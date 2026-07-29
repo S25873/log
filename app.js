@@ -82,16 +82,16 @@
     {bg:'linear-gradient(160deg,#30cfd0 0%,#330867 100%)', fg:'#f0f0f0', swatch:'linear-gradient(160deg,#30cfd0,#330867)'}  // 미드나잇
   ];
   var hlPresets = [
-    {c:'#fff59d', label:'노랑'}, {c:'#ffe082', label:'골드'},
-    {c:'#ffcc80', label:'오렌지'}, {c:'#f8bbd0', label:'핑크'},
-    {c:'#c5e1a5', label:'라임'}, {c:'#b3e5fc', label:'스카이'},
-    {c:'#d1c4e9', label:'라벤더'}, {c:'#eeeeee', label:'그레이'}
+    {c:'#fff59d', label:'노랑'}, {c:'#ffe082', label:'골드'}, {c:'#ffcc80', label:'오렌지'}, {c:'#ffab91', label:'살구'},
+    {c:'#f8bbd0', label:'핑크'}, {c:'#f48fb1', label:'로즈'}, {c:'#c5e1a5', label:'라임'}, {c:'#a5d6a7', label:'그린'},
+    {c:'#a7ffeb', label:'민트'}, {c:'#b3e5fc', label:'스카이'}, {c:'#90caf9', label:'블루'}, {c:'#d1c4e9', label:'라벤더'},
+    {c:'#ce93d8', label:'퍼플'}, {c:'#ffe0b2', label:'베이지'}, {c:'#e0e0e0', label:'그레이'}, {c:'#eeeeee', label:'페일'}
   ];
   var emPresets = [
-    {c:'#e23b3b', label:'레드'}, {c:'#f57c00', label:'오렌지'},
-    {c:'#f9a825', label:'옐로'}, {c:'#2e7d32', label:'그린'},
-    {c:'#1565c0', label:'블루'}, {c:'#6a1b9a', label:'퍼플'},
-    {c:'#000000', label:'먹'}, {c:'#737373', label:'그레이'}
+    {c:'#e23b3b', label:'레드'}, {c:'#c62828', label:'딥레드'}, {c:'#f57c00', label:'오렌지'}, {c:'#ff8f00', label:'앰버'},
+    {c:'#f9a825', label:'옐로'}, {c:'#2e7d32', label:'그린'}, {c:'#00897b', label:'틸'}, {c:'#0097a7', label:'시안'},
+    {c:'#1565c0', label:'블루'}, {c:'#283593', label:'인디고'}, {c:'#6a1b9a', label:'퍼플'}, {c:'#ad1457', label:'마젠타'},
+    {c:'#d81b60', label:'핫핑크'}, {c:'#6d4c41', label:'브라운'}, {c:'#616161', label:'그레이'}, {c:'#000000', label:'먹'}
   ];
 
   function toHex(c){ return String(c).indexOf('gradient') > -1 ? '#ffffff' : c; }
