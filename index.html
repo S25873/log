@@ -2,7 +2,7 @@
 <html lang="ko" data-theme="light">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>로그 이미지 생성기</title>
 <meta name="description" content="대사와 지문을 조판해 이미지로 저장하는 도구">
@@ -466,7 +466,7 @@
     flex:none;width:40px;height:24px;display:flex;align-items:center;justify-content:center;
     color:var(--ink-2);
   }
-  .sheet__list .s-preview svg{display:block;}
+  .sheet__list .s-preview svg{display:block;width:24px;height:24px;}
   .sheet__cancel{
     width:100%;margin-top:12px;height:46px;border:none;cursor:pointer;
     background:transparent;color:var(--ink-3);font-size:13px;font-weight:700;
@@ -500,32 +500,32 @@
   /* ============================================================
      색상 인풋
      ============================================================ */
-  .cgrid{display:grid;gap:14px;}
+  .cgrid{display:grid;gap:12px 10px;}
   .cgrid--3{grid-template-columns:repeat(3,minmax(0,1fr));}
   .cgrid--2{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .cchip{position:relative;}
+  .cchip{position:relative;min-width:0;}
   .cchip>label{
-    display:block;font-size:11px;color:var(--ink-2);font-weight:500;margin:0 0 7px;
+    display:block;font-size:11px;color:var(--ink-2);font-weight:500;margin:0 0 6px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;
   }
   .cchip__box{
-    position:relative;display:flex;align-items:center;gap:9px;height:44px;
-    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm);
-    padding:0 11px 0 6px;transition:border-color .16s var(--ease);
+    position:relative;display:flex;align-items:center;gap:7px;min-width:0;
+    background:transparent;border:none;border-radius:0;padding:0;height:auto;
   }
-  .cchip__box:hover{border-color:var(--line-strong);}
   .cchip input[type=color]{
-    width:32px;height:32px;flex:none;padding:0;border-radius:7px;
+    width:24px;height:24px;flex:none;padding:0;border-radius:50%;
     border:1px solid var(--line);background:var(--surface);cursor:pointer;
     -webkit-appearance:none;appearance:none;overflow:hidden;
+    box-shadow:0 1px 2px rgba(0,0,0,.08);
   }
   .cchip input[type=color]::-webkit-color-swatch-wrapper{padding:0;}
-  .cchip input[type=color]::-webkit-color-swatch{border:none;border-radius:6px;}
-  .cchip input[type=color]::-moz-color-swatch{border:none;border-radius:6px;}
+  .cchip input[type=color]::-webkit-color-swatch{border:none;border-radius:50%;}
+  .cchip input[type=color]::-moz-color-swatch{border:none;border-radius:50%;}
   .cchip__hex{
-    flex:1;min-width:0;border:none;background:transparent;color:var(--ink-2);
-    font-size:12px;font-family:ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.02em;
+    flex:1;min-width:0;width:100%;border:none;background:transparent;color:var(--ink-2);
+    font-size:11px;font-family:ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:0;
     text-transform:uppercase;padding:0;height:auto;border-radius:0;
+    overflow:hidden;text-overflow:ellipsis;
   }
   .cchip__hex:focus{outline:none;box-shadow:none;background:transparent;color:var(--ink);}
 
@@ -724,7 +724,9 @@
       flex:none;position:sticky;top:0;z-index:25;background:var(--surface);
     }
     .editor-fixed{flex:none;}
-    #editor{max-height:34vh;min-height:120px;}
+    #editor{max-height:34vh;min-height:120px;font-size:16px;}
+    /* iOS 자동 줌인 방지: 입력 요소 16px 이상 (색 헥스 제외) */
+    #name-ed,#title-ed,#subtitle-ed,input[type=text]:not(.cchip__hex),select,textarea{font-size:16px;}
     .panelscroll{
       flex:none;min-height:0;overflow:visible;
       padding:18px 18px calc(var(--dock-h) + 14px);
@@ -987,11 +989,6 @@
           </div>
 
           <div class="section">
-            <p class="section__head">배경 프리셋</p>
-            <div class="presets presets--bg" id="bg-presets"></div>
-          </div>
-
-          <div class="section">
             <p class="section__head">형광펜</p>
             <div class="dots" id="hl-presets"></div>
           </div>
@@ -999,33 +996,6 @@
           <div class="section">
             <p class="section__head">강조색</p>
             <div class="dots" id="em-presets"></div>
-          </div>
-
-          <div class="section">
-            <p class="section__head">사진 배경</p>
-            <label class="switch" for="photo-on">
-              <input id="photo-on" type="checkbox">
-              <span class="switch__text">
-                <span class="switch__title">사진 배경 사용</span>
-                <span class="switch__sub">배경에 사진을 깔고 불투명도·밝기를 조절합니다</span>
-              </span>
-            </label>
-            <input id="photo-file" type="file" accept="image/*" hidden>
-            <div class="photo-controls" id="photo-controls" hidden>
-              <div class="mini-row" style="justify-content:flex-start">
-                <button class="mini" id="photo-pick" type="button">사진 선택</button>
-              </div>
-              <div class="grid-2" style="margin-top:16px">
-                <div class="field">
-                  <span class="label">불투명도 <span class="val">100%</span></span>
-                  <div class="rangewrap"><input id="opacity" type="range" min="10" max="100" step="10" value="100"></div>
-                </div>
-                <div class="field">
-                  <span class="label">밝기 <span class="val">100%</span></span>
-                  <div class="rangewrap"><input id="bright" type="range" min="10" max="100" step="10" value="100"></div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div class="section">
@@ -1080,6 +1050,38 @@
 
         <!-- ========== 레이아웃 ========== -->
         <div class="panel" data-panel="layout" role="tabpanel">
+          <div class="section">
+            <p class="section__head">배경 프리셋</p>
+            <div class="presets presets--bg" id="bg-presets"></div>
+          </div>
+
+          <div class="section">
+            <p class="section__head">사진 배경</p>
+            <label class="switch" for="photo-on">
+              <input id="photo-on" type="checkbox">
+              <span class="switch__text">
+                <span class="switch__title">사진 배경 사용</span>
+                <span class="switch__sub">배경에 사진을 깔고 불투명도·밝기를 조절합니다</span>
+              </span>
+            </label>
+            <input id="photo-file" type="file" accept="image/*" hidden>
+            <div class="photo-controls" id="photo-controls" hidden>
+              <div class="mini-row" style="justify-content:flex-start">
+                <button class="mini" id="photo-pick" type="button">사진 선택</button>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">불투명도 <span class="val">100%</span></span>
+                  <div class="rangewrap"><input id="opacity" type="range" min="10" max="100" step="10" value="100"></div>
+                </div>
+                <div class="field">
+                  <span class="label">밝기 <span class="val">100%</span></span>
+                  <div class="rangewrap"><input id="bright" type="range" min="10" max="100" step="10" value="100"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="field">
             <span class="label">크기 모드</span>
             <div class="seg" id="size-seg">
