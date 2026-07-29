@@ -218,9 +218,11 @@
   linkColor('c-hl','c-hl-txt',false,true);
   linkColor('c-hl2','c-hl2-txt',false,false);
   linkColor('c-hl3','c-hl3-txt',false,false);
+  linkColor('c-hl4','c-hl4-txt',false,false);
   linkColor('c-em','c-em-txt',false,false);
   linkColor('c-em2','c-em2-txt',false,false);
   linkColor('c-em3','c-em3-txt',false,false);
+  linkColor('c-em4','c-em4-txt',false,false);
   linkColor('c-name','c-name-txt',false,false);
   linkColor('c-bar','c-bar-txt',false,false);
   linkColor('c-brecv','c-brecv-txt',false,false,updateEditorBub);
@@ -639,12 +641,14 @@
       { label: '형광펜 1', preview: function(){ return swatchHtml(hlColorOf(1)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(1)); } },
       { label: '형광펜 2', preview: function(){ return swatchHtml(hlColorOf(2)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(2)); } },
       { label: '형광펜 3', preview: function(){ return swatchHtml(hlColorOf(3)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(3)); } },
+      { label: '형광펜 4', preview: function(){ return swatchHtml(hlColorOf(4)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(4)); } },
       { label: '형광펜 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('hl', null, null, false, '__remove__'); } }
     ]},
     em: { title: '강조색', options: [
       { label: '강조 1', preview: function(){ return swatchHtml(emColorOf(1)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(1)); } },
       { label: '강조 2', preview: function(){ return swatchHtml(emColorOf(2)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(2)); } },
       { label: '강조 3', preview: function(){ return swatchHtml(emColorOf(3)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(3)); } },
+      { label: '강조 4', preview: function(){ return swatchHtml(emColorOf(4)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(4)); } },
       { label: '강조 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } }
     ]},
     quote: { title: '인용선', options: [
@@ -1587,7 +1591,7 @@
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
   var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
-    'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-name','c-name-txt','c-bar','c-bar-txt',
+    'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-quote','c-quote-txt','c-hr','c-hr-txt',
     'c-brecv-name','c-brecv-name-txt','c-bsend-name','c-bsend-name-txt','opacity','bright'];
@@ -1678,7 +1682,7 @@
     $('ratio-row').style.display = sizeMode==='ratio' ? '' : 'none';
     if(s.ratio){ ratio=s.ratio;
       [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); }); }
-    ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-em','c-em2','c-em3','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-quote','c-hr','c-brecv-name','c-bsend-name'].forEach(function(cid){
+    ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-em','c-em2','c-em3','c-em4','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-quote','c-hr','c-brecv-name','c-bsend-name'].forEach(function(cid){
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
     });
     if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
