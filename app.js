@@ -1256,10 +1256,10 @@
   function doSave(type){
     if(_busy) return;
     _busy=true;
-    var btns = document.querySelectorAll('#save-png,#save-jpg,#save-png-m,#save-jpg-m');
+    var btns = document.querySelectorAll('#save-png,#save-jpg');
     [].forEach.call(btns, function(b){ b.disabled=true; });
     var isJpg=(type==='image/jpeg');
-    var actBtns = document.querySelectorAll(isJpg ? '#save-jpg,#save-jpg-m' : '#save-png,#save-png-m');
+    var actBtns = document.querySelectorAll(isJpg ? '#save-jpg' : '#save-png');
     var origs=[]; [].forEach.call(actBtns, function(b){ origs.push([b, b.textContent]); b.textContent='저장 중…'; });
     function finish(){ _busy=false; [].forEach.call(btns, function(b){ b.disabled=false; }); origs.forEach(function(p){ p[0].textContent=p[1]; }); }
     var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
@@ -1356,8 +1356,8 @@
     doCapture();
   }
 
-  ['save-png','save-png-m'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click', function(){ doSave('image/png'); }); });
-  ['save-jpg','save-jpg-m'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click', function(){ doSave('image/jpeg'); }); });
+  ['save-png'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click', function(){ doSave('image/png'); }); });
+  ['save-jpg'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click', function(){ doSave('image/jpeg'); }); });
 
   /* ============================================================
      텍스트 변환 도구
