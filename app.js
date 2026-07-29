@@ -589,44 +589,76 @@
     btn.addEventListener('click', function(e){ if(swallow){ swallow=false; e.preventDefault(); e.stopPropagation(); return; } run(e); });
   }
 
-  var BUB_FMTS = {'bub-recv':1,'bub-send':1};
+  // 서식 버튼: 직접 적용형 (data-fmt) — 말풍선 제외(말풍선은 시트로)
   document.querySelectorAll('.fmt .fbtn[data-fmt]').forEach(function(btn){
     var fmt = btn.getAttribute('data-fmt');
-    if(BUB_FMTS[fmt]){
-      bindTap(btn, function(e){
-        if(e){ e.preventDefault(); e.stopPropagation(); }
-        var pop = btn.parentNode.querySelector('.pop');
-        var open = pop && pop.classList.contains('is-open');
-        closeAllPops(); if(pop && !open){ pop.classList.add('is-open'); }
+    bindTap(btn, function(e){ if(e){ e.preventDefault(); e.stopPropagation(); } applyFormat(fmt); });
+  });
+
+  /* ===== 바텀시트 (인용/구분/말풍선 선택) ===== */
+  var tailSvg = '<svg viewBox="0 0 16 20" preserveAspectRatio="none"><path d="M16 0 L16 20 Q6 20 0.6 19.2 Q-0.9 19.0 0.5 18.2 Q6.2 15.0 8 10 Q9.2 5.6 9 0 Z"></path></svg>';
+  var SHEETS = {
+    quote: { title: '인용선', options: [
+      { label: '왼쪽 인용선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="2.4" height="16" rx="1.2" fill="currentColor"/><line x1="10" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyFormat('quote', null, 'left'); } },
+      { label: '오른쪽 인용선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="17.6" y="4" width="2.4" height="16" rx="1.2" fill="currentColor"/><line x1="4" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="4" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7" y1="16" x2="14" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyFormat('quote', null, 'right'); } }
+    ]},
+    hr: { title: '구분선', options: [
+      { label: '가로 구분선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('line'); } },
+      { label: '점 세 개', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="17" cy="12" r="1.5" fill="currentColor"/></svg></span>', run: function(){ applyHr('dots'); } },
+      { label: '짧은 중앙선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="9" y1="12" x2="15" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('short'); } }
+    ]},
+    'bub-recv': { title: '왼쪽 말풍선 (상대)', options: [
+      { label: '연속 (꼬리 없음)', preview: '<span class="pk-ic pk-recv"></span>', run: function(){ applyFormat('bub-recv', false, null, false); } },
+      { label: '이름 + 연속', preview: '<span class="pk-ic pk-recv"></span>', run: function(){ applyFormat('bub-recv', false, null, true); } },
+      { label: '마지막 (꼬리 있음)', preview: '<span class="pk-ic pk-recv">'+tailSvg+'</span>', run: function(){ applyFormat('bub-recv', true, null, false); } },
+      { label: '이름 + 마지막', preview: '<span class="pk-ic pk-recv">'+tailSvg+'</span>', run: function(){ applyFormat('bub-recv', true, null, true); } }
+    ]},
+    'bub-send': { title: '오른쪽 말풍선 (나)', options: [
+      { label: '연속 (꼬리 없음)', preview: '<span class="pk-ic pk-send"></span>', run: function(){ applyFormat('bub-send', false, null, false); } },
+      { label: '이름 + 연속', preview: '<span class="pk-ic pk-send"></span>', run: function(){ applyFormat('bub-send', false, null, true); } },
+      { label: '마지막 (꼬리 있음)', preview: '<span class="pk-ic pk-send">'+tailSvg+'</span>', run: function(){ applyFormat('bub-send', true, null, false); } },
+      { label: '이름 + 마지막', preview: '<span class="pk-ic pk-send">'+tailSvg+'</span>', run: function(){ applyFormat('bub-send', true, null, true); } }
+    ]}
+  };
+  var sheetOverlay = $('sheet-overlay'), sheetEl = $('sheet'),
+      sheetTitle = $('sheet-title'), sheetList = $('sheet-list'), sheetCancel = $('sheet-cancel');
+  var _sheetSavedRange = null;
+  function openSheet(key){
+    var def = SHEETS[key]; if(!def || !sheetOverlay) return;
+    // 현재 에디터 선택을 보존 (시트 여는 동안 포커스 이동해도 복원)
+    var sel = window.getSelection();
+    _sheetSavedRange = (sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)) ? sel.getRangeAt(0).cloneRange() : (_savedRange ? _savedRange.cloneRange() : null);
+    sheetTitle.textContent = def.title;
+    sheetList.innerHTML = '';
+    def.options.forEach(function(opt){
+      var b = document.createElement('button'); b.type='button';
+      b.innerHTML = (opt.preview||'') + '<span>'+opt.label+'</span>';
+      b.addEventListener('click', function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        closeSheet();
+        // 보존한 선택을 복원한 뒤 서식 적용
+        if(_sheetSavedRange && editor.contains(_sheetSavedRange.startContainer)){
+          editor.focus();
+          var s=window.getSelection(); s.removeAllRanges(); s.addRange(_sheetSavedRange);
+        }
+        opt.run();
       });
-    } else {
-      bindTap(btn, function(e){ if(e){ e.preventDefault(); e.stopPropagation(); } applyFormat(fmt); });
-    }
-  });
-  document.querySelectorAll('.fmt .fbtn[data-pop]').forEach(function(btn){
-    bindTap(btn, function(e){
-      if(e){ e.preventDefault(); e.stopPropagation(); }
-      var pop = btn.parentNode.querySelector('.pop');
-      var open = pop && pop.classList.contains('is-open');
-      closeAllPops(); if(pop && !open){ pop.classList.add('is-open'); }
+      sheetList.appendChild(b);
     });
+    sheetOverlay.hidden = false;
+    requestAnimationFrame(function(){ sheetOverlay.classList.add('is-open'); });
+  }
+  function closeSheet(){
+    if(!sheetOverlay) return;
+    sheetOverlay.classList.remove('is-open');
+    setTimeout(function(){ sheetOverlay.hidden = true; }, 260);
+  }
+  document.querySelectorAll('[data-sheet]').forEach(function(btn){
+    bindTap(btn, function(e){ if(e){ e.preventDefault(); e.stopPropagation(); } openSheet(btn.getAttribute('data-sheet')); });
   });
-  function closeAllPops(){ document.querySelectorAll('.pop.is-open').forEach(function(p){ p.classList.remove('is-open'); }); }
-  document.querySelectorAll('.pop button').forEach(function(opt){
-    bindTap(opt, function(e){
-      if(e){ e.preventDefault(); e.stopPropagation(); }
-      closeAllPops();
-      var f = opt.getAttribute('data-fmt');
-      if(f==='title'){ applyTitle(opt.getAttribute('data-sub')==='1'); return; }
-      if(f==='quote'){ applyFormat('quote', null, opt.getAttribute('data-side')||'left'); return; }
-      if(f==='hr'){ applyHr(opt.getAttribute('data-hr')||'line'); return; }
-      var kind = opt.getAttribute('data-kind');
-      applyFormat(kind==='send'?'bub-send':'bub-recv', opt.getAttribute('data-tail')==='1', null, opt.getAttribute('data-name')==='1');
-    });
-  });
-  function outsideClose(e){ if(!e.target.closest || !e.target.closest('.pop-wrap')){ closeAllPops(); } }
-  document.addEventListener('click', outsideClose);
-  document.addEventListener('touchend', outsideClose);
+  if(sheetCancel){ sheetCancel.addEventListener('click', closeSheet); }
+  if(sheetOverlay){ sheetOverlay.addEventListener('click', function(e){ if(e.target===sheetOverlay){ closeSheet(); } }); }
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && sheetOverlay && !sheetOverlay.hidden){ closeSheet(); } });
 
   function bindBubTool(btn, action){
     bindTap(btn, function(e){
