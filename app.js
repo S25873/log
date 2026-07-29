@@ -82,16 +82,16 @@
     {bg:'linear-gradient(160deg,#30cfd0 0%,#330867 100%)', fg:'#f0f0f0', swatch:'linear-gradient(160deg,#30cfd0,#330867)'}  // 미드나잇
   ];
   var hlPresets = [
-    {c:'#fff59d', label:'노랑'}, {c:'#ffe082', label:'골드'}, {c:'#ffcc80', label:'오렌지'}, {c:'#ffab91', label:'살구'},
-    {c:'#f8bbd0', label:'핑크'}, {c:'#f48fb1', label:'로즈'}, {c:'#c5e1a5', label:'라임'}, {c:'#a5d6a7', label:'그린'},
-    {c:'#a7ffeb', label:'민트'}, {c:'#b3e5fc', label:'스카이'}, {c:'#90caf9', label:'블루'}, {c:'#d1c4e9', label:'라벤더'},
-    {c:'#ce93d8', label:'퍼플'}, {c:'#ffe0b2', label:'베이지'}, {c:'#e0e0e0', label:'그레이'}, {c:'#eeeeee', label:'페일'}
+    {c:'#f4b2ad', label:'코랄'}, {c:'#f8c9a6', label:'피치'}, {c:'#f9dea8', label:'버터'}, {c:'#e4e3a2', label:'라임옐로'},
+    {c:'#c4e1ac', label:'세이지'}, {c:'#aededd', label:'민트'}, {c:'#b4d3ec', label:'스카이'}, {c:'#b9c7ec', label:'페리'},
+    {c:'#c3c1eb', label:'인디고'}, {c:'#d0c2e8', label:'라벤더'}, {c:'#debee3', label:'바이올렛'}, {c:'#efbcd3', label:'로즈'},
+    {c:'#e9d2c6', label:'클레이'}, {c:'#ddccbf', label:'코코아'}, {c:'#dadce0', label:'그레이'}, {c:'#e6e6e6', label:'페일'}
   ];
   var emPresets = [
-    {c:'#e23b3b', label:'레드'}, {c:'#c62828', label:'딥레드'}, {c:'#f57c00', label:'오렌지'}, {c:'#ff8f00', label:'앰버'},
-    {c:'#f9a825', label:'옐로'}, {c:'#2e7d32', label:'그린'}, {c:'#00897b', label:'틸'}, {c:'#0097a7', label:'시안'},
-    {c:'#1565c0', label:'블루'}, {c:'#283593', label:'인디고'}, {c:'#6a1b9a', label:'퍼플'}, {c:'#ad1457', label:'마젠타'},
-    {c:'#d81b60', label:'핫핑크'}, {c:'#6d4c41', label:'브라운'}, {c:'#616161', label:'그레이'}, {c:'#000000', label:'먹'}
+    {c:'#c25b57', label:'브릭'}, {c:'#cf7b57', label:'테라코타'}, {c:'#c9995a', label:'오커'}, {c:'#9aa35c', label:'올리브'},
+    {c:'#5e9b72', label:'그린'}, {c:'#4e9a98', label:'틸'}, {c:'#5b87a8', label:'스틸블루'}, {c:'#5d74a6', label:'데님'},
+    {c:'#6e6fa6', label:'인디고'}, {c:'#8a6fa6', label:'라벤더'}, {c:'#9a5e8e', label:'플럼'}, {c:'#b05b78', label:'로즈우드'},
+    {c:'#a9756a', label:'클레이'}, {c:'#7c6355', label:'코코아'}, {c:'#6b7280', label:'슬레이트'}, {c:'#3e4149', label:'잉크'}
   ];
 
   function toHex(c){ return String(c).indexOf('gradient') > -1 ? '#ffffff' : c; }
