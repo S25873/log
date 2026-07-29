@@ -537,6 +537,66 @@
   }
 
   /* ============================================================
+     구분선(g-hr) 선택 · 삭제
+     — 클릭하면 선택 표시(✕)가 뜨고, ✕를 누르거나 Backspace/Delete로 삭제.
+       커서가 구분선 바로 뒤에 있을 때 Backspace로도 삭제된다.
+     ============================================================ */
+  var _selHr = null;
+  function clearHrSel(){
+    [].forEach.call(editor.querySelectorAll('.g-hr.is-sel'), function(x){ x.classList.remove('is-sel'); });
+    _selHr = null;
+  }
+  function selectHr(hr){ clearHrSel(); if(hr){ hr.classList.add('is-sel'); _selHr = hr; } }
+  function removeHr(hr){
+    if(!hr || !hr.parentNode) return;
+    var nx = hr.nextSibling, pv = hr.previousSibling;
+    hr.parentNode.removeChild(hr);
+    if(nx && nx.nodeType===1 && nx.tagName==='BR' && nx.parentNode){ nx.parentNode.removeChild(nx); }
+    else if(pv && pv.nodeType===1 && pv.tagName==='BR' && pv.parentNode){ pv.parentNode.removeChild(pv); }
+    _selHr = null;
+    cleanEditor(); render(); saveSel(); updateFormatButtons();
+    editor.focus();
+  }
+  function hrBeforeCaret(range){
+    var n=range.startContainer, o=range.startOffset, prev=null, up;
+    if(n.nodeType===3){
+      if(n.nodeValue.slice(0,o).replace(/\u200b/g,'').length>0) return null;
+      prev=n.previousSibling; up=n;
+      while(!prev && up.parentNode && up!==editor){ up=up.parentNode; if(up===editor) break; prev=up.previousSibling; }
+    } else {
+      if(o>0){ prev=n.childNodes[o-1]; }
+      else { up=n; while(!prev && up.parentNode && up!==editor){ prev=up.previousSibling; if(prev) break; up=up.parentNode; } }
+    }
+    if(prev && prev.nodeType===1 && prev.tagName==='BR'){ prev=prev.previousSibling; }
+    while(prev && prev.nodeType===3 && prev.nodeValue.replace(/\u200b/g,'')===''){ prev=prev.previousSibling; }
+    return (prev && prev.nodeType===1 && prev.classList && prev.classList.contains('g-hr')) ? prev : null;
+  }
+  editor.addEventListener('click', function(e){
+    var t=e.target, hr = (t && t.closest) ? t.closest('.g-hr') : null;
+    if(hr && editor.contains(hr)){
+      e.preventDefault();
+      var rect=hr.getBoundingClientRect();
+      if(hr.classList.contains('is-sel') && e.clientX >= rect.right - 34){ removeHr(hr); }
+      else { selectHr(hr); }
+      return;
+    }
+    clearHrSel();
+  });
+  editor.addEventListener('keydown', function(e){
+    if((e.key==='Backspace' || e.key==='Delete') && _selHr && editor.contains(_selHr)){
+      e.preventDefault(); removeHr(_selHr); return;
+    }
+    if(e.key==='Backspace' && !e.isComposing && e.keyCode!==229){
+      var sel=window.getSelection();
+      if(sel && sel.rangeCount && sel.isCollapsed){
+        var hrPrev=hrBeforeCaret(sel.getRangeAt(0));
+        if(hrPrev){ e.preventDefault(); removeHr(hrPrev); return; }
+      }
+    }
+  });
+  editor.addEventListener('input', clearHrSel);
+
+  /* ============================================================
      서식 적용 라우터
      ============================================================ */
   function applyFormat(fmt, tail, side, withName, color){
@@ -1629,7 +1689,7 @@
     try{
       if(data.vals){ TEXT_IDS.forEach(function(id){ if(data.vals[id]!=null){ safeRestoreValue(id, data.vals[id]); } }); }
       ensureFontValid();
-      if(typeof data.editorHtml==='string'){ editor.innerHTML=data.editorHtml; syncTails(editor); }
+      if(typeof data.editorHtml==='string'){ editor.innerHTML=data.editorHtml; syncTails(editor); clearHrSel(); }
       if(nameEd && typeof data.nameHtml==='string'){ nameEd.innerHTML=data.nameHtml; }
       if($('title-ed') && typeof data.titleHtml==='string'){ $('title-ed').innerHTML=data.titleHtml; }
       if($('subtitle-ed') && typeof data.subtitleHtml==='string'){ $('subtitle-ed').innerHTML=data.subtitleHtml; }
