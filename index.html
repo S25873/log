@@ -289,16 +289,38 @@
   }
 
   /* 미니 버튼 */
-  .mini-row{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+  .mini-row{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
   .mini{
-    border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
-    border-radius:var(--radius-xs);height:26px;padding:0 8px;font-size:11px;font-weight:600;
-    cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink-3);
+    border-radius:6px;height:22px;padding:0 6px;font-size:10px;font-weight:600;
+    cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;
     transition:background .16s var(--ease),color .16s,border-color .16s,transform .1s;
   }
   .mini:hover{background:var(--ink);color:var(--surface);border-color:var(--ink);}
   .mini:active{transform:scale(.96);}
   .mini.is-danger:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
+
+  /* 접이식 토글 */
+  .fold{
+    border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--surface);overflow:hidden;
+  }
+  .fold + .fold{margin-top:12px;}
+  .fold > summary{
+    list-style:none;cursor:pointer;user-select:none;
+    display:flex;align-items:center;gap:9px;
+    padding:13px 15px;font-size:12.5px;font-weight:600;color:var(--ink);
+    transition:background .16s var(--ease);
+  }
+  .fold > summary::-webkit-details-marker{display:none;}
+  .fold > summary:hover{background:var(--surface-2);}
+  .fold__chevron{
+    margin-left:auto;width:15px;height:15px;flex:none;color:var(--ink-3);
+    transition:transform .24s var(--ease);
+  }
+  .fold[open] > summary .fold__chevron{transform:rotate(180deg);}
+  .fold[open] > summary{border-bottom:1px solid var(--line);}
+  .fold__body{padding:15px;}
 
   /* 큰 버튼 */
   .btn{
@@ -560,16 +582,16 @@
   #editor .g-bub-name.send{margin-left:auto;margin-right:8px;text-align:right;color:var(--bub-name-send,#8a8a8a);}
   #editor .g-bub-name:empty:before{content:"이름";color:var(--ink-3);opacity:.7;}
 
-  #name-ed{
+  #name-ed,#title-ed,#subtitle-ed{
     width:100%;min-height:42px;max-height:120px;overflow-y:auto;
     background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm);
     color:var(--ink);padding:10px 13px;font-size:13.5px;line-height:1.6;
     white-space:pre-wrap;overflow-wrap:break-word;transition:border-color .18s var(--ease),box-shadow .18s;
   }
-  #name-ed:focus{border-color:var(--ink);background:var(--surface);outline:none;box-shadow:0 0 0 3px var(--accent-soft);}
-  #name-ed:empty:before{content:attr(data-placeholder);color:var(--ink-3);}
-  #name-ed *{font-size:inherit !important;line-height:inherit !important;color:inherit;display:inline;}
-  #name-ed div,#name-ed p{display:block !important;min-height:1.2em;}
+  #name-ed:focus,#title-ed:focus,#subtitle-ed:focus{border-color:var(--ink);background:var(--surface);outline:none;box-shadow:0 0 0 3px var(--accent-soft);}
+  #name-ed:empty:before,#title-ed:empty:before,#subtitle-ed:empty:before{content:attr(data-placeholder);color:var(--ink-3);}
+  #name-ed *,#title-ed *,#subtitle-ed *{font-size:inherit !important;line-height:inherit !important;color:inherit;display:inline;}
+  #name-ed div,#name-ed p,#title-ed div,#title-ed p,#subtitle-ed div,#subtitle-ed p{display:block !important;min-height:1.2em;}
 
   /* ============================================================
      캔버스 (저장 대상)
@@ -591,8 +613,8 @@
     text-decoration:underline !important;text-decoration-thickness:.05em !important;text-underline-offset:.12em !important;}
   #canvas mark.sub,.canvas-clone mark.sub{color:var(--sub-color,#8a8a8a) !important;background:transparent !important;display:inline !important;font-size:.8em !important;}
   #canvas .g-title-blk,.canvas-clone .g-title-blk{display:block !important;margin:0 0 .6em !important;}
-  #canvas .g-title-main,.canvas-clone .g-title-main{display:block !important;font-size:1.6em !important;font-weight:700 !important;color:var(--title-color,inherit) !important;line-height:1.25 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
-  #canvas .g-title-sub,.canvas-clone .g-title-sub{display:block !important;font-size:1.15em !important;font-weight:400 !important;color:var(--subtitle-color,inherit) !important;margin-top:.25em !important;line-height:1.3 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-title-main,.canvas-clone .g-title-main{display:block !important;font-size:var(--title-size,1.6em) !important;font-weight:700 !important;font-family:var(--title-font,inherit) !important;color:var(--title-color,inherit) !important;line-height:1.25 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-title-sub,.canvas-clone .g-title-sub{display:block !important;font-size:var(--subtitle-size,1.15em) !important;font-weight:400 !important;font-family:var(--title-font,inherit) !important;color:var(--subtitle-color,inherit) !important;margin-top:.25em !important;line-height:1.3 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-quote,.canvas-clone .g-quote{display:block !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-quote.left,.canvas-clone .g-quote.left{border-left:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-left:.6em !important;}
   #canvas .g-quote.right,.canvas-clone .g-quote.right{border-right:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-right:.6em !important;text-align:right !important;}
@@ -600,7 +622,7 @@
   #canvas .g-hr.line:before,.canvas-clone .g-hr.line:before{content:"" !important;display:block !important;width:100% !important;height:2px !important;background:var(--hr-color,rgba(140,140,140,.5)) !important;}
   #canvas .g-hr.dots,.canvas-clone .g-hr.dots{letter-spacing:.4em !important;font-size:.9em !important;height:auto !important;color:var(--hr-color,rgba(140,140,140,.55)) !important;}
   #canvas .g-hr.short:before,.canvas-clone .g-hr.short:before{content:"" !important;display:block !important;width:12% !important;height:2px !important;background:var(--hr-color,rgba(140,140,140,.6)) !important;}
-  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:1.6em !important;font-weight:400 !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:1.6em !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-name.right,.canvas-clone .g-name.right{text-align:right !important;}
   #canvas .g-name.left,.canvas-clone .g-name.left{text-align:left !important;}
   #canvas .g-name.s-bold,.canvas-clone .g-name.s-bold{font-weight:700 !important;}
@@ -725,13 +747,6 @@
             <button class="fbtn" type="button" data-fmt="emph"><span class="em-ic">강조</span></button>
             <button class="fbtn" type="button" data-fmt="hl"><span class="hl-ic">형광</span></button>
             <span class="pop-wrap">
-              <button class="fbtn" type="button" data-pop="title" title="제목"><span class="lbl">제목</span></button>
-              <span class="pop">
-                <button type="button" data-fmt="title" data-sub="0">제목만</button>
-                <button type="button" data-fmt="title" data-sub="1">제목 + 소제목</button>
-              </span>
-            </span>
-            <span class="pop-wrap">
               <button class="fbtn" type="button" data-fmt="sub"><span class="lbl">서브</span></button>
             </span>
             <span class="pop-wrap">
@@ -752,8 +767,6 @@
           </div>
 
           <div class="lowtools" hidden>
-            <button class="fbtn fbtn--exit" id="title-exit" type="button" hidden>제목 나가기 ↵</button>
-            <button class="fbtn fbtn--del" id="title-del" type="button" hidden>제목 삭제 ✕</button>
             <div class="subtools" hidden>
               <button class="fbtn fbtn--exit" id="bub-exit" type="button">말풍선 나가기 ↵</button>
               <button class="fbtn fbtn--del" id="bub-del" type="button">말풍선 삭제 ✕</button>
@@ -766,37 +779,94 @@
         <!-- ========== 내용 ========== -->
         <div class="panel is-active" data-panel="content" role="tabpanel">
           <div class="field">
-            <span class="label">하단 정보</span>
-            <div id="name-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
-                 aria-label="하단 정보 입력" data-placeholder="이름·날짜 등 (비워도 됩니다)"></div>
+            <label class="label" for="font">본문 글꼴</label>
+            <select id="font">
+              <option value='"Pretendard",sans-serif' selected>프리텐다드</option>
+              <option value='"Paperozi",sans-serif'>페이퍼로지</option>
+              <option value="'Presentation',sans-serif">프리젠테이션</option>
+              <option value="'GMarketSans',sans-serif">G마켓 산스</option>
+              <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
+              <option value='"Ridibatang",serif'>리디바탕</option>
+              <option value="'Mona12','Mona12 Text KR',sans-serif">모나</option>
+              <option value="'PfStardust',sans-serif">스타더스트</option>
+            </select>
           </div>
 
-          <div class="grid-2" style="margin-top:18px">
-            <div class="field">
-              <label class="label" for="name-pos">하단 배치</label>
-              <select id="name-pos">
-                <option value="plain-left" selected>기본 (좌)</option>
-                <option value="plain-right">기본 (우)</option>
-                <option value="bold-left">볼드 (좌)</option>
-                <option value="bold-right">볼드 (우)</option>
-                <option value="bar-left">인용선 (좌)</option>
-                <option value="bar-right">인용선 (우)</option>
-              </select>
+          <details class="fold" id="fold-title" style="margin-top:16px">
+            <summary>
+              제목
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <div class="field">
+                <span class="label">제목 <span class="val" id="title-size-val">1.6×</span></span>
+                <div id="title-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
+                     aria-label="제목 입력" data-placeholder="제목 (비워도 됩니다)"></div>
+                <div class="rangewrap" style="margin-top:9px"><input id="title-size" type="range" min="10" max="30" step="1" value="16"></div>
+              </div>
+              <div class="field" style="margin-top:16px">
+                <span class="label">소제목 <span class="val" id="subtitle-size-val">1.15×</span></span>
+                <div id="subtitle-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
+                     aria-label="소제목 입력" data-placeholder="소제목 (비워도 됩니다)"></div>
+                <div class="rangewrap" style="margin-top:9px"><input id="subtitle-size" type="range" min="8" max="24" step="1" value="12"></div>
+              </div>
+              <div class="field" style="margin-top:16px">
+                <label class="label" for="title-font">제목·소제목 글꼴</label>
+                <select id="title-font">
+                  <option value="" selected>본문과 동일</option>
+                  <option value='"Pretendard",sans-serif'>프리텐다드</option>
+                  <option value='"Paperozi",sans-serif'>페이퍼로지</option>
+                  <option value="'Presentation',sans-serif">프리젠테이션</option>
+                  <option value="'GMarketSans',sans-serif">G마켓 산스</option>
+                  <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
+                  <option value='"Ridibatang",serif'>리디바탕</option>
+                  <option value="'Mona12','Mona12 Text KR',sans-serif">모나</option>
+                  <option value="'PfStardust',sans-serif">스타더스트</option>
+                </select>
+              </div>
             </div>
-            <div class="field">
-              <label class="label" for="font">글꼴</label>
-              <select id="font">
-                <option value='"Pretendard",sans-serif' selected>프리텐다드</option>
-                <option value='"Paperozi",sans-serif'>페이퍼로지</option>
-                <option value="'Presentation',sans-serif">프리젠테이션</option>
-                <option value="'GMarketSans',sans-serif">G마켓 산스</option>
-                <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
-                <option value='"Ridibatang",serif'>리디바탕</option>
-                <option value="'Mona12','Mona12 Text KR',sans-serif">모나</option>
-                <option value="'PfStardust',sans-serif">스타더스트</option>
-              </select>
+          </details>
+
+          <details class="fold" id="fold-name" style="margin-top:12px">
+            <summary>
+              하단 정보
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <div class="field">
+                <span class="label">하단 정보</span>
+                <div id="name-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
+                     aria-label="하단 정보 입력" data-placeholder="이름·날짜 등 (비워도 됩니다)"></div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <label class="label" for="name-pos">하단 배치</label>
+                  <select id="name-pos">
+                    <option value="plain-left" selected>기본 (좌)</option>
+                    <option value="plain-right">기본 (우)</option>
+                    <option value="bold-left">볼드 (좌)</option>
+                    <option value="bold-right">볼드 (우)</option>
+                    <option value="bar-left">인용선 (좌)</option>
+                    <option value="bar-right">인용선 (우)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="label" for="name-font">하단 글꼴</label>
+                  <select id="name-font">
+                    <option value="" selected>본문과 동일</option>
+                    <option value='"Pretendard",sans-serif'>프리텐다드</option>
+                    <option value='"Paperozi",sans-serif'>페이퍼로지</option>
+                    <option value="'Presentation',sans-serif">프리젠테이션</option>
+                    <option value="'GMarketSans',sans-serif">G마켓 산스</option>
+                    <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
+                    <option value='"Ridibatang",serif'>리디바탕</option>
+                    <option value="'Mona12','Mona12 Text KR',sans-serif">모나</option>
+                    <option value="'PfStardust',sans-serif">스타더스트</option>
+                  </select>
+                </div>
+              </div>
             </div>
-          </div>
+          </details>
         </div>
 
         <!-- ========== 디자인 ========== -->

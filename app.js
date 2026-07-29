@@ -238,6 +238,26 @@
   }
   function nameIsEmpty(){ return nameHtml().replace(/<br>/g,'').replace(/\u00a0/g,' ').trim() === ''; }
 
+  // 제목/소제목 입력창(contenteditable) → 안전한 HTML (br만 허용)
+  function edToHtml(el){
+    if(!el) return '';
+    var src = el.cloneNode(true), out = '';
+    (function walk(node){
+      for(var i=0;i<node.childNodes.length;i++){
+        var ch = node.childNodes[i];
+        if(ch.nodeType===3){ out += ch.nodeValue.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        else if(ch.nodeType===1){
+          if(ch.tagName==='BR'){ out += '<br>'; }
+          else if(ch.tagName==='DIV' || ch.tagName==='P'){ if(out!=='' && !/<br>$/.test(out)) out+='<br>'; walk(ch); }
+          else { walk(ch); }
+        }
+      }
+    })(src);
+    return out.replace(/\u200b/g,'').replace(/(<br>)+$/,'');
+  }
+  function titleIsEmpty(){ return edToHtml($('title-ed')).replace(/<br>/g,'').replace(/\u00a0/g,' ').trim()===''; }
+  function subtitleIsEmpty(){ return edToHtml($('subtitle-ed')).replace(/<br>/g,'').replace(/\u00a0/g,' ').trim()===''; }
+
   /* ============================================================
      서식 유틸 (형광/강조/밑줄/서브 = mark 기반 union)
      ============================================================ */
@@ -919,6 +939,12 @@
     el.style.setProperty('--bub-send-ink', bubInkSend());
     el.style.setProperty('--title-color', $('c-title').value);
     el.style.setProperty('--subtitle-color', $('c-subtitle').value);
+    var tsz=$('title-size'), ssz=$('subtitle-size');
+    if(tsz){ el.style.setProperty('--title-size', (parseFloat(tsz.value)/10).toFixed(2)+'em'); }
+    if(ssz){ el.style.setProperty('--subtitle-size', (parseFloat(ssz.value)/10).toFixed(2)+'em'); }
+    var tf=$('title-font'), nf=$('name-font');
+    el.style.setProperty('--title-font', (tf && tf.value) ? tf.value : $('font').value);
+    el.style.setProperty('--name-font', (nf && nf.value) ? nf.value : $('font').value);
     el.style.setProperty('--sub-color', $('c-sub').value);
     el.style.setProperty('--quote-color', $('c-quote').value);
     el.style.setProperty('--hr-color', $('c-hr').value);
@@ -1028,6 +1054,15 @@
     [].forEach.call(tmp.querySelectorAll('.g-bub-name'), function(n){ if(n.textContent.replace(/\u200b/g,'').trim()===''){ if(n.parentNode) n.parentNode.removeChild(n); } });
     syncTails(tmp);
     var html = tmp.innerHTML;
+    // 제목/소제목 (별도 입력창) → 맨 앞
+    var tEmpty = titleIsEmpty(), sEmpty = subtitleIsEmpty();
+    if(!tEmpty || !sEmpty){
+      var titleBlk = '<div class="g-title-blk">';
+      if(!tEmpty){ titleBlk += '<div class="g-title-main">'+ edToHtml($('title-ed')) +'</div>'; }
+      if(!sEmpty){ titleBlk += '<div class="g-title-sub">'+ edToHtml($('subtitle-ed')) +'</div>'; }
+      titleBlk += '</div>';
+      html = titleBlk + html;
+    }
     if(!nameIsEmpty()){
       var opt = $('name-pos').value || 'plain-left';
       var parts = opt.split('-'), style=parts[0]||'plain', align=parts[1]||'left';
@@ -1110,6 +1145,51 @@
       range.insertNode(frag); sel.collapseToEnd(); render();
     });
   }
+
+  // 제목/소제목 입력창(간단 편집: 줄바꿈 + 붙여넣기 평문화)
+  function bindSimpleEditor(el){
+    if(!el) return;
+    el.addEventListener('input', render);
+    function lineBreak(){
+      var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return;
+      var range=sel.getRangeAt(0);
+      if(!el.contains(range.startContainer)) return;
+      range.deleteContents();
+      var br=document.createElement('br'); range.insertNode(br);
+      var needTrailing=!br.nextSibling || (br.nextSibling.nodeType===1 && br.nextSibling.tagName==='BR' && !br.nextSibling.nextSibling);
+      if(needTrailing){ var extra=document.createElement('br'); br.parentNode.insertBefore(extra, br.nextSibling); }
+      range.setStartAfter(br); range.collapse(true); sel.removeAllRanges(); sel.addRange(range); render();
+    }
+    el.addEventListener('beforeinput', function(e){
+      if(e.inputType==='insertLineBreak' || e.inputType==='insertParagraph'){ e.preventDefault(); lineBreak(); }
+    });
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' && !e.isComposing && e.keyCode!==229){ e.preventDefault(); lineBreak(); }
+    });
+    el.addEventListener('paste', function(e){
+      e.preventDefault();
+      var text=((e.originalEvent||e).clipboardData||window.clipboardData).getData('text/plain');
+      el.focus();
+      var sel=window.getSelection();
+      if(!sel.rangeCount){ el.appendChild(document.createTextNode(text)); render(); return; }
+      sel.deleteFromDocument();
+      var range=sel.getRangeAt(0), lines=text.replace(/\r\n/g,'\n').split('\n'), frag=document.createDocumentFragment();
+      lines.forEach(function(line,i){ if(i>0) frag.appendChild(document.createElement('br')); frag.appendChild(document.createTextNode(line)); });
+      range.insertNode(frag); sel.collapseToEnd(); render();
+    });
+  }
+  bindSimpleEditor($('title-ed'));
+  bindSimpleEditor($('subtitle-ed'));
+
+  // 제목/소제목 크기 슬라이더 + 글꼴 select
+  function updateTitleSizeLabels(){
+    var t=$('title-size'), s=$('subtitle-size');
+    if(t){ var tv=$('title-size-val'); if(tv) tv.textContent=(parseFloat(t.value)/10).toFixed(2).replace(/0$/,'')+'×'; }
+    if(s){ var sv=$('subtitle-size-val'); if(sv) sv.textContent=(parseFloat(s.value)/10).toFixed(2).replace(/0$/,'')+'×'; }
+  }
+  ['title-size','subtitle-size','title-font','name-font'].forEach(function(id){
+    var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
+  });
 
   ['name-pos','font','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w','opacity','bright'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', render); e.addEventListener('change', render); }
@@ -1395,7 +1475,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-em','c-em-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-quote','c-quote-txt','c-hr','c-hr-txt',
@@ -1406,8 +1486,9 @@
     if(_restoring) return;
     try{
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
-      var data={ vals:vals, editorHtml:editor.innerHTML, nameHtml:nameEd?nameEd.innerHTML:'', bgValue:bgValue,
-        align:currentAlign, sizeMode:sizeMode, ratio:ratio, photoOn:photoOn, photoData:photoData };
+      var data={ vals:vals, editorHtml:editor.innerHTML, nameHtml:nameEd?nameEd.innerHTML:'',
+        titleHtml:($('title-ed')?$('title-ed').innerHTML:''), subtitleHtml:($('subtitle-ed')?$('subtitle-ed').innerHTML:''),
+        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, photoOn:photoOn, photoData:photoData };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
     }catch(e){}
@@ -1435,6 +1516,12 @@
       ensureFontValid();
       if(typeof data.editorHtml==='string'){ editor.innerHTML=data.editorHtml; syncTails(editor); }
       if(nameEd && typeof data.nameHtml==='string'){ nameEd.innerHTML=data.nameHtml; }
+      if($('title-ed') && typeof data.titleHtml==='string'){ $('title-ed').innerHTML=data.titleHtml; }
+      if($('subtitle-ed') && typeof data.subtitleHtml==='string'){ $('subtitle-ed').innerHTML=data.subtitleHtml; }
+      updateTitleSizeLabels();
+      // 제목/하단에 내용이 있으면 해당 토글을 펼쳐 둔다
+      if($('fold-title') && (!titleIsEmpty() || !subtitleIsEmpty())){ $('fold-title').open = true; }
+      if($('fold-name') && !nameIsEmpty()){ $('fold-name').open = true; }
       bgValue = data.bgValue || $('c-bg').value;
       updateEditorHl(); updateEditorBub();
       if(data.align){ currentAlign=data.align;
@@ -1484,6 +1571,7 @@
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
     });
     if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
+    if(typeof updateTitleSizeLabels==='function'){ updateTitleSizeLabels(); }
     render();
   }
   function loadMyPresets(){ try{ var raw=localStorage.getItem(PRESET_KEY); return raw?JSON.parse(raw):[]; }catch(e){ return []; } }
