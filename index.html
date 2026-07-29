@@ -399,20 +399,20 @@
   .fbtn .u{text-decoration:underline;text-underline-offset:2px;}
   .fbtn s{text-decoration:line-through;}
   /* C = 글자색(강조): 빨강 */
-  .fbtn .c-ic{font-size:12.5px;font-weight:800;color:#e23b3b;}
+  .fbtn .c-ic{font-size:12.5px;font-weight:400;color:#e23b3b;}
   .fbtn.is-active .c-ic{color:#ff6b6b;}
   /* H = 형광(하이라이터): 밑줄 하이라이트 */
-  .fbtn .h-ic{position:relative;font-size:12.5px;font-weight:800;padding:0 1px;}
-  .fbtn .h-ic::after{content:"";position:absolute;left:-1px;right:-1px;bottom:1px;height:6px;background:var(--ink-3);opacity:.5;z-index:-1;border-radius:1px;}
-  .fbtn.is-active .h-ic::after{background:var(--ink-on-accent);opacity:.4;}
+  .fbtn .h-ic{position:relative;font-size:12.5px;font-weight:400;padding:0 2px;z-index:0;isolation:isolate;}
+  .fbtn .h-ic::after{content:"";position:absolute;left:-1px;right:-1px;bottom:1.5px;height:6px;background:var(--ink-3);opacity:.6;z-index:-1;border-radius:1px;}
+  .fbtn.is-active .h-ic::after{background:var(--ink-on-accent);opacity:.45;}
   /* S = 서브(작은 글씨) */
-  .fbtn .sub-ic{font-size:10px;font-weight:700;position:relative;top:3px;}
+  .fbtn .sub-ic{font-size:10px;font-weight:400;position:relative;top:3px;}
   /* 인용선 아이콘 */
   .fbtn .quote-ic{display:inline-flex;color:var(--ink);}
   .fbtn .quote-ic svg{width:16px;height:16px;display:block;}
   .fbtn.is-active .quote-ic{color:var(--ink-on-accent);}
   /* 구분: 대시 */
-  .fbtn .hr-ic{font-size:17px;font-weight:800;line-height:1;}
+  .fbtn .hr-ic{font-size:17px;font-weight:400;line-height:1;}
 
   .bub-ic{position:relative;display:inline-block;width:20px;height:13px;border-radius:6.5px;}
   .bub-ic>svg{position:absolute;bottom:0;width:11px;height:7px;overflow:visible;}
@@ -633,11 +633,11 @@
   #canvas .g-hr.line:before,.canvas-clone .g-hr.line:before{content:"" !important;display:block !important;width:100% !important;height:2px !important;background:var(--hr-color,rgba(140,140,140,.5)) !important;}
   #canvas .g-hr.dots,.canvas-clone .g-hr.dots{letter-spacing:.4em !important;font-size:.9em !important;height:auto !important;color:var(--hr-color,rgba(140,140,140,.55)) !important;}
   #canvas .g-hr.short:before,.canvas-clone .g-hr.short:before{content:"" !important;display:block !important;width:12% !important;height:2px !important;background:var(--hr-color,rgba(140,140,140,.6)) !important;}
-  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:1.6em !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:1.6em !important;font-size:var(--name-size,.7em) !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-name.right,.canvas-clone .g-name.right{text-align:right !important;}
   #canvas .g-name.left,.canvas-clone .g-name.left{text-align:left !important;}
   #canvas .g-name.s-bold,.canvas-clone .g-name.s-bold{font-weight:700 !important;}
-  #canvas .g-name.s-bar,.canvas-clone .g-name.s-bar{font-weight:400 !important;font-size:.85em !important;color:var(--name-color,rgba(90,90,90,.85)) !important;}
+  #canvas .g-name.s-bar,.canvas-clone .g-name.s-bar{font-weight:400 !important;color:var(--name-color,rgba(90,90,90,.85)) !important;}
   #canvas .g-name.s-bar.left,.canvas-clone .g-name.s-bar.left{border-left:.16em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-left:.55em !important;}
   #canvas .g-name.s-bar.right,.canvas-clone .g-name.s-bar.right{border-right:.16em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-right:.55em !important;}
   #canvas .g-bub,.canvas-clone .g-bub{display:block !important;position:relative !important;max-width:75% !important;width:fit-content !important;margin:.12em 0 !important;padding:.5em .875em !important;border-radius:1.15em !important;text-align:left !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;word-break:normal !important;line-height:1.25 !important;}
@@ -810,6 +810,25 @@
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
+                  <span class="label">정렬</span>
+                  <div class="seg" id="align-seg">
+                    <button type="button" data-align="left" aria-pressed="false">좌</button>
+                    <button type="button" data-align="justify" aria-pressed="true">양</button>
+                    <button type="button" data-align="center" aria-pressed="false">중</button>
+                    <button type="button" data-align="right" aria-pressed="false">우</button>
+                    <span class="seg__thumb"></span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="break-mode">줄바꿈 기준</label>
+                  <select id="break-mode">
+                    <option value="word">단어 단위</option>
+                    <option value="char" selected>글자 단위</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
                   <span class="label">여백 <span class="val">120px</span></span>
                   <div class="rangewrap"><input id="pad" type="range" min="60" max="300" step="10" value="120"></div>
                 </div>
@@ -909,6 +928,10 @@
                     <option value="'PfStardust',sans-serif">스타더스트</option>
                   </select>
                 </div>
+              </div>
+              <div class="field" style="margin-top:16px">
+                <span class="label">하단 크기 <span class="val" id="name-size-val">28px</span></span>
+                <div class="rangewrap"><input id="name-size" type="range" min="14" max="60" step="1" value="28"></div>
               </div>
             </div>
           </details>
@@ -1049,28 +1072,6 @@
 
         <!-- ========== 레이아웃 ========== -->
         <div class="panel" data-panel="layout" role="tabpanel">
-          <div class="grid-2">
-            <div class="field">
-              <span class="label">정렬</span>
-              <div class="seg" id="align-seg">
-                <button type="button" data-align="left" aria-pressed="false">좌</button>
-                <button type="button" data-align="justify" aria-pressed="true">양</button>
-                <button type="button" data-align="center" aria-pressed="false">중</button>
-                <button type="button" data-align="right" aria-pressed="false">우</button>
-                <span class="seg__thumb"></span>
-              </div>
-            </div>
-            <div class="field">
-              <label class="label" for="break-mode">줄바꿈 기준</label>
-              <select id="break-mode">
-                <option value="word">단어 단위</option>
-                <option value="char" selected>글자 단위</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
           <div class="field">
             <span class="label">크기 모드</span>
             <div class="seg" id="size-seg">

@@ -53,7 +53,7 @@
       var name = t.getAttribute('data-tab');
       document.querySelector('.panel[data-panel="'+name+'"]').classList.add('is-active');
       fitStage();
-      if(name==='layout' && typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
+      if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
     });
   });
 
@@ -939,9 +939,10 @@
     el.style.setProperty('--bub-send-ink', bubInkSend());
     el.style.setProperty('--title-color', $('c-title').value);
     el.style.setProperty('--subtitle-color', $('c-subtitle').value);
-    var tsz=$('title-size'), ssz=$('subtitle-size');
+    var tsz=$('title-size'), ssz=$('subtitle-size'), nsz=$('name-size');
     if(tsz){ el.style.setProperty('--title-size', parseFloat(tsz.value)+'px'); }
     if(ssz){ el.style.setProperty('--subtitle-size', parseFloat(ssz.value)+'px'); }
+    if(nsz){ el.style.setProperty('--name-size', parseFloat(nsz.value)+'px'); }
     var tf=$('title-font'), nf=$('name-font');
     el.style.setProperty('--title-font', (tf && tf.value) ? tf.value : $('font').value);
     el.style.setProperty('--name-font', (nf && nf.value) ? nf.value : $('font').value);
@@ -1183,11 +1184,12 @@
 
   // 제목/소제목 크기 슬라이더 + 글꼴 select
   function updateTitleSizeLabels(){
-    var t=$('title-size'), s=$('subtitle-size');
+    var t=$('title-size'), s=$('subtitle-size'), n=$('name-size');
     if(t){ var tv=$('title-size-val'); if(tv) tv.textContent=parseFloat(t.value)+'px'; }
     if(s){ var sv=$('subtitle-size-val'); if(sv) sv.textContent=parseFloat(s.value)+'px'; }
+    if(n){ var nv=$('name-size-val'); if(nv) nv.textContent=parseFloat(n.value)+'px'; }
   }
-  ['title-size','subtitle-size','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -1475,7 +1477,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-em','c-em-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-quote','c-quote-txt','c-hr','c-hr-txt',
