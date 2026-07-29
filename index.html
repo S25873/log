@@ -513,7 +513,7 @@
     background:transparent;border:none;border-radius:0;padding:0;height:auto;
   }
   .cchip input[type=color]{
-    width:20px;height:20px;flex:none;padding:0;border-radius:50%;
+    width:24px;height:24px;flex:none;padding:0;border-radius:50%;
     border:1px solid var(--line);background:var(--surface);cursor:pointer;
     -webkit-appearance:none;appearance:none;overflow:hidden;
     box-shadow:0 1px 2px rgba(0,0,0,.08);
@@ -728,13 +728,9 @@
       flex:none;position:sticky;top:0;z-index:25;background:var(--surface);
     }
     .editor-fixed{flex:none;}
-    #editor{max-height:34vh;min-height:120px;font-size:16px;}
-    /* iOS 자동 줌인 방지: 텍스트 입력 요소는 16px 유지 (색 헥스 제외) */
-    #name-ed,#title-ed,#subtitle-ed,input[type=text]:not(.cchip__hex),textarea{font-size:16px;}
-    /* 셀렉트는 포커스 줌이 없어 조금 작게 */
-    select{font-size:14px;}
-    /* 플레이스홀더(안내 문구)는 입력 크기와 별개로 작게 — 줌 유발 없이 */
-    #editor:empty:before,#name-ed:empty:before,#title-ed:empty:before,#subtitle-ed:empty:before{font-size:13.5px;}
+    #editor{max-height:34vh;min-height:120px;font-size:13.5px;}
+    /* 이 페이지는 뷰포트에서 확대를 잠가둬(maximum-scale=1) iOS 포커스 확대가 없음 → 작게 둬도 됨 */
+    #name-ed,#title-ed,#subtitle-ed,input[type=text]:not(.cchip__hex),select,textarea{font-size:13.5px;}
     .panelscroll{
       flex:none;min-height:0;overflow:visible;
       padding:18px 18px calc(var(--dock-h) + 14px);
