@@ -528,14 +528,15 @@
     var sel = window.getSelection();
     var hr = document.createElement('div'); hr.className='g-hr '+(kind||'line'); hr.setAttribute('contenteditable','false');
     if(kind==='dots'){ hr.textContent='•  •  •'; } else { hr.textContent='\u200b'; }
-    var anchor = document.createTextNode('\u200b');
     if(sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)){
       var range=sel.getRangeAt(0); range.collapse(false); range.insertNode(hr);
-      if(hr.nextSibling){ hr.parentNode.insertBefore(anchor, hr.nextSibling); } else { hr.parentNode.appendChild(anchor); }
     } else {
-      editor.appendChild(hr); editor.appendChild(anchor);
+      editor.appendChild(hr);
     }
-    var r=document.createRange(); r.setStart(anchor, anchor.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
+    // 구분선 바로 뒤에 빈 줄(br)이 생기지 않도록 제거
+    if(hr.nextSibling && hr.nextSibling.nodeType===1 && hr.nextSibling.tagName==='BR'){ hr.nextSibling.parentNode.removeChild(hr.nextSibling); }
+    // 빈 텍스트 노드를 남기지 않고 구분선 바로 뒤에 커서만 둔다
+    var r=document.createRange(); r.setStartAfter(hr); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
     cleanEditor(); render(); saveSel(); updateFormatButtons();
   }
 
@@ -579,7 +580,7 @@
     if(hr && editor.contains(hr)){
       e.preventDefault();
       var rect=hr.getBoundingClientRect();
-      if(hr.classList.contains('is-sel') && e.clientX >= rect.right - 34){ removeHr(hr); }
+      if(hr.classList.contains('is-sel') && e.clientX >= rect.right - 16 && e.clientY <= rect.top + 10){ removeHr(hr); }
       else { selectHr(hr); }
       return;
     }
@@ -903,6 +904,11 @@
     var zwsp = [];
     while(tw.nextNode()){ if(tw.currentNode.nodeValue.indexOf('\u200b')!==-1){ zwsp.push(tw.currentNode); } }
     zwsp.forEach(function(n){ if(n===caretNode) return; n.nodeValue=n.nodeValue.replace(/\u200b/g,''); if(n.nodeValue==='' && n.parentNode){ n.parentNode.removeChild(n); } });
+    // 구분선 바로 뒤에 남은 빈 줄(br) 제거
+    [].forEach.call(editor.querySelectorAll('.g-hr'), function(hr){
+      var nx=hr.nextSibling;
+      while(nx && nx.nodeType===1 && nx.tagName==='BR'){ var rm=nx; nx=nx.nextSibling; if(rm.parentNode) rm.parentNode.removeChild(rm); }
+    });
     normalizeBlocks(); syncTails(editor); updateEmptyBubbles();
   }
   function updateEmptyBubbles(){
