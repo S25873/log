@@ -169,7 +169,7 @@
 
   /* 항상 보이는 로그 에디터 영역 (탭 위) */
   .editor-fixed{
-    flex:none;padding:14px 20px 14px;border-bottom:1px solid var(--line);
+    flex:none;padding:12px 20px 12px;border-bottom:1px solid var(--line);
   }
   .panelscroll::-webkit-scrollbar{width:9px;}
   .panelscroll::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:99px;border:3px solid var(--surface);}
@@ -224,7 +224,7 @@
     margin-left:auto;color:var(--ink);font-weight:600;
     font-variant-numeric:tabular-nums;font-size:11.5px;
   }
-  .label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px;}
+  .label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;}
   .label-row .label{margin:0;}
 
   input[type=text],select,textarea{
@@ -274,11 +274,11 @@
   }
 
   /* 미니 버튼 */
-  .mini-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+  .mini-row{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
   .mini{
     border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
-    border-radius:var(--radius-xs);height:30px;padding:0 10px;font-size:11.5px;font-weight:600;
-    cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+    border-radius:var(--radius-xs);height:26px;padding:0 8px;font-size:11px;font-weight:600;
+    cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;
     transition:background .16s var(--ease),color .16s,border-color .16s,transform .1s;
   }
   .mini:hover{background:var(--ink);color:var(--surface);border-color:var(--ink);}
@@ -345,12 +345,12 @@
   /* ============================================================
      서식 도구
      ============================================================ */
-  .fmt{display:flex;flex-direction:column;gap:5px;margin-top:10px;}
-  .fmt-row{display:flex;gap:5px;}
+  .fmt{display:flex;flex-direction:column;gap:5px;margin-top:9px;}
+  .fmt-row{display:flex;gap:4px;}
   .fbtn{
-    flex:1 1 0;min-width:0;height:33px;border-radius:var(--radius-xs);
+    flex:1 1 0;min-width:0;height:30px;border-radius:var(--radius-xs);
     border:1px solid var(--line);background:var(--surface);color:var(--ink);
-    cursor:pointer;font-size:12.5px;display:grid;place-items:center;
+    cursor:pointer;font-size:12px;display:grid;place-items:center;
     transition:background .15s var(--ease),border-color .15s,color .15s,transform .1s;
   }
   .fbtn:hover{background:var(--surface-2);border-color:var(--line-strong);}
@@ -360,11 +360,11 @@
   .fbtn i{font-style:italic;}
   .fbtn .u{text-decoration:underline;text-underline-offset:2px;}
   .fbtn s{text-decoration:line-through;}
-  .fbtn .lbl{font-size:11.5px;font-weight:600;letter-spacing:-.03em;}
-  .fbtn .hl-ic{position:relative;font-size:11.5px;font-weight:600;padding:1px 2px;}
+  .fbtn .lbl{font-size:11px;font-weight:600;letter-spacing:-.04em;}
+  .fbtn .hl-ic{position:relative;font-size:11px;font-weight:600;padding:1px 1px;}
   .fbtn .hl-ic::after{content:"";position:absolute;left:-1px;right:-1px;bottom:1px;height:6px;background:var(--ink-3);opacity:.45;z-index:-1;border-radius:1px;}
   .fbtn.is-active .hl-ic::after{background:var(--ink-on-accent);opacity:.35;}
-  .fbtn .em-ic{font-size:11.5px;font-weight:700;}
+  .fbtn .em-ic{font-size:11px;font-weight:700;}
 
   .bub-ic{position:relative;display:inline-block;width:20px;height:13px;border-radius:6.5px;}
   .bub-ic>svg{position:absolute;bottom:0;width:11px;height:7px;overflow:visible;}
@@ -659,7 +659,9 @@
   }
   @media (max-width:440px){
     .tab{padding:0 10px;font-size:13px;}
-    .fbtn{height:32px;font-size:12px;}
+    .fbtn{height:30px;font-size:11px;}
+    .fbtn .lbl,.fbtn .hl-ic,.fbtn .em-ic{font-size:10px;letter-spacing:-.05em;}
+    .fmt-row{gap:3px;}
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
     .presets--bg{grid-template-columns:repeat(4,minmax(0,1fr));}
     .preview__meta{display:none;}
@@ -710,8 +712,6 @@
             <button class="fbtn" type="button" data-fmt="strike"><s>S</s></button>
             <button class="fbtn" type="button" data-fmt="emph"><span class="em-ic">강조</span></button>
             <button class="fbtn" type="button" data-fmt="hl"><span class="hl-ic">형광</span></button>
-          </div>
-          <div class="fmt-row">
             <span class="pop-wrap">
               <button class="fbtn" type="button" data-pop="title" title="제목"><span class="lbl">제목</span></button>
               <span class="pop">
