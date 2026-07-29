@@ -169,7 +169,7 @@
 
   /* 항상 보이는 로그 에디터 영역 (탭 위) */
   .editor-fixed{
-    flex:none;padding:18px 20px 16px;border-bottom:1px solid var(--line);
+    flex:none;padding:14px 20px 14px;border-bottom:1px solid var(--line);
   }
   .panelscroll::-webkit-scrollbar{width:9px;}
   .panelscroll::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:99px;border:3px solid var(--surface);}
@@ -345,12 +345,12 @@
   /* ============================================================
      서식 도구
      ============================================================ */
-  .fmt{display:flex;flex-direction:column;gap:7px;margin-top:12px;}
-  .fmt-row{display:flex;gap:7px;}
+  .fmt{display:flex;flex-direction:column;gap:5px;margin-top:10px;}
+  .fmt-row{display:flex;gap:5px;}
   .fbtn{
-    flex:1 1 0;min-width:0;height:40px;border-radius:var(--radius-xs);
+    flex:1 1 0;min-width:0;height:33px;border-radius:var(--radius-xs);
     border:1px solid var(--line);background:var(--surface);color:var(--ink);
-    cursor:pointer;font-size:13px;display:grid;place-items:center;
+    cursor:pointer;font-size:12.5px;display:grid;place-items:center;
     transition:background .15s var(--ease),border-color .15s,color .15s,transform .1s;
   }
   .fbtn:hover{background:var(--surface-2);border-color:var(--line-strong);}
@@ -360,11 +360,11 @@
   .fbtn i{font-style:italic;}
   .fbtn .u{text-decoration:underline;text-underline-offset:2px;}
   .fbtn s{text-decoration:line-through;}
-  .fbtn .lbl{font-size:12px;font-weight:600;letter-spacing:-.02em;}
-  .fbtn .hl-ic{position:relative;font-size:12px;font-weight:600;padding:1px 2px;}
-  .fbtn .hl-ic::after{content:"";position:absolute;left:-1px;right:-1px;bottom:1px;height:7px;background:var(--ink-3);opacity:.45;z-index:-1;border-radius:1px;}
+  .fbtn .lbl{font-size:11.5px;font-weight:600;letter-spacing:-.03em;}
+  .fbtn .hl-ic{position:relative;font-size:11.5px;font-weight:600;padding:1px 2px;}
+  .fbtn .hl-ic::after{content:"";position:absolute;left:-1px;right:-1px;bottom:1px;height:6px;background:var(--ink-3);opacity:.45;z-index:-1;border-radius:1px;}
   .fbtn.is-active .hl-ic::after{background:var(--ink-on-accent);opacity:.35;}
-  .fbtn .em-ic{font-size:12px;font-weight:700;}
+  .fbtn .em-ic{font-size:11.5px;font-weight:700;}
 
   .bub-ic{position:relative;display:inline-block;width:20px;height:13px;border-radius:6.5px;}
   .bub-ic>svg{position:absolute;bottom:0;width:11px;height:7px;overflow:visible;}
@@ -404,13 +404,13 @@
   .pop button:hover .pk-ic{background:var(--surface);}
 
   /* 저수준 도구줄 */
-  .lowtools{display:flex;gap:7px;margin-top:7px;}
+  .lowtools{display:flex;gap:5px;margin-top:5px;}
   .lowtools[hidden]{display:none;}
-  .subtools{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1;}
+  .subtools{display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;}
   .subtools[hidden]{display:none;}
-  .fbtn--exit{background:var(--surface-2);border-color:var(--line-strong);font-size:12px;font-weight:700;}
+  .fbtn--exit{background:var(--surface-2);border-color:var(--line-strong);font-size:11.5px;font-weight:700;}
   .fbtn--exit:hover{background:var(--ink);color:var(--surface);border-color:var(--ink);}
-  .fbtn--del{font-size:12px;font-weight:700;color:var(--ink-2);}
+  .fbtn--del{font-size:11.5px;font-weight:700;color:var(--ink-2);}
   .fbtn--del:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
   .fbtn--exit[hidden],.fbtn--del[hidden]{display:none;}
 
@@ -633,15 +633,19 @@
     }
     #stage{max-width:none;}
     .savebar{display:none;}
-    /* 하단 편집: 탭바 고정 + 에디터 고정 + 패널만 스크롤 */
+    /* 하단 편집: 탭바만 상단 고정, 로그 입력창부터 패널까지 함께 스크롤 */
     .editcol{
-      order:2;border-right:none;min-height:0;overflow:hidden;
+      order:2;border-right:none;min-height:0;
+      overflow-y:auto;-webkit-overflow-scrolling:touch;
       display:flex;flex-direction:column;
     }
-    .tabbar{flex:none;background:var(--surface);}
+    .tabbar{
+      flex:none;position:sticky;top:0;z-index:25;background:var(--surface);
+    }
     .editor-fixed{flex:none;}
+    #editor{max-height:34vh;min-height:120px;}
     .panelscroll{
-      flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+      flex:none;min-height:0;overflow:visible;
       padding:18px 18px calc(var(--dock-h) + 14px);
     }
     .dock{
@@ -652,11 +656,10 @@
       border-top:1px solid var(--line);box-shadow:0 -8px 24px -16px rgba(0,0,0,.2);
     }
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
-    #editor{max-height:26vh;min-height:120px;}
   }
   @media (max-width:440px){
     .tab{padding:0 10px;font-size:13px;}
-    .fbtn{height:38px;font-size:12px;}
+    .fbtn{height:32px;font-size:12px;}
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
     .presets--bg{grid-template-columns:repeat(4,minmax(0,1fr));}
     .preview__meta{display:none;}
