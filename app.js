@@ -940,8 +940,8 @@
     el.style.setProperty('--title-color', $('c-title').value);
     el.style.setProperty('--subtitle-color', $('c-subtitle').value);
     var tsz=$('title-size'), ssz=$('subtitle-size');
-    if(tsz){ el.style.setProperty('--title-size', (parseFloat(tsz.value)/10).toFixed(2)+'em'); }
-    if(ssz){ el.style.setProperty('--subtitle-size', (parseFloat(ssz.value)/10).toFixed(2)+'em'); }
+    if(tsz){ el.style.setProperty('--title-size', parseFloat(tsz.value)+'px'); }
+    if(ssz){ el.style.setProperty('--subtitle-size', parseFloat(ssz.value)+'px'); }
     var tf=$('title-font'), nf=$('name-font');
     el.style.setProperty('--title-font', (tf && tf.value) ? tf.value : $('font').value);
     el.style.setProperty('--name-font', (nf && nf.value) ? nf.value : $('font').value);
@@ -1184,8 +1184,8 @@
   // 제목/소제목 크기 슬라이더 + 글꼴 select
   function updateTitleSizeLabels(){
     var t=$('title-size'), s=$('subtitle-size');
-    if(t){ var tv=$('title-size-val'); if(tv) tv.textContent=(parseFloat(t.value)/10).toFixed(2).replace(/0$/,'')+'×'; }
-    if(s){ var sv=$('subtitle-size-val'); if(sv) sv.textContent=(parseFloat(s.value)/10).toFixed(2).replace(/0$/,'')+'×'; }
+    if(t){ var tv=$('title-size-val'); if(tv) tv.textContent=parseFloat(t.value)+'px'; }
+    if(s){ var sv=$('subtitle-size-val'); if(sv) sv.textContent=parseFloat(s.value)+'px'; }
   }
   ['title-size','subtitle-size','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }

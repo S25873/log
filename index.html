@@ -230,10 +230,11 @@
      ============================================================ */
   .field{display:flex;flex-direction:column;min-width:0;}
   .field + .field{margin-top:18px;}
+  .grid-2 > .field + .field{margin-top:0;}
   .label{
     display:flex;align-items:baseline;gap:8px;
     font-size:11px;font-weight:600;color:var(--ink-3);
-    letter-spacing:.02em;margin:0 0 8px;
+    letter-spacing:.02em;margin:0 0 8px;min-height:15px;line-height:15px;
   }
   .label .val{
     margin-left:auto;color:var(--ink);font-weight:600;
@@ -258,7 +259,7 @@
   }
   textarea{height:auto;padding:11px 13px;line-height:1.6;resize:vertical;}
 
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
   .divider{height:1px;background:var(--line);margin:22px 0;border:0;}
 
   .section{margin-top:26px;}
@@ -778,37 +779,71 @@
       <div class="panelscroll">
         <!-- ========== 내용 ========== -->
         <div class="panel is-active" data-panel="content" role="tabpanel">
-          <div class="field">
-            <label class="label" for="font">본문 글꼴</label>
-            <select id="font">
-              <option value='"Pretendard",sans-serif' selected>프리텐다드</option>
-              <option value='"Paperozi",sans-serif'>페이퍼로지</option>
-              <option value="'Presentation',sans-serif">프리젠테이션</option>
-              <option value="'GMarketSans',sans-serif">G마켓 산스</option>
-              <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
-              <option value='"Ridibatang",serif'>리디바탕</option>
-              <option value="'Mona12','Mona12 Text KR',sans-serif">모나</option>
-              <option value="'PfStardust',sans-serif">스타더스트</option>
-            </select>
-          </div>
+          <details class="fold" id="fold-body" open>
+            <summary>
+              본문
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <div class="field">
+                <label class="label" for="font">본문 글꼴</label>
+                <select id="font">
+                  <option value='"Pretendard",sans-serif' selected>프리텐다드</option>
+                  <option value='"Paperozi",sans-serif'>페이퍼로지</option>
+                  <option value="'Presentation',sans-serif">프리젠테이션</option>
+                  <option value="'GMarketSans',sans-serif">G마켓 산스</option>
+                  <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
+                  <option value='"Ridibatang",serif'>리디바탕</option>
+                  <option value="'Mona12','Mona12 Text KR',sans-serif">모나</option>
+                  <option value="'PfStardust',sans-serif">스타더스트</option>
+                </select>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">여백 <span class="val">120px</span></span>
+                  <div class="rangewrap"><input id="pad" type="range" min="60" max="300" step="10" value="120"></div>
+                </div>
+                <div class="field">
+                  <span class="label">글자 크기 <span class="val">40px</span></span>
+                  <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="40"></div>
+                </div>
+                <div class="field">
+                  <span class="label">자간 <span class="val">-0.5</span></span>
+                  <div class="rangewrap"><input id="letter-spacing" type="range" min="-2" max="2" step="0.1" value="-0.5"></div>
+                </div>
+                <div class="field">
+                  <span class="label">행간 <span class="val">1.7</span></span>
+                  <div class="rangewrap"><input id="line-height" type="range" min="10" max="20" step="1" value="17"></div>
+                </div>
+              </div>
+            </div>
+          </details>
 
-          <details class="fold" id="fold-title" style="margin-top:16px">
+          <details class="fold" id="fold-title">
             <summary>
               제목
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
               <div class="field">
-                <span class="label">제목 <span class="val" id="title-size-val">1.6×</span></span>
+                <span class="label">제목</span>
                 <div id="title-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
                      aria-label="제목 입력" data-placeholder="제목 (비워도 됩니다)"></div>
-                <div class="rangewrap" style="margin-top:9px"><input id="title-size" type="range" min="10" max="30" step="1" value="16"></div>
               </div>
-              <div class="field" style="margin-top:16px">
-                <span class="label">소제목 <span class="val" id="subtitle-size-val">1.15×</span></span>
+              <div class="field" style="margin-top:14px">
+                <span class="label">소제목</span>
                 <div id="subtitle-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
                      aria-label="소제목 입력" data-placeholder="소제목 (비워도 됩니다)"></div>
-                <div class="rangewrap" style="margin-top:9px"><input id="subtitle-size" type="range" min="8" max="24" step="1" value="12"></div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">제목 크기 <span class="val" id="title-size-val">64px</span></span>
+                  <div class="rangewrap"><input id="title-size" type="range" min="24" max="120" step="2" value="64"></div>
+                </div>
+                <div class="field">
+                  <span class="label">소제목 크기 <span class="val" id="subtitle-size-val">46px</span></span>
+                  <div class="rangewrap"><input id="subtitle-size" type="range" min="18" max="90" step="2" value="46"></div>
+                </div>
               </div>
               <div class="field" style="margin-top:16px">
                 <label class="label" for="title-font">제목·소제목 글꼴</label>
@@ -827,7 +862,7 @@
             </div>
           </details>
 
-          <details class="fold" id="fold-name" style="margin-top:12px">
+          <details class="fold" id="fold-name">
             <summary>
               하단 정보
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
@@ -1004,27 +1039,6 @@
 
         <!-- ========== 레이아웃 ========== -->
         <div class="panel" data-panel="layout" role="tabpanel">
-          <div class="grid-2">
-            <div class="field">
-              <span class="label">여백 <span class="val">120px</span></span>
-              <div class="rangewrap"><input id="pad" type="range" min="60" max="300" step="10" value="120"></div>
-            </div>
-            <div class="field">
-              <span class="label">글자 크기 <span class="val">40px</span></span>
-              <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="40"></div>
-            </div>
-            <div class="field">
-              <span class="label">자간 <span class="val">-0.5</span></span>
-              <div class="rangewrap"><input id="letter-spacing" type="range" min="-2" max="2" step="0.1" value="-0.5"></div>
-            </div>
-            <div class="field">
-              <span class="label">행간 <span class="val">1.7</span></span>
-              <div class="rangewrap"><input id="line-height" type="range" min="10" max="20" step="1" value="17"></div>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
           <div class="grid-2">
             <div class="field">
               <span class="label">정렬</span>
