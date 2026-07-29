@@ -1756,7 +1756,7 @@
   function saveMyPresets(list){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); }catch(e){} }
   function renderMyPresets(){
     var wrap=$('my-presets'), list=loadMyPresets(); wrap.innerHTML='';
-    if(!list.length){ var em=document.createElement('div'); em.className='mychips__empty'; em.textContent='마음에 드는 설정을 만들어 저장해 보세요.'; wrap.appendChild(em); return; }
+    if(!list.length){ return; }
     list.forEach(function(p, idx){
       var chip=document.createElement('div'); chip.className='mychip'; chip.title='클릭하면 이 설정을 적용합니다';
       var label=document.createElement('span'); label.textContent=p.name; chip.appendChild(label);
