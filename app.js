@@ -970,6 +970,11 @@
     });
   });
 
+  /* 폴드가 열릴 때 세그 thumb 재배치 (숨겨진 동안엔 폭이 0이라 위치를 못 잡음) */
+  var _foldEmph=$('fold-emph'), _foldHl=$('fold-hl');
+  if(_foldEmph){ _foldEmph.addEventListener('toggle', function(){ if(_foldEmph.open){ requestAnimationFrame(function(){ moveThumb($('em-slot-seg')); }); } }); }
+  if(_foldHl){ _foldHl.addEventListener('toggle', function(){ if(_foldHl.open){ requestAnimationFrame(function(){ moveThumb($('hl-slot-seg')); }); } }); }
+
   var ratios = [
     {w:1,h:1,label:'1:1',rw:1080}, {w:4,h:5,label:'4:5',rw:1080},
     {w:3,h:4,label:'3:4',rw:1200}, {w:9,h:16,label:'9:16',rw:1080}

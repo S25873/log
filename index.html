@@ -503,6 +503,8 @@
   .cgrid{display:grid;gap:12px 10px;}
   .cgrid--3{grid-template-columns:repeat(3,minmax(0,1fr));}
   .cgrid--2{grid-template-columns:repeat(2,minmax(0,1fr));}
+  /* 슬롯 컬러칩: 화면 폭과 무관하게 1·2·3을 항상 한 줄에 */
+  .cgrid--slot{grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:12px 8px;}
   .cchip{position:relative;min-width:0;}
   .cchip>label{
     display:block;font-size:11px;color:var(--ink-2);font-weight:500;margin:0 0 6px;
@@ -986,45 +988,61 @@
             </div>
           </div>
 
-          <div class="section">
-            <p class="section__head">형광펜</p>
-            <div class="field">
-              <span class="label">적용할 색 <span class="val" id="hl-slot-val">형광펜 1</span></span>
-              <div class="seg" id="hl-slot-seg">
-                <button type="button" data-slot="1" aria-pressed="true">1</button>
-                <button type="button" data-slot="2" aria-pressed="false">2</button>
-                <button type="button" data-slot="3" aria-pressed="false">3</button>
-                <span class="seg__thumb"></span>
+          <details class="fold" id="fold-emph">
+            <summary>
+              강조
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <div class="cgrid cgrid--3 cgrid--slot">
+                <div class="cchip"><label>강조 1</label><div class="cchip__box"><input id="c-em" type="color" value="#e23b3b"><input class="cchip__hex" id="c-em-txt" type="text" value="#e23b3b"></div></div>
+                <div class="cchip"><label>강조 2</label><div class="cchip__box"><input id="c-em2" type="color" value="#1565c0"><input class="cchip__hex" id="c-em2-txt" type="text" value="#1565c0"></div></div>
+                <div class="cchip"><label>강조 3</label><div class="cchip__box"><input id="c-em3" type="color" value="#2e7d32"><input class="cchip__hex" id="c-em3-txt" type="text" value="#2e7d32"></div></div>
+              </div>
+              <div class="section">
+                <p class="section__head">프리셋</p>
+                <div class="dots" id="em-presets"></div>
+              </div>
+              <div class="field" style="margin-top:20px">
+                <span class="label">적용할 색 <span class="val" id="em-slot-val">강조 1</span></span>
+                <div class="seg" id="em-slot-seg">
+                  <button type="button" data-slot="1" aria-pressed="true">1</button>
+                  <button type="button" data-slot="2" aria-pressed="false">2</button>
+                  <button type="button" data-slot="3" aria-pressed="false">3</button>
+                  <span class="seg__thumb"></span>
+                </div>
+                <p class="hint">프리셋을 누르면 여기서 고른 슬롯에 색이 들어갑니다.</p>
               </div>
             </div>
-            <div class="cgrid cgrid--3" style="margin-top:16px">
-              <div class="cchip"><label>형광펜 1</label><div class="cchip__box"><input id="c-hl" type="color" value="#fff59d"><input class="cchip__hex" id="c-hl-txt" type="text" value="#fff59d"></div></div>
-              <div class="cchip"><label>형광펜 2</label><div class="cchip__box"><input id="c-hl2" type="color" value="#b3e5fc"><input class="cchip__hex" id="c-hl2-txt" type="text" value="#b3e5fc"></div></div>
-              <div class="cchip"><label>형광펜 3</label><div class="cchip__box"><input id="c-hl3" type="color" value="#f8bbd0"><input class="cchip__hex" id="c-hl3-txt" type="text" value="#f8bbd0"></div></div>
-            </div>
-            <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어갑니다.</p>
-            <div class="dots" id="hl-presets" style="margin-top:10px"></div>
-          </div>
+          </details>
 
-          <div class="section">
-            <p class="section__head">강조색</p>
-            <div class="field">
-              <span class="label">적용할 색 <span class="val" id="em-slot-val">강조 1</span></span>
-              <div class="seg" id="em-slot-seg">
-                <button type="button" data-slot="1" aria-pressed="true">1</button>
-                <button type="button" data-slot="2" aria-pressed="false">2</button>
-                <button type="button" data-slot="3" aria-pressed="false">3</button>
-                <span class="seg__thumb"></span>
+          <details class="fold" id="fold-hl">
+            <summary>
+              형광펜
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <div class="cgrid cgrid--3 cgrid--slot">
+                <div class="cchip"><label>형광펜 1</label><div class="cchip__box"><input id="c-hl" type="color" value="#fff59d"><input class="cchip__hex" id="c-hl-txt" type="text" value="#fff59d"></div></div>
+                <div class="cchip"><label>형광펜 2</label><div class="cchip__box"><input id="c-hl2" type="color" value="#b3e5fc"><input class="cchip__hex" id="c-hl2-txt" type="text" value="#b3e5fc"></div></div>
+                <div class="cchip"><label>형광펜 3</label><div class="cchip__box"><input id="c-hl3" type="color" value="#f8bbd0"><input class="cchip__hex" id="c-hl3-txt" type="text" value="#f8bbd0"></div></div>
+              </div>
+              <div class="section">
+                <p class="section__head">프리셋</p>
+                <div class="dots" id="hl-presets"></div>
+              </div>
+              <div class="field" style="margin-top:20px">
+                <span class="label">적용할 색 <span class="val" id="hl-slot-val">형광펜 1</span></span>
+                <div class="seg" id="hl-slot-seg">
+                  <button type="button" data-slot="1" aria-pressed="true">1</button>
+                  <button type="button" data-slot="2" aria-pressed="false">2</button>
+                  <button type="button" data-slot="3" aria-pressed="false">3</button>
+                  <span class="seg__thumb"></span>
+                </div>
+                <p class="hint">프리셋을 누르면 여기서 고른 슬롯에 색이 들어갑니다.</p>
               </div>
             </div>
-            <div class="cgrid cgrid--3" style="margin-top:16px">
-              <div class="cchip"><label>강조 1</label><div class="cchip__box"><input id="c-em" type="color" value="#e23b3b"><input class="cchip__hex" id="c-em-txt" type="text" value="#e23b3b"></div></div>
-              <div class="cchip"><label>강조 2</label><div class="cchip__box"><input id="c-em2" type="color" value="#1565c0"><input class="cchip__hex" id="c-em2-txt" type="text" value="#1565c0"></div></div>
-              <div class="cchip"><label>강조 3</label><div class="cchip__box"><input id="c-em3" type="color" value="#2e7d32"><input class="cchip__hex" id="c-em3-txt" type="text" value="#2e7d32"></div></div>
-            </div>
-            <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어갑니다.</p>
-            <div class="dots" id="em-presets" style="margin-top:10px"></div>
-          </div>
+          </details>
 
           <div class="section">
             <div class="label-row">
