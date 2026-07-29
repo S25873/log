@@ -512,8 +512,9 @@
     var frag = range.extractContents();
     [].forEach.call(frag.querySelectorAll('.g-quote'), function(b){ var p=b.parentNode; while(b.firstChild){ p.insertBefore(b.firstChild,b); } p.removeChild(b); });
     var q=document.createElement('div'); q.className='g-quote '+side; q.appendChild(frag);
-    while(q.firstChild && q.firstChild.nodeType===1 && q.firstChild.tagName==='BR'){ q.removeChild(q.firstChild); }
-    while(q.lastChild && q.lastChild.nodeType===1 && q.lastChild.tagName==='BR'){ q.removeChild(q.lastChild); }
+    function edgeStrippable(n){ return (n.nodeType===1 && n.tagName==='BR') || (n.nodeType===3 && n.nodeValue.replace(/\u200b/g,'')===''); }
+    while(q.firstChild && edgeStrippable(q.firstChild)){ q.removeChild(q.firstChild); }
+    while(q.lastChild && edgeStrippable(q.lastChild)){ q.removeChild(q.lastChild); }
     if(!q.childNodes.length){ q.appendChild(document.createTextNode('\u200b')); }
     range.insertNode(q);
     var r=document.createRange(); r.selectNodeContents(q); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
@@ -527,12 +528,14 @@
     var sel = window.getSelection();
     var hr = document.createElement('div'); hr.className='g-hr '+(kind||'line'); hr.setAttribute('contenteditable','false');
     if(kind==='dots'){ hr.textContent='•  •  •'; } else { hr.textContent='\u200b'; }
+    var anchor = document.createTextNode('\u200b');
     if(sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)){
       var range=sel.getRangeAt(0); range.collapse(false); range.insertNode(hr);
-      var after=document.createElement('br');
-      if(hr.nextSibling){ hr.parentNode.insertBefore(after, hr.nextSibling); } else { hr.parentNode.appendChild(after); }
-      var r=document.createRange(); r.setStartAfter(after); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
-    } else { editor.appendChild(hr); editor.appendChild(document.createElement('br')); }
+      if(hr.nextSibling){ hr.parentNode.insertBefore(anchor, hr.nextSibling); } else { hr.parentNode.appendChild(anchor); }
+    } else {
+      editor.appendChild(hr); editor.appendChild(anchor);
+    }
+    var r=document.createRange(); r.setStart(anchor, anchor.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
     cleanEditor(); render(); saveSel(); updateFormatButtons();
   }
 
