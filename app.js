@@ -752,17 +752,42 @@
   /* ============================================================
      Enter / paste
      ============================================================ */
+  var _lineBreakGuard = false;
+  function doLineBreak(){
+    var inBub = caretInBubble();
+    var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
+    var range=sel.getRangeAt(0);
+    if(!editor.contains(range.startContainer)) return false;
+    range.deleteContents();
+    var br=document.createElement('br'); range.insertNode(br);
+    // br 바로 뒤 위치는 브라우저가 이전 텍스트로 병합시켜 줄바꿈이 씹히므로,
+    // 커서가 안착할 텍스트 노드를 br 뒤에 명시적으로 만든다.
+    var anchor = document.createTextNode('\u200b');
+    if(br.nextSibling){ br.parentNode.insertBefore(anchor, br.nextSibling); }
+    else { br.parentNode.appendChild(anchor); }
+    var r2=document.createRange();
+    r2.setStart(anchor, anchor.nodeValue.length); r2.collapse(true);
+    sel.removeAllRanges(); sel.addRange(r2);
+    saveSel();
+    render();
+    return true;
+  }
+  // 이벤트 순서: keydown → beforeinput → input
+  // 데스크톱/일반: keydown에서 처리하고 가드를 세워 beforeinput 중복을 막는다.
+  // 모바일 IME: keydown이 keyCode 229로 와서 건너뛰고, beforeinput이 처리한다.
   editor.addEventListener('keydown', function(e){
-    if(e.key==='Enter' && !e.isComposing){
-      var inBub = caretInBubble();
+    if(e.key==='Enter' && !e.isComposing && e.keyCode!==229){
       e.preventDefault();
-      var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return;
-      var range=sel.getRangeAt(0); range.deleteContents();
-      var br=document.createElement('br'); range.insertNode(br);
-      var needTrailing = !br.nextSibling || (br.nextSibling.nodeType===1 && br.nextSibling.tagName==='BR' && !br.nextSibling.nextSibling);
-      if(needTrailing && !inBub){ var extra=document.createElement('br'); br.parentNode.insertBefore(extra, br.nextSibling); }
-      range.setStartAfter(br); range.collapse(true); sel.removeAllRanges(); sel.addRange(range);
-      render();
+      _lineBreakGuard = true;
+      setTimeout(function(){ _lineBreakGuard = false; }, 0);
+      doLineBreak();
+    }
+  });
+  editor.addEventListener('beforeinput', function(e){
+    if(e.inputType==='insertLineBreak' || e.inputType==='insertParagraph'){
+      e.preventDefault();
+      if(_lineBreakGuard){ return; }   // keydown이 이미 처리함
+      doLineBreak();
     }
   });
   editor.addEventListener('paste', function(e){
@@ -1056,16 +1081,22 @@
 
   if(nameEd){
     nameEd.addEventListener('input', render);
+    function nameLineBreak(){
+      var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
+      var range=sel.getRangeAt(0);
+      if(!nameEd.contains(range.startContainer)) return false;
+      range.deleteContents();
+      var br=document.createElement('br'); range.insertNode(br);
+      var needTrailing=!br.nextSibling || (br.nextSibling.nodeType===1 && br.nextSibling.tagName==='BR' && !br.nextSibling.nextSibling);
+      if(needTrailing){ var extra=document.createElement('br'); br.parentNode.insertBefore(extra, br.nextSibling); }
+      range.setStartAfter(br); range.collapse(true); sel.removeAllRanges(); sel.addRange(range); render();
+      return true;
+    }
+    nameEd.addEventListener('beforeinput', function(e){
+      if(e.inputType==='insertLineBreak' || e.inputType==='insertParagraph'){ e.preventDefault(); nameLineBreak(); }
+    });
     nameEd.addEventListener('keydown', function(e){
-      if(e.key==='Enter' && !e.isComposing){
-        e.preventDefault();
-        var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return;
-        var range=sel.getRangeAt(0); range.deleteContents();
-        var br=document.createElement('br'); range.insertNode(br);
-        var needTrailing=!br.nextSibling || (br.nextSibling.nodeType===1 && br.nextSibling.tagName==='BR' && !br.nextSibling.nextSibling);
-        if(needTrailing){ var extra=document.createElement('br'); br.parentNode.insertBefore(extra, br.nextSibling); }
-        range.setStartAfter(br); range.collapse(true); sel.removeAllRanges(); sel.addRange(range); render();
-      }
+      if(e.key==='Enter' && !e.isComposing && e.keyCode!==229){ e.preventDefault(); nameLineBreak(); }
     });
     nameEd.addEventListener('paste', function(e){
       e.preventDefault();

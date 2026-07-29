@@ -614,23 +614,36 @@
      ============================================================ */
   .dock{display:none;}
   @media (max-width:900px){
-    .app{grid-template-rows:1fr;}
+    .app{height:100dvh;overflow:hidden;}
     .workspace{
-      grid-template-columns:1fr;grid-template-rows:auto 1fr;
-      overflow-y:auto;-webkit-overflow-scrolling:touch;height:100dvh;
+      grid-template-columns:1fr;
+      grid-template-rows:42dvh 1fr;   /* 상: 프리뷰 / 하: 편집 — 각각 독립 스크롤 */
+      overflow:hidden;height:100dvh;
     }
-    .editcol{border-right:none;order:2;}
-    .tabbar{position:sticky;top:0;z-index:25;background:var(--surface);}
+    /* 상단 프리뷰: 영역 안에서만 스크롤 */
     .previewcol{
-      order:1;position:sticky;top:0;z-index:20;
+      order:1;min-height:0;overflow:hidden;
       border-bottom:1px solid var(--line);
-      background:var(--bg);max-height:44vh;
+      background:var(--bg);display:flex;flex-direction:column;
     }
-    .preview__bar{height:auto;padding:12px 18px 8px;}
-    .preview__scroll{padding:4px 18px 16px;}
+    .preview__bar{height:auto;padding:10px 18px 6px;flex:none;}
+    .preview__scroll{
+      flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;
+      padding:4px 18px 16px;align-items:flex-start;
+    }
     #stage{max-width:none;}
     .savebar{display:none;}
-    .panelscroll{overflow-y:visible;padding:20px 18px calc(var(--dock-h) + 18px);}
+    /* 하단 편집: 탭바 고정 + 에디터 고정 + 패널만 스크롤 */
+    .editcol{
+      order:2;border-right:none;min-height:0;overflow:hidden;
+      display:flex;flex-direction:column;
+    }
+    .tabbar{flex:none;background:var(--surface);}
+    .editor-fixed{flex:none;}
+    .panelscroll{
+      flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+      padding:18px 18px calc(var(--dock-h) + 14px);
+    }
     .dock{
       display:flex;gap:10px;
       position:fixed;left:0;right:0;bottom:0;z-index:50;
@@ -639,7 +652,7 @@
       border-top:1px solid var(--line);box-shadow:0 -8px 24px -16px rgba(0,0,0,.2);
     }
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
-    #editor{max-height:none;min-height:190px;}
+    #editor{max-height:26vh;min-height:120px;}
   }
   @media (max-width:440px){
     .tab{padding:0 10px;font-size:13px;}
