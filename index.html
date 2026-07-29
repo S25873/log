@@ -792,8 +792,8 @@
             <button class="fbtn" type="button" data-fmt="italic"><i>I</i></button>
             <button class="fbtn" type="button" data-fmt="underline"><span class="u">U</span></button>
             <button class="fbtn" type="button" data-fmt="strike"><s>S</s></button>
-            <button class="fbtn" type="button" data-fmt="emph" title="글자색(강조)"><span class="c-ic">C</span></button>
-            <button class="fbtn" type="button" data-fmt="hl" title="형광펜(하이라이터)"><span class="h-ic">H</span></button>
+            <button class="fbtn" type="button" data-sheet="em" title="글자색(강조)"><span class="c-ic">C</span></button>
+            <button class="fbtn" type="button" data-sheet="hl" title="형광펜(하이라이터)"><span class="h-ic">H</span></button>
             <button class="fbtn" type="button" data-fmt="sub" title="서브(작은 글씨)"><span class="sub-ic">S</span></button>
             <button class="fbtn" type="button" data-sheet="quote" title="인용선">
               <span class="quote-ic"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.5" width="2" height="11" rx="1" fill="currentColor"/><line x1="7" y1="5" x2="13" y2="5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="7" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="7" y1="11" x2="11" y2="11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
@@ -970,8 +970,6 @@
             <div class="cgrid cgrid--3">
               <div class="cchip"><label>배경</label><div class="cchip__box"><input id="c-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-bg-txt" type="text" value="#ffffff"></div></div>
               <div class="cchip"><label>글자</label><div class="cchip__box"><input id="c-fg" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-fg-txt" type="text" value="#2b2b2b"></div></div>
-              <div class="cchip"><label>형광펜</label><div class="cchip__box"><input id="c-hl" type="color" value="#fff59d"><input class="cchip__hex" id="c-hl-txt" type="text" value="#fff59d"></div></div>
-              <div class="cchip"><label>강조색</label><div class="cchip__box"><input id="c-em" type="color" value="#e23b3b"><input class="cchip__hex" id="c-em-txt" type="text" value="#e23b3b"></div></div>
               <div class="cchip"><label>제목</label><div class="cchip__box"><input id="c-title" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-title-txt" type="text" value="#1a1a1a"></div></div>
               <div class="cchip"><label>소제목</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#1a1a1a"></div></div>
             </div>
@@ -990,12 +988,42 @@
 
           <div class="section">
             <p class="section__head">형광펜</p>
-            <div class="dots" id="hl-presets"></div>
+            <div class="field">
+              <span class="label">적용할 색 <span class="val" id="hl-slot-val">형광펜 1</span></span>
+              <div class="seg" id="hl-slot-seg">
+                <button type="button" data-slot="1" aria-pressed="true">1</button>
+                <button type="button" data-slot="2" aria-pressed="false">2</button>
+                <button type="button" data-slot="3" aria-pressed="false">3</button>
+                <span class="seg__thumb"></span>
+              </div>
+            </div>
+            <div class="cgrid cgrid--3" style="margin-top:16px">
+              <div class="cchip"><label>형광펜 1</label><div class="cchip__box"><input id="c-hl" type="color" value="#fff59d"><input class="cchip__hex" id="c-hl-txt" type="text" value="#fff59d"></div></div>
+              <div class="cchip"><label>형광펜 2</label><div class="cchip__box"><input id="c-hl2" type="color" value="#b3e5fc"><input class="cchip__hex" id="c-hl2-txt" type="text" value="#b3e5fc"></div></div>
+              <div class="cchip"><label>형광펜 3</label><div class="cchip__box"><input id="c-hl3" type="color" value="#f8bbd0"><input class="cchip__hex" id="c-hl3-txt" type="text" value="#f8bbd0"></div></div>
+            </div>
+            <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어갑니다.</p>
+            <div class="dots" id="hl-presets" style="margin-top:10px"></div>
           </div>
 
           <div class="section">
             <p class="section__head">강조색</p>
-            <div class="dots" id="em-presets"></div>
+            <div class="field">
+              <span class="label">적용할 색 <span class="val" id="em-slot-val">강조 1</span></span>
+              <div class="seg" id="em-slot-seg">
+                <button type="button" data-slot="1" aria-pressed="true">1</button>
+                <button type="button" data-slot="2" aria-pressed="false">2</button>
+                <button type="button" data-slot="3" aria-pressed="false">3</button>
+                <span class="seg__thumb"></span>
+              </div>
+            </div>
+            <div class="cgrid cgrid--3" style="margin-top:16px">
+              <div class="cchip"><label>강조 1</label><div class="cchip__box"><input id="c-em" type="color" value="#e23b3b"><input class="cchip__hex" id="c-em-txt" type="text" value="#e23b3b"></div></div>
+              <div class="cchip"><label>강조 2</label><div class="cchip__box"><input id="c-em2" type="color" value="#1565c0"><input class="cchip__hex" id="c-em2-txt" type="text" value="#1565c0"></div></div>
+              <div class="cchip"><label>강조 3</label><div class="cchip__box"><input id="c-em3" type="color" value="#2e7d32"><input class="cchip__hex" id="c-em3-txt" type="text" value="#2e7d32"></div></div>
+            </div>
+            <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어갑니다.</p>
+            <div class="dots" id="em-presets" style="margin-top:10px"></div>
           </div>
 
           <div class="section">

@@ -15,6 +15,15 @@
   var photoOn = false;
   var photoData = null;
 
+  /* 형광펜·강조색: 슬롯 1/2/3 (슬롯1은 기존 c-hl / c-em 을 그대로 사용) */
+  var hlSlot = 1, emSlot = 1;
+  function hlInput(slot){ return $(slot===1 ? 'c-hl' : 'c-hl'+slot); }
+  function emInput(slot){ return $(slot===1 ? 'c-em' : 'c-em'+slot); }
+  function hlTxt(slot){ return $((slot===1 ? 'c-hl' : 'c-hl'+slot)+'-txt'); }
+  function emTxt(slot){ return $((slot===1 ? 'c-em' : 'c-em'+slot)+'-txt'); }
+  function hlColorOf(slot){ var e=hlInput(slot); return e ? e.value : '#fff59d'; }
+  function emColorOf(slot){ var e=emInput(slot); return e ? e.value : '#e23b3b'; }
+
   /* ============================================================
      테마 토글
      ============================================================ */
@@ -113,7 +122,10 @@
     b.addEventListener('click', function(){
       [].forEach.call(hlWrap.children, function(x){ x.classList.remove('on'); });
       b.classList.add('on');
-      $('c-hl').value = p.c; $('c-hl-txt').value = p.c; updateEditorHl(); render();
+      var ci=hlInput(hlSlot), ti=hlTxt(hlSlot);
+      if(ci) ci.value = p.c; if(ti) ti.value = p.c;
+      if(hlSlot===1) updateEditorHl();
+      render();
     });
     hlWrap.appendChild(b);
   });
@@ -126,7 +138,9 @@
     b.addEventListener('click', function(){
       [].forEach.call(emWrap.children, function(x){ x.classList.remove('on'); });
       b.classList.add('on');
-      $('c-em').value = p.c; $('c-em-txt').value = p.c; render();
+      var ci=emInput(emSlot), ti=emTxt(emSlot);
+      if(ci) ci.value = p.c; if(ti) ti.value = p.c;
+      render();
     });
     emWrap.appendChild(b);
   });
@@ -202,7 +216,11 @@
   linkColor('c-bg','c-bg-txt',true,false);
   linkColor('c-fg','c-fg-txt',false,false);
   linkColor('c-hl','c-hl-txt',false,true);
+  linkColor('c-hl2','c-hl2-txt',false,false);
+  linkColor('c-hl3','c-hl3-txt',false,false);
   linkColor('c-em','c-em-txt',false,false);
+  linkColor('c-em2','c-em2-txt',false,false);
+  linkColor('c-em3','c-em3-txt',false,false);
   linkColor('c-name','c-name-txt',false,false);
   linkColor('c-bar','c-bar-txt',false,false);
   linkColor('c-brecv','c-brecv-txt',false,false,updateEditorBub);
@@ -310,6 +328,25 @@
     if(startMark.parentNode) startMark.parentNode.removeChild(startMark);
     if(endMark.parentNode) endMark.parentNode.removeChild(endMark);
     mergeAdjacentMarks(cls);
+  }
+
+  /* 선택 영역과 겹치는 mark.cls 를 모두 풀어 서식(형광펜/강조)을 지운다 */
+  function stripMarks(range, cls){
+    var startMark = document.createTextNode('\u200b'), endMark = document.createTextNode('\u200b');
+    var endRange = range.cloneRange(); endRange.collapse(false); endRange.insertNode(endMark);
+    var startRange = range.cloneRange(); startRange.collapse(true); startRange.insertNode(startMark);
+    var work = document.createRange(); work.setStartAfter(startMark); work.setEndBefore(endMark);
+    var toUnwrap = [];
+    [].forEach.call(editor.querySelectorAll('mark.'+cls), function(mk){
+      var hit;
+      try{ var mr=document.createRange(); mr.selectNode(mk);
+        hit = work.compareBoundaryPoints(Range.END_TO_START, mr) < 0 && work.compareBoundaryPoints(Range.START_TO_END, mr) > 0;
+      }catch(e){ hit=false; }
+      if(hit) toUnwrap.push(mk);
+    });
+    toUnwrap.forEach(function(mk){ var pr=mk.parentNode; if(!pr) return; while(mk.firstChild){ pr.insertBefore(mk.firstChild, mk); } pr.removeChild(mk); });
+    if(startMark.parentNode) startMark.parentNode.removeChild(startMark);
+    if(endMark.parentNode) endMark.parentNode.removeChild(endMark);
   }
 
   /* ============================================================
@@ -500,7 +537,7 @@
   /* ============================================================
      서식 적용 라우터
      ============================================================ */
-  function applyFormat(fmt, tail, side, withName){
+  function applyFormat(fmt, tail, side, withName, color){
     var sel0 = window.getSelection();
     var saved = (sel0 && sel0.rangeCount && editor.contains(sel0.getRangeAt(0).startContainer)) ? sel0.getRangeAt(0).cloneRange() : null;
     if(!saved && _savedRange && editor.contains(_savedRange.startContainer)){ saved = _savedRange.cloneRange(); }
@@ -523,17 +560,13 @@
     }
     else if(fmt==='hl'){
       var range=sel.getRangeAt(0); if(range.collapsed) return;
-      var anc=sel.anchorNode, node=anc&&anc.nodeType===3?anc.parentNode:anc;
-      var existing=node&&node.closest?node.closest('mark.hl'):null;
-      if(existing && rangeWithin(range, existing)){ var pr=existing.parentNode; while(existing.firstChild){pr.insertBefore(existing.firstChild,existing);} pr.removeChild(existing); }
-      else { paintUnion(range, 'hl', '--hl', $('c-hl').value); }
+      if(color==='__remove__'){ stripMarks(range, 'hl'); }
+      else { paintUnion(range, 'hl', '--hl', color || hlColorOf(hlSlot)); }
     }
     else if(fmt==='emph'){
       var range2=sel.getRangeAt(0); if(range2.collapsed) return;
-      var anc2=sel.anchorNode, node2=anc2&&anc2.nodeType===3?anc2.parentNode:anc2;
-      var existing2=node2&&node2.closest?node2.closest('mark.em'):null;
-      if(existing2 && rangeWithin(range2, existing2)){ var pr2=existing2.parentNode; while(existing2.firstChild){pr2.insertBefore(existing2.firstChild,existing2);} pr2.removeChild(existing2); }
-      else { paintUnion(range2, 'em', '--em', $('c-em').value); }
+      if(color==='__remove__'){ stripMarks(range2, 'em'); }
+      else { paintUnion(range2, 'em', '--em', color || emColorOf(emSlot)); }
     }
     else if(fmt==='sub'){
       var rangeS=sel.getRangeAt(0); if(rangeS.collapsed) return;
@@ -597,7 +630,23 @@
 
   /* ===== 바텀시트 (인용/구분/말풍선 선택) ===== */
   var tailSvg = '<svg viewBox="0 0 16 20" preserveAspectRatio="none"><path d="M16 0 L16 20 Q6 20 0.6 19.2 Q-0.9 19.0 0.5 18.2 Q6.2 15.0 8 10 Q9.2 5.6 9 0 Z"></path></svg>';
+  function swatchHtml(color){
+    return '<span class="s-preview"><i style="display:block;width:20px;height:20px;border-radius:50%;background:'+color+';box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)"></i></span>';
+  }
+  var removeSwatchHtml = '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><line x1="6.5" y1="17.5" x2="17.5" y2="6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>';
   var SHEETS = {
+    hl: { title: '형광펜', options: [
+      { label: '형광펜 1', preview: function(){ return swatchHtml(hlColorOf(1)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(1)); } },
+      { label: '형광펜 2', preview: function(){ return swatchHtml(hlColorOf(2)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(2)); } },
+      { label: '형광펜 3', preview: function(){ return swatchHtml(hlColorOf(3)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(3)); } },
+      { label: '형광펜 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('hl', null, null, false, '__remove__'); } }
+    ]},
+    em: { title: '강조색', options: [
+      { label: '강조 1', preview: function(){ return swatchHtml(emColorOf(1)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(1)); } },
+      { label: '강조 2', preview: function(){ return swatchHtml(emColorOf(2)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(2)); } },
+      { label: '강조 3', preview: function(){ return swatchHtml(emColorOf(3)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(3)); } },
+      { label: '강조 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } }
+    ]},
     quote: { title: '인용선', options: [
       { label: '왼쪽 인용선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="2.4" height="16" rx="1.2" fill="currentColor"/><line x1="10" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyFormat('quote', null, 'left'); } },
       { label: '오른쪽 인용선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="17.6" y="4" width="2.4" height="16" rx="1.2" fill="currentColor"/><line x1="4" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="4" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7" y1="16" x2="14" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyFormat('quote', null, 'right'); } }
@@ -632,7 +681,8 @@
     sheetList.innerHTML = '';
     def.options.forEach(function(opt){
       var b = document.createElement('button'); b.type='button';
-      b.innerHTML = (opt.preview||'') + '<span>'+opt.label+'</span>';
+      var pv = (typeof opt.preview==='function') ? opt.preview() : (opt.preview||'');
+      b.innerHTML = pv + '<span>'+opt.label+'</span>';
       b.addEventListener('click', function(ev){
         ev.preventDefault(); ev.stopPropagation();
         closeSheet();
@@ -877,7 +927,7 @@
     thumb.style.width = aRect.width + 'px';
     thumb.style.transform = 'translateX(' + (aRect.left - segRect.left - pad) + 'px)';
   }
-  function moveAllThumbs(){ moveThumb($('align-seg')); moveThumb($('size-seg')); moveThumb($('ratio-seg')); }
+  function moveAllThumbs(){ moveThumb($('align-seg')); moveThumb($('size-seg')); moveThumb($('ratio-seg')); moveThumb($('hl-slot-seg')); moveThumb($('em-slot-seg')); }
 
   document.querySelectorAll('#align-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -898,6 +948,28 @@
       render();
     });
   });
+  /* 형광펜/강조색 슬롯 토글 (1/2/3) — 프리셋이 들어갈 활성 슬롯 선택 */
+  document.querySelectorAll('#hl-slot-seg button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#hl-slot-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      hlSlot = parseInt(btn.getAttribute('data-slot'),10) || 1;
+      var lbl=$('hl-slot-val'); if(lbl){ lbl.textContent = '형광펜 '+hlSlot; }
+      moveThumb($('hl-slot-seg'));
+      markDot(hlWrap, hlPresets, hlColorOf(hlSlot));
+    });
+  });
+  document.querySelectorAll('#em-slot-seg button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#em-slot-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      emSlot = parseInt(btn.getAttribute('data-slot'),10) || 1;
+      var lbl=$('em-slot-val'); if(lbl){ lbl.textContent = '강조 '+emSlot; }
+      moveThumb($('em-slot-seg'));
+      markDot(emWrap, emPresets, emColorOf(emSlot));
+    });
+  });
+
   var ratios = [
     {w:1,h:1,label:'1:1',rw:1080}, {w:4,h:5,label:'4:5',rw:1080},
     {w:3,h:4,label:'3:4',rw:1200}, {w:9,h:16,label:'9:16',rw:1080}
@@ -1510,7 +1582,7 @@
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
   var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
-    'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-em','c-em-txt','c-name','c-name-txt','c-bar','c-bar-txt',
+    'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-quote','c-quote-txt','c-hr','c-hr-txt',
     'c-brecv-name','c-brecv-name-txt','c-bsend-name','c-bsend-name-txt','opacity','bright'];
@@ -1601,7 +1673,7 @@
     $('ratio-row').style.display = sizeMode==='ratio' ? '' : 'none';
     if(s.ratio){ ratio=s.ratio;
       [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); }); }
-    ['c-bg','c-fg','c-hl','c-em','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-quote','c-hr','c-brecv-name','c-bsend-name'].forEach(function(cid){
+    ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-em','c-em2','c-em3','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-quote','c-hr','c-brecv-name','c-bsend-name'].forEach(function(cid){
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
     });
     if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
@@ -1637,8 +1709,8 @@
     [].forEach.call(wrap.children, function(el, i){ var c=list[i] && list[i].c ? list[i].c.toLowerCase() : ''; el.classList.toggle('on', c===v); });
   }
   function syncPresetChips(){
-    markDot(hlWrap, hlPresets, $('c-hl').value);
-    markDot(emWrap, emPresets, $('c-em').value);
+    markDot(hlWrap, hlPresets, hlColorOf(hlSlot));
+    markDot(emWrap, emPresets, emColorOf(emSlot));
     var bgv=(bgValue||'').trim().toLowerCase();
     [].forEach.call(bgWrap.children, function(el, i){ var b=bgPresets[i]?String(bgPresets[i].bg).toLowerCase():''; el.classList.toggle('on', b===bgv); });
   }
