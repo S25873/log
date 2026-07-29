@@ -406,10 +406,10 @@
   /* C = 글자색(강조): 빨강 */
   .fbtn .c-ic{color:#e23b3b;}
   .fbtn.is-active .c-ic{color:#ff8a8a;}
-  /* H = 형광(하이라이터): 글자 전체 뒤 배경 */
+  /* H = 형광(하이라이터): 글자 전체 뒤 배경 (노랑) */
   .fbtn .h-ic{position:relative;z-index:0;isolation:isolate;padding:1px 3px;border-radius:2px;}
-  .fbtn .h-ic::after{content:"";position:absolute;inset:0;background:var(--ink-3);opacity:.55;z-index:-1;border-radius:2px;}
-  .fbtn.is-active .h-ic::after{background:var(--ink-on-accent);opacity:.4;}
+  .fbtn .h-ic::after{content:"";position:absolute;inset:0;background:#fff59d;opacity:.9;z-index:-1;border-radius:2px;}
+  .fbtn.is-active .h-ic::after{background:#fff59d;opacity:.8;}
   /* S = 서브 */
   .fbtn .sub-ic{}
   /* 인용선 아이콘 */
@@ -611,7 +611,7 @@
   #editor .g-hr.short:before{content:"";display:block;width:40px;height:1px;background:var(--ink-3);}
   #editor .g-bub{display:block;position:relative;width:fit-content;max-width:80%;padding:4px 10px;border-radius:14px;margin:2px 0;white-space:pre-wrap;}
   #editor .g-bub.recv{margin-right:auto;margin-left:8px;background:var(--bub-recv,#e5e5ea);color:var(--bub-recv-ink,#000) !important;}
-  #editor .g-bub.send{margin-left:auto;margin-right:8px;background:var(--bub-send,#2b2b2b);color:var(--bub-send-ink,#fff) !important;}
+  #editor .g-bub.send{margin-left:auto;margin-right:8px;background:var(--bub-send,#248bf5);color:var(--bub-send-ink,#fff) !important;}
   #editor .g-bub.recv *{color:var(--bub-recv-ink,#000) !important;}
   #editor .g-bub.send *{color:var(--bub-send-ink,#fff) !important;}
   #editor .g-bub mark.em{color:var(--em,inherit) !important;}
@@ -619,7 +619,7 @@
   #editor .g-bub.recv>svg.g-tail{left:-5px;}
   #editor .g-bub.send>svg.g-tail{right:-5px;transform:scaleX(-1);}
   #editor .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea);}
-  #editor .g-bub.send>svg.g-tail path{fill:var(--bub-send,#2b2b2b);}
+  #editor .g-bub.send>svg.g-tail path{fill:var(--bub-send,#248bf5);}
   #editor .g-bub.is-empty:before{content:"내용";opacity:.6;}
   #editor .g-bub.recv.is-empty:before{color:var(--bub-recv-ink,#000);}
   #editor .g-bub.send.is-empty:before{color:var(--bub-send-ink,#fff);}
@@ -679,7 +679,7 @@
   #canvas .g-bub.cont + .g-bub,.canvas-clone .g-bub.cont + .g-bub,#canvas .g-bub + .g-bub.cont,.canvas-clone .g-bub + .g-bub.cont{margin-top:.1em !important;}
   #canvas .g-bub:first-child,.canvas-clone .g-bub:first-child{margin-top:0 !important;}
   #canvas .g-bub.recv,.canvas-clone .g-bub.recv{margin-right:auto !important;margin-left:.4em !important;background:var(--bub-recv,#e5e5ea) !important;color:var(--bub-recv-ink,#000) !important;}
-  #canvas .g-bub.send,.canvas-clone .g-bub.send{margin-left:auto !important;margin-right:.4em !important;background:var(--bub-send,#2b2b2b) !important;color:var(--bub-send-ink,#fff) !important;}
+  #canvas .g-bub.send,.canvas-clone .g-bub.send{margin-left:auto !important;margin-right:.4em !important;background:var(--bub-send,#248bf5) !important;color:var(--bub-send-ink,#fff) !important;}
   #canvas .g-bub-name,.canvas-clone .g-bub-name{display:block !important;width:fit-content !important;max-width:75% !important;font-size:.8em !important;font-weight:700 !important;line-height:1.2 !important;margin:.5em 0 .35em !important;padding:0 .3em !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-bub-name.recv,.canvas-clone .g-bub-name.recv{margin-right:auto !important;margin-left:.4em !important;text-align:left !important;color:var(--bub-name-recv,#8a8a8a) !important;}
   #canvas .g-bub-name.send,.canvas-clone .g-bub-name.send{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;color:var(--bub-name-send,#8a8a8a) !important;}
@@ -689,7 +689,7 @@
   #canvas .g-bub.recv>svg.g-tail,.canvas-clone .g-bub.recv>svg.g-tail{left:-.42em !important;}
   #canvas .g-bub.send>svg.g-tail,.canvas-clone .g-bub.send>svg.g-tail{right:-.42em !important;transform:scaleX(-1) !important;}
   #canvas .g-bub.recv>svg.g-tail path,.canvas-clone .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea) !important;}
-  #canvas .g-bub.send>svg.g-tail path,.canvas-clone .g-bub.send>svg.g-tail path{fill:var(--bub-send,#2b2b2b) !important;}
+  #canvas .g-bub.send>svg.g-tail path,.canvas-clone .g-bub.send>svg.g-tail path{fill:var(--bub-send,#248bf5) !important;}
   #canvas .g-bub mark.em,.canvas-clone .g-bub mark.em{color:var(--em) !important;}
 
   /* ============================================================
@@ -968,8 +968,8 @@
             <div class="cgrid cgrid--3">
               <div class="cchip"><label>배경</label><div class="cchip__box"><input id="c-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-bg-txt" type="text" value="#ffffff"></div></div>
               <div class="cchip"><label>글자</label><div class="cchip__box"><input id="c-fg" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-fg-txt" type="text" value="#2b2b2b"></div></div>
-              <div class="cchip"><label>형광펜</label><div class="cchip__box"><input id="c-hl" type="color" value="#eaeaea"><input class="cchip__hex" id="c-hl-txt" type="text" value="#eaeaea"></div></div>
-              <div class="cchip"><label>강조색</label><div class="cchip__box"><input id="c-em" type="color" value="#111111"><input class="cchip__hex" id="c-em-txt" type="text" value="#111111"></div></div>
+              <div class="cchip"><label>형광펜</label><div class="cchip__box"><input id="c-hl" type="color" value="#fff59d"><input class="cchip__hex" id="c-hl-txt" type="text" value="#fff59d"></div></div>
+              <div class="cchip"><label>강조색</label><div class="cchip__box"><input id="c-em" type="color" value="#e23b3b"><input class="cchip__hex" id="c-em-txt" type="text" value="#e23b3b"></div></div>
               <div class="cchip"><label>제목</label><div class="cchip__box"><input id="c-title" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-title-txt" type="text" value="#1a1a1a"></div></div>
               <div class="cchip"><label>소제목</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#1a1a1a"></div></div>
             </div>
@@ -1064,7 +1064,7 @@
             <p class="section__head">말풍선 색</p>
             <div class="cgrid cgrid--2">
               <div class="cchip"><label>왼쪽 배경</label><div class="cchip__box"><input id="c-brecv" type="color" value="#ececec"><input class="cchip__hex" id="c-brecv-txt" type="text" value="#ececec"></div></div>
-              <div class="cchip"><label>오른쪽 배경</label><div class="cchip__box"><input id="c-bsend" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-bsend-txt" type="text" value="#2b2b2b"></div></div>
+              <div class="cchip"><label>오른쪽 배경</label><div class="cchip__box"><input id="c-bsend" type="color" value="#248bf5"><input class="cchip__hex" id="c-bsend-txt" type="text" value="#248bf5"></div></div>
               <div class="cchip"><label>왼쪽 글자</label><div class="cchip__box"><input id="c-brecv-ink" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-brecv-ink-txt" type="text" value="#1a1a1a"></div></div>
               <div class="cchip"><label>오른쪽 글자</label><div class="cchip__box"><input id="c-bsend-ink" type="color" value="#ffffff"><input class="cchip__hex" id="c-bsend-ink-txt" type="text" value="#ffffff"></div></div>
               <div class="cchip"><label>왼쪽 이름</label><div class="cchip__box"><input id="c-brecv-name" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-brecv-name-txt" type="text" value="#8a8a8a"></div></div>

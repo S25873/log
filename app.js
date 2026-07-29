@@ -62,27 +62,27 @@
      ============================================================ */
   var bgPresets = [
     {bg:'#ffffff', fg:'#2b2b2b', swatch:'#ffffff'},              // 화이트
-    {bg:'#f4f4f4', fg:'#2b2b2b', swatch:'#f4f4f4'},              // 라이트 그레이
-    {bg:'#e6e6e6', fg:'#222222', swatch:'#e6e6e6'},              // 그레이
-    {bg:'#3a3a3a', fg:'#f2f2f2', swatch:'#3a3a3a'},              // 차콜
+    {bg:'#fbf7f0', fg:'#3a352d', swatch:'#fbf7f0'},              // 크림
+    {bg:'#fdf0f2', fg:'#5c2b34', swatch:'#fdf0f2'},              // 로즈
+    {bg:'#eef4fb', fg:'#233b52', swatch:'#eef4fb'},              // 스카이
+    {bg:'#eef7f0', fg:'#264536', swatch:'#eef7f0'},              // 민트
     {bg:'#1a1a1a', fg:'#f0f0f0', swatch:'#1a1a1a'},              // 먹
-    {bg:'linear-gradient(135deg,#ffffff 0%,#e2e2e2 100%)', fg:'#2b2b2b', swatch:'linear-gradient(135deg,#ffffff,#e2e2e2)'},
-    {bg:'linear-gradient(135deg,#f0f0f0 0%,#c8c8c8 100%)', fg:'#222222', swatch:'linear-gradient(135deg,#f0f0f0,#c8c8c8)'},
-    {bg:'linear-gradient(135deg,#4a4a4a 0%,#1a1a1a 100%)', fg:'#f2f2f2', swatch:'linear-gradient(135deg,#4a4a4a,#1a1a1a)'},
-    {bg:'linear-gradient(160deg,#2b2b2b 0%,#000000 100%)', fg:'#f0f0f0', swatch:'linear-gradient(160deg,#2b2b2b,#000000)'},
-    {bg:'#0a0a0a', fg:'#eaeaea', swatch:'#0a0a0a'}               // 블랙
+    {bg:'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)', fg:'#5a3a28', swatch:'linear-gradient(135deg,#ffecd2,#fcb69f)'}, // 선셋
+    {bg:'linear-gradient(135deg,#a1c4fd 0%,#c2e9fb 100%)', fg:'#22364a', swatch:'linear-gradient(135deg,#a1c4fd,#c2e9fb)'}, // 오션
+    {bg:'linear-gradient(135deg,#d4fc79 0%,#96e6a1 100%)', fg:'#28472e', swatch:'linear-gradient(135deg,#d4fc79,#96e6a1)'}, // 프레시
+    {bg:'linear-gradient(160deg,#30cfd0 0%,#330867 100%)', fg:'#f0f0f0', swatch:'linear-gradient(160deg,#30cfd0,#330867)'}  // 미드나잇
   ];
   var hlPresets = [
-    {c:'#efefef', label:'페일'}, {c:'#e4e4e4', label:'라이트'},
-    {c:'#d8d8d8', label:'실버'}, {c:'#cccccc', label:'그레이'},
-    {c:'#bcbcbc', label:'애시'}, {c:'#ababab', label:'스톤'},
-    {c:'#9a9a9a', label:'미드'}, {c:'#dcdcdc', label:'클라우드'}
+    {c:'#fff59d', label:'노랑'}, {c:'#ffe082', label:'골드'},
+    {c:'#ffcc80', label:'오렌지'}, {c:'#f8bbd0', label:'핑크'},
+    {c:'#c5e1a5', label:'라임'}, {c:'#b3e5fc', label:'스카이'},
+    {c:'#d1c4e9', label:'라벤더'}, {c:'#eeeeee', label:'그레이'}
   ];
   var emPresets = [
-    {c:'#000000', label:'먹'}, {c:'#2b2b2b', label:'차콜'},
-    {c:'#454545', label:'그래파이트'}, {c:'#5c5c5c', label:'슬레이트'},
-    {c:'#737373', label:'그레이'}, {c:'#8f8f8f', label:'애시'},
-    {c:'#a8a8a8', label:'실버'}, {c:'#ffffff', label:'화이트'}
+    {c:'#e23b3b', label:'레드'}, {c:'#f57c00', label:'오렌지'},
+    {c:'#f9a825', label:'옐로'}, {c:'#2e7d32', label:'그린'},
+    {c:'#1565c0', label:'블루'}, {c:'#6a1b9a', label:'퍼플'},
+    {c:'#000000', label:'먹'}, {c:'#737373', label:'그레이'}
   ];
 
   function toHex(c){ return String(c).indexOf('gradient') > -1 ? '#ffffff' : c; }
@@ -131,14 +131,14 @@
     emWrap.appendChild(b);
   });
 
-  /* 말풍선 프리셋 (모노톤 조합) — recv배경/send배경/recv글자/send글자 */
+  /* 말풍선 프리셋 — recv배경/send배경/recv글자/send글자 */
   var bubPresets = [
-    {label:'클래식', br:'#ececec', bs:'#2b2b2b', bri:'#1a1a1a', bsi:'#ffffff'},
-    {label:'소프트',  br:'#f2f2f2', bs:'#5c5c5c', bri:'#2b2b2b', bsi:'#ffffff'},
-    {label:'대비',    br:'#e0e0e0', bs:'#000000', bri:'#000000', bsi:'#ffffff'},
-    {label:'라이트',  br:'#f6f6f6', bs:'#dcdcdc', bri:'#2b2b2b', bsi:'#1a1a1a'},
-    {label:'그레이',  br:'#d6d6d6', bs:'#8f8f8f', bri:'#1a1a1a', bsi:'#ffffff'},
-    {label:'인버스',  br:'#3a3a3a', bs:'#ececec', bri:'#f2f2f2', bsi:'#1a1a1a'}
+    {label:'아이메시지', br:'#e9e9eb', bs:'#248bf5', bri:'#000000', bsi:'#ffffff'},
+    {label:'그린',      br:'#e9e9eb', bs:'#34c759', bri:'#000000', bsi:'#ffffff'},
+    {label:'카톡',      br:'#ffffff', bs:'#fee500', bri:'#000000', bsi:'#3c1e1e'},
+    {label:'퍼플',      br:'#efeafc', bs:'#7c5cff', bri:'#2b1f52', bsi:'#ffffff'},
+    {label:'로즈',      br:'#fdeef2', bs:'#ff5c8a', bri:'#5c2b3a', bsi:'#ffffff'},
+    {label:'모노',      br:'#ececec', bs:'#2b2b2b', bri:'#1a1a1a', bsi:'#ffffff'}
   ];
   var bubWrap = $('bub-presets');
   if(bubWrap){
