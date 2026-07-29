@@ -384,7 +384,7 @@
      서식 도구
      ============================================================ */
   .fmt{display:flex;flex-direction:column;gap:5px;margin-top:9px;}
-  .fmt-row{display:flex;gap:4px;}
+  .fmt-row{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;}
   .fbtn{
     flex:1 1 0;min-width:0;height:30px;border-radius:var(--radius-xs);
     border:1px solid var(--line);background:var(--surface);color:var(--ink);
@@ -398,11 +398,21 @@
   .fbtn i{font-style:italic;}
   .fbtn .u{text-decoration:underline;text-underline-offset:2px;}
   .fbtn s{text-decoration:line-through;}
-  .fbtn .lbl{font-size:11px;font-weight:600;letter-spacing:-.04em;}
-  .fbtn .hl-ic{position:relative;font-size:11px;font-weight:600;padding:1px 1px;}
-  .fbtn .hl-ic::after{content:"";position:absolute;left:-1px;right:-1px;bottom:1px;height:6px;background:var(--ink-3);opacity:.45;z-index:-1;border-radius:1px;}
-  .fbtn.is-active .hl-ic::after{background:var(--ink-on-accent);opacity:.35;}
-  .fbtn .em-ic{font-size:11px;font-weight:700;}
+  /* C = 글자색(강조): 빨강 */
+  .fbtn .c-ic{font-size:12.5px;font-weight:800;color:#e23b3b;}
+  .fbtn.is-active .c-ic{color:#ff6b6b;}
+  /* H = 형광(하이라이터): 밑줄 하이라이트 */
+  .fbtn .h-ic{position:relative;font-size:12.5px;font-weight:800;padding:0 1px;}
+  .fbtn .h-ic::after{content:"";position:absolute;left:-1px;right:-1px;bottom:1px;height:6px;background:var(--ink-3);opacity:.5;z-index:-1;border-radius:1px;}
+  .fbtn.is-active .h-ic::after{background:var(--ink-on-accent);opacity:.4;}
+  /* S = 서브(작은 글씨) */
+  .fbtn .sub-ic{font-size:10px;font-weight:700;position:relative;top:3px;}
+  /* 인용선 아이콘 */
+  .fbtn .quote-ic{display:inline-flex;color:var(--ink);}
+  .fbtn .quote-ic svg{width:16px;height:16px;display:block;}
+  .fbtn.is-active .quote-ic{color:var(--ink-on-accent);}
+  /* 구분: 대시 */
+  .fbtn .hr-ic{font-size:17px;font-weight:800;line-height:1;}
 
   .bub-ic{position:relative;display:inline-block;width:20px;height:13px;border-radius:6.5px;}
   .bub-ic>svg{position:absolute;bottom:0;width:11px;height:7px;overflow:visible;}
@@ -695,7 +705,7 @@
   @media (max-width:440px){
     .tab{padding:0 10px;font-size:13px;}
     .fbtn{height:30px;font-size:11px;}
-    .fbtn .lbl,.fbtn .hl-ic,.fbtn .em-ic{font-size:10px;letter-spacing:-.05em;}
+    .fbtn .c-ic,.fbtn .h-ic,.fbtn .sub-ic,.fbtn .hr-ic{font-size:11px;}
     .fmt-row{gap:3px;}
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
     .presets--bg{grid-template-columns:repeat(4,minmax(0,1fr));}
@@ -745,20 +755,20 @@
             <button class="fbtn" type="button" data-fmt="italic"><i>I</i></button>
             <button class="fbtn" type="button" data-fmt="underline"><span class="u">U</span></button>
             <button class="fbtn" type="button" data-fmt="strike"><s>S</s></button>
-            <button class="fbtn" type="button" data-fmt="emph"><span class="em-ic">강조</span></button>
-            <button class="fbtn" type="button" data-fmt="hl"><span class="hl-ic">형광</span></button>
+            <button class="fbtn" type="button" data-fmt="emph" title="글자색(강조)"><span class="c-ic">C</span></button>
+            <button class="fbtn" type="button" data-fmt="hl" title="형광펜(하이라이터)"><span class="h-ic">H</span></button>
+            <button class="fbtn" type="button" data-fmt="sub" title="서브(작은 글씨)"><span class="sub-ic">S</span></button>
             <span class="pop-wrap">
-              <button class="fbtn" type="button" data-fmt="sub"><span class="lbl">서브</span></button>
-            </span>
-            <span class="pop-wrap">
-              <button class="fbtn" type="button" data-pop="quote" title="인용선"><span class="lbl">인용</span></button>
+              <button class="fbtn" type="button" data-pop="quote" title="인용선">
+                <span class="quote-ic"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.5" width="2" height="11" rx="1" fill="currentColor"/><line x1="7" y1="5" x2="13" y2="5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="7" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="7" y1="11" x2="11" y2="11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+              </button>
               <span class="pop">
                 <button type="button" data-fmt="quote" data-side="left">왼쪽 인용선</button>
                 <button type="button" data-fmt="quote" data-side="right">오른쪽 인용선</button>
               </span>
             </span>
             <span class="pop-wrap">
-              <button class="fbtn" type="button" data-pop="hr" title="구분선"><span class="lbl">구분</span></button>
+              <button class="fbtn" type="button" data-pop="hr" title="구분선"><span class="hr-ic">–</span></button>
               <span class="pop">
                 <button type="button" data-fmt="hr" data-hr="line">구분선 ———</button>
                 <button type="button" data-fmt="hr" data-hr="dots">점 • • •</button>
@@ -835,16 +845,6 @@
                 <div id="subtitle-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
                      aria-label="소제목 입력" data-placeholder="소제목 (비워도 됩니다)"></div>
               </div>
-              <div class="grid-2" style="margin-top:16px">
-                <div class="field">
-                  <span class="label">제목 크기 <span class="val" id="title-size-val">64px</span></span>
-                  <div class="rangewrap"><input id="title-size" type="range" min="24" max="120" step="2" value="64"></div>
-                </div>
-                <div class="field">
-                  <span class="label">소제목 크기 <span class="val" id="subtitle-size-val">46px</span></span>
-                  <div class="rangewrap"><input id="subtitle-size" type="range" min="18" max="90" step="2" value="46"></div>
-                </div>
-              </div>
               <div class="field" style="margin-top:16px">
                 <label class="label" for="title-font">제목·소제목 글꼴</label>
                 <select id="title-font">
@@ -858,6 +858,16 @@
                   <option value="'Mona12','Mona12 Text KR',sans-serif">모나</option>
                   <option value="'PfStardust',sans-serif">스타더스트</option>
                 </select>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">제목 크기 <span class="val" id="title-size-val">64px</span></span>
+                  <div class="rangewrap"><input id="title-size" type="range" min="24" max="120" step="2" value="64"></div>
+                </div>
+                <div class="field">
+                  <span class="label">소제목 크기 <span class="val" id="subtitle-size-val">46px</span></span>
+                  <div class="rangewrap"><input id="subtitle-size" type="range" min="18" max="90" step="2" value="46"></div>
+                </div>
               </div>
             </div>
           </details>
