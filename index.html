@@ -655,6 +655,11 @@
   #editor.bub-simple .g-bub>svg.g-tail{display:none;}
   #canvas.bub-simple .g-bub,.canvas-clone.bub-simple .g-bub{border-radius:.4em !important;}
   #canvas.bub-simple .g-bub>svg.g-tail,.canvas-clone.bub-simple .g-bub>svg.g-tail{display:none !important;}
+  /* 라운드(더 둥글게 + 꼬리) / 각진(각지지만 꼬리 유지) */
+  #editor.bub-round .g-bub{border-radius:20px;}
+  #canvas.bub-round .g-bub,.canvas-clone.bub-round .g-bub{border-radius:1.7em !important;}
+  #editor.bub-card .g-bub{border-radius:5px;}
+  #canvas.bub-card .g-bub,.canvas-clone.bub-card .g-bub{border-radius:.32em !important;}
   /* 인물 말풍선 좌/우 정렬 (색은 인라인으로 인물별 적용) */
   #editor .g-bub.char-bub.left{margin-right:auto;margin-left:8px;}
   #editor .g-bub.char-bub.right{margin-left:auto;margin-right:8px;}
@@ -1183,6 +1188,8 @@
             <div class="field">
               <div class="seg" id="bub-shape-seg">
                 <button type="button" data-shape="imessage" aria-pressed="true">아이메시지</button>
+                <button type="button" data-shape="round" aria-pressed="false">라운드</button>
+                <button type="button" data-shape="card" aria-pressed="false">각진</button>
                 <button type="button" data-shape="simple" aria-pressed="false">심플</button>
                 <span class="seg__thumb"></span>
               </div>
@@ -1612,9 +1619,13 @@
     });
   });
   function applyBubbleShape(){
-    var simple = bubbleShape==='simple';
-    editor.classList.toggle('bub-simple', simple);
-    canvas.classList.toggle('bub-simple', simple);
+    [editor, canvas].forEach(function(el){
+      if(!el) return;
+      el.classList.remove('bub-simple','bub-round','bub-card');
+      if(bubbleShape==='simple') el.classList.add('bub-simple');
+      else if(bubbleShape==='round') el.classList.add('bub-round');
+      else if(bubbleShape==='card') el.classList.add('bub-card');
+    });
   }
   document.querySelectorAll('#bub-shape-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -1881,14 +1892,25 @@
       if(info){
         var run=[], j=i;
         while(j<kids.length){ var f=elInfo(kids[j]); if(f && f.cid===info.cid && f.side===info.side){ run.push(kids[j]); j++; } else break; }
-        var c=findChar(info.cid);
-        var group=document.createElement('div'); group.className='g-msg-group '+info.side;
-        var av=document.createElement('span'); av.className='g-avatar '+info.side+((c&&c.photoShape==='square')?' square':'');
-        if(c&&c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; }
-        else { av.className+=' noimg'; av.textContent=(c&&c.name)?c.name.charAt(0):'?'; }
         var col=document.createElement('div'); col.className='g-msg-col '+info.side;
         run.forEach(function(n){ col.appendChild(n); });
-        group.appendChild(av); group.appendChild(col);
+        // 이름: 첫 개만 남기고 맨 위로, 없으면 아바타도 없음
+        var firstName=null;
+        [].slice.call(col.children).forEach(function(ch){
+          if(ch.classList && ch.classList.contains('char-name')){
+            if(!firstName){ firstName=ch; } else if(ch.parentNode){ ch.parentNode.removeChild(ch); }
+          }
+        });
+        if(firstName && col.firstChild!==firstName){ col.insertBefore(firstName, col.firstChild); }
+        var group=document.createElement('div'); group.className='g-msg-group '+info.side;
+        if(firstName){
+          var c=findChar(info.cid);
+          var av=document.createElement('span'); av.className='g-avatar '+info.side+((c&&c.photoShape==='square')?' square':'');
+          if(c&&c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; }
+          else { av.className+=' noimg'; av.textContent=(c&&c.name)?c.name.charAt(0):'?'; }
+          group.appendChild(av);
+        }
+        group.appendChild(col);
         inner.insertBefore(group, kids[j]||null);
         i=j;
       } else { i++; }
@@ -1929,9 +1951,10 @@
     }
     var range=sel.getRangeAt(0);
     var sideCls=(side==='right')?'right':'left';
+    var withName=(tailMode==='tail');
     var out=document.createDocumentFragment();
     if(range.collapsed){
-      out.appendChild(makeCharName(charId, sideCls));
+      if(withName) out.appendChild(makeCharName(charId, sideCls));
       var eb=makeCharBub(charId, sideCls, tailMode==='tail'); eb.appendChild(document.createTextNode('\u200b'));
       out.appendChild(eb);
       range.insertNode(out);
@@ -1941,7 +1964,7 @@
       stripBubblesFrag(contents);
       var groups=splitFragByBlank(contents);
       if(!groups.length){ var g0=[document.createTextNode('\u200b')]; groups=[g0]; }
-      out.appendChild(makeCharName(charId, sideCls));
+      if(withName) out.appendChild(makeCharName(charId, sideCls));
       groups.forEach(function(g, i){
         var isLast=(i===groups.length-1);
         var bub=makeCharBub(charId, sideCls, (tailMode==='tail')&&isLast);
@@ -1956,10 +1979,10 @@
     var c=findChar(charId); if(!c) return;
     function pk(){ return '<span class="s-preview"><i style="display:block;width:22px;height:15px;border-radius:7px;background:'+c.bub+';box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></i></span>'; }
     openSheetDef({ title:(c.name||'인물')+' 말풍선', options:[
-      { label:'왼쪽 · 연속', preview:pk, run:function(){ insertCharBubbles(charId,'left','cont'); } },
-      { label:'왼쪽 · 끝(꼬리)', preview:pk, run:function(){ insertCharBubbles(charId,'left','tail'); } },
-      { label:'오른쪽 · 연속', preview:pk, run:function(){ insertCharBubbles(charId,'right','cont'); } },
-      { label:'오른쪽 · 끝(꼬리)', preview:pk, run:function(){ insertCharBubbles(charId,'right','tail'); } }
+      { label:'왼쪽 · 이름+사진', preview:pk, run:function(){ insertCharBubbles(charId,'left','tail'); } },
+      { label:'왼쪽 · 말풍선만', preview:pk, run:function(){ insertCharBubbles(charId,'left','cont'); } },
+      { label:'오른쪽 · 이름+사진', preview:pk, run:function(){ insertCharBubbles(charId,'right','tail'); } },
+      { label:'오른쪽 · 말풍선만', preview:pk, run:function(){ insertCharBubbles(charId,'right','cont'); } }
     ]});
   }
   function applyBubble(kind, tail, withName){
