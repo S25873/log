@@ -651,7 +651,7 @@
   #editor .g-bub.recv *{color:var(--bub-recv-ink,#000) !important;}
   #editor .g-bub.send *{color:var(--bub-send-ink,#fff) !important;}
   #editor .g-bub mark.em{color:var(--em,inherit) !important;}
-  #editor .g-bub>svg.g-tail{position:absolute;bottom:0;width:16px;height:10px;z-index:0;overflow:visible;pointer-events:none;}
+  #editor .g-bub>svg.g-tail{position:absolute;bottom:0;width:14px;height:12px;z-index:0;overflow:visible;pointer-events:none;}
   #editor .g-bub.recv>svg.g-tail{left:-5px;}
   #editor .g-bub.send>svg.g-tail{right:-5px;transform:scaleX(-1);}
   #editor .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea);}
@@ -676,14 +676,14 @@
   /* 인물 말풍선 좌/우 정렬 (색은 인라인으로 인물별 적용) */
   #editor .g-bub.char-bub.left{margin-right:auto;margin-left:8px;}
   #editor .g-bub.char-bub.right{margin-left:auto;margin-right:8px;}
-  #editor .g-bub.char-bub.left>svg.g-tail{left:-5px;right:auto;transform:none;}
-  #editor .g-bub.char-bub.right>svg.g-tail{right:-5px;left:auto;transform:scaleX(-1);}
+  #editor .g-bub.char-bub.left>svg.g-tail{left:-4px;right:auto;transform:none;}
+  #editor .g-bub.char-bub.right>svg.g-tail{right:-4px;left:auto;transform:scaleX(-1);}
   #editor .g-bub-name.char-name.left{margin-right:auto;margin-left:8px;text-align:left;}
   #editor .g-bub-name.char-name.right{margin-left:auto;margin-right:8px;text-align:right;}
   #canvas .g-bub.char-bub.left,.canvas-clone .g-bub.char-bub.left{margin-right:auto !important;margin-left:.4em !important;}
   #canvas .g-bub.char-bub.right,.canvas-clone .g-bub.char-bub.right{margin-left:auto !important;margin-right:.4em !important;}
-  #canvas .g-bub.char-bub.left>svg.g-tail,.canvas-clone .g-bub.char-bub.left>svg.g-tail{left:-.42em !important;right:auto !important;transform:none !important;}
-  #canvas .g-bub.char-bub.right>svg.g-tail,.canvas-clone .g-bub.char-bub.right>svg.g-tail{right:-.42em !important;left:auto !important;transform:scaleX(-1) !important;}
+  #canvas .g-bub.char-bub.left>svg.g-tail,.canvas-clone .g-bub.char-bub.left>svg.g-tail{left:-.26em !important;right:auto !important;transform:none !important;}
+  #canvas .g-bub.char-bub.right>svg.g-tail,.canvas-clone .g-bub.char-bub.right>svg.g-tail{right:-.26em !important;left:auto !important;transform:scaleX(-1) !important;}
   /* 라운드: 코너가 많이 둥글어 꼬리를 살짝 위로 + 더 겹쳐 붙임 */
   #canvas.bub-round .g-bub.char-bub.left>svg.g-tail,.canvas-clone.bub-round .g-bub.char-bub.left>svg.g-tail{left:-.3em !important;bottom:.22em !important;}
   #canvas.bub-round .g-bub.char-bub.right>svg.g-tail,.canvas-clone.bub-round .g-bub.char-bub.right>svg.g-tail{right:-.3em !important;bottom:.22em !important;}
@@ -765,7 +765,7 @@
   #canvas .g-bub-name.send,.canvas-clone .g-bub-name.send{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;color:var(--bub-name-send,#8a8a8a) !important;}
   #canvas .g-bub-name + .g-bub,.canvas-clone .g-bub-name + .g-bub{margin-top:.25em !important;}
   #canvas .g-bub-name:first-child,.canvas-clone .g-bub-name:first-child{margin-top:0 !important;}
-  #canvas .g-bub>svg.g-tail,.canvas-clone .g-bub>svg.g-tail{position:absolute !important;bottom:0 !important;z-index:0 !important;width:1.35em !important;height:.85em !important;display:block !important;overflow:visible !important;pointer-events:none !important;}
+  #canvas .g-bub>svg.g-tail,.canvas-clone .g-bub>svg.g-tail{position:absolute !important;bottom:0 !important;z-index:0 !important;width:.82em !important;height:.72em !important;display:block !important;overflow:visible !important;pointer-events:none !important;}
   #canvas .g-bub.recv>svg.g-tail,.canvas-clone .g-bub.recv>svg.g-tail{left:-.42em !important;}
   #canvas .g-bub.send>svg.g-tail,.canvas-clone .g-bub.send>svg.g-tail{right:-.42em !important;transform:scaleX(-1) !important;}
   #canvas .g-bub.recv>svg.g-tail path,.canvas-clone .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea) !important;}
@@ -1819,8 +1819,8 @@
   /* ============================================================
      말풍선
      ============================================================ */
-  var TAIL_SVG = '<svg class="g-tail" viewBox="0 0 16 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
-    + '<path d="M16 0 L16 20 Q6 20 0.6 19.2 Q-0.9 19.0 0.5 18.2 Q6.2 15.0 8 10 Q9.2 5.6 9 0 Z"/></svg>';
+  var TAIL_SVG = '<svg class="g-tail" viewBox="0 0 16 16" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
+    + '<path d="M16 16 Q3 16 0 12.5 Q5.2 11.5 6.2 7.6 Q7.2 3.6 7.6 0 Q9.2 8.4 16 16 Z"/></svg>';
 
   function closestBubble(node){
     var el = node && node.nodeType===3 ? node.parentNode : node;
