@@ -1189,21 +1189,14 @@
             </div>
           </div>
 
-          <div class="section">
-            <p class="section__head">말풍선 색</p>
-            <div class="cgrid cgrid--2">
-              <div class="cchip"><label>왼쪽 배경</label><div class="cchip__box"><input id="c-brecv" type="color" value="#ececec"><input class="cchip__hex" id="c-brecv-txt" type="text" value="#ececec"></div></div>
-              <div class="cchip"><label>오른쪽 배경</label><div class="cchip__box"><input id="c-bsend" type="color" value="#248bf5"><input class="cchip__hex" id="c-bsend-txt" type="text" value="#248bf5"></div></div>
-              <div class="cchip"><label>왼쪽 글자</label><div class="cchip__box"><input id="c-brecv-ink" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-brecv-ink-txt" type="text" value="#1a1a1a"></div></div>
-              <div class="cchip"><label>오른쪽 글자</label><div class="cchip__box"><input id="c-bsend-ink" type="color" value="#ffffff"><input class="cchip__hex" id="c-bsend-ink-txt" type="text" value="#ffffff"></div></div>
-              <div class="cchip"><label>왼쪽 이름</label><div class="cchip__box"><input id="c-brecv-name" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-brecv-name-txt" type="text" value="#8a8a8a"></div></div>
-              <div class="cchip"><label>오른쪽 이름</label><div class="cchip__box"><input id="c-bsend-name" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-bsend-name-txt" type="text" value="#8a8a8a"></div></div>
-            </div>
-          </div>
-
-          <div class="section">
-            <p class="section__head">말풍선 프리셋</p>
-            <div class="presets" id="bub-presets" style="grid-template-columns:repeat(auto-fill,minmax(72px,1fr))"></div>
+          <div id="legacy-bub" hidden aria-hidden="true">
+            <input id="c-brecv" type="color" value="#ececec"><input id="c-brecv-txt" type="text" value="#ececec">
+            <input id="c-bsend" type="color" value="#248bf5"><input id="c-bsend-txt" type="text" value="#248bf5">
+            <input id="c-brecv-ink" type="color" value="#1a1a1a"><input id="c-brecv-ink-txt" type="text" value="#1a1a1a">
+            <input id="c-bsend-ink" type="color" value="#ffffff"><input id="c-bsend-ink-txt" type="text" value="#ffffff">
+            <input id="c-brecv-name" type="color" value="#8a8a8a"><input id="c-brecv-name-txt" type="text" value="#8a8a8a">
+            <input id="c-bsend-name" type="color" value="#8a8a8a"><input id="c-bsend-name-txt" type="text" value="#8a8a8a">
+            <div id="bub-presets"></div>
           </div>
         </div>
 
@@ -3081,8 +3074,16 @@
       for(var i=0;i<bub.childNodes.length;i++){ var c=bub.childNodes[i]; if(c.nodeType===1 && c.nodeName && c.nodeName.toLowerCase()==='svg'){ svg=c; break; } }
       if(!svg) return;
       var r=svg.getBoundingClientRect(); if(r.width<=0||r.height<=0) return;
-      var isSend=bub.classList.contains('send');
-      out.push({ x:r.left-rootRect.left, y:r.top-rootRect.top, w:r.width, h:r.height, flip:isSend, color:isSend?$('c-bsend').value:$('c-brecv').value });
+      var flip, color;
+      if(bub.classList.contains('char-bub')){
+        flip = bub.classList.contains('right');
+        var cc=findChar(bub.getAttribute('data-char'));
+        color = cc ? cc.bub : (bub.style.getPropertyValue('background') || '#cccccc');
+      } else {
+        var isSend=bub.classList.contains('send');
+        flip=isSend; color = isSend ? ($('c-bsend')?$('c-bsend').value:'#248bf5') : ($('c-brecv')?$('c-brecv').value:'#ececec');
+      }
+      out.push({ x:r.left-rootRect.left, y:r.top-rootRect.top, w:r.width, h:r.height, flip:flip, color:color });
     });
     return out;
   }
