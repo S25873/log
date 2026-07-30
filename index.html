@@ -531,7 +531,8 @@
 
   /* 프리셋 */
   .presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(0,1fr));gap:8px;}
-  .presets--bg{grid-template-columns:repeat(5,minmax(0,1fr));}
+  .presets--bg{grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;}
+  .presets--bg .chip{font-size:11px;}
   .chip{
     position:relative;width:100%;aspect-ratio:1;min-width:0;
     border:1px solid var(--line);border-radius:var(--radius-xs);cursor:pointer;
@@ -749,7 +750,7 @@
     .fbtn .c-ic,.fbtn .h-ic,.fbtn .sub-ic,.fbtn .hr-ic{font-size:11px;}
     .fmt-row{gap:3px;}
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
-    .presets--bg{grid-template-columns:repeat(4,minmax(0,1fr));}
+    .presets--bg{grid-template-columns:repeat(5,minmax(0,1fr));}
     .preview__meta{display:none;}
   }
 
@@ -1115,40 +1116,59 @@
 
         <!-- ========== 레이아웃 ========== -->
         <div class="panel" data-panel="layout" role="tabpanel">
-          <div class="section">
-            <p class="section__head">배경</p>
-            <div class="cgrid cgrid--3" style="margin-bottom:16px">
-              <div class="cchip"><label>배경 색</label><div class="cchip__box"><input id="c-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-bg-txt" type="text" value="#ffffff"></div></div>
-            </div>
-            <div class="presets presets--bg" id="bg-presets"></div>
-          </div>
+          <details class="fold" id="fold-bg">
+            <summary>
+              배경
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <div class="field">
+                <span class="label">배경 종류</span>
+                <div class="seg" id="bg-mode-seg">
+                  <button type="button" data-bgmode="solid" aria-pressed="true">단색</button>
+                  <button type="button" data-bgmode="gradient" aria-pressed="false">그라데이션</button>
+                  <button type="button" data-bgmode="photo" aria-pressed="false">사진</button>
+                  <span class="seg__thumb"></span>
+                </div>
+              </div>
 
-          <div class="section">
-            <p class="section__head">사진 배경</p>
-            <label class="switch" for="photo-on">
-              <input id="photo-on" type="checkbox">
-              <span class="switch__text">
-                <span class="switch__title">사진 배경 사용</span>
-                <span class="switch__sub">배경에 사진을 깔고 불투명도·밝기를 조절합니다</span>
-              </span>
-            </label>
-            <input id="photo-file" type="file" accept="image/*" hidden>
-            <div class="photo-controls" id="photo-controls" hidden>
-              <div class="mini-row" style="justify-content:flex-start">
-                <button class="mini" id="photo-pick" type="button">사진 선택</button>
-              </div>
-              <div class="grid-2" style="margin-top:16px">
-                <div class="field">
-                  <span class="label">불투명도 <span class="val">100%</span></span>
-                  <div class="rangewrap"><input id="opacity" type="range" min="10" max="100" step="10" value="100"></div>
+              <div id="bg-solid-view" style="margin-top:18px">
+                <div class="cgrid cgrid--2" style="margin-bottom:12px">
+                  <div class="cchip"><label>배경 색</label><div class="cchip__box"><input id="c-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-bg-txt" type="text" value="#ffffff"></div></div>
                 </div>
-                <div class="field">
-                  <span class="label">밝기 <span class="val">100%</span></span>
-                  <div class="rangewrap"><input id="bright" type="range" min="10" max="100" step="10" value="100"></div>
+                <div class="presets presets--bg" id="bg-presets-solid"></div>
+              </div>
+
+              <div id="bg-grad-view" style="display:none;margin-top:18px">
+                <div class="cgrid cgrid--2">
+                  <div class="cchip"><label>색 1</label><div class="cchip__box"><input id="c-grad1" type="color" value="#ffecd2"><input class="cchip__hex" id="c-grad1-txt" type="text" value="#ffecd2"></div></div>
+                  <div class="cchip"><label>색 2</label><div class="cchip__box"><input id="c-grad2" type="color" value="#fcb69f"><input class="cchip__hex" id="c-grad2-txt" type="text" value="#fcb69f"></div></div>
+                </div>
+                <div class="field" style="margin-top:14px">
+                  <span class="label">방향 <span class="val">135°</span></span>
+                  <div class="rangewrap"><input id="grad-angle" type="range" min="0" max="360" step="5" value="135"></div>
+                </div>
+                <div class="presets presets--bg" id="bg-presets-grad" style="margin-top:14px"></div>
+              </div>
+
+              <div id="bg-photo-view" style="display:none;margin-top:18px">
+                <input id="photo-file" type="file" accept="image/*" hidden>
+                <div class="mini-row" style="justify-content:flex-start">
+                  <button class="mini" id="photo-pick" type="button">사진 선택</button>
+                </div>
+                <div class="grid-2" style="margin-top:16px">
+                  <div class="field">
+                    <span class="label">불투명도 <span class="val">100%</span></span>
+                    <div class="rangewrap"><input id="opacity" type="range" min="10" max="100" step="10" value="100"></div>
+                  </div>
+                  <div class="field">
+                    <span class="label">밝기 <span class="val">100%</span></span>
+                    <div class="rangewrap"><input id="bright" type="range" min="10" max="100" step="10" value="100"></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </details>
 
           <details class="fold" id="fold-size">
             <summary>
@@ -1157,10 +1177,10 @@
             </summary>
             <div class="fold__body">
               <div class="field">
-                <span class="label">저장 형태</span>
+                <span class="label">비율 조정</span>
                 <div class="seg" id="size-seg">
-                  <button type="button" data-mode="width" aria-pressed="true">자동 높이</button>
-                  <button type="button" data-mode="ratio" aria-pressed="false">비율 고정</button>
+                  <button type="button" data-mode="width" aria-pressed="true">자동 비율</button>
+                  <button type="button" data-mode="ratio" aria-pressed="false">고정 비율</button>
                   <span class="seg__thumb"></span>
                 </div>
               </div>
@@ -1236,6 +1256,7 @@
   var bgValue = '#ffffff';
   var photoOn = false;
   var photoData = null;
+  var bgMode = 'solid';  // 'solid' | 'gradient' | 'photo'
 
   /* 형광펜·강조색: 슬롯 1/2/3 (슬롯1은 기존 c-hl / c-em 을 그대로 사용) */
   var hlSlot = 1, emSlot = 1;
@@ -1291,17 +1312,20 @@
   /* ============================================================
      프리셋 데이터 (모던 뉴트럴 톤)
      ============================================================ */
-  var bgPresets = [
-    {bg:'#ffffff', fg:'#2b2b2b', swatch:'#ffffff'},              // 화이트
-    {bg:'#fbf7f0', fg:'#3a352d', swatch:'#fbf7f0'},              // 크림
-    {bg:'#fdf0f2', fg:'#5c2b34', swatch:'#fdf0f2'},              // 로즈
-    {bg:'#eef4fb', fg:'#233b52', swatch:'#eef4fb'},              // 스카이
-    {bg:'#eef7f0', fg:'#264536', swatch:'#eef7f0'},              // 민트
-    {bg:'#1a1a1a', fg:'#f0f0f0', swatch:'#1a1a1a'},              // 먹
-    {bg:'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)', fg:'#5a3a28', swatch:'linear-gradient(135deg,#ffecd2,#fcb69f)'}, // 선셋
-    {bg:'linear-gradient(135deg,#a1c4fd 0%,#c2e9fb 100%)', fg:'#22364a', swatch:'linear-gradient(135deg,#a1c4fd,#c2e9fb)'}, // 오션
-    {bg:'linear-gradient(135deg,#d4fc79 0%,#96e6a1 100%)', fg:'#28472e', swatch:'linear-gradient(135deg,#d4fc79,#96e6a1)'}, // 프레시
-    {bg:'linear-gradient(160deg,#30cfd0 0%,#330867 100%)', fg:'#f0f0f0', swatch:'linear-gradient(160deg,#30cfd0,#330867)'}  // 미드나잇
+  var bgSolids = [
+    {bg:'#ffffff', fg:'#2b2b2b'},  {bg:'#fbf7f0', fg:'#3a352d'},  {bg:'#fdf0f2', fg:'#5c2b34'},
+    {bg:'#eef4fb', fg:'#233b52'},  {bg:'#eef7f0', fg:'#264536'},  {bg:'#f4eefb', fg:'#3a2f52'},
+    {bg:'#f7f7f4', fg:'#33322c'},  {bg:'#2b2f36', fg:'#eceef1'},  {bg:'#1a1a1a', fg:'#f0f0f0'}
+  ];
+  var bgGrads = [
+    {c1:'#ffecd2', c2:'#fcb69f', angle:135, fg:'#5a3a28'},  // 선셋
+    {c1:'#ffdde1', c2:'#ee9ca7', angle:135, fg:'#5c2b34'},  // 피치
+    {c1:'#a1c4fd', c2:'#c2e9fb', angle:135, fg:'#22364a'},  // 오션
+    {c1:'#d4fc79', c2:'#96e6a1', angle:135, fg:'#28472e'},  // 프레시
+    {c1:'#e0c3fc', c2:'#8ec5fc', angle:135, fg:'#3a2f52'},  // 라벤더
+    {c1:'#fbc2eb', c2:'#a6c1ee', angle:135, fg:'#4a2f45'},  // 블로썸
+    {c1:'#30cfd0', c2:'#330867', angle:160, fg:'#f0f0f0'},  // 미드나잇
+    {c1:'#414345', c2:'#232526', angle:160, fg:'#eceef1'}   // 차콜
   ];
   var hlPresets = [
     {c:'#f4b2ad', label:'코랄'}, {c:'#f8c9a6', label:'피치'}, {c:'#f9ee9a', label:'옐로'}, {c:'#dae59e', label:'라임'},
@@ -1317,23 +1341,48 @@
   ];
 
   function toHex(c){ return String(c).indexOf('gradient') > -1 ? '#ffffff' : c; }
+  function currentGradient(){
+    var a=($('grad-angle')?$('grad-angle').value:135), c1=($('c-grad1')?$('c-grad1').value:'#ffecd2'), c2=($('c-grad2')?$('c-grad2').value:'#fcb69f');
+    return 'linear-gradient('+a+'deg, '+c1+', '+c2+')';
+  }
 
-  /* 배경 프리셋 렌더 */
-  var bgWrap = $('bg-presets');
-  bgPresets.forEach(function(p){
+  /* 배경 프리셋 렌더 (단색 / 그라데이션 카테고리별) */
+  var bgSolidWrap = $('bg-presets-solid');
+  var bgGradWrap  = $('bg-presets-grad');
+  function clearBgOn(){ document.querySelectorAll('#bg-presets-solid .chip, #bg-presets-grad .chip').forEach(function(x){ x.classList.remove('on'); }); }
+  function syncBgChips(){
+    var v = String(bgValue).toLowerCase();
+    document.querySelectorAll('#bg-presets-solid .chip').forEach(function(el){ el.classList.toggle('on', String(el.getAttribute('data-bg')).toLowerCase()===v); });
+    document.querySelectorAll('#bg-presets-grad .chip').forEach(function(el){ el.classList.toggle('on', String(el.getAttribute('data-grad')).toLowerCase()===v); });
+  }
+  bgSolids.forEach(function(p){
     var b = document.createElement('button');
-    b.type = 'button'; b.className = 'chip';
-    b.style.background = p.swatch; b.style.color = p.fg; b.textContent = '가';
-    b.title = '배경 프리셋 적용';
+    b.type='button'; b.className='chip'; b.setAttribute('data-bg', p.bg);
+    b.style.background=p.bg; b.style.color=p.fg; b.textContent='가'; b.title='단색 배경 적용';
     b.addEventListener('click', function(){
-      [].forEach.call(bgWrap.children, function(x){ x.classList.remove('on'); });
-      b.classList.add('on');
+      clearBgOn(); b.classList.add('on');
       bgValue = p.bg;
-      $('c-fg').value = toHex(p.fg); $('c-fg-txt').value = p.fg; $('c-bg-txt').value = p.bg;
-      if(p.bg.indexOf('gradient') === -1){ $('c-bg').value = p.bg; }
+      $('c-bg').value=p.bg; $('c-bg-txt').value=p.bg;
+      $('c-fg').value=toHex(p.fg); $('c-fg-txt').value=p.fg;
       render();
     });
-    bgWrap.appendChild(b);
+    bgSolidWrap.appendChild(b);
+  });
+  bgGrads.forEach(function(p){
+    var grad='linear-gradient('+p.angle+'deg, '+p.c1+', '+p.c2+')';
+    var b = document.createElement('button');
+    b.type='button'; b.className='chip'; b.setAttribute('data-grad', grad);
+    b.style.background=grad; b.style.color=p.fg; b.textContent='가'; b.title='그라데이션 적용';
+    b.addEventListener('click', function(){
+      clearBgOn(); b.classList.add('on');
+      $('c-grad1').value=p.c1; $('c-grad1-txt').value=p.c1;
+      $('c-grad2').value=p.c2; $('c-grad2-txt').value=p.c2;
+      $('grad-angle').value=p.angle; setVal('grad-angle', p.angle+'°');
+      $('c-fg').value=toHex(p.fg); $('c-fg-txt').value=p.fg;
+      bgValue = currentGradient();
+      render();
+    });
+    bgGradWrap.appendChild(b);
   });
 
   var hlWrap = $('hl-presets');
@@ -1444,6 +1493,31 @@
   }
   linkColor('c-bg','c-bg-txt',true,false);
   linkColor('c-fg','c-fg-txt',false,false);
+  function updateGradient(){ if(bgMode==='gradient'){ bgValue = currentGradient(); } }
+  linkColor('c-grad1','c-grad1-txt',false,false, updateGradient);
+  linkColor('c-grad2','c-grad2-txt',false,false, updateGradient);
+  if($('grad-angle')){
+    $('grad-angle').addEventListener('input', function(){ setVal('grad-angle', $('grad-angle').value+'°'); updateGradient(); render(); });
+  }
+  function applyBgViews(){
+    if($('bg-solid-view')) $('bg-solid-view').style.display = bgMode==='solid' ? '' : 'none';
+    if($('bg-grad-view'))  $('bg-grad-view').style.display  = bgMode==='gradient' ? '' : 'none';
+    if($('bg-photo-view')) $('bg-photo-view').style.display = bgMode==='photo' ? '' : 'none';
+    photoOn = (bgMode==='photo');
+  }
+  document.querySelectorAll('#bg-mode-seg button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      bgMode = btn.getAttribute('data-bgmode');
+      applyBgViews();
+      if(bgMode==='solid'){ bgValue = $('c-bg').value; }
+      else if(bgMode==='gradient'){ bgValue = currentGradient(); }
+      if(bgMode==='photo' && !photoData){ $('photo-file').click(); }
+      moveThumb($('bg-mode-seg'));
+      render();
+    });
+  });
   linkColor('c-hl','c-hl-txt',false,true, function(){ recolorSlotMarks('hl',1,$('c-hl').value); });
   linkColor('c-hl2','c-hl2-txt',false,false, function(){ recolorSlotMarks('hl',2,$('c-hl2').value); });
   linkColor('c-hl3','c-hl3-txt',false,false, function(){ recolorSlotMarks('hl',3,$('c-hl3').value); });
@@ -2229,7 +2303,7 @@
     thumb.style.width = aRect.width + 'px';
     thumb.style.transform = 'translateX(' + (aRect.left - segRect.left - pad) + 'px)';
   }
-  function moveAllThumbs(){ moveThumb($('align-seg')); moveThumb($('size-seg')); moveThumb($('ratio-seg')); moveThumb($('hl-slot-seg')); moveThumb($('em-slot-seg')); }
+  function moveAllThumbs(){ moveThumb($('align-seg')); moveThumb($('size-seg')); moveThumb($('ratio-seg')); moveThumb($('hl-slot-seg')); moveThumb($('em-slot-seg')); moveThumb($('bg-mode-seg')); }
 
   document.querySelectorAll('#align-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -2284,10 +2358,13 @@
   if(_foldHl){ _foldHl.addEventListener('toggle', function(){ if(_foldHl.open){ requestAnimationFrame(function(){ moveThumb($('hl-slot-seg')); }); } }); }
   var _foldSize=$('fold-size');
   if(_foldSize){ _foldSize.addEventListener('toggle', function(){ if(_foldSize.open){ requestAnimationFrame(moveAllThumbs); } }); }
+  var _foldBg=$('fold-bg');
+  if(_foldBg){ _foldBg.addEventListener('toggle', function(){ if(_foldBg.open){ requestAnimationFrame(moveAllThumbs); } }); }
 
   var ratios = [
     {w:1,h:1,label:'1:1',rw:1080}, {w:4,h:5,label:'4:5',rw:1080},
-    {w:3,h:4,label:'3:4',rw:1200}, {w:9,h:16,label:'9:16',rw:1080}
+    {w:3,h:4,label:'3:4',rw:1200}, {w:2,h:3,label:'2:3',rw:1080},
+    {w:9,h:16,label:'9:16',rw:1080}, {w:16,h:9,label:'16:9',rw:1280}
   ];
   var rSeg = $('ratio-seg');
   ratios.forEach(function(p, idx){
@@ -2627,20 +2704,13 @@
      사진 배경
      ============================================================ */
   function updatePhotoUI(){
-    $('photo-controls').hidden = !photoOn;
-    $('photo-on').checked = photoOn;
     var pick=$('photo-pick'); if(pick){ pick.textContent = photoData ? '🖼 사진 변경' : '🖼 사진 선택'; }
   }
-  $('photo-on').addEventListener('change', function(){
-    photoOn = $('photo-on').checked;
-    if(photoOn && !photoData){ $('photo-file').click(); }
-    updatePhotoUI(); render();
-  });
   $('photo-pick').addEventListener('click', function(){ $('photo-file').click(); });
   $('photo-file').addEventListener('change', function(e){
     var file=e.target.files && e.target.files[0]; if(!file) return;
     var reader=new FileReader();
-    reader.onload=function(ev){ photoData=ev.target.result; photoOn=true; updatePhotoUI(); render(); };
+    reader.onload=function(ev){ photoData=ev.target.result; photoOn=(bgMode==='photo'); updatePhotoUI(); render(); };
     reader.readAsDataURL(file); e.target.value='';
   });
 
@@ -2907,7 +2977,7 @@
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-quote','c-quote-txt','c-hr','c-hr-txt',
-    'c-brecv-name','c-brecv-name-txt','c-bsend-name','c-bsend-name-txt','opacity','bright'];
+    'c-brecv-name','c-brecv-name-txt','c-bsend-name','c-bsend-name-txt','opacity','bright','c-grad1','c-grad1-txt','c-grad2','c-grad2-txt','grad-angle'];
   var _restoring=false;
 
   function saveState(){
@@ -2916,7 +2986,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:editor.innerHTML, nameHtml:nameEd?nameEd.innerHTML:'',
         titleHtml:($('title-ed')?$('title-ed').innerHTML:''), subtitleHtml:($('subtitle-ed')?$('subtitle-ed').innerHTML:''),
-        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, photoOn:photoOn, photoData:photoData };
+        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, photoOn:photoOn, photoData:photoData };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
     }catch(e){}
@@ -2959,9 +3029,12 @@
       applySizeModeUI();
       if(data.ratio){ ratio=data.ratio;
         [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); }); }
-      [].forEach.call(bgWrap.children, function(x){ x.classList.remove('on'); });
+      clearBgOn();
       photoData = (typeof data.photoData==='string') ? data.photoData : null;
-      photoOn = !!data.photoOn && !!photoData;
+      bgMode = data.bgMode || (data.photoOn && photoData ? 'photo' : (String(data.bgValue).indexOf('gradient')!==-1 ? 'gradient' : 'solid'));
+      document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-bgmode')===bgMode?'true':'false'); });
+      applyBgViews();
+      photoOn = (bgMode==='photo') && !!photoData;
       updatePhotoUI();
     }catch(e){}
     _restoring=false;
@@ -2978,7 +3051,7 @@
   var PRESET_KEY = 'logmaker-presets-v1';
   function captureSettings(){
     var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio };
+    return { vals:vals, bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode };
   }
   function applySettings(s){
     if(!s) return;
@@ -2993,6 +3066,10 @@
     applySizeModeUI();
     if(s.ratio){ ratio=s.ratio;
       [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); }); }
+    bgMode = s.bgMode || (String(bgValue).indexOf('gradient')!==-1 ? 'gradient' : 'solid');
+    document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-bgmode')===bgMode?'true':'false'); });
+    applyBgViews();
+    photoOn = (bgMode==='photo') && !!photoData;
     ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-em','c-em2','c-em3','c-em4','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-quote','c-hr','c-brecv-name','c-bsend-name'].forEach(function(cid){
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
     });
@@ -3031,8 +3108,7 @@
   function syncPresetChips(){
     markDot(hlWrap, hlPresets, hlColorOf(hlSlot));
     markDot(emWrap, emPresets, emColorOf(emSlot));
-    var bgv=(bgValue||'').trim().toLowerCase();
-    [].forEach.call(bgWrap.children, function(el, i){ var b=bgPresets[i]?String(bgPresets[i].bg).toLowerCase():''; el.classList.toggle('on', b===bgv); });
+    syncBgChips();
   }
 
   /* ============================================================
