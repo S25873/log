@@ -1212,9 +1212,9 @@
             <div class="fold__body">
               <div class="field">
                 <span class="label">말풍선 모양</span>
-                <div class="seg" id="bub-shape-seg">
-                  <button type="button" data-shape="imessage" aria-pressed="true">아이메시지</button>
-                  <button type="button" data-shape="simple" aria-pressed="false">심플</button>
+                <div class="seg" id="bub-shape-seg" style="height:auto">
+                  <button type="button" data-shape="imessage" aria-pressed="true" style="padding:7px 2px;line-height:1.35">메시지<br><span style="font-size:10px;opacity:.8">(사진 없음 추천)</span></button>
+                  <button type="button" data-shape="simple" aria-pressed="false" style="padding:7px 2px;line-height:1.35">심플<br><span style="font-size:10px;opacity:.8">(꼬리 없음)</span></button>
                   <span class="seg__thumb"></span>
                 </div>
               </div>
@@ -1951,47 +1951,46 @@
       n.style.setProperty('color', c.nameColor, 'important');
     });
   }
-  // 캔버스: 같은 인물 연속 묶음을 [아바타][말풍선 열]로 감싼다 (미리보기·저장용)
+  // 캔버스: 같은 인물 묶음을 [아바타][말풍선 열]로 감싼다. 이름은 새 그룹의 시작점.
   function groupAvatars(root){
     var inner = root.querySelector('.g-inner'); if(!inner) return;
-    var kids = [].slice.call(inner.childNodes), i=0;
+    var kids = [].slice.call(inner.childNodes);
     function elInfo(nd){
       if(!(nd && nd.nodeType===1 && nd.classList)) return null;
       var isName = nd.classList.contains('g-bub-name') && nd.classList.contains('char-name');
       var isBub = nd.classList.contains('g-bub') && nd.classList.contains('char-bub');
       if(!isName && !isBub) return null;
-      return { cid: nd.getAttribute('data-char'), side: nd.classList.contains('right')?'right':'left' };
+      return { cid: nd.getAttribute('data-char'), side: nd.classList.contains('right')?'right':'left', isName:isName };
     }
-    while(i<kids.length){
-      var info=elInfo(kids[i]);
-      if(info){
-        var run=[], j=i;
-        while(j<kids.length){ var f=elInfo(kids[j]); if(f && f.cid===info.cid && f.side===info.side){ run.push(kids[j]); j++; } else break; }
-        var col=document.createElement('div'); col.className='g-msg-col '+info.side;
-        run.forEach(function(n){ col.appendChild(n); });
-        // 이름: 첫 개만 남기고 맨 위로, 없으면 아바타도 없음
-        var firstName=null;
-        [].slice.call(col.children).forEach(function(ch){
-          if(ch.classList && ch.classList.contains('char-name')){
-            if(!firstName){ firstName=ch; } else if(ch.parentNode){ ch.parentNode.removeChild(ch); }
-          }
-        });
-        if(firstName && col.firstChild!==firstName){ col.insertBefore(firstName, col.firstChild); }
-        var wantAv=false;
-        [].forEach.call(col.querySelectorAll('.g-bub.char-bub'), function(bb){ if(bb.getAttribute('data-av')==='1') wantAv=true; });
-        var group=document.createElement('div'); group.className='g-msg-group '+info.side;
-        if(wantAv){
-          var c=findChar(info.cid);
-          var av=document.createElement('span'); av.className='g-avatar '+info.side+((c&&c.photoShape==='square')?' square':'');
-          if(c&&c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; }
-          else { av.className+=' noimg'; av.textContent=(c&&c.name)?c.name.charAt(0):'?'; }
-          group.appendChild(av);
-        }
-        group.appendChild(col);
-        inner.insertBefore(group, kids[j]||null);
-        i=j;
-      } else { i++; }
-    }
+    var groups=[], cur=null;
+    kids.forEach(function(nd){
+      var f=elInfo(nd);
+      if(!f){ cur=null; return; }
+      if(cur && (cur.cid!==f.cid || cur.side!==f.side)) cur=null;
+      if(f.isName){ cur={ cid:f.cid, side:f.side, items:[nd] }; groups.push(cur); }
+      else { if(!cur){ cur={ cid:f.cid, side:f.side, items:[nd] }; groups.push(cur); } else { cur.items.push(nd); } }
+    });
+    groups.forEach(function(g){
+      var last=g.items[g.items.length-1];
+      var ref=last.nextSibling;
+      var group=document.createElement('div'); group.className='g-msg-group '+g.side;
+      var col=document.createElement('div'); col.className='g-msg-col '+g.side;
+      var name=null;
+      g.items.forEach(function(n){ if(n.classList.contains('char-name') && !name){ name=n; } });
+      if(name) col.appendChild(name);
+      g.items.forEach(function(n){ if(n!==name){ if(n.classList.contains('char-name')){ if(n.parentNode) n.parentNode.removeChild(n); } else { col.appendChild(n); } } });
+      var wantAv=false;
+      [].forEach.call(col.querySelectorAll('.g-bub.char-bub'), function(bb){ if(bb.getAttribute('data-av')==='1') wantAv=true; });
+      if(wantAv){
+        var c=findChar(g.cid);
+        var av=document.createElement('span'); av.className='g-avatar '+g.side+((c&&c.photoShape==='square')?' square':'');
+        if(c&&c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; }
+        else { av.className+=' noimg'; av.textContent=(c&&c.name)?c.name.charAt(0):'?'; }
+        group.appendChild(av);
+      }
+      group.appendChild(col);
+      inner.insertBefore(group, ref);
+    });
   }
   function stripBubblesFrag(frag){
     [].forEach.call(frag.querySelectorAll('svg.g-tail'), function(s){ if(s.parentNode) s.parentNode.removeChild(s); });
@@ -2705,7 +2704,7 @@
     thumb.style.width = aRect.width + 'px';
     thumb.style.transform = 'translateX(' + (aRect.left - segRect.left - pad) + 'px)';
   }
-  function moveAllThumbs(){ moveThumb($('align-seg')); moveThumb($('size-seg')); moveThumb($('ratio-seg')); moveThumb($('hl-slot-seg')); moveThumb($('em-slot-seg')); moveThumb($('bg-mode-seg')); moveThumb($('char-shape-seg')); moveThumb($('bub-shape-seg')); }
+  function moveAllThumbs(){ moveThumb($('align-seg')); moveThumb($('size-seg')); moveThumb($('ratio-seg')); moveThumb($('hl-slot-seg')); moveThumb($('em-slot-seg')); moveThumb($('bg-mode-seg')); moveThumb($('char-shape-seg')); moveThumb($('bub-shape-seg')); moveThumb($('topbar-src-seg')); }
 
   document.querySelectorAll('#align-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -2863,6 +2862,7 @@
     if(_top){
       var padTop=fs*0.7, avD=fs*3.0;
       _top.style.padding = padTop+'px '+(pad+fs*1.6)+'px '+(fs*0.6)+'px';
+      _top.style.marginBottom = (fs*0.7)+'px';
       var _av=_top.querySelector('.g-tb-av'); if(_av){ _av.style.width=avD+'px'; _av.style.height=avD+'px'; _av.style.fontSize=(fs*1.25)+'px'; _av.style.marginBottom=(fs*0.32)+'px'; }
       var _tn=_top.querySelector('.g-tb-name'); if(_tn){ _tn.style.fontSize=(fs*0.66)+'px'; }
       var avC=padTop+avD/2;
@@ -2871,7 +2871,7 @@
     }
     var _comp = el.querySelector('.g-inputbar');
     if(_comp){
-      _comp.style.padding=(fs*0.6)+'px '+pad+'px'; _comp.style.gap=(fs*0.5)+'px';
+      _comp.style.padding=(fs*0.6)+'px '+pad+'px'; _comp.style.gap=(fs*0.5)+'px'; _comp.style.marginTop=(fs*0.7)+'px';
       var _pl=_comp.querySelector('.g-ib-plus'); if(_pl){ _pl.style.fontSize=(fs*1.5)+'px'; _pl.style.width=(fs*1.6)+'px'; _pl.style.height=(fs*1.6)+'px'; }
       var _fd=_comp.querySelector('.g-ib-field'); if(_fd){ _fd.style.padding=(fs*0.45)+'px '+(fs*0.8)+'px'; _fd.style.fontSize=(fs*0.85)+'px'; _fd.style.minHeight=(fs*1.9)+'px'; }
       var _sd=_comp.querySelector('.g-ib-send'); if(_sd){ var sd=fs*1.7; _sd.style.width=sd+'px'; _sd.style.height=sd+'px'; _sd.style.fontSize=fs+'px'; }
@@ -3816,7 +3816,7 @@
     var on=$('topbar-on'), ib=$('inputbar-on'), srcSeg=$('topbar-src-seg'), nm=$('topbar-name');
     if(!on) return;
     on.checked=chrome.topbar; ib.checked=chrome.inputbar; if(nm) nm.value=chrome.name||'';
-    if(srcSeg){ [].forEach.call(srcSeg.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-src')===chrome.src?'true':'false'); }); if(typeof moveThumb==='function') moveThumb(srcSeg); }
+    if(srcSeg){ [].forEach.call(srcSeg.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-src')===chrome.src?'true':'false'); }); if(typeof moveThumb==='function'){ requestAnimationFrame(function(){ moveThumb(srcSeg); }); } }
     var opts=$('topbar-opts'); if(opts) opts.hidden=!chrome.topbar;
     var custom=chrome.src==='custom';
     if($('topbar-char-view')) $('topbar-char-view').hidden=custom;
