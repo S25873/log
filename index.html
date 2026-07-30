@@ -884,7 +884,7 @@
       <div class="panelscroll">
         <!-- ========== 내용 ========== -->
         <div class="panel is-active" data-panel="content" role="tabpanel">
-          <details class="fold" id="fold-body" open>
+          <details class="fold" id="fold-body">
             <summary>
               본문
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
@@ -3639,7 +3639,7 @@
     linkColor('char-bub','char-bub-txt',false,false, function(){ syncCharBubPreset($('char-bub').value); });
     linkColor('char-ink','char-ink-txt',false,false);
     linkColor('char-namecolor','char-namecolor-txt',false,false);
-    var charBubPresets = ['#248bf5','#e5e5ea','#1c1c1e','#ffffff','#ffd1d1','#ffe0b8','#fbf0b0','#cdeccb','#cbe0fb','#ddd0f5'];
+    var charBubPresets = ['#248bf5','#e5e5ea','#1c1c1e','#ffffff','#ffd1d1','#ffe0b8','#fbf0b0','#cdeccb','#cbe0fb','#ddd0f5','#f6c9de','#cdb29a'];
     var cbpWrap = $('char-bub-presets');
     if(cbpWrap){
       charBubPresets.forEach(function(col){
@@ -3654,7 +3654,7 @@
     if($('char-photo-preview')){
       $('char-photo-preview').addEventListener('click', function(){
         openSheetDef({ title:'사진', options:[
-          { label:'🖼 사진 선택', run:function(){ $('char-photo-file').click(); } },
+          { label:'사진 선택', run:function(){ $('char-photo-file').click(); } },
           { label:'제거', run:function(){ tmpPhoto=null; updateCharPhotoPreview(); } }
         ]});
       });
