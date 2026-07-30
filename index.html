@@ -645,13 +645,13 @@
   #editor .g-hr.line:before{content:"";display:block;width:100%;height:1px;background:var(--line-strong);}
   #editor .g-hr.dots{letter-spacing:.4em;color:var(--ink-3);height:auto;}
   #editor .g-hr.short:before{content:"";display:block;width:40px;height:1px;background:var(--ink-3);}
-  #editor .g-bub{display:block;position:relative;width:fit-content;max-width:80%;padding:4px 10px;border-radius:14px;margin:2px 0;white-space:pre-wrap;overflow:visible;}
+  #editor .g-bub{display:block;position:relative;width:fit-content;max-width:80%;padding:4px 10px;border-radius:14px;margin:2px 0;white-space:pre-wrap;}
   #editor .g-bub.recv{margin-right:auto;margin-left:8px;background:var(--bub-recv,#e5e5ea);color:var(--bub-recv-ink,#000) !important;}
   #editor .g-bub.send{margin-left:auto;margin-right:8px;background:var(--bub-send,#248bf5);color:var(--bub-send-ink,#fff) !important;}
   #editor .g-bub.recv *{color:var(--bub-recv-ink,#000) !important;}
   #editor .g-bub.send *{color:var(--bub-send-ink,#fff) !important;}
   #editor .g-bub mark.em{color:var(--em,inherit) !important;}
-  #editor .g-bub>svg.g-tail{position:absolute;bottom:0;width:14px;height:12px;z-index:0;overflow:visible;pointer-events:none;}
+  #editor .g-bub>svg.g-tail{position:absolute;bottom:0;width:16px;height:10px;z-index:0;overflow:visible;pointer-events:none;}
   #editor .g-bub.recv>svg.g-tail{left:-5px;}
   #editor .g-bub.send>svg.g-tail{right:-5px;transform:scaleX(-1);}
   #editor .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea);}
@@ -680,19 +680,18 @@
   #editor .g-bub-name.char-name.right{margin-left:auto;margin-right:8px;text-align:right;}
   #canvas .g-bub.char-bub.left,.canvas-clone .g-bub.char-bub.left{margin-right:auto !important;margin-left:.4em !important;}
   #canvas .g-bub.char-bub.right,.canvas-clone .g-bub.char-bub.right{margin-left:auto !important;margin-right:.4em !important;}
-  /* 인물 말풍선 꼬리 — 아이메시지식 pseudo(::before 꼬리 + ::after 배경색 마스크) */
-  #editor .g-bub.char-bub.tail::before,#editor .g-bub.char-bub.tail::after,
-  #canvas .g-bub.char-bub.tail::before,#canvas .g-bub.char-bub.tail::after,
-  .canvas-clone .g-bub.char-bub.tail::before,.canvas-clone .g-bub.char-bub.tail::after{content:"";position:absolute;bottom:-.08em;height:.8em;pointer-events:none;}
-  #editor .g-bub.char-bub.tail.left::before,
-  #canvas .g-bub.char-bub.tail.left::before,.canvas-clone .g-bub.char-bub.tail.left::before{border-bottom-right-radius:.64em .56em;border-left:.8em solid var(--bub,#e5e5ea);left:-.28em;transform:translate(0,-.08em);}
-  #editor .g-bub.char-bub.tail.left::after,
-  #canvas .g-bub.char-bub.tail.left::after,.canvas-clone .g-bub.char-bub.tail.left::after{background:var(--pbg,#fff);border-bottom-right-radius:.4em;left:1em;width:.5em;transform:translate(-1.5em,-.08em);}
-  #editor .g-bub.char-bub.tail.right::before,
-  #canvas .g-bub.char-bub.tail.right::before,.canvas-clone .g-bub.char-bub.tail.right::before{border-bottom-left-radius:.64em .56em;border-right:.8em solid var(--bub,#248bf5);right:-.28em;transform:translate(0,-.08em);}
-  #editor .g-bub.char-bub.tail.right::after,
-  #canvas .g-bub.char-bub.tail.right::after,.canvas-clone .g-bub.char-bub.tail.right::after{background:var(--pbg,#fff);border-bottom-left-radius:.4em;right:1em;width:.5em;transform:translate(1.5em,-.08em);}
-  .bub-simple .g-bub.char-bub.tail::before,.bub-simple .g-bub.char-bub.tail::after{display:none !important;}
+  #editor .g-bub.char-bub.left>svg.g-tail{left:-5px;right:auto;transform:none;}
+  #editor .g-bub.char-bub.right>svg.g-tail{right:-5px;left:auto;transform:scaleX(-1);}
+  #canvas .g-bub.char-bub.left>svg.g-tail,.canvas-clone .g-bub.char-bub.left>svg.g-tail{left:-.42em !important;right:auto !important;transform:none !important;}
+  #canvas .g-bub.char-bub.right>svg.g-tail,.canvas-clone .g-bub.char-bub.right>svg.g-tail{right:-.42em !important;left:auto !important;transform:scaleX(-1) !important;}
+  #canvas.bub-round .g-bub.char-bub.left>svg.g-tail,.canvas-clone.bub-round .g-bub.char-bub.left>svg.g-tail{left:-.3em !important;bottom:.22em !important;}
+  #canvas.bub-round .g-bub.char-bub.right>svg.g-tail,.canvas-clone.bub-round .g-bub.char-bub.right>svg.g-tail{right:-.3em !important;bottom:.22em !important;}
+  #editor.bub-round .g-bub.char-bub.left>svg.g-tail{left:-4px;bottom:3px;}
+  #editor.bub-round .g-bub.char-bub.right>svg.g-tail{right:-4px;bottom:3px;}
+  #canvas.bub-card .g-bub.char-bub.left>svg.g-tail,.canvas-clone.bub-card .g-bub.char-bub.left>svg.g-tail{left:-.34em !important;bottom:0 !important;}
+  #canvas.bub-card .g-bub.char-bub.right>svg.g-tail,.canvas-clone.bub-card .g-bub.char-bub.right>svg.g-tail{right:-.34em !important;bottom:0 !important;}
+  #editor.bub-card .g-bub.char-bub.left>svg.g-tail{left:-4px;bottom:0;}
+  #editor.bub-card .g-bub.char-bub.right>svg.g-tail{right:-4px;bottom:0;}
   #canvas .g-bub-name.char-name.left,.canvas-clone .g-bub-name.char-name.left{margin-right:auto !important;margin-left:.4em !important;text-align:left !important;}
   #canvas .g-bub-name.char-name.right,.canvas-clone .g-bub-name.char-name.right{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;}
   /* 아바타 + 메시지 묶음 (카톡 스타일) */
@@ -754,7 +753,7 @@
   #canvas .g-name.s-bar,.canvas-clone .g-name.s-bar{font-weight:400 !important;color:var(--name-color,rgba(90,90,90,.85)) !important;}
   #canvas .g-name.s-bar.left,.canvas-clone .g-name.s-bar.left{border-left:.16em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-left:.55em !important;}
   #canvas .g-name.s-bar.right,.canvas-clone .g-name.s-bar.right{border-right:.16em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-right:.55em !important;}
-  #canvas .g-bub,.canvas-clone .g-bub{display:block !important;position:relative !important;max-width:75% !important;width:fit-content !important;margin:.12em 0 !important;padding:.5em .875em !important;border-radius:1.15em !important;text-align:left !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;word-break:normal !important;line-height:1.25 !important;overflow:visible !important;}
+  #canvas .g-bub,.canvas-clone .g-bub{display:block !important;position:relative !important;max-width:75% !important;width:fit-content !important;margin:.12em 0 !important;padding:.5em .875em !important;border-radius:1.15em !important;text-align:left !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;word-break:normal !important;line-height:1.25 !important;}
   #canvas .g-bub.cont + .g-bub,.canvas-clone .g-bub.cont + .g-bub,#canvas .g-bub + .g-bub.cont,.canvas-clone .g-bub + .g-bub.cont{margin-top:.1em !important;}
   #canvas .g-bub:first-child,.canvas-clone .g-bub:first-child{margin-top:0 !important;}
   #canvas .g-bub.recv,.canvas-clone .g-bub.recv{margin-right:auto !important;margin-left:.4em !important;background:var(--bub-recv,#e5e5ea) !important;color:var(--bub-recv-ink,#000) !important;}
@@ -764,7 +763,7 @@
   #canvas .g-bub-name.send,.canvas-clone .g-bub-name.send{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;color:var(--bub-name-send,#8a8a8a) !important;}
   #canvas .g-bub-name + .g-bub,.canvas-clone .g-bub-name + .g-bub{margin-top:.25em !important;}
   #canvas .g-bub-name:first-child,.canvas-clone .g-bub-name:first-child{margin-top:0 !important;}
-  #canvas .g-bub>svg.g-tail,.canvas-clone .g-bub>svg.g-tail{position:absolute !important;bottom:0 !important;z-index:0 !important;width:.9em !important;height:.78em !important;display:block !important;overflow:visible !important;pointer-events:none !important;}
+  #canvas .g-bub>svg.g-tail,.canvas-clone .g-bub>svg.g-tail{position:absolute !important;bottom:0 !important;z-index:0 !important;width:1.35em !important;height:.85em !important;display:block !important;overflow:visible !important;pointer-events:none !important;}
   #canvas .g-bub.recv>svg.g-tail,.canvas-clone .g-bub.recv>svg.g-tail{left:-.42em !important;}
   #canvas .g-bub.send>svg.g-tail,.canvas-clone .g-bub.send>svg.g-tail{right:-.42em !important;transform:scaleX(-1) !important;}
   #canvas .g-bub.recv>svg.g-tail path,.canvas-clone .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea) !important;}
@@ -1818,8 +1817,8 @@
   /* ============================================================
      말풍선
      ============================================================ */
-  var TAIL_SVG = '<svg class="g-tail" viewBox="0 0 16 16" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
-    + '<path d="M13.5 16 C7 16 2 14.5 0 11.8 C3.8 11.3 5.6 9 5.8 5.2 C6 2 8 0.5 12 0.5 C11.5 6.5 12.8 12.5 13.5 16 Z"/></svg>';
+  var TAIL_SVG = '<svg class="g-tail" viewBox="0 0 16 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
+    + '<path d="M16 0 L16 20 Q6 20 0.6 19.2 Q-0.9 19.0 0.5 18.2 Q6.2 15.0 8 10 Q9.2 5.6 9 0 Z"/></svg>';
 
   function closestBubble(node){
     var el = node && node.nodeType===3 ? node.parentNode : node;
@@ -1881,7 +1880,6 @@
   function syncTails(root){
     if(!root) return;
     [].forEach.call(root.querySelectorAll('.g-bub'), function(b){
-      if(b.classList.contains('char-bub')){ var s0=b.querySelector('svg.g-tail'); if(s0) b.removeChild(s0); return; }
       var want = b.classList.contains('tail'), svg = null;
       for(var i=0;i<b.childNodes.length;i++){ var c=b.childNodes[i]; if(c.nodeType===1 && c.nodeName && c.nodeName.toLowerCase()==='svg'){ svg=c; break; } }
       if(want && !svg){ var tmp=document.createElement('div'); tmp.innerHTML=TAIL_SVG; var node=tmp.firstChild; node.setAttribute('contenteditable','false'); b.appendChild(node); }
@@ -1905,20 +1903,13 @@
     n.textContent=(c&&c.name)?c.name:'\u200b';
     return n;
   }
-  function bgMaskColor(){
-    if(typeof bgMode!=='undefined' && bgMode==='gradient') return ($('c-grad2')?$('c-grad2').value:'#ffffff');
-    if(typeof bgMode!=='undefined' && bgMode==='photo') return '#ffffff';
-    return ($('c-bg')?$('c-bg').value:'#ffffff');
-  }
   function styleCharBubbles(root){
     if(!root) return;
-    var pbg = bgMaskColor();
     [].forEach.call(root.querySelectorAll('.g-bub.char-bub'), function(b){
       var c=findChar(b.getAttribute('data-char')); if(!c) return;
       b.style.setProperty('background', c.bub, 'important');
       b.style.setProperty('color', c.ink, 'important');
-      b.style.setProperty('--bub', c.bub);
-      b.style.setProperty('--pbg', pbg);
+      var path=b.querySelector('svg.g-tail path'); if(path){ path.style.setProperty('fill', c.bub, 'important'); }
     });
     [].forEach.call(root.querySelectorAll('.g-bub-name.char-name'), function(n){
       var c=findChar(n.getAttribute('data-char')); if(!c) return;
@@ -3151,15 +3142,15 @@
 
   /* 꼬리 패스 (2D 캔버스에 직접) */
   function traceTailPath(ctx, x, y, w, h, flip){
-    var sx=w/16, sy=h/16;
+    var sx=w/16, sy=h/20;
     function X(u){ return x + (flip ? (16-u) : u)*sx; }
     function Y(v){ return y + v*sy; }
     ctx.beginPath();
-    ctx.moveTo(X(13.5),Y(16));
-    ctx.bezierCurveTo(X(7),Y(16), X(2),Y(14.5), X(0),Y(11.8));
-    ctx.bezierCurveTo(X(3.8),Y(11.3), X(5.6),Y(9), X(5.8),Y(5.2));
-    ctx.bezierCurveTo(X(6),Y(2), X(8),Y(0.5), X(12),Y(0.5));
-    ctx.bezierCurveTo(X(11.5),Y(6.5), X(12.8),Y(12.5), X(13.5),Y(16));
+    ctx.moveTo(X(16),Y(0)); ctx.lineTo(X(16),Y(20));
+    ctx.quadraticCurveTo(X(6),Y(20),X(0.6),Y(19.2));
+    ctx.quadraticCurveTo(X(-0.9),Y(19.0),X(0.5),Y(18.2));
+    ctx.quadraticCurveTo(X(6.2),Y(15.0),X(8),Y(10));
+    ctx.quadraticCurveTo(X(9.2),Y(5.6),X(9),Y(0));
     ctx.closePath();
   }
   function collectTailRects(root){
