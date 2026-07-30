@@ -856,13 +856,13 @@
         <div class="label-row">
           <span class="label">로그</span>
           <div class="mini-row">
-            <button class="mini" id="t-star" type="button" title="별표(*) 모두 삭제">* 삭제</button>
+            <button class="mini" id="t-star" type="button" title="별표(*) 모두 삭제">*</button>
             <button class="mini" id="t-star-gray" type="button" title="**강조** 안쪽을 서브색(회색)으로">* 회색</button>
-            <button class="mini" id="t-quote" type="button" title="큰따옴표(&quot;) 기호 모두 삭제">&quot; 삭제</button>
+            <button class="mini" id="t-quote" type="button" title="휘어진 따옴표(&quot; &quot; &#39; &#39;)를 곧은 부호로">&quot;</button>
             <button class="mini" id="t-quote-bub" type="button" title="큰따옴표 안쪽을 인물 말풍선으로">&quot; 말풍선</button>
-            <button class="mini" id="t-dots" type="button" title="마침표 세 개를 가로 생략부호(⋯)로">⋯ 변환</button>
-            <button class="mini" id="t-paren" type="button" title="괄호 안쪽을 이탤릭으로">( ) 이탤릭</button>
+            <button class="mini" id="t-paren" type="button" title="괄호 안쪽을 이탤릭(기울임)으로">( )</button>
             <button class="mini" id="t-paren-gray" type="button" title="괄호(포함)를 서브색(회색)으로">( ) 회색</button>
+            <button class="mini" id="t-dots" type="button" title="마침표 세 개를 가로 생략부호(⋯)로">⋯</button>
             <button class="mini is-danger" id="t-clear" type="button">비우기</button>
           </div>
         </div>
@@ -2100,14 +2100,26 @@
     }
     cleanEditor(); styleCharBubbles(editor); render(); saveSel(); updateFormatButtons();
   }
+  // 말풍선 방향 아이콘: 해당 방향 가장자리에 세로 막대 + 그쪽에 붙은 말풍선(+아바타)
+  function sideBubIcon(side, withAv, color){
+    var L = side==='left', edge = L ? 2.5 : 21.5, s='<svg viewBox="0 0 24 24" fill="none">';
+    s += '<line x1="'+edge+'" y1="4.5" x2="'+edge+'" y2="19.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" opacity=".4"/>';
+    if(withAv){
+      s += '<circle cx="'+(L?5.6:18.4)+'" cy="7" r="2.7" fill="'+color+'" stroke="rgba(0,0,0,.14)" stroke-width="1"/>';
+      s += '<rect x="'+(L?4:8)+'" y="12" width="12" height="6.4" rx="3.2" fill="'+color+'" stroke="rgba(0,0,0,.12)" stroke-width="1"/>';
+    } else {
+      s += '<rect x="'+(L?3.5:8.5)+'" y="8.8" width="12" height="6.4" rx="3.2" fill="'+color+'" stroke="rgba(0,0,0,.12)" stroke-width="1"/>';
+    }
+    return '<span class="s-preview">'+s+'</svg></span>';
+  }
   function openCharInsertSheet(charId){
     var c=findChar(charId); if(!c) return;
-    function pk(){ return '<span class="s-preview"><i style="display:block;width:22px;height:15px;border-radius:7px;background:'+c.bub+';box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></i></span>'; }
+    var col=c.bub||'#e5e5ea';
     openSheetDef({ title:(c.name||'인물')+' 말풍선', options:[
-      { label:'왼쪽 · 이름+사진', preview:pk, run:function(){ insertCharBubbles(charId,'left','tail'); } },
-      { label:'왼쪽 · 말풍선만', preview:pk, run:function(){ insertCharBubbles(charId,'left','cont'); } },
-      { label:'오른쪽 · 이름+사진', preview:pk, run:function(){ insertCharBubbles(charId,'right','tail'); } },
-      { label:'오른쪽 · 말풍선만', preview:pk, run:function(){ insertCharBubbles(charId,'right','cont'); } }
+      { label:'이름+사진', preview:sideBubIcon('left',true,col), run:function(){ insertCharBubbles(charId,'left','tail'); } },
+      { label:'말풍선만', preview:sideBubIcon('left',false,col), run:function(){ insertCharBubbles(charId,'left','cont'); } },
+      { label:'이름+사진', preview:sideBubIcon('right',true,col), run:function(){ insertCharBubbles(charId,'right','tail'); } },
+      { label:'말풍선만', preview:sideBubIcon('right',false,col), run:function(){ insertCharBubbles(charId,'right','cont'); } }
     ]});
   }
   function applyBubble(kind, tail, withName){
@@ -3566,8 +3578,8 @@
   $('t-star-gray').addEventListener('click', function(){
     replaceInText(/\*\*([^\n]+?)\*\*/g, function(m){ return grayMark(m[1]); }, isGrayEl);
   });
-  // " 삭제: 큰따옴표 기호(곧은+휘어진) 모두 제거
-  $('t-quote').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033"]/g,''); }); });
+  // " : 휘어진 따옴표(큰·작은)를 곧은 부호로
+  $('t-quote').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033]/g,'"').replace(/[\u2018\u2019\u201A\u201B\u2032]/g,"'"); }); });
   // " 말풍선: 큰따옴표 안쪽을 인물 말풍선으로 (시트로 옵션 선택)
   $('t-quote-bub').addEventListener('click', function(){ openQuoteBubbleSheet(); });
   // ⋯ 변환: 마침표 세 개/… → 가로 생략부호(⋯)
@@ -3605,11 +3617,10 @@
     }, isBubEl);
   }
   function openQuoteBubbleSheet(){
-    var cid=currentCharId(), c=cid?findChar(cid):null;
-    function pk(){ var col=c?c.bub:'#e5e5ea'; return '<span class="s-preview"><i style="display:block;width:22px;height:15px;border-radius:7px;background:'+col+';box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></i></span>'; }
+    var cid=currentCharId(), c=cid?findChar(cid):null, col=c?c.bub:'#e5e5ea';
     openSheetDef({ title:'따옴표 → 말풍선'+((c&&c.name)?(' · '+c.name):''), options:[
-      { label:'말풍선만', preview:pk, run:function(){ quoteToBubbles('plain'); } },
-      { label:'사진+이름', preview:pk, run:function(){ quoteToBubbles('named'); } }
+      { label:'말풍선만', preview:sideBubIcon('left',false,col), run:function(){ quoteToBubbles('plain'); } },
+      { label:'사진+이름', preview:sideBubIcon('left',true,col), run:function(){ quoteToBubbles('named'); } }
     ]});
   }
 
