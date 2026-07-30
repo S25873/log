@@ -752,7 +752,7 @@
     .fbtn .c-ic,.fbtn .h-ic,.fbtn .sub-ic,.fbtn .hr-ic{font-size:11px;}
     .fmt-row{gap:3px;}
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
-    .presets--bg{grid-template-columns:repeat(5,minmax(0,1fr));}
+    .presets--bg{grid-template-columns:repeat(6,minmax(0,1fr));}
     .preview__meta{display:none;}
   }
 
@@ -1148,8 +1148,8 @@
                   <div class="cchip"><label>색 2</label><div class="cchip__box"><input id="c-grad2" type="color" value="#fcb69f"><input class="cchip__hex" id="c-grad2-txt" type="text" value="#fcb69f"></div></div>
                 </div>
                 <div class="field" style="margin-top:14px">
-                  <span class="label">방향 <span class="val">135°</span></span>
-                  <div class="rangewrap"><input id="grad-angle" type="range" min="0" max="360" step="5" value="135"></div>
+                  <span class="label">방향 <span class="val">↘</span></span>
+                  <div class="rangewrap"><input id="grad-angle" type="range" min="0" max="315" step="45" value="135"></div>
                 </div>
                 <div class="presets presets--bg" id="bg-presets-grad" style="margin-top:14px"></div>
               </div>
@@ -1316,19 +1316,16 @@
      프리셋 데이터 (모던 뉴트럴 톤)
      ============================================================ */
   var bgSolids = [
-    {bg:'#ffffff', fg:'#2b2b2b'},  {bg:'#fbf7f0', fg:'#3a352d'},  {bg:'#fdf0f2', fg:'#5c2b34'},
-    {bg:'#eef4fb', fg:'#233b52'},  {bg:'#eef7f0', fg:'#264536'},  {bg:'#f4eefb', fg:'#3a2f52'},
-    {bg:'#f7f7f4', fg:'#33322c'},  {bg:'#2b2f36', fg:'#eceef1'},  {bg:'#1a1a1a', fg:'#f0f0f0'}
+    {bg:'#ffffff'}, {bg:'#fbf7f0'}, {bg:'#fdf0f2'},
+    {bg:'#eef4fb'}, {bg:'#eef7f0'}, {bg:'#1a1a1a'}
   ];
   var bgGrads = [
-    {c1:'#ffecd2', c2:'#fcb69f', angle:135, fg:'#5a3a28'},  // 선셋
-    {c1:'#ffdde1', c2:'#ee9ca7', angle:135, fg:'#5c2b34'},  // 피치
-    {c1:'#a1c4fd', c2:'#c2e9fb', angle:135, fg:'#22364a'},  // 오션
-    {c1:'#d4fc79', c2:'#96e6a1', angle:135, fg:'#28472e'},  // 프레시
-    {c1:'#e0c3fc', c2:'#8ec5fc', angle:135, fg:'#3a2f52'},  // 라벤더
-    {c1:'#fbc2eb', c2:'#a6c1ee', angle:135, fg:'#4a2f45'},  // 블로썸
-    {c1:'#30cfd0', c2:'#330867', angle:160, fg:'#f0f0f0'},  // 미드나잇
-    {c1:'#414345', c2:'#232526', angle:160, fg:'#eceef1'}   // 차콜
+    {c1:'#ffecd2', c2:'#fcb69f', angle:135},  // 선셋
+    {c1:'#a1c4fd', c2:'#c2e9fb', angle:135},  // 오션
+    {c1:'#d4fc79', c2:'#96e6a1', angle:135},  // 프레시
+    {c1:'#e0c3fc', c2:'#8ec5fc', angle:135},  // 라벤더
+    {c1:'#fbc2eb', c2:'#a6c1ee', angle:135},  // 블로썸
+    {c1:'#30cfd0', c2:'#330867', angle:180}   // 미드나잇
   ];
   var hlPresets = [
     {c:'#f4b2ad', label:'코랄'}, {c:'#f8c9a6', label:'피치'}, {c:'#f9ee9a', label:'옐로'}, {c:'#dae59e', label:'라임'},
@@ -1349,6 +1346,10 @@
     return 'linear-gradient('+a+'deg, '+c1+', '+c2+')';
   }
   /* 현재 배경 종류에 해당하는 배경만 반환 — 다른 모드 값이 새지 않게 */
+  function angleLabel(deg){
+    var m={0:'↑ 위',45:'↗',90:'→ 오른쪽',135:'↘',180:'↓ 아래',225:'↙',270:'← 왼쪽',315:'↖'};
+    return m[parseInt(deg,10)] || (deg+'°');
+  }
   function effectiveBg(){
     if(bgMode==='gradient') return currentGradient();
     if(bgMode==='photo') return '#ffffff';   // 사진 뒤 base는 항상 중립(흰색)
@@ -1385,7 +1386,7 @@
       clearBgOn(); b.classList.add('on');
       $('c-grad1').value=p.c1; $('c-grad1-txt').value=p.c1;
       $('c-grad2').value=p.c2; $('c-grad2-txt').value=p.c2;
-      $('grad-angle').value=p.angle; setVal('grad-angle', p.angle+'°');
+      $('grad-angle').value=p.angle; setVal('grad-angle', angleLabel(p.angle));
       bgValue = currentGradient();
       render();
     });
@@ -1504,7 +1505,7 @@
   linkColor('c-grad1','c-grad1-txt',false,false, updateGradient);
   linkColor('c-grad2','c-grad2-txt',false,false, updateGradient);
   if($('grad-angle')){
-    $('grad-angle').addEventListener('input', function(){ setVal('grad-angle', $('grad-angle').value+'°'); updateGradient(); render(); });
+    $('grad-angle').addEventListener('input', function(){ setVal('grad-angle', angleLabel($('grad-angle').value)); updateGradient(); render(); });
   }
   function applyBgViews(){
     if($('bg-solid-view')) $('bg-solid-view').style.display = bgMode==='solid' ? '' : 'none';
@@ -2597,6 +2598,7 @@
     styleCanvas(canvas); applyHlSolid(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('stretch')) setVal('stretch', $('stretch').value+'%');
+    if($('grad-angle')) setVal('grad-angle', angleLabel($('grad-angle').value));
     setVal('letter-spacing', parseFloat($('letter-spacing').value).toFixed(1));
     setVal('line-height', (parseFloat($('line-height').value)/10).toFixed(1));
     setVal('pad', $('pad').value+'px');
