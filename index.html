@@ -841,6 +841,7 @@
         <button class="tab" role="tab" aria-selected="false" data-tab="design">디자인</button>
         <button class="tab" role="tab" aria-selected="false" data-tab="bubble">말풍선</button>
         <button class="tab" role="tab" aria-selected="false" data-tab="layout">레이아웃</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="help">설명</button>
         <span class="tabbar__spacer"></span>
         <button class="icon-btn" id="theme-toggle" type="button" title="라이트/다크 전환" aria-label="라이트/다크 전환">
           <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -1363,10 +1364,50 @@
             </div>
           </details>
         </div>
+
+        <!-- ========== 설명 ========== -->
+        <div class="panel" data-panel="help" role="tabpanel">
+          <details class="fold" open>
+            <summary>내용 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0">로그(대사·지문)를 쓰고 서식을 입히는 곳이에요.<br><br>· <b>굵게·기울임·밑줄·취소선</b>: 텍스트를 선택하고 눌러요.<br>· <b>형광펜·강조</b>: 색을 고른 뒤 선택한 글자에 적용돼요.<br>· <b>구분선</b>: 문단 사이에 가로줄을 넣어요.<br>· <b>제목·본문</b>: 큰 제목/작은 본문 스타일을 넣어요.</p>
+            </div>
+          </details>
+          <details class="fold">
+            <summary>디자인 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0">이미지 전체의 분위기를 정해요.<br><br>· <b>배경</b>: 단색·그라데이션·사진 중에서 골라요.<br>· <b>글꼴·글자색</b>: 폰트와 기본 글자색을 바꿔요.<br>· <b>테마 프리셋</b>: 색 조합을 한 번에 적용해요.<br>· <b>내 프리셋</b>: 지금 설정을 저장해 두고 다시 불러와요.</p>
+            </div>
+          </details>
+          <details class="fold">
+            <summary>말풍선 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0">대화를 말풍선으로 꾸며요.<br><br>· <b>인물</b>: 이름·말풍선색·글자색·프로필 사진을 가진 인물을 만들어요.<br>· <b>말풍선 삽입</b>: 텍스트를 선택하고 인물을 누르면 말풍선이 돼요. 여러 문단 선택 시 빈 문단을 기준으로 나뉘어요.<br>· <b>말풍선 클릭 편집</b>: 말풍선 안을 누르면 좌우·꼬리·인물·이름·사진·삭제 도구가 떠요. 이름/사진을 켠 지점이 새 묶음의 시작이 돼요.<br>· <b>디자인</b>: 말풍선 모양(메시지/심플), 아이메시지 상단바·입력창 표시.</p>
+            </div>
+          </details>
+          <details class="fold">
+            <summary>레이아웃 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0">글자·여백·저장 크기를 조절해요.<br><br>· <b>글자 크기·자간·행간</b>: 텍스트 촘촘함을 정해요.<br>· <b>여백</b>: 이미지 좌우 안쪽 여백이에요.<br>· <b>크기 모드</b>: <b>폭 직접</b>은 원하는 저장 폭을, <b>비율 고정</b>은 1:1·4:5 같은 비율을 정해요.</p>
+            </div>
+          </details>
+          <details class="fold">
+            <summary>저장·복사<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0">· <b>PNG·JPG 저장</b>: 이미지 파일로 내려받아요. (PNG는 투명·선명, JPG는 용량이 작아요)<br>· <b>이미지 복사</b>: 파일 저장 없이 클립보드로 바로 복사해서 다른 곳에 붙여넣을 수 있어요.</p>
+            </div>
+          </details>
+
+          <div class="section" style="margin-top:20px">
+            <p class="section__head">기타</p>
+            <p class="hint" style="margin:0 0 12px">아래 버튼은 모든 설정과 로그를 처음 상태로 되돌려요. <b>되돌릴 수 없으니</b> 주의하세요.</p>
+            <button class="btn btn--ghost" id="t-reset" type="button" style="width:100%;height:42px;font-size:13px;color:var(--danger,#d9534f)">전체 초기화</button>
+          </div>
+        </div>
       </div>
 
       <div class="actionbar">
-        <button class="act act--reset" id="t-reset" type="button">전체 초기화</button>
+        <button class="act act--ghost" id="copy-img" type="button">이미지 복사</button>
         <button class="act act--primary" id="save-png" type="button">PNG 저장</button>
         <button class="act act--ghost" id="save-jpg" type="button">JPG 저장</button>
       </div>
@@ -2327,8 +2368,10 @@
   function bindTap(btn, run){
     if(!btn) return;
     btn.addEventListener('mousedown', function(e){ e.preventDefault(); });
-    var swallow = false;
-    btn.addEventListener('touchend', function(e){ swallow=true; run(e); setTimeout(function(){ swallow=false; }, 350); }, {passive:false});
+    var swallow = false, sx=0, sy=0, moved=false;
+    btn.addEventListener('touchstart', function(e){ moved=false; if(e.touches&&e.touches[0]){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; } }, {passive:true});
+    btn.addEventListener('touchmove', function(e){ if(e.touches&&e.touches[0]){ if(Math.abs(e.touches[0].clientX-sx)>8 || Math.abs(e.touches[0].clientY-sy)>8) moved=true; } }, {passive:true});
+    btn.addEventListener('touchend', function(e){ if(moved){ moved=false; return; } swallow=true; run(e); setTimeout(function(){ swallow=false; }, 350); }, {passive:false});
     btn.addEventListener('click', function(e){ if(swallow){ swallow=false; e.preventDefault(); e.stopPropagation(); return; } run(e); });
   }
 
@@ -3329,8 +3372,22 @@
     link.download=filename; link.href=url; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
   }
-  function deliverImage(cnv, type, done){
+  var _copyOk=false;
+  function copyBlobToClipboard(blob){
+    if(navigator.clipboard && window.ClipboardItem){
+      try{ return navigator.clipboard.write([new window.ClipboardItem({'image/png':blob})]); }
+      catch(e){ return Promise.reject(e); }
+    }
+    return Promise.reject(new Error('clipboard unsupported'));
+  }
+  function deliverImage(cnv, type, done, mode){
     var isJpg=(type==='image/jpeg'), filename=isJpg?'로그.jpg':'로그.png', quality=isJpg?0.95:undefined;
+    if(mode==='copy'){
+      canvasToBlob(cnv, 'image/png').then(function(blob){
+        copyBlobToClipboard(blob).then(function(){ _copyOk=true; done(); }).catch(function(){ _copyOk=false; done(); });
+      }).catch(function(){ _copyOk=false; done(); });
+      return;
+    }
     canvasToBlob(cnv, type, quality).then(function(blob){
       var file=null; try{ file=new File([blob], filename, {type:type}); }catch(e){ file=null; }
       var canShare = _isIOS && file && navigator.share && navigator.canShare && navigator.canShare({files:[file]});
@@ -3346,22 +3403,28 @@
   }
 
   var _busy=false;
-  function doSave(type){
+  function doSave(type, mode){
     if(_busy) return;
-    _busy=true;
-    var btns = document.querySelectorAll('#save-png,#save-jpg');
-    [].forEach.call(btns, function(b){ b.disabled=true; });
-    var isJpg=(type==='image/jpeg');
-    var actBtns = document.querySelectorAll(isJpg ? '#save-jpg' : '#save-png');
-    var origs=[]; [].forEach.call(actBtns, function(b){ origs.push([b, b.textContent]); b.textContent='저장 중…'; });
-    function finish(){ _busy=false; [].forEach.call(btns, function(b){ b.disabled=false; }); origs.forEach(function(p){ p[0].textContent=p[1]; }); }
+    _busy=true; mode=mode||'save';
+    var allBtns = document.querySelectorAll('#save-png,#save-jpg,#copy-img');
+    [].forEach.call(allBtns, function(b){ b.disabled=true; });
+    var actBtn = (mode==='copy') ? $('copy-img') : (type==='image/jpeg' ? $('save-jpg') : $('save-png'));
+    var origTxt = actBtn ? actBtn.textContent : '';
+    if(actBtn) actBtn.textContent = (mode==='copy') ? '복사 중…' : '저장 중…';
+    function finish(){
+      _busy=false; [].forEach.call(allBtns, function(b){ b.disabled=false; });
+      if(actBtn){
+        if(mode==='copy'){ actBtn.textContent=_copyOk?'복사됨 ✓':'복사 실패'; setTimeout(function(){ if(actBtn) actBtn.textContent='이미지 복사'; }, 1500); }
+        else { actBtn.textContent=origTxt; }
+      }
+    }
     var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     fontsReady.then(function(){ requestAnimationFrame(function(){ requestAnimationFrame(function(){
-      try{ runSave(type, finish); }catch(e){ finish(); }
+      try{ runSave(type, finish, mode); }catch(e){ finish(); }
     }); }); });
   }
 
-  function runSave(type, finish){
+  function runSave(type, finish, mode){
     render();
     var w = baseW();
     var stageIn=$('stage-in'), stage=$('stage');
@@ -3426,7 +3489,7 @@
           hrRects.forEach(function(rc){ ctx.fillStyle=rc.color; ctx.fillRect(rc.x*2, rc.y*2, rc.w*2, rc.h*2); });
           tailRects.forEach(function(t){ ctx.save(); ctx.fillStyle=t.color; traceTailPath(ctx, t.x*2, t.y*2, t.w*2, t.h*2, t.flip); ctx.fill(); ctx.restore(); });
           ctx.drawImage(textCanvas, 0, 0, outW, outH);
-          deliverImage(out, type, cleanup);
+          deliverImage(out, type, cleanup, mode);
         });
       }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreCanvasBg(); cleanup(); });
     }
@@ -3451,6 +3514,7 @@
 
   ['save-png'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click', function(){ doSave('image/png'); }); });
   ['save-jpg'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click', function(){ doSave('image/jpeg'); }); });
+  (function(){ var b=$('copy-img'); if(!b) return; if(!(navigator.clipboard && window.ClipboardItem)){ b.title='이 브라우저는 이미지 복사를 지원하지 않아요'; } b.addEventListener('click', function(){ doSave('image/png','copy'); }); })();
 
   /* ============================================================
      텍스트 변환 도구
