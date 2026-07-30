@@ -1372,40 +1372,14 @@
 
         <!-- ========== 설명 ========== -->
         <div class="panel" data-panel="help" role="tabpanel">
-          <details class="fold" open>
-            <summary>내용 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0">로그(대사·지문)를 쓰고 서식을 입히는 곳이에요.<br><br>· <b>굵게·기울임·밑줄·취소선</b>: 텍스트를 선택하고 눌러요.<br>· <b>형광펜·강조</b>: 색을 고른 뒤 선택한 글자에 적용돼요.<br>· <b>구분선</b>: 문단 사이에 가로줄을 넣어요.<br>· <b>제목·본문</b>: 큰 제목/작은 본문 스타일을 넣어요.</p>
-            </div>
-          </details>
-          <details class="fold">
-            <summary>디자인 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0">이미지 전체의 분위기를 정해요.<br><br>· <b>배경</b>: 단색·그라데이션·사진 중에서 골라요.<br>· <b>글꼴·글자색</b>: 폰트와 기본 글자색을 바꿔요.<br>· <b>테마 프리셋</b>: 색 조합을 한 번에 적용해요.<br>· <b>내 프리셋</b>: 지금 설정을 저장해 두고 다시 불러와요.</p>
-            </div>
-          </details>
-          <details class="fold">
-            <summary>말풍선 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0">대화를 말풍선으로 꾸며요.<br><br>· <b>인물</b>: 이름·말풍선색·글자색·프로필 사진을 가진 인물을 만들어요.<br>· <b>말풍선 삽입</b>: 텍스트를 선택하고 인물을 누르면 말풍선이 돼요. 여러 문단 선택 시 빈 문단을 기준으로 나뉘어요.<br>· <b>말풍선 클릭 편집</b>: 말풍선 안을 누르면 좌우·꼬리·인물·이름·사진·삭제 도구가 떠요. 이름/사진을 켠 지점이 새 묶음의 시작이 돼요.<br>· <b>디자인</b>: 말풍선 모양(메시지/심플), 아이메시지 상단바·입력창 표시.</p>
-            </div>
-          </details>
-          <details class="fold">
-            <summary>레이아웃 탭<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0">글자·여백·저장 크기를 조절해요.<br><br>· <b>글자 크기·자간·행간</b>: 텍스트 촘촘함을 정해요.<br>· <b>여백</b>: 이미지 좌우 안쪽 여백이에요.<br>· <b>크기 모드</b>: <b>폭 직접</b>은 원하는 저장 폭을, <b>비율 고정</b>은 1:1·4:5 같은 비율을 정해요.</p>
-            </div>
-          </details>
-          <details class="fold">
-            <summary>저장·복사<svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0">· <b>PNG·JPG 저장</b>: 이미지 파일로 내려받아요. (PNG는 투명·선명, JPG는 용량이 작아요)<br>· <b>이미지 복사</b>: 파일 저장 없이 클립보드로 바로 복사해서 다른 곳에 붙여넣을 수 있어요.</p>
-            </div>
-          </details>
+          <div class="section">
+            <p class="section__head">팁</p>
+            <p class="hint" style="margin:0">· <b>*</b>: * 기호를 삭제해요.<br>· <b>* 회색</b>: * 사이의 지문을 회색으로 변경해요. 이때 서브 글자 색이 적용돼요.<br>· <b>&quot;</b>: 기울어진 따옴표를 곧은 따옴표로 변경해요.<br>· <b>&quot; 말풍선</b>: 따옴표 사이의 내용을 말풍선에 넣어요.<br>· <b>( )</b>: 괄호 포함 내용을 이탤릭으로 변경해요.<br>· <b>( ) 회색</b>: 괄호 포함 내용을 회색으로 변경해요. 이때 서브 글자 색이 적용돼요.<br><br>· <b>굵게·기울임·밑줄·취소선</b>: 텍스트 선택 후 클릭해요.<br>· <b>형광펜·강조</b>: 텍스트 영역 선택 후 클릭해요. 각 형광펜은 칠해진 뒤에도 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선</b>: 백스페이스 또는 로그 입력 부분에서 클릭 후 삭제할 수 있어요.<br><br>· <b>말풍선</b>: 백스페이스 또는 클릭 시 나타나는 삭제로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.</p>
+          </div>
 
           <div class="section" style="margin-top:20px">
-            <p class="section__head">기타</p>
-            <p class="hint" style="margin:0 0 12px">아래 버튼은 모든 설정과 로그를 처음 상태로 되돌려요. <b>되돌릴 수 없으니</b> 주의하세요.</p>
+            <p class="section__head">초기화</p>
+            <p class="hint" style="margin:0 0 12px">프리셋을 제외한 모든 설정과 로그를 처음 상태로 되돌려요. <b>되돌릴 수 없으니</b> 주의하세요.</p>
             <button class="btn btn--ghost" id="t-reset" type="button" style="width:100%;height:42px;font-size:13px;color:var(--danger,#d9534f)">전체 초기화</button>
           </div>
         </div>
@@ -2094,11 +2068,24 @@
         var bub=makeCharBub(charId, sideCls, tail);
         if(!multi && withName && i===0) bub.setAttribute('data-av','1');
         g.forEach(function(n){ bub.appendChild(n); });
+        trimBubbleTail(bub);
         out.appendChild(bub);
       });
       range.insertNode(out);
     }
     cleanEditor(); styleCharBubbles(editor); render(); saveSel(); updateFormatButtons();
+  }
+  // 말풍선 끝에 남은 개행/공백/<br>(pre-wrap에서 빈 줄로 보임)을 정리
+  function trimBubbleTail(bub){
+    while(bub.lastChild){
+      var n=bub.lastChild;
+      if(n.nodeType===1 && n.tagName==='BR'){ bub.removeChild(n); continue; }
+      if(n.nodeType===3){
+        if(n.nodeValue.replace(/\u200b/g,'').trim()===''){ bub.removeChild(n); continue; }
+        n.nodeValue=n.nodeValue.replace(/[\s\u200b]+$/,'');
+      }
+      break;
+    }
   }
   // 말풍선 방향 아이콘: 굵은 세로 막대를 해당 방향 가장자리에 두고 말풍선을 그쪽에 붙여 방향만 강조
   function sideBubIcon(side, color){
