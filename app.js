@@ -125,6 +125,7 @@
       var ci=hlInput(hlSlot), ti=hlTxt(hlSlot);
       if(ci) ci.value = p.c; if(ti) ti.value = p.c;
       if(hlSlot===1) updateEditorHl();
+      recolorSlotMarks('hl', hlSlot, p.c);
       render();
     });
     hlWrap.appendChild(b);
@@ -140,6 +141,7 @@
       b.classList.add('on');
       var ci=emInput(emSlot), ti=emTxt(emSlot);
       if(ci) ci.value = p.c; if(ti) ti.value = p.c;
+      recolorSlotMarks('em', emSlot, p.c);
       render();
     });
     emWrap.appendChild(b);
@@ -184,6 +186,11 @@
      색상 인풋 연결
      ============================================================ */
   function updateEditorHl(){ editor.style.setProperty('--hl', $('c-hl').value); }
+  /* 특정 슬롯으로 칠해 둔 기존 마크의 색을 새 색으로 갱신 */
+  function recolorSlotMarks(kind, slot, color){
+    var varName = kind==='hl' ? '--hl' : '--em';
+    [].forEach.call(editor.querySelectorAll('mark.'+kind+'[data-slot="'+slot+'"]'), function(m){ m.style.setProperty(varName, color); });
+  }
   function bubInkRecv(){ return $('c-brecv-ink').value; }
   function bubInkSend(){ return $('c-bsend-ink').value; }
   function updateEditorBub(){
@@ -215,14 +222,14 @@
   }
   linkColor('c-bg','c-bg-txt',true,false);
   linkColor('c-fg','c-fg-txt',false,false);
-  linkColor('c-hl','c-hl-txt',false,true);
-  linkColor('c-hl2','c-hl2-txt',false,false);
-  linkColor('c-hl3','c-hl3-txt',false,false);
-  linkColor('c-hl4','c-hl4-txt',false,false);
-  linkColor('c-em','c-em-txt',false,false);
-  linkColor('c-em2','c-em2-txt',false,false);
-  linkColor('c-em3','c-em3-txt',false,false);
-  linkColor('c-em4','c-em4-txt',false,false);
+  linkColor('c-hl','c-hl-txt',false,true, function(){ recolorSlotMarks('hl',1,$('c-hl').value); });
+  linkColor('c-hl2','c-hl2-txt',false,false, function(){ recolorSlotMarks('hl',2,$('c-hl2').value); });
+  linkColor('c-hl3','c-hl3-txt',false,false, function(){ recolorSlotMarks('hl',3,$('c-hl3').value); });
+  linkColor('c-hl4','c-hl4-txt',false,false, function(){ recolorSlotMarks('hl',4,$('c-hl4').value); });
+  linkColor('c-em','c-em-txt',false,false, function(){ recolorSlotMarks('em',1,$('c-em').value); });
+  linkColor('c-em2','c-em2-txt',false,false, function(){ recolorSlotMarks('em',2,$('c-em2').value); });
+  linkColor('c-em3','c-em3-txt',false,false, function(){ recolorSlotMarks('em',3,$('c-em3').value); });
+  linkColor('c-em4','c-em4-txt',false,false, function(){ recolorSlotMarks('em',4,$('c-em4').value); });
   linkColor('c-name','c-name-txt',false,false);
   linkColor('c-bar','c-bar-txt',false,false);
   linkColor('c-brecv','c-brecv-txt',false,false,updateEditorBub);
@@ -288,7 +295,7 @@
     var marks = editor.querySelectorAll('mark.'+cls);
     [].forEach.call(marks, function(mk){
       var next = mk.nextSibling;
-      while(next && next.nodeType===1 && next.tagName==='MARK' && next.classList.contains(cls)){
+      while(next && next.nodeType===1 && next.tagName==='MARK' && next.classList.contains(cls) && next.getAttribute('data-slot')===mk.getAttribute('data-slot')){
         while(next.firstChild){ mk.appendChild(next.firstChild); }
         var after = next.nextSibling; next.parentNode.removeChild(next); next = after;
       }
@@ -308,7 +315,7 @@
       try{ if(range.compareBoundaryPoints(Range.END_TO_END, mr) < 0){ range.setEndAfter(mk); } }catch(e){}
     });
   }
-  function paintUnion(range, cls, colorVarName, colorValue){
+  function paintUnion(range, cls, colorVarName, colorValue, slot){
     expandRangeOverMarks(range, cls);
     var startMark = document.createTextNode('\u200b'), endMark = document.createTextNode('\u200b');
     var endRange = range.cloneRange(); endRange.collapse(false); endRange.insertNode(endMark);
@@ -324,7 +331,7 @@
     });
     toUnwrap.forEach(function(mk){ var pr=mk.parentNode; if(!pr) return; while(mk.firstChild){ pr.insertBefore(mk.firstChild, mk); } pr.removeChild(mk); });
     var wrap = document.createRange(); wrap.setStartAfter(startMark); wrap.setEndBefore(endMark);
-    var mm = document.createElement('mark'); mm.className = cls; if(colorVarName){ mm.style.setProperty(colorVarName, colorValue); }
+    var mm = document.createElement('mark'); mm.className = cls; if(colorVarName){ mm.style.setProperty(colorVarName, colorValue); } if(slot!=null){ mm.setAttribute('data-slot', slot); }
     try{ wrap.surroundContents(mm); }
     catch(e){ var f=wrap.extractContents(); mm.appendChild(f); wrap.insertNode(mm); }
     if(startMark.parentNode) startMark.parentNode.removeChild(startMark);
@@ -627,12 +634,12 @@
     else if(fmt==='hl'){
       var range=sel.getRangeAt(0); if(range.collapsed) return;
       if(color==='__remove__'){ stripMarks(range, 'hl'); }
-      else { paintUnion(range, 'hl', '--hl', color || hlColorOf(hlSlot)); }
+      else { var hs=(color!=null?color:hlSlot); paintUnion(range, 'hl', '--hl', hlColorOf(hs), hs); }
     }
     else if(fmt==='emph'){
       var range2=sel.getRangeAt(0); if(range2.collapsed) return;
       if(color==='__remove__'){ stripMarks(range2, 'em'); }
-      else { paintUnion(range2, 'em', '--em', color || emColorOf(emSlot)); }
+      else { var es=(color!=null?color:emSlot); paintUnion(range2, 'em', '--em', emColorOf(es), es); }
     }
     else if(fmt==='sub'){
       var rangeS=sel.getRangeAt(0); if(rangeS.collapsed) return;
@@ -702,17 +709,17 @@
   var removeSwatchHtml = '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><line x1="6.5" y1="17.5" x2="17.5" y2="6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>';
   var SHEETS = {
     hl: { title: '형광펜', options: [
-      { label: '형광펜 1', preview: function(){ return swatchHtml(hlColorOf(1)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(1)); } },
-      { label: '형광펜 2', preview: function(){ return swatchHtml(hlColorOf(2)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(2)); } },
-      { label: '형광펜 3', preview: function(){ return swatchHtml(hlColorOf(3)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(3)); } },
-      { label: '형광펜 4', preview: function(){ return swatchHtml(hlColorOf(4)); }, run: function(){ applyFormat('hl', null, null, false, hlColorOf(4)); } },
+      { label: '형광펜 1', preview: function(){ return swatchHtml(hlColorOf(1)); }, run: function(){ applyFormat('hl', null, null, false, 1); } },
+      { label: '형광펜 2', preview: function(){ return swatchHtml(hlColorOf(2)); }, run: function(){ applyFormat('hl', null, null, false, 2); } },
+      { label: '형광펜 3', preview: function(){ return swatchHtml(hlColorOf(3)); }, run: function(){ applyFormat('hl', null, null, false, 3); } },
+      { label: '형광펜 4', preview: function(){ return swatchHtml(hlColorOf(4)); }, run: function(){ applyFormat('hl', null, null, false, 4); } },
       { label: '형광펜 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('hl', null, null, false, '__remove__'); } }
     ]},
     em: { title: '강조색', options: [
-      { label: '강조 1', preview: function(){ return swatchHtml(emColorOf(1)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(1)); } },
-      { label: '강조 2', preview: function(){ return swatchHtml(emColorOf(2)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(2)); } },
-      { label: '강조 3', preview: function(){ return swatchHtml(emColorOf(3)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(3)); } },
-      { label: '강조 4', preview: function(){ return swatchHtml(emColorOf(4)); }, run: function(){ applyFormat('emph', null, null, false, emColorOf(4)); } },
+      { label: '강조 1', preview: function(){ return swatchHtml(emColorOf(1)); }, run: function(){ applyFormat('emph', null, null, false, 1); } },
+      { label: '강조 2', preview: function(){ return swatchHtml(emColorOf(2)); }, run: function(){ applyFormat('emph', null, null, false, 2); } },
+      { label: '강조 3', preview: function(){ return swatchHtml(emColorOf(3)); }, run: function(){ applyFormat('emph', null, null, false, 3); } },
+      { label: '강조 4', preview: function(){ return swatchHtml(emColorOf(4)); }, run: function(){ applyFormat('emph', null, null, false, 4); } },
       { label: '강조 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } }
     ]},
     quote: { title: '인용선', options: [
@@ -1141,7 +1148,13 @@
     el.style.padding = pad+'px';
     el.style.textAlign = currentAlign;
     el.style.wordBreak = (mode==='word') ? 'keep-all' : 'break-all';
-    var inner = el.querySelector('.g-inner'); if(inner){ inner.style.width='100%'; }
+    var inner = el.querySelector('.g-inner');
+    if(inner){
+      var st = parseFloat($('stretch') ? $('stretch').value : 100); if(isNaN(st)) st=100;
+      var s = st/100;
+      if(s===1){ inner.style.width='100%'; inner.style.transform=''; inner.style.transformOrigin=''; }
+      else { inner.style.width=(100/s)+'%'; inner.style.transform='scaleX('+s+')'; inner.style.transformOrigin='left top'; }
+    }
     var layer = el.querySelector('.g-bg-layer');
     if(photoOn && photoData){
       if(!layer){ layer=document.createElement('div'); layer.className='g-bg-layer'; el.insertBefore(layer, el.firstChild); }
@@ -1268,6 +1281,7 @@
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
     styleCanvas(canvas); applyHlSolid(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
+    if($('stretch')) setVal('stretch', $('stretch').value+'%');
     setVal('letter-spacing', parseFloat($('letter-spacing').value).toFixed(1));
     setVal('line-height', (parseFloat($('line-height').value)/10).toFixed(1));
     setVal('pad', $('pad').value+'px');
@@ -1375,7 +1389,7 @@
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
-  ['name-pos','font','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w','opacity','bright'].forEach(function(id){
+  ['name-pos','font','font-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w','opacity','bright'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', render); e.addEventListener('change', render); }
   });
 
@@ -1659,7 +1673,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','font-size','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','font-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-quote','c-quote-txt','c-hr','c-hr-txt',
