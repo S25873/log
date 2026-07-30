@@ -668,6 +668,17 @@
   #canvas .g-bub.char-bub.right>svg.g-tail,.canvas-clone .g-bub.char-bub.right>svg.g-tail{right:-.42em !important;left:auto !important;transform:scaleX(-1) !important;}
   #canvas .g-bub-name.char-name.left,.canvas-clone .g-bub-name.char-name.left{margin-right:auto !important;margin-left:.4em !important;text-align:left !important;}
   #canvas .g-bub-name.char-name.right,.canvas-clone .g-bub-name.char-name.right{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;}
+  /* 아바타 + 메시지 묶음 (카톡 스타일) */
+  #canvas .g-msg-group,.canvas-clone .g-msg-group{display:flex !important;align-items:flex-start !important;gap:.45em !important;margin:.55em 0 !important;}
+  #canvas .g-msg-group.left,.canvas-clone .g-msg-group.left{flex-direction:row !important;}
+  #canvas .g-msg-group.right,.canvas-clone .g-msg-group.right{flex-direction:row-reverse !important;}
+  #canvas .g-msg-group:first-child,.canvas-clone .g-msg-group:first-child{margin-top:0 !important;}
+  #canvas .g-avatar,.canvas-clone .g-avatar{width:2.5em !important;height:2.5em !important;flex:none !important;border-radius:50% !important;background-size:cover !important;background-position:center !important;background-repeat:no-repeat !important;margin-top:.15em !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:.92em !important;font-weight:700 !important;color:#fff !important;overflow:hidden !important;}
+  #canvas .g-avatar.square,.canvas-clone .g-avatar.square{border-radius:.55em !important;}
+  #canvas .g-avatar.noimg,.canvas-clone .g-avatar.noimg{background:#c3c7cd !important;}
+  #canvas .g-msg-col,.canvas-clone .g-msg-col{flex:1 1 auto !important;min-width:0 !important;display:block !important;}
+  #canvas .g-msg-col .g-bub:first-child,.canvas-clone .g-msg-col .g-bub:first-child{margin-top:0 !important;}
+  #canvas .g-msg-col .g-bub-name:first-child,.canvas-clone .g-msg-col .g-bub-name:first-child{margin-top:0 !important;}
 
   #name-ed,#title-ed,#subtitle-ed{
     width:100%;min-height:42px;max-height:120px;overflow-y:auto;
@@ -845,9 +856,11 @@
           </div>
 
           <div class="lowtools" hidden>
-            <div class="subtools" hidden>
-              <button class="fbtn fbtn--exit" id="bub-exit" type="button">말풍선 나가기 ↵</button>
-              <button class="fbtn fbtn--del" id="bub-del" type="button">말풍선 삭제 ✕</button>
+            <div class="subtools" id="charbub-tools" hidden style="grid-template-columns:repeat(4,1fr)">
+              <button class="fbtn" id="cb-side" type="button" title="왼쪽↔오른쪽">◀ ▶</button>
+              <button class="fbtn" id="cb-tail" type="button" title="연속↔끝(꼬리)">연속/끝</button>
+              <button class="fbtn" id="cb-char" type="button" title="인물 변경">인물</button>
+              <button class="fbtn fbtn--del" id="cb-del" type="button" title="말풍선 삭제">삭제 ✕</button>
             </div>
           </div>
         </div>
@@ -1111,6 +1124,13 @@
 
         <!-- ========== 말풍선 ========== -->
         <div class="panel" data-panel="bubble" role="tabpanel">
+          <div class="section">
+            <p class="section__head">말풍선 넣기</p>
+            <p class="hint" style="margin-top:0;margin-bottom:12px">인물을 눌러 선택한 텍스트를 말풍선으로 넣으세요. <b>빈 줄로 나눈 여러 메시지</b>는 한 번에 여러 풍선이 되고, 맨 위에 이름이 한 번 붙습니다.</p>
+            <div class="char-list" id="char-insert-list"></div>
+            <p class="hint" id="char-insert-empty" style="margin:8px 0 0">아직 인물이 없어요. <b>아래 인물</b>에서 먼저 추가하세요.</p>
+          </div>
+
           <details class="fold" id="fold-char" open>
             <summary>
               인물
@@ -1165,21 +1185,6 @@
                 <button type="button" data-shape="imessage" aria-pressed="true">아이메시지</button>
                 <button type="button" data-shape="simple" aria-pressed="false">심플</button>
                 <span class="seg__thumb"></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="section">
-            <p class="section__head">말풍선 넣기</p>
-            <p class="hint" style="margin-top:0;margin-bottom:12px">인물을 눌러 선택한 텍스트를 말풍선으로 넣으세요. <b>빈 줄로 나눈 여러 메시지</b>는 한 번에 여러 풍선이 되고, 맨 위에 이름이 한 번 붙습니다.</p>
-            <div class="char-list" id="char-insert-list"></div>
-            <p class="hint" id="char-insert-empty" style="margin:8px 0 0">아직 인물이 없어요. 위 <b>인물</b>에서 먼저 추가하세요.</p>
-            <div class="fmt" style="margin-top:14px">
-              <div class="lowtools" id="bub-lowtools" hidden>
-                <div class="subtools" style="display:grid">
-                  <button class="fbtn fbtn--exit" id="bub-exit-2" type="button">말풍선 나가기 ↵</button>
-                  <button class="fbtn fbtn--del" id="bub-del-2" type="button">말풍선 삭제 ✕</button>
-                </div>
               </div>
             </div>
           </div>
@@ -1867,6 +1872,35 @@
       n.style.setProperty('color', c.nameColor, 'important');
     });
   }
+  // 캔버스: 같은 인물 연속 묶음을 [아바타][말풍선 열]로 감싼다 (미리보기·저장용)
+  function groupAvatars(root){
+    var inner = root.querySelector('.g-inner'); if(!inner) return;
+    var kids = [].slice.call(inner.childNodes), i=0;
+    function elInfo(nd){
+      if(!(nd && nd.nodeType===1 && nd.classList)) return null;
+      var isName = nd.classList.contains('g-bub-name') && nd.classList.contains('char-name');
+      var isBub = nd.classList.contains('g-bub') && nd.classList.contains('char-bub');
+      if(!isName && !isBub) return null;
+      return { cid: nd.getAttribute('data-char'), side: nd.classList.contains('right')?'right':'left' };
+    }
+    while(i<kids.length){
+      var info=elInfo(kids[i]);
+      if(info){
+        var run=[], j=i;
+        while(j<kids.length){ var f=elInfo(kids[j]); if(f && f.cid===info.cid && f.side===info.side){ run.push(kids[j]); j++; } else break; }
+        var c=findChar(info.cid);
+        var group=document.createElement('div'); group.className='g-msg-group '+info.side;
+        var av=document.createElement('span'); av.className='g-avatar '+info.side+((c&&c.photoShape==='square')?' square':'');
+        if(c&&c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; }
+        else { av.className+=' noimg'; av.textContent=(c&&c.name)?c.name.charAt(0):'?'; }
+        var col=document.createElement('div'); col.className='g-msg-col '+info.side;
+        run.forEach(function(n){ col.appendChild(n); });
+        group.appendChild(av); group.appendChild(col);
+        inner.insertBefore(group, kids[j]||null);
+        i=j;
+      } else { i++; }
+    }
+  }
   function stripBubblesFrag(frag){
     [].forEach.call(frag.querySelectorAll('svg.g-tail'), function(s){ if(s.parentNode) s.parentNode.removeChild(s); });
     [].forEach.call(frag.querySelectorAll('.g-bub'), function(b){ var p=b.parentNode; if(!p) return; while(b.firstChild){ p.insertBefore(b.firstChild,b); } p.removeChild(b); });
@@ -2298,10 +2332,50 @@
       updateFormatButtons();
     });
   }
-  bindBubTool($('bub-exit'), exitBubble);
-  bindBubTool($('bub-del'), unwrapBubble);
-  bindBubTool($('bub-exit-2'), exitBubble);
-  bindBubTool($('bub-del-2'), unwrapBubble);
+  function isCharBub(b){ return b && b.classList && b.classList.contains('char-bub'); }
+  function cbFlipSide(b){
+    var toRight = !b.classList.contains('right');
+    b.classList.toggle('right', toRight); b.classList.toggle('left', !toRight);
+    var nm=bubNameBefore(b); if(nm){ nm.classList.toggle('right', toRight); nm.classList.toggle('left', !toRight); }
+  }
+  function cbToggleTail(b){
+    if(b.classList.contains('tail')){ b.classList.remove('tail'); b.classList.add('cont'); }
+    else { b.classList.remove('cont'); b.classList.add('tail'); }
+  }
+  function cbDelete(b){
+    var nm=bubNameBefore(b);
+    if(nm){
+      var nxt=b.nextElementSibling; while(nxt && !(nxt.classList&&nxt.classList.contains('g-bub'))) nxt=nxt.nextElementSibling;
+      if(nxt && nxt.classList.contains('char-bub') && nxt.getAttribute('data-char')===b.getAttribute('data-char')){ nxt.parentNode.insertBefore(nm, nxt); }
+      else if(nm.parentNode){ nm.parentNode.removeChild(nm); }
+    }
+    if(b.parentNode) b.parentNode.removeChild(b);
+  }
+  function bindCharBubTool(btn, action){
+    if(!btn) return;
+    bindTap(btn, function(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      editor.focus(); restoreSel();
+      var b = caretInBubble();
+      if(isCharBub(b)){ action(b); cleanEditor(); styleCharBubbles(editor); render(); saveSel(); }
+      updateFormatButtons();
+    });
+  }
+  bindCharBubTool($('cb-side'), cbFlipSide);
+  bindCharBubTool($('cb-tail'), cbToggleTail);
+  bindCharBubTool($('cb-del'), cbDelete);
+  if($('cb-char')){
+    bindTap($('cb-char'), function(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      editor.focus(); restoreSel();
+      var b = caretInBubble();
+      if(!isCharBub(b) || !characters.length) return;
+      openSheetDef({ title:'인물 변경', options: characters.map(function(c){
+        return { label:c.name||'(이름 없음)', preview:function(){ return '<span class="s-preview"><i style="display:block;width:20px;height:20px;border-radius:50%;background:'+c.bub+'"></i></span>'; },
+          run:function(){ b.setAttribute('data-char', c.id); var nm=bubNameBefore(b); if(nm) nm.setAttribute('data-char', c.id); cleanEditor(); styleCharBubbles(editor); render(); saveSel(); } };
+      }) });
+    });
+  }
 
   // 제목 삭제/나가기 (confirm 없이 단순 처리)
   function bindSimple(btn, run){
@@ -2361,17 +2435,10 @@
       var fmt = btn.getAttribute('data-fmt');
       btn.classList.toggle('is-active', node ? hasFormat(node, fmt) : false);
     });
-    var bubShown = !!(node && closestBubble(node));
-    var titleShown = !!findTitleBlock();
-    // 에디터 고정 영역: 제목/말풍선 공용 lowtools
-    var subtools = document.querySelector('.editor-fixed .subtools');
-    if(subtools){ subtools.hidden = !bubShown; }
-    var tdel = $('title-del'); if(tdel){ tdel.hidden = !titleShown; }
-    var texit = $('title-exit'); if(texit){ texit.hidden = !titleShown; }
-    var low = document.querySelector('.editor-fixed .lowtools');
-    if(low){ low.hidden = !(bubShown || titleShown); }
-    // 말풍선 탭: 전용 lowtools
-    var bubLow = $('bub-lowtools'); if(bubLow){ bubLow.hidden = !bubShown; }
+    var cbub = node ? closestBubble(node) : null;
+    var charBubShown = !!(cbub && cbub.classList.contains('char-bub'));
+    var cbTools = $('charbub-tools'); if(cbTools){ cbTools.hidden = !charBubShown; }
+    var low = document.querySelector('.editor-fixed .lowtools'); if(low){ low.hidden = !charBubShown; }
   }
   editor.addEventListener('keyup', updateFormatButtons);
   editor.addEventListener('mouseup', updateFormatButtons);
@@ -2439,11 +2506,24 @@
      Enter / paste
      ============================================================ */
   var _lineBreakGuard = false;
+  function isCaretAtBubEnd(el, range){
+    if(!range.collapsed) return false;
+    try{ var r=document.createRange(); r.selectNodeContents(el); r.setStart(range.endContainer, range.endOffset);
+      var rest=r.cloneContents(); return (rest.textContent||'').replace(/\u200b/g,'')===''; }catch(e){ return false; }
+  }
+  function exitCharBub(bub){
+    var sel=window.getSelection();
+    var anchor=document.createTextNode('\u200b');
+    if(bub.nextSibling){ bub.parentNode.insertBefore(anchor, bub.nextSibling); } else { bub.parentNode.appendChild(anchor); }
+    var r=document.createRange(); r.setStart(anchor, anchor.nodeValue.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
+    saveSel(); render();
+  }
   function doLineBreak(){
     var inBub = caretInBubble();
     var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
     var range=sel.getRangeAt(0);
     if(!editor.contains(range.startContainer)) return false;
+    if(inBub && inBub.classList.contains('char-bub') && isCaretAtBubEnd(inBub, range)){ exitCharBub(inBub); return true; }
     range.deleteContents();
     var br=document.createElement('br'); range.insertNode(br);
     // br 바로 뒤 위치는 브라우저가 이전 텍스트로 병합시켜 줄바꿈이 씹히므로,
@@ -2802,7 +2882,7 @@
     updateEmptyBubbles();
     styleCharBubbles(editor);
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
-    styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); fitStage();
+    styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('stretch')) setVal('stretch', $('stretch').value+'%');
     if($('grad-angle')) setVal('grad-angle', angleLabel($('grad-angle').value));
