@@ -549,8 +549,8 @@
   .char-chip__dot{width:11px;height:11px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);}
   .char-editor{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);}
   .char-photo-row{display:flex;align-items:center;gap:10px;}
-  .char-photo-row .char-photo-btn{flex:1;height:42px;font-size:12.5px;padding:0 8px;}
-  .char-avatar{width:52px;height:52px;flex:none;border-radius:50%;background:var(--surface-3) center/cover no-repeat;display:grid;place-items:center;font-size:11px;color:var(--ink-3);overflow:hidden;border:1px solid var(--line);}
+  .char-avatar{width:52px;height:52px;flex:none;border-radius:50%;background:var(--surface-3) center/cover no-repeat;display:grid;place-items:center;font-size:11px;color:var(--ink-3);overflow:hidden;border:1px solid var(--line);cursor:pointer;transition:border-color .14s var(--ease),transform .14s;}
+  .char-avatar:hover{border-color:var(--ink);transform:translateY(-1px);}
   .char-avatar.square{border-radius:9px;}
   /* 사진 자르기 */
   .crop-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);opacity:0;transition:opacity .2s var(--ease);padding:16px;}
@@ -1141,7 +1141,7 @@
         <div class="panel" data-panel="bubble" role="tabpanel">
           <div class="section">
             <p class="section__head">말풍선 넣기</p>
-            <p class="hint" style="margin-top:0;margin-bottom:12px">인물을 눌러 선택한 텍스트를 말풍선으로 넣으세요.<br><br>여러 문단 선택 시 중간에 빈 문단이 있다면 다른 말풍선으로 처리돼요.</p>
+            <p class="hint" style="margin-top:0;margin-bottom:12px">인물을 눌러 선택한 텍스트를 말풍선으로 넣으세요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 다른 말풍선으로 처리돼요.</p>
             <div class="char-list" id="char-insert-list"></div>
             <p class="hint" id="char-insert-empty" style="margin:8px 0 0">아직 인물이 없어요. <b>아래 인물</b>에서 먼저 추가하세요.</p>
           </div>
@@ -1158,20 +1158,15 @@
 
               <div class="char-editor" id="char-editor" hidden>
                 <div class="field" style="margin-top:14px">
-                  <span class="label">사진</span>
+                  <span class="label">사진 <span class="val" style="font-weight:400;color:var(--ink-3)">미리보기를 눌러 선택/제거</span></span>
                   <div class="char-photo-row">
-                    <div class="char-avatar" id="char-photo-preview">없음</div>
+                    <div class="char-avatar" id="char-photo-preview" title="눌러서 사진 선택/제거">없음</div>
                     <input id="char-photo-file" type="file" accept="image/*" hidden>
-                    <button class="btn btn--ghost char-photo-btn" id="char-photo-pick" type="button">사진 선택</button>
-                    <button class="btn btn--ghost char-photo-btn" id="char-photo-clear" type="button">제거</button>
-                  </div>
-                </div>
-                <div class="field" style="margin-top:14px">
-                  <span class="label">사진 모양</span>
-                  <div class="seg" id="char-shape-seg">
-                    <button type="button" data-shape="circle" aria-pressed="true">원형</button>
-                    <button type="button" data-shape="square" aria-pressed="false">사각</button>
-                    <span class="seg__thumb"></span>
+                    <div class="seg" id="char-shape-seg" style="flex:1">
+                      <button type="button" data-shape="circle" aria-pressed="true">원형</button>
+                      <button type="button" data-shape="square" aria-pressed="false">사각</button>
+                      <span class="seg__thumb"></span>
+                    </div>
                   </div>
                 </div>
                 <div class="field" style="margin-top:14px">
@@ -3656,8 +3651,14 @@
     }
     $('char-add').addEventListener('click', function(){ openCharEditor(null); });
     $('char-cancel').addEventListener('click', closeCharEditor);
-    $('char-photo-pick').addEventListener('click', function(){ $('char-photo-file').click(); });
-    $('char-photo-clear').addEventListener('click', function(){ tmpPhoto=null; updateCharPhotoPreview(); });
+    if($('char-photo-preview')){
+      $('char-photo-preview').addEventListener('click', function(){
+        openSheetDef({ title:'사진', options:[
+          { label:'🖼 사진 선택', run:function(){ $('char-photo-file').click(); } },
+          { label:'제거', run:function(){ tmpPhoto=null; updateCharPhotoPreview(); } }
+        ]});
+      });
+    }
     $('char-photo-file').addEventListener('change', function(e){
       var f=e.target.files&&e.target.files[0]; if(!f) return;
       var rd=new FileReader(); rd.onload=function(ev){ openCropper(ev.target.result, function(url){ tmpPhoto=url; updateCharPhotoPreview(); }); }; rd.readAsDataURL(f); e.target.value='';
