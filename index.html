@@ -3590,17 +3590,16 @@
 
   /* ===== 큰따옴표 → 인물 말풍선 ===== */
   function currentCharId(){ return (characters && characters.length) ? characters[0].id : null; }
-  // mode: 'plain'(말풍선만) | 'named'(사진+이름: 첫 말풍선에 이름+아바타)
+  // mode: 'plain'(말풍선만) | 'named'(사진+이름: 말풍선마다 각각 이름+아바타)
   function quoteToBubbles(mode){
     var cid=currentCharId();
     var re=/[\u201C\u201D\u201E\u201F\u2033"]([^\u201C\u201D\u201E\u201F\u2033"\n]*)[\u201C\u201D\u201E\u201F\u2033"]/g;
-    var first=true;
     replaceInText(re, function(m){
       var inner=m[1]; var out=document.createDocumentFragment();
       if(cid){
-        if(mode==='named' && first){ out.appendChild(makeCharName(cid,'left')); }
+        if(mode==='named'){ out.appendChild(makeCharName(cid,'left')); }
         var bub=makeCharBub(cid,'left',false);
-        if(mode==='named' && first){ bub.setAttribute('data-av','1'); }
+        if(mode==='named'){ bub.setAttribute('data-av','1'); }
         bub.appendChild(document.createTextNode(inner===''?'\u200b':inner));
         out.appendChild(bub);
       } else {
@@ -3608,7 +3607,7 @@
         gb.appendChild(document.createTextNode(inner===''?'\u200b':inner));
         out.appendChild(gb);
       }
-      first=false; return out;
+      return out;
     }, isBubEl);
   }
   function openQuoteBubbleSheet(){
