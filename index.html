@@ -731,7 +731,7 @@
       flex:none;position:sticky;top:0;z-index:25;background:var(--surface);
     }
     .editor-fixed{flex:none;}
-    #editor{height:30vh;font-size:13.5px;}
+    #editor{height:24vh;font-size:12.5px;}
     /* 이 페이지는 뷰포트에서 확대를 잠가둬(maximum-scale=1) iOS 포커스 확대가 없음 → 작게 둬도 됨 */
     #name-ed,#title-ed,#subtitle-ed,input[type=text]:not(.cchip__hex),select,textarea{font-size:13.5px;}
     .panelscroll{
@@ -1347,7 +1347,7 @@
   }
   /* 현재 배경 종류에 해당하는 배경만 반환 — 다른 모드 값이 새지 않게 */
   function angleLabel(deg){
-    var m={0:'↑ 위',45:'↗',90:'→ 오른쪽',135:'↘',180:'↓ 아래',225:'↙',270:'← 왼쪽',315:'↖'};
+    var m={0:'↑',45:'↗',90:'→',135:'↘',180:'↓',225:'↙',270:'←',315:'↖'};
     return m[parseInt(deg,10)] || (deg+'°');
   }
   function effectiveBg(){
@@ -2404,9 +2404,9 @@
   }
   function hlMixRatio(fg){
     var c=(fg||'').trim().replace('#',''); if(c.length===3){ c=c[0]+c[0]+c[1]+c[1]+c[2]+c[2]; }
-    if(!/^[0-9a-fA-F]{6}$/.test(c)) return 0.72;
+    if(!/^[0-9a-fA-F]{6}$/.test(c)) return 0.63;
     var r=parseInt(c.slice(0,2),16), g=parseInt(c.slice(2,4),16), b=parseInt(c.slice(4,6),16);
-    return ((0.299*r+0.587*g+0.114*b)/255) < 0.5 ? 0.72 : 0.92;
+    return ((0.299*r+0.587*g+0.114*b)/255) < 0.5 ? 0.63 : 0.86;
   }
   function hlToRgba(c, alpha, bg){
     function parseHex(v){ v=(v||'').trim(); var m=v.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/); if(!m) return null;
