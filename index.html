@@ -2104,7 +2104,7 @@
   function sideBubIcon(side, color){
     var L = side==='left';
     var bar = '<rect x="'+(L?2:19)+'" y="3.5" width="3" height="17" rx="1.5" fill="currentColor"/>';
-    var bub = '<rect x="'+(L?6.5:8)+'" y="8" width="11" height="8" rx="4" fill="'+color+'" stroke="rgba(0,0,0,.14)" stroke-width="1"/>';
+    var bub = '<rect x="'+(L?7:6)+'" y="8" width="11" height="8" rx="4" fill="'+color+'" stroke="rgba(0,0,0,.14)" stroke-width="1"/>';
     return '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none">'+bar+bub+'</svg></span>';
   }
   function openCharInsertSheet(charId){
