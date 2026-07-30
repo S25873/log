@@ -21,8 +21,8 @@
   function emInput(slot){ return $(slot===1 ? 'c-em' : 'c-em'+slot); }
   function hlTxt(slot){ return $((slot===1 ? 'c-hl' : 'c-hl'+slot)+'-txt'); }
   function emTxt(slot){ return $((slot===1 ? 'c-em' : 'c-em'+slot)+'-txt'); }
-  function hlColorOf(slot){ var e=hlInput(slot); return e ? e.value : '#fff59d'; }
-  function emColorOf(slot){ var e=emInput(slot); return e ? e.value : '#e23b3b'; }
+  function hlColorOf(slot){ var e=hlInput(slot); return e ? e.value : '#f9ee9a'; }
+  function emColorOf(slot){ var e=emInput(slot); return e ? e.value : '#c25b57'; }
 
   /* ============================================================
      테마 토글
@@ -82,7 +82,7 @@
     {bg:'linear-gradient(160deg,#30cfd0 0%,#330867 100%)', fg:'#f0f0f0', swatch:'linear-gradient(160deg,#30cfd0,#330867)'}  // 미드나잇
   ];
   var hlPresets = [
-    {c:'#f4b2ad', label:'코랄'}, {c:'#f8c9a6', label:'피치'}, {c:'#f9dea8', label:'버터'}, {c:'#e4e3a2', label:'라임옐로'},
+    {c:'#f4b2ad', label:'코랄'}, {c:'#f8c9a6', label:'피치'}, {c:'#f9ee9a', label:'옐로'}, {c:'#dae59e', label:'라임'},
     {c:'#c4e1ac', label:'세이지'}, {c:'#aededd', label:'민트'}, {c:'#b4d3ec', label:'스카이'}, {c:'#b9c7ec', label:'페리'},
     {c:'#c3c1eb', label:'인디고'}, {c:'#d0c2e8', label:'라벤더'}, {c:'#debee3', label:'바이올렛'}, {c:'#efbcd3', label:'로즈'},
     {c:'#e9d2c6', label:'클레이'}, {c:'#ddccbf', label:'코코아'}, {c:'#dadce0', label:'그레이'}, {c:'#e6e6e6', label:'페일'}
