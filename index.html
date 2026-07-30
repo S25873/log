@@ -1141,7 +1141,7 @@
         <div class="panel" data-panel="bubble" role="tabpanel">
           <div class="section">
             <p class="section__head">말풍선 넣기</p>
-            <p class="hint" style="margin-top:0;margin-bottom:12px">인물을 눌러 선택한 텍스트를 말풍선으로 넣으세요. <b>빈 줄로 나눈 여러 메시지</b>는 한 번에 여러 풍선이 되고, 맨 위에 이름이 한 번 붙습니다.</p>
+            <p class="hint" style="margin-top:0;margin-bottom:12px">인물을 눌러 선택한 텍스트를 말풍선으로 넣으세요.<br><br>여러 문단 선택 시 중간에 빈 문단이 있다면 다른 말풍선으로 처리돼요.</p>
             <div class="char-list" id="char-insert-list"></div>
             <p class="hint" id="char-insert-empty" style="margin:8px 0 0">아직 인물이 없어요. <b>아래 인물</b>에서 먼저 추가하세요.</p>
           </div>
@@ -2941,8 +2941,17 @@
     var wrap=s.closest('.rangewrap'); var lbl=wrap?wrap.previousElementSibling:null;
     var span=lbl?lbl.querySelector('.val'):null; if(span) span.textContent=text;
   }
+  function cleanOrphanNames(){
+    [].forEach.call(editor.querySelectorAll('.g-bub-name.char-name'), function(nm){
+      var nx=nm.nextElementSibling;
+      while(nx && nx.tagName==='BR') nx=nx.nextElementSibling;
+      var ok = nx && nx.classList && nx.classList.contains('g-bub') && nx.classList.contains('char-bub') && nx.getAttribute('data-char')===nm.getAttribute('data-char');
+      if(!ok && nm.parentNode) nm.parentNode.removeChild(nm);
+    });
+  }
   function render(){
     bgValue = effectiveBg();
+    cleanOrphanNames();
     updateEmptyBubbles();
     styleCharBubbles(editor);
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
@@ -3635,7 +3644,7 @@
     linkColor('char-bub','char-bub-txt',false,false, function(){ syncCharBubPreset($('char-bub').value); });
     linkColor('char-ink','char-ink-txt',false,false);
     linkColor('char-namecolor','char-namecolor-txt',false,false);
-    var charBubPresets = ['#248bf5','#34c759','#ff3b30','#ff9500','#ffcc00','#af52de','#e5e5ea','#ffd6e0','#d6e6ff','#d6f5e6','#3a3a3c','#ffffff'];
+    var charBubPresets = ['#248bf5','#e5e5ea','#1c1c1e','#ffffff','#ffd1d1','#ffe0b8','#fbf0b0','#cdeccb','#cbe0fb','#ddd0f5'];
     var cbpWrap = $('char-bub-presets');
     if(cbpWrap){
       charBubPresets.forEach(function(col){
