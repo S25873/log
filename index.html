@@ -2235,6 +2235,10 @@
       if(sel && sel.rangeCount && sel.isCollapsed){
         var hrPrev=hrBeforeCaret(sel.getRangeAt(0));
         if(hrPrev){ e.preventDefault(); removeHr(hrPrev); return; }
+        var eb=caretInBubble();
+        if(eb && eb.classList.contains('char-bub') && (eb.textContent||'').replace(/\u200b/g,'')===''){
+          e.preventDefault(); removeEmptyCharBub(eb); return;
+        }
       }
     }
   });
@@ -2453,6 +2457,27 @@
     parent.insertBefore(frag, b);
     parent.removeChild(b);
   }
+  function removeEmptyCharBub(bub){
+    var parent=bub.parentNode; if(!parent) return;
+    var svg=bub.querySelector('svg.g-tail'); if(svg) bub.removeChild(svg);
+    var nm=bubNameBefore(bub);
+    if(nm){
+      var nxt=bub.nextElementSibling; while(nxt && !(nxt.classList&&nxt.classList.contains('g-bub'))) nxt=nxt.nextElementSibling;
+      if(nxt && nxt.classList.contains('char-bub') && nxt.getAttribute('data-char')===bub.getAttribute('data-char')){ nxt.parentNode.insertBefore(nm, nxt); }
+      else if(nm.parentNode){ nm.parentNode.removeChild(nm); }
+    }
+    var prev=bub.previousSibling;
+    parent.removeChild(bub);
+    var sel=window.getSelection(); var r=document.createRange();
+    try{
+      if(prev && prev.nodeType===3){ r.setStart(prev, prev.nodeValue.length); r.collapse(true); }
+      else if(prev && prev.nodeType===1 && prev.tagName!=='BR'){ r.selectNodeContents(prev); r.collapse(false); }
+      else if(prev){ r.setStartAfter(prev); r.collapse(true); }
+      else { r.selectNodeContents(editor); r.collapse(false); }
+      sel.removeAllRanges(); sel.addRange(r);
+    }catch(err){}
+    cleanEditor(); render(); saveSel();
+  }
   function cbToggleName(b){
     var nm=bubNameBefore(b);
     if(nm){ if(nm.parentNode) nm.parentNode.removeChild(nm); }
@@ -2667,6 +2692,15 @@
       e.preventDefault();
       if(_lineBreakGuard){ return; }   // keydown이 이미 처리함
       doLineBreak();
+    }
+    if(e.inputType==='deleteContentBackward'){
+      var sel=window.getSelection();
+      if(sel && sel.rangeCount && sel.isCollapsed){
+        var eb=caretInBubble();
+        if(eb && eb.classList.contains('char-bub') && (eb.textContent||'').replace(/\u200b/g,'')===''){
+          e.preventDefault(); removeEmptyCharBub(eb); return;
+        }
+      }
     }
   });
   editor.addEventListener('paste', function(e){
