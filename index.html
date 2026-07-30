@@ -2100,26 +2100,21 @@
     }
     cleanEditor(); styleCharBubbles(editor); render(); saveSel(); updateFormatButtons();
   }
-  // 말풍선 방향 아이콘: 해당 방향 가장자리에 세로 막대 + 그쪽에 붙은 말풍선(+아바타)
-  function sideBubIcon(side, withAv, color){
-    var L = side==='left', edge = L ? 2.5 : 21.5, s='<svg viewBox="0 0 24 24" fill="none">';
-    s += '<line x1="'+edge+'" y1="4.5" x2="'+edge+'" y2="19.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" opacity=".4"/>';
-    if(withAv){
-      s += '<circle cx="'+(L?5.6:18.4)+'" cy="7" r="2.7" fill="'+color+'" stroke="rgba(0,0,0,.14)" stroke-width="1"/>';
-      s += '<rect x="'+(L?4:8)+'" y="12" width="12" height="6.4" rx="3.2" fill="'+color+'" stroke="rgba(0,0,0,.12)" stroke-width="1"/>';
-    } else {
-      s += '<rect x="'+(L?3.5:8.5)+'" y="8.8" width="12" height="6.4" rx="3.2" fill="'+color+'" stroke="rgba(0,0,0,.12)" stroke-width="1"/>';
-    }
-    return '<span class="s-preview">'+s+'</svg></span>';
+  // 말풍선 방향 아이콘: 굵은 세로 막대를 해당 방향 가장자리에 두고 말풍선을 그쪽에 붙여 방향만 강조
+  function sideBubIcon(side, color){
+    var L = side==='left';
+    var bar = '<rect x="'+(L?2:19)+'" y="3.5" width="3" height="17" rx="1.5" fill="currentColor"/>';
+    var bub = '<rect x="'+(L?6.5:8)+'" y="8" width="11" height="8" rx="4" fill="'+color+'" stroke="rgba(0,0,0,.14)" stroke-width="1"/>';
+    return '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none">'+bar+bub+'</svg></span>';
   }
   function openCharInsertSheet(charId){
     var c=findChar(charId); if(!c) return;
     var col=c.bub||'#e5e5ea';
     openSheetDef({ title:(c.name||'인물')+' 말풍선', options:[
-      { label:'이름+사진', preview:sideBubIcon('left',true,col), run:function(){ insertCharBubbles(charId,'left','tail'); } },
-      { label:'말풍선만', preview:sideBubIcon('left',false,col), run:function(){ insertCharBubbles(charId,'left','cont'); } },
-      { label:'이름+사진', preview:sideBubIcon('right',true,col), run:function(){ insertCharBubbles(charId,'right','tail'); } },
-      { label:'말풍선만', preview:sideBubIcon('right',false,col), run:function(){ insertCharBubbles(charId,'right','cont'); } }
+      { label:'이름+사진', preview:sideBubIcon('left',col), run:function(){ insertCharBubbles(charId,'left','tail'); } },
+      { label:'말풍선만', preview:sideBubIcon('left',col), run:function(){ insertCharBubbles(charId,'left','cont'); } },
+      { label:'이름+사진', preview:sideBubIcon('right',col), run:function(){ insertCharBubbles(charId,'right','tail'); } },
+      { label:'말풍선만', preview:sideBubIcon('right',col), run:function(){ insertCharBubbles(charId,'right','cont'); } }
     ]});
   }
   function applyBubble(kind, tail, withName){
@@ -3619,8 +3614,8 @@
   function openQuoteBubbleSheet(){
     var cid=currentCharId(), c=cid?findChar(cid):null, col=c?c.bub:'#e5e5ea';
     openSheetDef({ title:'따옴표 → 말풍선'+((c&&c.name)?(' · '+c.name):''), options:[
-      { label:'말풍선만', preview:sideBubIcon('left',false,col), run:function(){ quoteToBubbles('plain'); } },
-      { label:'사진+이름', preview:sideBubIcon('left',true,col), run:function(){ quoteToBubbles('named'); } }
+      { label:'말풍선만', preview:sideBubIcon('left',col), run:function(){ quoteToBubbles('plain'); } },
+      { label:'사진+이름', preview:sideBubIcon('left',col), run:function(){ quoteToBubbles('named'); } }
     ]});
   }
 
