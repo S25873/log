@@ -551,6 +551,19 @@
   .char-photo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
   .char-avatar{width:46px;height:46px;flex:none;border-radius:50%;background:var(--surface-3) center/cover no-repeat;display:grid;place-items:center;font-size:11px;color:var(--ink-3);overflow:hidden;border:1px solid var(--line);}
   .char-avatar.square{border-radius:9px;}
+  /* 사진 자르기 */
+  .crop-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);opacity:0;transition:opacity .2s var(--ease);padding:16px;}
+  .crop-overlay.is-open{opacity:1;}
+  .crop-overlay[hidden]{display:none;}
+  .crop-card{background:var(--surface);border-radius:var(--radius,16px);padding:16px;width:100%;max-width:300px;box-shadow:var(--shadow-2);}
+  .crop-card__title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:14px;text-align:center;}
+  .crop-frame{position:relative;width:240px;height:240px;margin:0 auto;border-radius:12px;overflow:hidden;background:#111;touch-action:none;cursor:grab;user-select:none;}
+  .crop-frame:active{cursor:grabbing;}
+  .crop-frame img{position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none;}
+  .crop-frame__ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 9999px rgba(0,0,0,.34);pointer-events:none;}
+  .crop-zoom{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:12px;color:var(--ink-2);}
+  .crop-actions{display:flex;gap:8px;margin-top:16px;}
+  .crop-actions .btn{flex:1;font-size:13px;}
   .chip{
     position:relative;width:100%;aspect-ratio:1;min-width:0;
     border:1px solid var(--line);border-radius:var(--radius-xs);cursor:pointer;
@@ -671,6 +684,16 @@
   #canvas .g-bub.char-bub.right,.canvas-clone .g-bub.char-bub.right{margin-left:auto !important;margin-right:.4em !important;}
   #canvas .g-bub.char-bub.left>svg.g-tail,.canvas-clone .g-bub.char-bub.left>svg.g-tail{left:-.42em !important;right:auto !important;transform:none !important;}
   #canvas .g-bub.char-bub.right>svg.g-tail,.canvas-clone .g-bub.char-bub.right>svg.g-tail{right:-.42em !important;left:auto !important;transform:scaleX(-1) !important;}
+  /* 라운드: 코너가 많이 둥글어 꼬리를 살짝 위로 + 더 겹쳐 붙임 */
+  #canvas.bub-round .g-bub.char-bub.left>svg.g-tail,.canvas-clone.bub-round .g-bub.char-bub.left>svg.g-tail{left:-.3em !important;bottom:.22em !important;}
+  #canvas.bub-round .g-bub.char-bub.right>svg.g-tail,.canvas-clone.bub-round .g-bub.char-bub.right>svg.g-tail{right:-.3em !important;bottom:.22em !important;}
+  #editor.bub-round .g-bub.char-bub.left>svg.g-tail{left:-4px;bottom:3px;}
+  #editor.bub-round .g-bub.char-bub.right>svg.g-tail{right:-4px;bottom:3px;}
+  /* 각진: 날카로운 바닥 코너에 딱 맞춰 붙임 */
+  #canvas.bub-card .g-bub.char-bub.left>svg.g-tail,.canvas-clone.bub-card .g-bub.char-bub.left>svg.g-tail{left:-.34em !important;bottom:0 !important;}
+  #canvas.bub-card .g-bub.char-bub.right>svg.g-tail,.canvas-clone.bub-card .g-bub.char-bub.right>svg.g-tail{right:-.34em !important;bottom:0 !important;}
+  #editor.bub-card .g-bub.char-bub.left>svg.g-tail{left:-4px;bottom:0;}
+  #editor.bub-card .g-bub.char-bub.right>svg.g-tail{right:-4px;bottom:0;}
   #canvas .g-bub-name.char-name.left,.canvas-clone .g-bub-name.char-name.left{margin-right:auto !important;margin-left:.4em !important;text-align:left !important;}
   #canvas .g-bub-name.char-name.right,.canvas-clone .g-bub-name.char-name.right{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;}
   /* 아바타 + 메시지 묶음 (카톡 스타일) */
@@ -863,7 +886,7 @@
           <div class="lowtools" hidden>
             <div class="subtools" id="charbub-tools" hidden style="grid-template-columns:repeat(4,1fr)">
               <button class="fbtn" id="cb-side" type="button" title="왼쪽↔오른쪽">◀ ▶</button>
-              <button class="fbtn" id="cb-tail" type="button" title="연속↔끝(꼬리)">연속/끝</button>
+              <button class="fbtn" id="cb-tail" type="button" title="꼬리 켜기/끄기">꼬리</button>
               <button class="fbtn" id="cb-char" type="button" title="인물 변경">인물</button>
               <button class="fbtn fbtn--del" id="cb-del" type="button" title="말풍선 삭제">삭제 ✕</button>
             </div>
@@ -1329,6 +1352,24 @@
     <div class="sheet__title" id="sheet-title">선택</div>
     <div class="sheet__list" id="sheet-list"></div>
     <button class="sheet__cancel" id="sheet-cancel" type="button">취소</button>
+  </div>
+</div>
+
+<div class="crop-overlay" id="crop-overlay" hidden>
+  <div class="crop-card" role="dialog" aria-modal="true">
+    <div class="crop-card__title">사진 자르기</div>
+    <div class="crop-frame" id="crop-frame">
+      <img id="crop-img" alt="" draggable="false">
+      <div class="crop-frame__ring" id="crop-ring"></div>
+    </div>
+    <div class="crop-zoom">
+      <span>크기</span>
+      <div class="rangewrap" style="flex:1"><input id="crop-zoom" type="range" min="1" max="3" step="0.01" value="1"></div>
+    </div>
+    <div class="crop-actions">
+      <button class="btn btn--ghost" id="crop-cancel" type="button" style="height:40px">취소</button>
+      <button class="btn btn--primary" id="crop-apply" type="button" style="height:40px">적용</button>
+    </div>
   </div>
 </div>
 
@@ -3439,8 +3480,60 @@
   }
 
   /* ============================================================
-     인물 프리셋 (1단계: 만들기·저장·관리)
+     사진 자르기 (크롭)
      ============================================================ */
+  var CROP_FRAME = 240;
+  var crop = { img:null, natW:0, natH:0, base:1, zoom:1, ox:0, oy:0, cb:null, drag:false, sx:0, sy:0 };
+  function cropDisp(){ var s=crop.base*crop.zoom; return { w:crop.natW*s, h:crop.natH*s }; }
+  function cropClamp(){ var d=cropDisp(); crop.ox=Math.min(0, Math.max(CROP_FRAME-d.w, crop.ox)); crop.oy=Math.min(0, Math.max(CROP_FRAME-d.h, crop.oy)); }
+  function cropLayout(center){
+    var d=cropDisp(), im=$('crop-img'); if(!im) return;
+    if(center){ crop.ox=(CROP_FRAME-d.w)/2; crop.oy=(CROP_FRAME-d.h)/2; }
+    cropClamp();
+    im.style.width=d.w+'px'; im.style.height=d.h+'px'; im.style.left=crop.ox+'px'; im.style.top=crop.oy+'px';
+  }
+  function openCropper(src, cb){
+    var ov=$('crop-overlay'), im=$('crop-img'); if(!ov||!im) { cb(src); return; }
+    crop.cb=cb;
+    var img=new Image();
+    img.onload=function(){
+      crop.img=img; crop.natW=img.naturalWidth; crop.natH=img.naturalHeight;
+      crop.base=CROP_FRAME/Math.min(img.naturalWidth, img.naturalHeight); crop.zoom=1;
+      im.src=src; $('crop-zoom').value=1;
+      cropLayout(true);
+      ov.hidden=false; requestAnimationFrame(function(){ ov.classList.add('is-open'); });
+    };
+    img.src=src;
+  }
+  function closeCropper(){ var ov=$('crop-overlay'); if(!ov) return; ov.classList.remove('is-open'); setTimeout(function(){ ov.hidden=true; }, 200); }
+  (function bindCropper(){
+    var frame=$('crop-frame'); if(!frame) return;
+    $('crop-zoom').addEventListener('input', function(){
+      var old=cropDisp(), cx=(CROP_FRAME/2-crop.ox), cy=(CROP_FRAME/2-crop.oy);
+      crop.zoom=parseFloat(this.value)||1;
+      var nw=cropDisp();
+      crop.ox=CROP_FRAME/2 - cx*(nw.w/old.w); crop.oy=CROP_FRAME/2 - cy*(nw.h/old.h);
+      cropLayout(false);
+    });
+    frame.addEventListener('pointerdown', function(e){ crop.drag=true; crop.sx=e.clientX; crop.sy=e.clientY; try{ frame.setPointerCapture(e.pointerId); }catch(x){} });
+    frame.addEventListener('pointermove', function(e){ if(!crop.drag) return; crop.ox+=e.clientX-crop.sx; crop.oy+=e.clientY-crop.sy; crop.sx=e.clientX; crop.sy=e.clientY; cropLayout(false); });
+    function endDrag(){ crop.drag=false; }
+    frame.addEventListener('pointerup', endDrag); frame.addEventListener('pointercancel', endDrag);
+    $('crop-cancel').addEventListener('click', closeCropper);
+    $('crop-apply').addEventListener('click', function(){
+      var OUT=256, s=OUT/CROP_FRAME, d=cropDisp();
+      var cv=document.createElement('canvas'); cv.width=OUT; cv.height=OUT;
+      var cx=cv.getContext('2d');
+      cx.fillStyle='#ffffff'; cx.fillRect(0,0,OUT,OUT);
+      cx.drawImage(crop.img, crop.ox*s, crop.oy*s, d.w*s, d.h*s);
+      var url; try{ url=cv.toDataURL('image/jpeg', 0.88); }catch(e){ url=null; }
+      closeCropper();
+      if(url && crop.cb) crop.cb(url);
+    });
+    $('crop-overlay').addEventListener('click', function(e){ if(e.target===$('crop-overlay')) closeCropper(); });
+  })();
+
+
   var CHAR_KEY = 'logmaker-characters-v1';
   var characters = (function(){ try{ var r=localStorage.getItem(CHAR_KEY); return r?JSON.parse(r):[]; }catch(e){ return []; } })();
   var editingCharId = null, tmpPhoto = null, tmpShape = 'circle';
@@ -3524,7 +3617,7 @@
     $('char-photo-clear').addEventListener('click', function(){ tmpPhoto=null; updateCharPhotoPreview(); });
     $('char-photo-file').addEventListener('change', function(e){
       var f=e.target.files&&e.target.files[0]; if(!f) return;
-      var rd=new FileReader(); rd.onload=function(ev){ tmpPhoto=ev.target.result; updateCharPhotoPreview(); }; rd.readAsDataURL(f); e.target.value='';
+      var rd=new FileReader(); rd.onload=function(ev){ openCropper(ev.target.result, function(url){ tmpPhoto=url; updateCharPhotoPreview(); }); }; rd.readAsDataURL(f); e.target.value='';
     });
     document.querySelectorAll('#char-shape-seg button').forEach(function(b){
       b.addEventListener('click', function(){ tmpShape=b.getAttribute('data-shape'); setShapeSeg(tmpShape); updateCharPhotoPreview(); });
