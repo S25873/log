@@ -531,8 +531,10 @@
 
   /* 프리셋 */
   .presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(0,1fr));gap:8px;}
-  .presets--bg{grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;}
-  .presets--bg .chip{font-size:11px;}
+  .presets--bg{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;}
+  .presets--bg .chip{aspect-ratio:auto;height:32px;}
+  .cchip--wide .cchip__box{width:100%;}
+  .cchip--wide .cchip__hex{flex:1;min-width:0;}
   .chip{
     position:relative;width:100%;aspect-ratio:1;min-width:0;
     border:1px solid var(--line);border-radius:var(--radius-xs);cursor:pointer;
@@ -1133,8 +1135,9 @@
               </div>
 
               <div id="bg-solid-view" style="margin-top:18px">
-                <div class="cgrid cgrid--2" style="margin-bottom:12px">
-                  <div class="cchip"><label>배경 색</label><div class="cchip__box"><input id="c-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-bg-txt" type="text" value="#ffffff"></div></div>
+                <div class="cchip cchip--wide" style="margin-bottom:14px">
+                  <label>배경 색</label>
+                  <div class="cchip__box"><input id="c-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-bg-txt" type="text" value="#ffffff"></div>
                 </div>
                 <div class="presets presets--bg" id="bg-presets-solid"></div>
               </div>
@@ -1345,6 +1348,12 @@
     var a=($('grad-angle')?$('grad-angle').value:135), c1=($('c-grad1')?$('c-grad1').value:'#ffecd2'), c2=($('c-grad2')?$('c-grad2').value:'#fcb69f');
     return 'linear-gradient('+a+'deg, '+c1+', '+c2+')';
   }
+  /* 현재 배경 종류에 해당하는 배경만 반환 — 다른 모드 값이 새지 않게 */
+  function effectiveBg(){
+    if(bgMode==='gradient') return currentGradient();
+    if(bgMode==='photo') return '#ffffff';   // 사진 뒤 base는 항상 중립(흰색)
+    return ($('c-bg') ? $('c-bg').value : '#ffffff');  // 단색
+  }
 
   /* 배경 프리셋 렌더 (단색 / 그라데이션 카테고리별) */
   var bgSolidWrap = $('bg-presets-solid');
@@ -1358,12 +1367,11 @@
   bgSolids.forEach(function(p){
     var b = document.createElement('button');
     b.type='button'; b.className='chip'; b.setAttribute('data-bg', p.bg);
-    b.style.background=p.bg; b.style.color=p.fg; b.textContent='가'; b.title='단색 배경 적용';
+    b.style.background=p.bg; b.title='단색 배경 적용';
     b.addEventListener('click', function(){
       clearBgOn(); b.classList.add('on');
-      bgValue = p.bg;
       $('c-bg').value=p.bg; $('c-bg-txt').value=p.bg;
-      $('c-fg').value=toHex(p.fg); $('c-fg-txt').value=p.fg;
+      bgValue = p.bg;
       render();
     });
     bgSolidWrap.appendChild(b);
@@ -1372,13 +1380,12 @@
     var grad='linear-gradient('+p.angle+'deg, '+p.c1+', '+p.c2+')';
     var b = document.createElement('button');
     b.type='button'; b.className='chip'; b.setAttribute('data-grad', grad);
-    b.style.background=grad; b.style.color=p.fg; b.textContent='가'; b.title='그라데이션 적용';
+    b.style.background=grad; b.title='그라데이션 적용';
     b.addEventListener('click', function(){
       clearBgOn(); b.classList.add('on');
       $('c-grad1').value=p.c1; $('c-grad1-txt').value=p.c1;
       $('c-grad2').value=p.c2; $('c-grad2-txt').value=p.c2;
       $('grad-angle').value=p.angle; setVal('grad-angle', p.angle+'°');
-      $('c-fg').value=toHex(p.fg); $('c-fg-txt').value=p.fg;
       bgValue = currentGradient();
       render();
     });
@@ -2584,6 +2591,7 @@
     var span=lbl?lbl.querySelector('.val'):null; if(span) span.textContent=text;
   }
   function render(){
+    bgValue = effectiveBg();
     updateEmptyBubbles();
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
     styleCanvas(canvas); applyHlSolid(canvas); fitStage();
