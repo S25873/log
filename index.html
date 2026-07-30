@@ -884,11 +884,13 @@
           </div>
 
           <div class="lowtools" hidden>
-            <div class="subtools" id="charbub-tools" hidden style="grid-template-columns:repeat(4,1fr)">
+            <div class="subtools" id="charbub-tools" hidden style="grid-template-columns:repeat(3,1fr)">
               <button class="fbtn" id="cb-side" type="button" title="왼쪽↔오른쪽">◀ ▶</button>
               <button class="fbtn" id="cb-tail" type="button" title="꼬리 켜기/끄기">꼬리</button>
               <button class="fbtn" id="cb-char" type="button" title="인물 변경">인물</button>
-              <button class="fbtn fbtn--del" id="cb-del" type="button" title="말풍선 삭제">삭제 ✕</button>
+              <button class="fbtn" id="cb-name" type="button" title="이름 넣기/빼기">이름</button>
+              <button class="fbtn" id="cb-av" type="button" title="사진 넣기/빼기">사진</button>
+              <button class="fbtn fbtn--del" id="cb-del" type="button" title="말풍선 해제(내용은 남김)">삭제</button>
             </div>
           </div>
         </div>
@@ -1943,8 +1945,10 @@
           }
         });
         if(firstName && col.firstChild!==firstName){ col.insertBefore(firstName, col.firstChild); }
+        var wantAv=false;
+        [].forEach.call(col.querySelectorAll('.g-bub.char-bub'), function(bb){ if(bb.getAttribute('data-av')==='1') wantAv=true; });
         var group=document.createElement('div'); group.className='g-msg-group '+info.side;
-        if(firstName){
+        if(wantAv){
           var c=findChar(info.cid);
           var av=document.createElement('span'); av.className='g-avatar '+info.side+((c&&c.photoShape==='square')?' square':'');
           if(c&&c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; }
@@ -1996,7 +2000,7 @@
     var out=document.createDocumentFragment();
     if(range.collapsed){
       if(withName) out.appendChild(makeCharName(charId, sideCls));
-      var eb=makeCharBub(charId, sideCls, tailMode==='tail'); eb.appendChild(document.createTextNode('\u200b'));
+      var eb=makeCharBub(charId, sideCls, tailMode==='tail'); if(withName) eb.setAttribute('data-av','1'); eb.appendChild(document.createTextNode('\u200b'));
       out.appendChild(eb);
       range.insertNode(out);
       var r=document.createRange(); r.selectNodeContents(eb); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
@@ -2009,6 +2013,7 @@
       groups.forEach(function(g, i){
         var isLast=(i===groups.length-1);
         var bub=makeCharBub(charId, sideCls, (tailMode==='tail')&&isLast);
+        if(withName && i===0) bub.setAttribute('data-av','1');
         g.forEach(function(n){ bub.appendChild(n); });
         out.appendChild(bub);
       });
@@ -2400,13 +2405,29 @@
     else { b.classList.remove('cont'); b.classList.add('tail'); }
   }
   function cbDelete(b){
+    var parent=b.parentNode; if(!parent) return;
     var nm=bubNameBefore(b);
     if(nm){
       var nxt=b.nextElementSibling; while(nxt && !(nxt.classList&&nxt.classList.contains('g-bub'))) nxt=nxt.nextElementSibling;
       if(nxt && nxt.classList.contains('char-bub') && nxt.getAttribute('data-char')===b.getAttribute('data-char')){ nxt.parentNode.insertBefore(nm, nxt); }
       else if(nm.parentNode){ nm.parentNode.removeChild(nm); }
     }
-    if(b.parentNode) b.parentNode.removeChild(b);
+    // 말풍선만 해제하고 안의 내용(글자)은 그대로 남긴다
+    var svg=b.querySelector('svg.g-tail'); if(svg) b.removeChild(svg);
+    var frag=document.createDocumentFragment();
+    while(b.firstChild){ frag.appendChild(b.firstChild); }
+    frag.appendChild(document.createElement('br'));
+    parent.insertBefore(frag, b);
+    parent.removeChild(b);
+  }
+  function cbToggleName(b){
+    var nm=bubNameBefore(b);
+    if(nm){ if(nm.parentNode) nm.parentNode.removeChild(nm); }
+    else { var side=b.classList.contains('right')?'right':'left'; b.parentNode.insertBefore(makeCharName(b.getAttribute('data-char'), side), b); }
+  }
+  function cbToggleAvatar(b){
+    if(b.getAttribute('data-av')==='1') b.removeAttribute('data-av');
+    else b.setAttribute('data-av','1');
   }
   function bindCharBubTool(btn, action){
     if(!btn) return;
@@ -2420,6 +2441,8 @@
   }
   bindCharBubTool($('cb-side'), cbFlipSide);
   bindCharBubTool($('cb-tail'), cbToggleTail);
+  bindCharBubTool($('cb-name'), cbToggleName);
+  bindCharBubTool($('cb-av'), cbToggleAvatar);
   bindCharBubTool($('cb-del'), cbDelete);
   if($('cb-char')){
     bindTap($('cb-char'), function(e){
@@ -2875,11 +2898,12 @@
           var nameKind = (isBubName && !isCharName) ? (ch.classList.contains('send')?'send':'recv') : '';
           var charSide = (isCharBub||isCharName) ? (ch.classList.contains('right')?'right':'left') : '';
           var savedCharId = (isCharBub||isCharName) ? (ch.getAttribute('data-char')||'') : '';
+          var savedAv = isCharBub ? (ch.getAttribute('data-av')||'') : '';
           var bubTail = isBub ? !ch.classList.contains('cont') : false;
           var hlColor = isHl ? ch.style.getPropertyValue('--hl') : '';
           var emColor = isEm ? ch.style.getPropertyValue('--em') : '';
           for(var i=ch.attributes.length-1;i>=0;i--){ ch.removeAttribute(ch.attributes[i].name); }
-          if(isCharBub){ ch.className='g-bub char-bub '+charSide+' '+(bubTail?'tail':'cont'); if(savedCharId) ch.setAttribute('data-char', savedCharId); }
+          if(isCharBub){ ch.className='g-bub char-bub '+charSide+' '+(bubTail?'tail':'cont'); if(savedCharId) ch.setAttribute('data-char', savedCharId); if(savedAv) ch.setAttribute('data-av', savedAv); }
           else if(isBub){ ch.className='g-bub '+bubKind+' '+(bubTail?'tail':'cont'); }
           else if(isCharName){ ch.className='g-bub-name char-name '+charSide; if(savedCharId) ch.setAttribute('data-char', savedCharId); }
           else if(isBubName){ ch.className='g-bub-name '+nameKind; }
