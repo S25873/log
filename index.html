@@ -597,7 +597,7 @@
   #editor mark.em{color:var(--em,inherit) !important;background:transparent;}
   #editor mark.ul{background:transparent;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;}
   #editor mark.sub{color:var(--sub-color,#8a8a8a) !important;background:transparent;font-size:.8em !important;}
-  #editor .g-title-blk{display:block;margin:0 0 6px;}
+  #editor .g-title-blk{display:block;margin:0 0 8px;}
   #editor .g-title-main{display:block !important;font-size:1.6em !important;font-weight:700 !important;line-height:1.25 !important;}
   #editor .g-title-sub{display:block !important;font-size:1.15em !important;font-weight:400 !important;margin-top:2px;line-height:1.3 !important;}
   #editor .g-title-main:empty:before{content:"제목";color:var(--ink-3);}
@@ -662,7 +662,7 @@
   #canvas mark.ul,.canvas-clone mark.ul{color:inherit !important;background:transparent !important;display:inline !important;
     text-decoration:underline !important;text-decoration-thickness:.05em !important;text-underline-offset:.12em !important;}
   #canvas mark.sub,.canvas-clone mark.sub{color:var(--sub-color,#8a8a8a) !important;background:transparent !important;display:inline !important;font-size:.8em !important;}
-  #canvas .g-title-blk,.canvas-clone .g-title-blk{display:block !important;margin:0 0 .6em !important;}
+  #canvas .g-title-blk,.canvas-clone .g-title-blk{display:block !important;margin:0 0 .8em !important;}
   #canvas .g-title-main,.canvas-clone .g-title-main{display:block !important;font-size:var(--title-size,1.6em) !important;font-weight:700 !important;font-family:var(--title-font,inherit) !important;color:var(--title-color,inherit) !important;line-height:1.25 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-title-sub,.canvas-clone .g-title-sub{display:block !important;font-size:var(--subtitle-size,1.15em) !important;font-weight:400 !important;font-family:var(--title-font,inherit) !important;color:var(--subtitle-color,inherit) !important;margin-top:.25em !important;line-height:1.3 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-quote,.canvas-clone .g-quote{display:block !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
@@ -859,8 +859,8 @@
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
-                  <span class="label">글자 크기 <span class="val">40px</span></span>
-                  <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="40"></div>
+                  <span class="label">글자 크기 <span class="val">32px</span></span>
+                  <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="32"></div>
                 </div>
                 <div class="field">
                   <span class="label">장평 <span class="val">100%</span></span>
@@ -910,12 +910,12 @@
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
-                  <span class="label">제목 크기 <span class="val" id="title-size-val">64px</span></span>
-                  <div class="rangewrap"><input id="title-size" type="range" min="24" max="120" step="2" value="64"></div>
+                  <span class="label">제목 크기 <span class="val" id="title-size-val">52px</span></span>
+                  <div class="rangewrap"><input id="title-size" type="range" min="20" max="80" step="2" value="52"></div>
                 </div>
                 <div class="field">
-                  <span class="label">소제목 크기 <span class="val" id="subtitle-size-val">46px</span></span>
-                  <div class="rangewrap"><input id="subtitle-size" type="range" min="18" max="90" step="2" value="46"></div>
+                  <span class="label">소제목 크기 <span class="val" id="subtitle-size-val">36px</span></span>
+                  <div class="rangewrap"><input id="subtitle-size" type="range" min="16" max="56" step="2" value="36"></div>
                 </div>
               </div>
             </div>
@@ -960,8 +960,8 @@
                 </div>
               </div>
               <div class="field" style="margin-top:16px">
-                <span class="label">하단 크기 <span class="val" id="name-size-val">28px</span></span>
-                <div class="rangewrap"><input id="name-size" type="range" min="14" max="60" step="1" value="28"></div>
+                <span class="label">하단 크기 <span class="val" id="name-size-val">22px</span></span>
+                <div class="rangewrap"><input id="name-size" type="range" min="12" max="36" step="1" value="22"></div>
               </div>
             </div>
           </details>
