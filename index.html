@@ -2938,7 +2938,7 @@
     var _top = el.querySelector('.g-topbar');
     if(_top){
       var padTop=fs*0.7, avD=fs*3.0;
-      _top.style.padding = padTop+'px '+(pad+fs*1.6)+'px '+(fs*0.6)+'px';
+      _top.style.padding = padTop+'px '+(pad+fs*1.6)+'px '+padTop+'px';
       _top.style.marginBottom = (fs*1.0)+'px';
       var _av=_top.querySelector('.g-tb-av'); if(_av){ _av.style.width=avD+'px'; _av.style.height=avD+'px'; _av.style.fontSize=(fs*1.25)+'px'; _av.style.marginBottom=(fs*0.32)+'px'; }
       var _tn=_top.querySelector('.g-tb-name'); if(_tn){ _tn.style.fontSize=(fs*0.66)+'px'; }
