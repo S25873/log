@@ -138,6 +138,9 @@
     padding:0 10px;flex:none;height:var(--header-h);
     border-bottom:1px solid var(--line);
   }
+  .tabbar__tabs{display:flex;align-items:center;gap:2px;flex:1;min-width:0;height:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .tabbar__tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:none;white-space:nowrap;}
   .tab{
     appearance:none;border:none;background:transparent;cursor:pointer;
     padding:0 13px;height:100%;font-size:13.5px;font-weight:600;letter-spacing:-.01em;
@@ -493,7 +496,7 @@
   .subtools[hidden]{display:none;}
   .fbtn--exit{background:var(--surface-2);border-color:var(--line-strong);font-size:11.5px;font-weight:700;}
   .fbtn--exit:hover{background:var(--ink);color:var(--surface);border-color:var(--ink);}
-  .fbtn--del{font-size:11.5px;font-weight:700;color:var(--ink-2);}
+  .fbtn--del{font-size:11.5px;color:var(--ink-2);}
   .fbtn--del:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
   .fbtn--exit[hidden],.fbtn--del[hidden]{display:none;}
 
@@ -586,7 +589,8 @@
   .dot.on{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink);border-color:transparent;}
 
   /* 내 프리셋 */
-  .mychips{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;}
+  .mychips{display:flex;flex-wrap:wrap;gap:8px;}
+  .mychips:not(:empty){margin-bottom:10px;}
   .mychip{
     display:inline-flex;align-items:center;gap:7px;
     background:var(--surface-2);border:1px solid var(--line);border-radius:999px;
@@ -804,7 +808,7 @@
       flex:none;position:sticky;top:0;z-index:25;background:var(--surface);
     }
     .editor-fixed{flex:none;}
-    #editor{height:24vh;font-size:12.5px;}
+    #editor{height:24vh;font-size:12.5px;line-height:1.5;}
     /* 이 페이지는 뷰포트에서 확대를 잠가둬(maximum-scale=1) iOS 포커스 확대가 없음 → 작게 둬도 됨 */
     #name-ed,#title-ed,#subtitle-ed,input[type=text]:not(.cchip__hex),select,textarea{font-size:13.5px;}
     .panelscroll{
@@ -839,12 +843,13 @@
   <div class="workspace">
     <section class="editcol">
       <div class="tabbar" role="tablist">
-        <button class="tab" role="tab" aria-selected="true" data-tab="content">내용</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="design">디자인</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="bubble">말풍선</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="layout">레이아웃</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="help">설명</button>
-        <span class="tabbar__spacer"></span>
+        <div class="tabbar__tabs">
+          <button class="tab" role="tab" aria-selected="true" data-tab="content">내용</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="design">디자인</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="bubble">말풍선</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="layout">레이아웃</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="help">프리셋 · 초기화</button>
+        </div>
         <button class="icon-btn" id="theme-toggle" type="button" title="라이트/다크 전환" aria-label="라이트/다크 전환">
           <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
           <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
@@ -854,7 +859,7 @@
       <!-- 항상 보이는 로그 에디터 -->
       <div class="editor-fixed">
         <div class="label-row">
-          <span class="label">로그</span>
+          <span class="label">입력</span>
           <div class="mini-row">
             <button class="mini" id="t-star" type="button" title="별표(*) 모두 삭제">*</button>
             <button class="mini" id="t-star-gray" type="button" title="**강조** 안쪽을 서브색(회색)으로">* 회색</button>
@@ -863,12 +868,13 @@
             <button class="mini" id="t-paren" type="button" title="괄호 안쪽을 이탤릭(기울임)으로">( )</button>
             <button class="mini" id="t-paren-gray" type="button" title="괄호(포함)를 서브색(회색)으로">( ) 회색</button>
             <button class="mini" id="t-dots" type="button" title="마침표 세 개를 가로 생략부호(⋯)로">⋯</button>
+            <button class="mini" id="t-code" type="button" title="텍스트에 든 &lt;br&gt; &lt;sub&gt; &lt;/sub&gt; 삭제">코드</button>
             <button class="mini is-danger" id="t-clear" type="button">비우기</button>
           </div>
         </div>
 
         <div id="editor" contenteditable="true" role="textbox" spellcheck="false" translate="no"
-             aria-label="로그 입력" data-placeholder="대사와 지문을 입력하세요."></div>
+             aria-label="로그 입력" data-placeholder="내용을 입력하세요."></div>
 
         <div class="fmt">
           <div class="fmt-row">
@@ -888,12 +894,12 @@
           </div>
 
           <div class="lowtools" hidden>
-            <div class="subtools" id="charbub-tools" hidden style="grid-template-columns:repeat(3,1fr)">
+            <div class="subtools" id="charbub-tools" hidden style="grid-template-columns:repeat(6,1fr)">
               <button class="fbtn" id="cb-side" type="button" title="왼쪽↔오른쪽">◀ ▶</button>
-              <button class="fbtn" id="cb-tail" type="button" title="꼬리 켜기/끄기">꼬리</button>
-              <button class="fbtn" id="cb-char" type="button" title="인물 변경">인물</button>
               <button class="fbtn" id="cb-name" type="button" title="이름 넣기/빼기">이름</button>
               <button class="fbtn" id="cb-av" type="button" title="사진 넣기/빼기">사진</button>
+              <button class="fbtn" id="cb-tail" type="button" title="꼬리 켜기/끄기">꼬리</button>
+              <button class="fbtn" id="cb-char" type="button" title="인물 변경">인물</button>
               <button class="fbtn fbtn--del" id="cb-del" type="button" title="말풍선 해제(내용은 남김)">삭제</button>
             </div>
           </div>
@@ -1055,7 +1061,7 @@
         <div class="panel" data-panel="design" role="tabpanel">
           <details class="fold" id="fold-textcolor">
             <summary>
-              글자
+              글자 · 보조
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
@@ -1064,17 +1070,6 @@
                 <div class="cchip"><label>서브 글자</label><div class="cchip__box"><input id="c-sub" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-sub-txt" type="text" value="#8a8a8a"></div></div>
                 <div class="cchip"><label>제목</label><div class="cchip__box"><input id="c-title" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-title-txt" type="text" value="#1a1a1a"></div></div>
                 <div class="cchip"><label>소제목</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#1a1a1a"></div></div>
-              </div>
-            </div>
-          </details>
-
-          <details class="fold" id="fold-subcolor">
-            <summary>
-              보조·하단
-              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </summary>
-            <div class="fold__body">
-              <div class="cgrid cgrid--2">
                 <div class="cchip"><label>인용선</label><div class="cchip__box"><input id="c-quote" type="color" value="#c8c8c8"><input class="cchip__hex" id="c-quote-txt" type="text" value="#c8c8c8"></div></div>
                 <div class="cchip"><label>구분선</label><div class="cchip__box"><input id="c-hr" type="color" value="#c8c8c8"><input class="cchip__hex" id="c-hr-txt" type="text" value="#c8c8c8"></div></div>
                 <div class="cchip"><label>하단 글자</label><div class="cchip__box"><input id="c-name" type="color" value="#6c6c6c"><input class="cchip__hex" id="c-name-txt" type="text" value="#6c6c6c"></div></div>
@@ -1108,7 +1103,7 @@
                   </div>
                 </div>
                 <div class="dots" id="em-presets"></div>
-                <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어갑니다.</p>
+                <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어가요.</p>
               </div>
             </div>
           </details>
@@ -1138,20 +1133,8 @@
                   </div>
                 </div>
                 <div class="dots" id="hl-presets"></div>
-                <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어갑니다.</p>
+                <p class="hint">프리셋을 누르면 위에서 고른 슬롯에 색이 들어가요.</p>
               </div>
-            </div>
-          </details>
-
-          <details class="fold" id="fold-mypreset">
-            <summary>
-              내 프리셋
-              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 배경 이미지는 프리셋에 저장되지 않아요.</p>
-              <div class="mychips" id="my-presets"></div>
-              <button class="btn btn--ghost" id="preset-save" type="button" style="height:40px;font-size:12.5px;margin-top:14px;width:100%">＋ 현재 설정 저장</button>
             </div>
           </details>
         </div>
@@ -1160,18 +1143,18 @@
         <div class="panel" data-panel="bubble" role="tabpanel">
           <div class="section">
             <p class="section__head">말풍선 삽입</p>
-            <p class="hint" style="margin-top:0;margin-bottom:12px">인물을 눌러 선택한 텍스트를 말풍선으로 넣으세요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 다른 말풍선으로 처리돼요.</p>
+            <p class="hint" style="margin-top:0;margin-bottom:14px">인물을 눌러 말풍선을 삽입해요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 서로 다른 말풍선으로 처리돼요.</p>
             <div class="char-list" id="char-insert-list"></div>
-            <p class="hint" id="char-insert-empty" style="margin:8px 0 0">아직 인물이 없어요. <b>아래 인물</b>에서 먼저 추가하세요.</p>
+            <p class="hint" id="char-insert-empty" style="margin:0">아직 인물이 없어요. <b>아래 인물</b>에서 먼저 추가하세요.</p>
           </div>
 
-          <details class="fold" id="fold-char" open>
+          <details class="fold" id="fold-char" open style="margin-top:14px">
             <summary>
               인물
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
-              <p class="hint" style="margin:0 0 12px">인물을 만들어 두면, 나중에 입력할 때 골라서 말풍선을 바로 넣을 수 있어요.</p>
+              <p class="hint" style="margin:0 0 12px">만들어 둔 인물을 말풍선 생성에 사용할 수 있어요.</p>
               <div class="char-list" id="char-list"></div>
               <button class="btn btn--ghost" id="char-add" type="button" style="height:40px;font-size:12.5px;width:100%">+ 인물 추가</button>
 
@@ -1201,10 +1184,10 @@
                   <div class="cchip__box"><input id="char-bub" type="color" value="#248bf5"><input class="cchip__hex" id="char-bub-txt" type="text" value="#248bf5"></div>
                 </div>
                 <div class="presets presets--bg" id="char-bub-presets" style="margin-top:12px"></div>
-                <div class="mini-row" style="margin-top:16px;gap:8px;justify-content:flex-end">
-                  <button class="btn btn--ghost" id="char-delete" type="button" style="height:38px;font-size:12px;color:var(--danger);border-color:var(--danger)">삭제</button>
-                  <button class="btn btn--ghost" id="char-cancel" type="button" style="height:38px;font-size:12px">취소</button>
-                  <button class="btn btn--primary" id="char-save" type="button" style="height:38px;font-size:12px">저장</button>
+                <div style="margin-top:16px;display:flex;align-items:center;gap:8px;justify-content:flex-end">
+                  <button class="btn btn--ghost" id="char-delete" type="button" style="height:42px;font-size:12.5px;color:var(--danger);border-color:var(--danger);flex:none;width:76px;padding:0;margin-right:auto">삭제</button>
+                  <button class="btn btn--ghost" id="char-cancel" type="button" style="height:42px;font-size:12.5px;flex:none;width:76px;padding:0">취소</button>
+                  <button class="btn btn--primary" id="char-save" type="button" style="height:42px;font-size:12.5px;flex:none;width:76px;padding:0">저장</button>
                 </div>
               </div>
             </div>
@@ -1219,8 +1202,8 @@
               <div class="field">
                 <span class="label">말풍선 모양</span>
                 <div class="seg" id="bub-shape-seg" style="height:auto">
-                  <button type="button" data-shape="imessage" aria-pressed="true" style="padding:7px 2px;line-height:1.35">메시지<br><span style="font-size:10px;opacity:.8">(사진 없음 추천)</span></button>
-                  <button type="button" data-shape="simple" aria-pressed="false" style="padding:7px 2px;line-height:1.35">심플<br><span style="font-size:10px;opacity:.8">(꼬리 없음)</span></button>
+                  <button type="button" data-shape="imessage" aria-pressed="true" style="padding:7px 2px;line-height:1.35">아이메시지<br><span style="font-size:10px;opacity:.8">(사진 없음 추천)</span></button>
+                  <button type="button" data-shape="simple" aria-pressed="false" style="padding:7px 2px;line-height:1.35">네모<br><span style="font-size:10px;opacity:.8">(꼬리 없음, 일반 대화 추천)</span></button>
                   <span class="seg__thumb"></span>
                 </div>
               </div>
@@ -1228,7 +1211,7 @@
               <label class="switch" style="margin-top:16px">
                 <span class="switch__text" style="flex:1">
                   <span class="switch__title">아이메시지 상단바</span>
-                  <span class="switch__sub">위쪽에 프로필 헤더를 표시합니다</span>
+                  <span class="switch__sub">위쪽에 프로필 헤더를 표시해요</span>
                 </span>
                 <input id="topbar-on" type="checkbox" style="margin-left:auto">
               </label>
@@ -1257,7 +1240,7 @@
               <label class="switch" style="margin-top:14px">
                 <span class="switch__text" style="flex:1">
                   <span class="switch__title">입력창</span>
-                  <span class="switch__sub">아래쪽에 메시지 입력창을 표시합니다</span>
+                  <span class="switch__sub">아래쪽에 메시지 입력창을 표시해요</span>
                 </span>
                 <input id="inputbar-on" type="checkbox" style="margin-left:auto">
               </label>
@@ -1286,14 +1269,14 @@
               <div class="field">
                 <span class="label">배경 종류</span>
                 <div class="seg" id="bg-mode-seg">
-                  <button type="button" data-bgmode="solid" aria-pressed="true">단색</button>
-                  <button type="button" data-bgmode="gradient" aria-pressed="false">그라데이션</button>
+                  <button type="button" data-bgmode="solid" aria-pressed="false">단색</button>
+                  <button type="button" data-bgmode="gradient" aria-pressed="true">그라데이션</button>
                   <button type="button" data-bgmode="photo" aria-pressed="false">사진</button>
                   <span class="seg__thumb"></span>
                 </div>
               </div>
 
-              <div id="bg-solid-view" style="margin-top:18px">
+              <div id="bg-solid-view" style="display:none;margin-top:18px">
                 <div class="cchip cchip--wide" style="margin-bottom:14px">
                   <label>배경 색</label>
                   <div class="cchip__box"><input id="c-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-bg-txt" type="text" value="#ffffff"></div>
@@ -1301,10 +1284,10 @@
                 <div class="presets presets--bg" id="bg-presets-solid"></div>
               </div>
 
-              <div id="bg-grad-view" style="display:none;margin-top:18px">
+              <div id="bg-grad-view" style="margin-top:18px">
                 <div class="cgrid cgrid--2">
-                  <div class="cchip"><label>색 1</label><div class="cchip__box"><input id="c-grad1" type="color" value="#ffecd2"><input class="cchip__hex" id="c-grad1-txt" type="text" value="#ffecd2"></div></div>
-                  <div class="cchip"><label>색 2</label><div class="cchip__box"><input id="c-grad2" type="color" value="#fcb69f"><input class="cchip__hex" id="c-grad2-txt" type="text" value="#fcb69f"></div></div>
+                  <div class="cchip"><label>색 1</label><div class="cchip__box"><input id="c-grad1" type="color" value="#fbc2eb"><input class="cchip__hex" id="c-grad1-txt" type="text" value="#fbc2eb"></div></div>
+                  <div class="cchip"><label>색 2</label><div class="cchip__box"><input id="c-grad2" type="color" value="#a6c1ee"><input class="cchip__hex" id="c-grad2-txt" type="text" value="#a6c1ee"></div></div>
                 </div>
                 <div class="field" style="margin-top:14px">
                   <span class="label">방향 <span class="val">↘</span></span>
@@ -1374,12 +1357,27 @@
         <div class="panel" data-panel="help" role="tabpanel">
           <div class="section">
             <p class="section__head">팁</p>
-            <p class="hint" style="margin:0">· <b>*</b>: * 기호를 삭제해요.<br>· <b>* 회색</b>: * 사이의 지문을 회색으로 변경해요. 이때 서브 글자 색이 적용돼요.<br>· <b>&quot;</b>: 기울어진 따옴표를 곧은 따옴표로 변경해요.<br>· <b>&quot; 말풍선</b>: 따옴표 사이의 내용을 말풍선에 넣어요.<br>· <b>( )</b>: 괄호 포함 내용을 이탤릭으로 변경해요.<br>· <b>( ) 회색</b>: 괄호 포함 내용을 회색으로 변경해요. 이때 서브 글자 색이 적용돼요.<br><br>· <b>굵게·기울임·밑줄·취소선</b>: 텍스트 선택 후 클릭해요.<br>· <b>형광펜·강조</b>: 텍스트 영역 선택 후 클릭해요. 각 형광펜은 칠해진 뒤에도 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선</b>: 백스페이스 또는 로그 입력 부분에서 클릭 후 삭제할 수 있어요.<br><br>· <b>말풍선</b>: 백스페이스 또는 클릭 시 나타나는 삭제로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.</p>
+            <details class="fold" id="fold-tips">
+            <summary>
+              간단한 설명
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0">· <b>*</b>: * 기호를 삭제해요.<br>· <b>* 회색</b>: * 사이의 지문을 서브 글자 색으로 변경해요.<br>· <b>&quot;</b>: 기울어진 따옴표를 곧은 따옴표로 변경해요.<br>· <b>&quot; 말풍선</b>: 따옴표 삭제 후 그 사이의 내용을 말풍선에 넣어요.<br>· <b>( )</b>: 괄호 포함 내용을 이탤릭으로 변경해요.<br>· <b>( ) 회색</b>: 괄호 포함 내용을 서브 글자 색으로 변경해요.<br>· <b>코드</b>: &lt;br&gt;, &lt;sub&gt;, &lt;/sub&gt;를 삭제해요.<br>· <b>⋯</b>: ...을 ⋯로 변경해요.<br><br>· <b>강조·형광펜</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선 삭제</b>: 백스페이스 또는 입력 부분에서 직접 클릭 후 삭제할 수 있어요.<br><br>· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일의 경우 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.</p>
+            </div>
+          </details>
+          </div>
+
+          <div class="section" style="margin-top:20px">
+            <p class="section__head">프리셋</p>
+            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 배경 이미지는 프리셋에 저장되지 않아요.</p>
+            <div class="mychips" id="my-presets"></div>
+            <button class="btn btn--ghost" id="preset-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 설정 저장</button>
           </div>
 
           <div class="section" style="margin-top:20px">
             <p class="section__head">초기화</p>
-            <p class="hint" style="margin:0 0 12px">프리셋을 제외한 모든 설정과 로그를 처음 상태로 되돌려요. <b>되돌릴 수 없으니</b> 주의하세요.</p>
+            <p class="hint" style="margin:0 0 12px">프리셋을 제외한 모든 설정과 로그를 처음 상태로 되돌려요.</p>
             <button class="btn btn--ghost" id="t-reset" type="button" style="width:100%;height:42px;font-size:13px;color:var(--danger,#d9534f)">전체 초기화</button>
           </div>
         </div>
@@ -1444,10 +1442,10 @@
   var currentAlign = 'justify';
   var sizeMode = 'width';
   var ratio = {w:4, h:5};
-  var bgValue = '#ffffff';
+  var bgValue = 'linear-gradient(135deg, #fbc2eb, #a6c1ee)';
   var photoOn = false;
   var photoData = null;
-  var bgMode = 'solid';  // 'solid' | 'gradient' | 'photo'
+  var bgMode = 'gradient';  // 'solid' | 'gradient' | 'photo'
   var bubbleShape = 'imessage';  // 'imessage' | 'simple'
 
   /* 형광펜·강조색: 슬롯 1/2/3 (슬롯1은 기존 c-hl / c-em 을 그대로 사용) */
@@ -1509,12 +1507,12 @@
     {bg:'#eef4fb'}, {bg:'#eef7f0'}, {bg:'#1a1a1a'}
   ];
   var bgGrads = [
-    {c1:'#ffecd2', c2:'#fcb69f', angle:135},  // 선셋
-    {c1:'#a1c4fd', c2:'#c2e9fb', angle:135},  // 오션
-    {c1:'#d4fc79', c2:'#96e6a1', angle:135},  // 프레시
-    {c1:'#e0c3fc', c2:'#8ec5fc', angle:135},  // 라벤더
     {c1:'#fbc2eb', c2:'#a6c1ee', angle:135},  // 블로썸
-    {c1:'#30cfd0', c2:'#330867', angle:180}   // 미드나잇
+    {c1:'#ffd9c7', c2:'#f6a8b8', angle:135},  // 피치 로즈
+    {c1:'#fbeecb', c2:'#f5d19f', angle:135},  // 허니
+    {c1:'#d6ecd8', c2:'#a9d6c3', angle:135},  // 세이지 민트
+    {c1:'#d0e7f6', c2:'#a2c4e8', angle:135},  // 소프트 스카이
+    {c1:'#e7d8f2', c2:'#c3abe0', angle:135}   // 라일락
   ];
   var hlPresets = [
     {c:'#f4b2ad', label:'코랄'}, {c:'#f8c9a6', label:'피치'}, {c:'#f9ee9a', label:'옐로'}, {c:'#dae59e', label:'라임'},
@@ -1571,6 +1569,7 @@
     var b = document.createElement('button');
     b.type='button'; b.className='chip'; b.setAttribute('data-grad', grad);
     b.style.background=grad; b.title='그라데이션 적용';
+    if(bgMode==='gradient' && grad===bgValue){ b.classList.add('on'); }
     b.addEventListener('click', function(){
       clearBgOn(); b.classList.add('on');
       $('c-grad1').value=p.c1; $('c-grad1-txt').value=p.c1;
@@ -2440,7 +2439,7 @@
       b.addEventListener('click', function(ev){
         ev.preventDefault(); ev.stopPropagation();
         closeSheet();
-        if(_sheetSavedRange && editor.contains(_sheetSavedRange.startContainer)){
+        if(!opt.noFocus && _sheetSavedRange && editor.contains(_sheetSavedRange.startContainer)){
           editor.focus();
           var s=window.getSelection(); s.removeAllRanges(); s.addRange(_sheetSavedRange);
         }
@@ -2698,12 +2697,12 @@
     var r=document.createRange(); r.setStart(anchor, anchor.nodeValue.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
     saveSel(); render();
   }
-  function doLineBreak(){
+  function doLineBreak(forceBreak){
     var inBub = caretInBubble();
     var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
     var range=sel.getRangeAt(0);
     if(!editor.contains(range.startContainer)) return false;
-    if(inBub && inBub.classList.contains('char-bub') && isCaretAtBubEnd(inBub, range)){ exitCharBub(inBub); return true; }
+    if(!forceBreak && inBub && inBub.classList.contains('char-bub') && isCaretAtBubEnd(inBub, range)){ exitCharBub(inBub); return true; }
     range.deleteContents();
     var br=document.createElement('br'); range.insertNode(br);
     // br 바로 뒤 위치는 브라우저가 이전 텍스트로 병합시켜 줄바꿈이 씹히므로,
@@ -2726,7 +2725,7 @@
       e.preventDefault();
       _lineBreakGuard = true;
       setTimeout(function(){ _lineBreakGuard = false; }, 0);
-      doLineBreak();
+      doLineBreak(e.shiftKey);
     }
   });
   editor.addEventListener('beforeinput', function(e){
@@ -3520,11 +3519,13 @@
   /* ============================================================
      텍스트 변환 도구
      ============================================================ */
+  // 터치 기기: 상단 미니 도구 적용 후 editor.focus()를 하면 소프트 키보드가 떠서, 터치에서는 포커스를 주지 않음
+  var IS_TOUCH = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   function transformTextNodes(fn){
     var walker=document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false), nodes=[];
     while(walker.nextNode()){ nodes.push(walker.currentNode); }
     nodes.forEach(function(n){ n.nodeValue=fn(n.nodeValue); });
-    cleanEditor(); render(); editor.focus();
+    cleanEditor(); render(); if(!IS_TOUCH) editor.focus();
   }
   // 텍스트 노드를 순회하며 정규식 매칭 구간을 커스텀 노드로 치환하는 공통 헬퍼.
   // build(match) → 삽입할 DOM 노드(반환 null 이면 원문 유지). skip(el) → true 이면 그 조상 안의 노드는 건너뜀.
@@ -3545,7 +3546,7 @@
       if(last<text.length){ frag.appendChild(document.createTextNode(text.slice(last))); }
       if(tn.parentNode) tn.parentNode.replaceChild(frag, tn);
     });
-    cleanEditor(); render(); editor.focus();
+    cleanEditor(); render(); if(!IS_TOUCH) editor.focus();
   }
   function grayMark(inner){ var mk=document.createElement('mark'); mk.className='gray'; mk.textContent=inner; return mk; }
   function isGrayEl(el){ return el.tagName==='MARK' && el.classList.contains('gray'); }
@@ -3566,6 +3567,8 @@
   $('t-quote-bub').addEventListener('click', function(){ openQuoteBubbleSheet(); });
   // ⋯ 변환: 마침표 세 개/… → 가로 생략부호(⋯)
   $('t-dots').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/\u2026/g,'\u22EF').replace(/\u00B7\u00B7\u00B7/g,'\u22EF').replace(/\.{3,}/g,'\u22EF'); }); });
+  // 코드: 텍스트에 리터럴로 들어간 <br> <sub> </sub> 문자열 삭제 (실제 줄바꿈 <br> 요소는 텍스트 노드가 아니라 영향 없음)
+  $('t-code').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/<br\s*\/?>|<\/?sub>/gi,''); }); });
   // ( ) 이탤릭: 괄호 안쪽(괄호 포함)을 이탤릭으로
   $('t-paren').addEventListener('click', function(){
     replaceInText(/\([^()\n]*\)/g, function(m){ var it=document.createElement('i'); it.textContent=m[0]; return it; }, isItalicEl);
@@ -3600,8 +3603,8 @@
   function openQuoteBubbleSheet(){
     var cid=currentCharId(), c=cid?findChar(cid):null, col=c?c.bub:'#e5e5ea';
     openSheetDef({ title:'따옴표 → 말풍선'+((c&&c.name)?(' · '+c.name):''), options:[
-      { label:'말풍선만', preview:sideBubIcon('left',col), run:function(){ quoteToBubbles('plain'); } },
-      { label:'사진+이름', preview:sideBubIcon('left',col), run:function(){ quoteToBubbles('named'); } }
+      { label:'말풍선만', preview:sideBubIcon('left',col), noFocus:true, run:function(){ quoteToBubbles('plain'); } },
+      { label:'사진+이름', preview:sideBubIcon('left',col), noFocus:true, run:function(){ quoteToBubbles('named'); } }
     ]});
   }
 
