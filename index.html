@@ -2938,17 +2938,17 @@
     var _top = el.querySelector('.g-topbar');
     if(_top){
       var padTop=fs*0.7, avD=fs*3.0;
-      _top.style.padding = padTop+'px '+(pad+fs*1.6)+'px '+padTop+'px';
+      _top.style.padding = padTop+'px '+(fs*3.1)+'px '+padTop+'px';
       _top.style.marginBottom = (fs*1.0)+'px';
       var _av=_top.querySelector('.g-tb-av'); if(_av){ _av.style.width=avD+'px'; _av.style.height=avD+'px'; _av.style.fontSize=(fs*1.25)+'px'; _av.style.marginBottom=(fs*0.32)+'px'; }
       var _tn=_top.querySelector('.g-tb-name'); if(_tn){ _tn.style.fontSize=(fs*0.66)+'px'; }
       var avC=padTop+avD/2;
-      var _bk=_top.querySelector('.g-tb-back'); if(_bk){ _bk.style.width=(fs*1.85)+'px'; _bk.style.height=(fs*1.85)+'px'; _bk.style.left=pad+'px'; _bk.style.top=avC+'px'; }
-      var _if=_top.querySelector('.g-tb-info'); if(_if){ _if.style.width=(fs*1.4)+'px'; _if.style.height=(fs*1.4)+'px'; _if.style.right=pad+'px'; _if.style.top=avC+'px'; }
+      var _bk=_top.querySelector('.g-tb-back'); if(_bk){ _bk.style.width=(fs*1.85)+'px'; _bk.style.height=(fs*1.85)+'px'; _bk.style.left=(fs*1.1)+'px'; _bk.style.top=avC+'px'; }
+      var _if=_top.querySelector('.g-tb-info'); if(_if){ _if.style.width=(fs*1.55)+'px'; _if.style.height=(fs*1.55)+'px'; _if.style.right=(fs*1.1)+'px'; _if.style.top=avC+'px'; }
     }
     var _comp = el.querySelector('.g-inputbar');
     if(_comp){
-      _comp.style.padding=(fs*0.6)+'px '+pad+'px'; _comp.style.gap=(fs*0.5)+'px'; _comp.style.marginTop=(fs*1.0)+'px';
+      _comp.style.padding=(fs*0.6)+'px '+(fs*1.1)+'px'; _comp.style.gap=(fs*0.5)+'px'; _comp.style.marginTop=(fs*1.0)+'px';
       var _pl=_comp.querySelector('.g-ib-plus'); if(_pl){ _pl.style.fontSize=(fs*1.5)+'px'; _pl.style.width=(fs*1.6)+'px'; _pl.style.height=(fs*1.6)+'px'; }
       var _fd=_comp.querySelector('.g-ib-field'); if(_fd){ _fd.style.padding=(fs*0.45)+'px '+(fs*0.8)+'px'; _fd.style.fontSize=(fs*0.85)+'px'; _fd.style.minHeight=(fs*1.9)+'px'; }
       var _sd=_comp.querySelector('.g-ib-send'); if(_sd){ var sd=fs*1.7; _sd.style.width=sd+'px'; _sd.style.height=sd+'px'; _sd.style.fontSize=fs+'px'; }
