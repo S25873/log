@@ -783,27 +783,6 @@
   #canvas .g-bub.recv>svg.g-tail path,.canvas-clone .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea) !important;}
   #canvas .g-bub.send>svg.g-tail path,.canvas-clone .g-bub.send>svg.g-tail path{fill:var(--bub-send,#248bf5) !important;}
 
-  /* ===== 곡선(CSS) 아이메시지 꼬리 — 사용자가 준 CSS 그대로 ===== */
-  .bub-imsg2 .g-bub>svg.g-tail{display:none !important;}
-  .bub-imsg2 .g-bub{position:relative;}
-  .bub-imsg2 .g-bub.recv,.bub-imsg2 .g-bub.char-bub.left{--tail-c:var(--bub, var(--bub-recv,#e5e5ea));}
-  .bub-imsg2 .g-bub.send,.bub-imsg2 .g-bub.char-bub.right{--tail-c:var(--bub, var(--bub-send,#248bf5));}
-  .bub-imsg2 .g-bub.recv::before,.bub-imsg2 .g-bub.char-bub.left::before{
-    content:"";position:absolute;bottom:-0.08em;left:-0.28em;height:0.8em;
-    border-left:0.8em solid var(--tail-c);border-bottom-right-radius:0.64em 0.56em;transform:translate(0,-0.08em);
-  }
-  .bub-imsg2 .g-bub.recv::after,.bub-imsg2 .g-bub.char-bub.left::after{
-    content:"";position:absolute;bottom:-0.08em;left:1em;width:0.5em;height:0.8em;
-    background:var(--tail-mask,#fff);border-bottom-right-radius:0.4em;transform:translate(-1.5em,-0.1em);
-  }
-  .bub-imsg2 .g-bub.send::before,.bub-imsg2 .g-bub.char-bub.right::before{
-    content:"";position:absolute;bottom:-0.08em;right:-0.28em;height:0.8em;
-    border-right:0.8em solid var(--tail-c);border-bottom-left-radius:0.64em 0.56em;transform:translate(0,-0.08em);
-  }
-  .bub-imsg2 .g-bub.send::after,.bub-imsg2 .g-bub.char-bub.right::after{
-    content:"";position:absolute;bottom:-0.08em;right:-2em;width:0.5em;height:0.8em;
-    background:var(--tail-mask,#fff);border-bottom-left-radius:0.4em;transform:translate(-1.5em,-0.1em);
-  }
   #canvas .g-bub mark.em,.canvas-clone .g-bub mark.em{color:var(--em) !important;}
 
   /* ============================================================
@@ -1751,36 +1730,23 @@
   });
   function applyBubbleShape(){
     var simple = bubbleShape==='simple';
-    var imsg2 = bubbleShape==='imessage2';
     var soft = bubbleShape==='soft';
     editor.classList.toggle('bub-simple', simple);
     canvas.classList.toggle('bub-simple', simple);
-    editor.classList.toggle('bub-imsg2', imsg2);
-    canvas.classList.toggle('bub-imsg2', imsg2);
     editor.classList.toggle('bub-soft', soft);
     canvas.classList.toggle('bub-soft', soft);
-    editor.classList.remove('bub-round','bub-card'); canvas.classList.remove('bub-round','bub-card');
+    editor.classList.remove('bub-imsg2','bub-round','bub-card'); canvas.classList.remove('bub-imsg2','bub-round','bub-card');
   }
   function syncShapeSeg(){
     document.querySelectorAll('#bub-shape-seg button').forEach(function(b){
-      var s=b.getAttribute('data-shape');
-      var on = (s==='imessage') ? (bubbleShape==='imessage'||bubbleShape==='imessage2') : (s===bubbleShape);
-      b.setAttribute('aria-pressed', on?'true':'false');
+      b.setAttribute('aria-pressed', (b.getAttribute('data-shape')===bubbleShape)?'true':'false');
     });
     moveThumb($('bub-shape-seg'));
   }
   function setBubbleShape(shape){ bubbleShape=shape; applyBubbleShape(); syncShapeSeg(); render(); }
-  function openTailStyleSheet(){
-    openSheetDef({ title:'아이메시지 꼬리', options:[
-      { label:'기본 꼬리', noFocus:true, run:function(){ setBubbleShape('imessage'); } },
-      { label:'곡선 꼬리', noFocus:true, run:function(){ setBubbleShape('imessage2'); } }
-    ]});
-  }
   document.querySelectorAll('#bub-shape-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
-      var shape = btn.getAttribute('data-shape');
-      if(shape==='imessage'){ openTailStyleSheet(); return; }
-      setBubbleShape(shape);
+      setBubbleShape(btn.getAttribute('data-shape'));
     });
   });
   linkColor('c-hl','c-hl-txt',false,true, function(){ recolorSlotMarks('hl',1,$('c-hl').value); });
@@ -3859,7 +3825,7 @@
       applyBgViews();
       photoOn = (bgMode==='photo') && !!photoData;
       updatePhotoUI();
-      bubbleShape = ({imessage:1,imessage2:1,simple:1,soft:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
+      bubbleShape = ({imessage:1,simple:1,soft:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
       syncShapeSeg();
       applyBubbleShape();
       if(data.chrome){ chrome.topbar=!!data.chrome.topbar; chrome.src=(data.chrome.src==='custom')?'custom':'char'; chrome.charId=data.chrome.charId||null; chrome.name=data.chrome.name||''; chrome.photo=data.chrome.photo||null; chrome.inputbar=!!data.chrome.inputbar; }
@@ -3940,7 +3906,7 @@
     document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-bgmode')===bgMode?'true':'false'); });
     applyBgViews();
     photoOn = (bgMode==='photo') && !!photoData;
-    bubbleShape = ({imessage:1,imessage2:1,simple:1,soft:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
+    bubbleShape = ({imessage:1,simple:1,soft:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
     syncShapeSeg();
     applyBubbleShape();
     ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-em','c-em2','c-em3','c-em4','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-quote','c-hr','c-brecv-name','c-bsend-name'].forEach(function(cid){
