@@ -2828,6 +2828,22 @@
     var anchor = document.createTextNode('\u200b');
     if(br.nextSibling){ br.parentNode.insertBefore(anchor, br.nextSibling); }
     else { br.parentNode.appendChild(anchor); }
+    // 안전장치: 줄바꿈이 말풍선 '안쪽 끝'에 들어갔고 바로 뒤가 또 다른 말풍선이면,
+    // 그 상태로는 미리보기 그룹이 안 끊기므로 줄바꿈+커서를 부모 레벨(두 말풍선 사이)로 빼낸다.
+    var host = (typeof closestBubble==='function') ? closestBubble(br) : null;
+    if(host && host.classList && host.classList.contains('char-bub') && host.contains(br)){
+      var tailR=document.createRange(); tailR.selectNodeContents(host); tailR.setStartAfter(br);
+      var tailEmpty=(tailR.cloneContents().textContent||'').replace(/\u200b/g,'')==='';
+      var nb=host.nextSibling;
+      while(nb && nb.nodeType===3 && nb.nodeValue.replace(/\u200b/g,'')===''){ nb=nb.nextSibling; }
+      var nextIsBub = nb && nb.nodeType===1 && nb.classList && nb.classList.contains('g-bub');
+      if(!forceBreak && tailEmpty && nextIsBub){
+        if(anchor.parentNode) anchor.parentNode.removeChild(anchor);
+        if(br.parentNode) br.parentNode.removeChild(br);
+        host.parentNode.insertBefore(br, host.nextSibling);
+        host.parentNode.insertBefore(anchor, br.nextSibling);
+      }
+    }
     var r2=document.createRange();
     r2.setStart(anchor, anchor.nodeValue.length); r2.collapse(true);
     sel.removeAllRanges(); sel.addRange(r2);
