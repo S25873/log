@@ -2802,16 +2802,29 @@
     try{ var r=document.createRange(); r.selectNodeContents(el); r.setStart(range.endContainer, range.endOffset);
       var rest=r.cloneContents(); return (rest.textContent||'').replace(/\u200b/g,'')===''; }catch(e){ return false; }
   }
+  function caretToBubEnd(bub){
+    var tn=null, w=document.createTreeWalker(bub, NodeFilter.SHOW_TEXT, null, false), x;
+    while(x=w.nextNode()){ tn=x; }
+    var r=document.createRange();
+    if(tn){ r.setStart(tn, tn.nodeValue.length); r.collapse(true); }
+    else { r.selectNodeContents(bub); r.collapse(false); }
+    var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  }
   function exitCharBub(bub){
     var sel=window.getSelection();
     // 바로 다음(빈 텍스트만 건너뜀)이 또 다른 말풍선이면 = 미리보기에서 한 그룹으로 묶인 상태.
-    // 이때는 제로폭만이 아니라 실제 <br>을 넣어 한 번의 엔터로 그룹이 분리되게 한다.
     var imm=bub.nextSibling;
-    while(imm && imm.nodeType===3 && imm.nodeValue.replace(/\u200b/g,'')===''){ imm=imm.nextSibling; }
+    while(imm && imm.nodeType===3 && imm.nodeValue.replace(/\u200b/g,'')===''){ var rm=imm; imm=imm.nextSibling; if(rm.parentNode) rm.parentNode.removeChild(rm); }
     var splitGroup = imm && imm.nodeType===1 && imm.classList && imm.classList.contains('g-bub');
+    if(splitGroup){
+      // 두 말풍선 사이에 <br> '하나만' 넣어 분리. 커서 앉힐 제로폭 줄을 따로 만들지 않고
+      // 위 말풍선 끝에 커서를 둬서 편집창에 빈 줄이 하나만 생기게 한다.
+      bub.parentNode.insertBefore(document.createElement('br'), imm);
+      caretToBubEnd(bub);
+      saveSel(); render(); return;
+    }
     var anchor=document.createTextNode('\u200b');
     if(bub.nextSibling){ bub.parentNode.insertBefore(anchor, bub.nextSibling); } else { bub.parentNode.appendChild(anchor); }
-    if(splitGroup){ bub.parentNode.insertBefore(document.createElement('br'), anchor); }
     var r=document.createRange(); r.setStart(anchor, anchor.nodeValue.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
     saveSel(); render();
   }
@@ -2841,7 +2854,8 @@
         if(anchor.parentNode) anchor.parentNode.removeChild(anchor);
         if(br.parentNode) br.parentNode.removeChild(br);
         host.parentNode.insertBefore(br, host.nextSibling);
-        host.parentNode.insertBefore(anchor, br.nextSibling);
+        caretToBubEnd(host);
+        saveSel(); render(); return true;
       }
     }
     var r2=document.createRange();
