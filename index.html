@@ -2098,6 +2098,33 @@
     while(nx && nx.nodeType===3 && nx.nodeValue.replace(/\u200b/g,'')===''){ var rm=nx; nx=nx.nextSibling; if(rm.parentNode) rm.parentNode.removeChild(rm); }
     if(nx && nx.nodeType===1 && nx.tagName==='BR' && nx.parentNode){ nx.parentNode.removeChild(nx); }
   }
+  // 선택 끝 경계를 뒤쪽 <br>/빈 텍스트 앞으로 당겨, 드래그가 다음 줄 줄바꿈을 얼마나 물었든
+  // 말풍선 변환 결과가 일정해지도록 한다(줄바꿈은 편집창에 그대로 남김).
+  function trimRangeTrailingBreaks(range){
+    try{
+      var guard=0;
+      while(guard++ < 200){
+        var c=range.endContainer, o=range.endOffset;
+        if(c.nodeType===3){
+          if(o>0){
+            var v=c.nodeValue;
+            // 텍스트 끝에 실제 글자가 있으면 멈춤; 제로폭만이면 통과
+            if(v.slice(0,o).replace(/\u200b/g,'')!=='') break;
+          }
+          var idx=Array.prototype.indexOf.call(c.parentNode.childNodes, c);
+          range.setEnd(c.parentNode, idx); continue;
+        }
+        if(c.nodeType===1){
+          if(o<=0) break;
+          var before=c.childNodes[o-1];
+          if(before && before.nodeType===1 && before.tagName==='BR'){ range.setEnd(c, o-1); continue; }
+          if(before && before.nodeType===3 && before.nodeValue.replace(/\u200b/g,'')===''){ range.setEnd(c, o-1); continue; }
+          break;
+        }
+        break;
+      }
+    }catch(e){}
+  }
   function insertCharBubbles(charId, side, tailMode){
     var c=findChar(charId); if(!c) return;
     editor.focus();
@@ -2119,6 +2146,17 @@
       var r=document.createRange(); r.selectNodeContents(eb); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
       insBub=eb;
     } else {
+      trimRangeTrailingBreaks(range);
+      if(range.collapsed){
+        // 트림 결과 선택이 비면(줄바꿈만 골랐던 경우) 빈 말풍선 하나로 처리
+        var eb2=makeCharBub(charId, sideCls, withName); if(withName) eb2.setAttribute('data-av','1'); eb2.appendChild(document.createTextNode('\u200b'));
+        if(withName) out.appendChild(makeCharName(charId, sideCls));
+        out.appendChild(eb2); range.insertNode(out);
+        var rr=document.createRange(); rr.selectNodeContents(eb2); rr.collapse(false); sel.removeAllRanges(); sel.addRange(rr);
+        insBub=eb2;
+        cleanEditor(); absorbBubBreak(insBub); styleCharBubbles(editor); render(); saveSel(); updateFormatButtons();
+        return;
+      }
       var contents=range.extractContents();
       stripBubblesFrag(contents);
       var groups=splitFragByBlank(contents);
@@ -2766,8 +2804,14 @@
   }
   function exitCharBub(bub){
     var sel=window.getSelection();
+    // 바로 다음(빈 텍스트만 건너뜀)이 또 다른 말풍선이면 = 미리보기에서 한 그룹으로 묶인 상태.
+    // 이때는 제로폭만이 아니라 실제 <br>을 넣어 한 번의 엔터로 그룹이 분리되게 한다.
+    var imm=bub.nextSibling;
+    while(imm && imm.nodeType===3 && imm.nodeValue.replace(/\u200b/g,'')===''){ imm=imm.nextSibling; }
+    var splitGroup = imm && imm.nodeType===1 && imm.classList && imm.classList.contains('g-bub');
     var anchor=document.createTextNode('\u200b');
     if(bub.nextSibling){ bub.parentNode.insertBefore(anchor, bub.nextSibling); } else { bub.parentNode.appendChild(anchor); }
+    if(splitGroup){ bub.parentNode.insertBefore(document.createElement('br'), anchor); }
     var r=document.createRange(); r.setStart(anchor, anchor.nodeValue.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
     saveSel(); render();
   }
