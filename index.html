@@ -2089,6 +2089,13 @@
     });
     return trimmed;
   }
+  // 블록 말풍선 바로 뒤의 잉여 <br> 하나 제거: 블록이 이미 줄을 끝내므로,
+  // 인라인 텍스트를 말풍선으로 바꿀 때 원래 그 줄을 끝내던 <br>이 남아 빈 줄이 하나 더 생김
+  function absorbBubBreak(bub){
+    if(!bub) return;
+    var nx=bub.nextSibling;
+    if(nx && nx.nodeType===1 && nx.tagName==='BR' && nx.parentNode){ nx.parentNode.removeChild(nx); }
+  }
   function insertCharBubbles(charId, side, tailMode){
     var c=findChar(charId); if(!c) return;
     editor.focus();
@@ -2107,6 +2114,7 @@
       out.appendChild(eb);
       range.insertNode(out);
       var r=document.createRange(); r.selectNodeContents(eb); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
+      absorbBubBreak(eb);
     } else {
       var contents=range.extractContents();
       stripBubblesFrag(contents);
@@ -2114,6 +2122,7 @@
       if(!groups.length){ var g0=[document.createTextNode('\u200b')]; groups=[g0]; }
       var multi = groups.length > 1;
       if(withName && !multi) out.appendChild(makeCharName(charId, sideCls));
+      var lastBub=null;
       groups.forEach(function(g, i){
         var isLast=(i===groups.length-1);
         var tail = (!multi) && (tailMode==='tail') && isLast;
@@ -2121,9 +2130,10 @@
         if(!multi && withName && i===0) bub.setAttribute('data-av','1');
         g.forEach(function(n){ bub.appendChild(n); });
         trimBubbleTail(bub);
-        out.appendChild(bub);
+        out.appendChild(bub); lastBub=bub;
       });
       range.insertNode(out);
+      absorbBubBreak(lastBub);
     }
     cleanEditor(); styleCharBubbles(editor); render(); saveSel(); updateFormatButtons();
   }
@@ -3587,7 +3597,7 @@
   }
   // 텍스트 노드를 순회하며 정규식 매칭 구간을 커스텀 노드로 치환하는 공통 헬퍼.
   // build(match) → 삽입할 DOM 노드(반환 null 이면 원문 유지). skip(el) → true 이면 그 조상 안의 노드는 건너뜀.
-  function replaceInText(re, build, skip){
+  function replaceInText(re, build, skip, absorbBub){
     var walker=document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false), nodes=[];
     while(walker.nextNode()){ nodes.push(walker.currentNode); }
     nodes.forEach(function(tn){
@@ -3602,7 +3612,12 @@
         last=m.index+m[0].length;
       }
       if(last<text.length){ frag.appendChild(document.createTextNode(text.slice(last))); }
+      var lastBub=null;
+      if(absorbBub){
+        for(var k=frag.childNodes.length-1;k>=0;k--){ var cn=frag.childNodes[k]; if(cn.nodeType===1 && cn.classList && cn.classList.contains('g-bub')){ lastBub=cn; break; } }
+      }
       if(tn.parentNode) tn.parentNode.replaceChild(frag, tn);
+      if(lastBub) absorbBubBreak(lastBub);
     });
     cleanEditor(); render(); if(!IS_TOUCH) editor.focus();
   }
@@ -3656,7 +3671,7 @@
         out.appendChild(gb);
       }
       return out;
-    }, isBubEl);
+    }, isBubEl, true);
   }
   function openQuoteBubbleSheet(){
     var cid=currentCharId(), c=cid?findChar(cid):null, col=c?c.bub:'#e5e5ea';
