@@ -2089,13 +2089,24 @@
     });
     return trimmed;
   }
+  // 두 말풍선 '사이'에 놓인 제로폭 문자(그룹 분리용 커서 자리). 편집창에선 빈 줄 하나로 보이고,
+  // 저장/미리보기 zwsp 청소에서 지우지 않아 canvas에 텍스트 노드로 살아남아 groupAvatars가 그룹을 끊는다.
+  function isBubbleSeparatorZwsp(n){
+    if(!(n && n.nodeType===3)) return false;
+    if(n.nodeValue.indexOf('\u200b')===-1) return false;
+    if(n.nodeValue.replace(/\u200b/g,'')!=='') return false; // 제로폭만
+    var p=n.previousSibling, x=n.nextSibling;
+    var pb = p && p.nodeType===1 && p.classList && p.classList.contains('g-bub');
+    var nb = x && x.nodeType===1 && x.classList && x.classList.contains('g-bub');
+    return pb && nb;
+  }
   // 블록 말풍선 바로 뒤의 잉여 <br> 하나 제거: 블록이 이미 줄을 끝내므로,
   // 인라인 텍스트를 말풍선으로 바꿀 때 원래 그 줄을 끝내던 <br>이 남아 빈 줄이 하나 더 생김
   function absorbBubBreak(bub){
     if(!bub) return;
     var nx=bub.nextSibling;
     // 말풍선과 <br> 사이에 낀 빈/제로폭 텍스트 노드는 건너뛰며 제거
-    while(nx && nx.nodeType===3 && nx.nodeValue.replace(/\u200b/g,'')===''){ var rm=nx; nx=nx.nextSibling; if(rm.parentNode) rm.parentNode.removeChild(rm); }
+    while(nx && nx.nodeType===3 && nx.nodeValue.replace(/\u200b/g,'')==='' && !isBubbleSeparatorZwsp(nx)){ var rm=nx; nx=nx.nextSibling; if(rm.parentNode) rm.parentNode.removeChild(rm); }
     if(nx && nx.nodeType===1 && nx.tagName==='BR' && nx.parentNode){ nx.parentNode.removeChild(nx); }
   }
   // 선택 끝 경계를 뒤쪽 <br>/빈 텍스트 앞으로 당겨, 드래그가 다음 줄 줄바꿈을 얼마나 물었든
@@ -2772,7 +2783,7 @@
     var caretNode = (sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)) ? sel.getRangeAt(0).startContainer : null;
     var zwsp = [];
     while(tw.nextNode()){ if(tw.currentNode.nodeValue.indexOf('\u200b')!==-1){ zwsp.push(tw.currentNode); } }
-    zwsp.forEach(function(n){ if(n===caretNode) return; n.nodeValue=n.nodeValue.replace(/\u200b/g,''); if(n.nodeValue==='' && n.parentNode){ n.parentNode.removeChild(n); } });
+    zwsp.forEach(function(n){ if(n===caretNode) return; if(isBubbleSeparatorZwsp(n)) return; n.nodeValue=n.nodeValue.replace(/\u200b/g,''); if(n.nodeValue==='' && n.parentNode){ n.parentNode.removeChild(n); } });
     // 구분선 바로 뒤에 남은 빈 줄(br) 제거
     [].forEach.call(editor.querySelectorAll('.g-hr'), function(hr){
       var nx=hr.nextSibling;
@@ -2809,11 +2820,11 @@
     while(imm && imm.nodeType===3 && imm.nodeValue.replace(/\u200b/g,'')===''){ var rm=imm; imm=imm.nextSibling; if(rm.parentNode) rm.parentNode.removeChild(rm); }
     var splitGroup = imm && imm.nodeType===1 && imm.classList && imm.classList.contains('g-bub');
     if(splitGroup){
-      // 두 말풍선 사이에 <br> '하나만' 넣어 분리. 커서는 그 <br> 바로 뒤(빈 줄, 말풍선 밖)로.
-      // 제로폭 텍스트 노드를 두지 않아 빈 줄이 하나만 생기게 한다.
-      var sepBr=document.createElement('br');
-      bub.parentNode.insertBefore(sepBr, imm);
-      var rs=document.createRange(); rs.setStartAfter(sepBr); rs.collapse(true);
+      // 두 말풍선 사이에 제로폭 문자 한 칸을 넣어 분리. 커서를 그 위(가운데 빈 줄)에 둔다.
+      // 이 제로폭은 isBubbleSeparatorZwsp로 청소에서 보존되어 미리보기에서 그룹을 끊는다(빈 줄은 하나).
+      var sepZ=document.createTextNode('\u200b');
+      bub.parentNode.insertBefore(sepZ, imm);
+      var rs=document.createRange(); rs.setStart(sepZ, sepZ.nodeValue.length); rs.collapse(true);
       sel.removeAllRanges(); sel.addRange(rs);
       saveSel(); render(); return;
     }
@@ -2847,8 +2858,9 @@
       if(!forceBreak && tailEmpty && nextIsBub){
         if(anchor.parentNode) anchor.parentNode.removeChild(anchor);
         if(br.parentNode) br.parentNode.removeChild(br);
-        host.parentNode.insertBefore(br, host.nextSibling);
-        var rc=document.createRange(); rc.setStartAfter(br); rc.collapse(true);
+        var sepZ2=document.createTextNode('\u200b');
+        host.parentNode.insertBefore(sepZ2, host.nextSibling);
+        var rc=document.createRange(); rc.setStart(sepZ2, sepZ2.nodeValue.length); rc.collapse(true);
         sel.removeAllRanges(); sel.addRange(rc);
         saveSel(); render(); return true;
       }
@@ -3207,7 +3219,7 @@
     sanitize(tmp);
     var tw = document.createTreeWalker(tmp, NodeFilter.SHOW_TEXT, null, false), zs=[];
     while(tw.nextNode()){ if(tw.currentNode.nodeValue.indexOf('\u200b')!==-1){ zs.push(tw.currentNode); } }
-    zs.forEach(function(n){ n.nodeValue=n.nodeValue.replace(/\u200b/g,''); });
+    zs.forEach(function(n){ if(isBubbleSeparatorZwsp(n)) return; n.nodeValue=n.nodeValue.replace(/\u200b/g,''); });
     [].forEach.call(tmp.querySelectorAll('.g-bub'), function(b){ if(b.textContent.trim()==='' && !b.querySelector('img')){ if(b.parentNode) b.parentNode.removeChild(b); } });
     [].forEach.call(tmp.querySelectorAll('.g-bub-name'), function(n){ if(n.textContent.replace(/\u200b/g,'').trim()===''){ if(n.parentNode) n.parentNode.removeChild(n); } });
     syncTails(tmp);
