@@ -775,6 +775,7 @@
   #canvas .g-bub.send>svg.g-tail,.canvas-clone .g-bub.send>svg.g-tail{right:-.42em !important;transform:scaleX(-1) !important;}
   #canvas .g-bub.recv>svg.g-tail path,.canvas-clone .g-bub.recv>svg.g-tail path{fill:var(--bub-recv,#e5e5ea) !important;}
   #canvas .g-bub.send>svg.g-tail path,.canvas-clone .g-bub.send>svg.g-tail path{fill:var(--bub-send,#248bf5) !important;}
+
   #canvas .g-bub mark.em,.canvas-clone .g-bub mark.em{color:var(--em) !important;}
 
   /* ============================================================
@@ -1724,14 +1725,26 @@
     canvas.classList.toggle('bub-simple', simple);
     editor.classList.remove('bub-round','bub-card'); canvas.classList.remove('bub-round','bub-card');
   }
+  function syncShapeSeg(){
+    document.querySelectorAll('#bub-shape-seg button').forEach(function(b){
+      var s=b.getAttribute('data-shape');
+      var on = (s==='imessage') ? (bubbleShape==='imessage'||bubbleShape==='imessage2') : (s===bubbleShape);
+      b.setAttribute('aria-pressed', on?'true':'false');
+    });
+    moveThumb($('bub-shape-seg'));
+  }
+  function setBubbleShape(shape){ bubbleShape=shape; applyBubbleShape(); syncShapeSeg(); render(); }
+  function openTailStyleSheet(){
+    openSheetDef({ title:'아이메시지 꼬리', options:[
+      { label:'기본 꼬리', noFocus:true, run:function(){ setBubbleShape('imessage'); } },
+      { label:'곡선 꼬리', noFocus:true, run:function(){ setBubbleShape('imessage2'); } }
+    ]});
+  }
   document.querySelectorAll('#bub-shape-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('#bub-shape-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
-      btn.setAttribute('aria-pressed','true');
-      bubbleShape = btn.getAttribute('data-shape');
-      applyBubbleShape();
-      moveThumb($('bub-shape-seg'));
-      render();
+      var shape = btn.getAttribute('data-shape');
+      if(shape==='imessage'){ openTailStyleSheet(); return; }
+      setBubbleShape(shape);
     });
   });
   linkColor('c-hl','c-hl-txt',false,true, function(){ recolorSlotMarks('hl',1,$('c-hl').value); });
@@ -1873,8 +1886,12 @@
   /* ============================================================
      말풍선
      ============================================================ */
-  var TAIL_SVG = '<svg class="g-tail" viewBox="0 0 16 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
+  var TAIL_SVG = '<svg class="g-tail" data-t="1" viewBox="0 0 16 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
     + '<path d="M16 0 L16 20 Q6 20 0.6 19.2 Q-0.9 19.0 0.5 18.2 Q6.2 15.0 8 10 Q9.2 5.6 9 0 Z"/></svg>';
+  // 곡선 꼬리(사용자가 준 CSS 아이메시지 꼬리를 모양 유지해 SVG로 옮긴 것) — 배경 상관없이 렌더됨
+  var TAIL_SVG2 = '<svg class="g-tail" data-t="2" viewBox="0 0 16 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
+    + '<path d="M16 4 C16 13 12.5 18 3.5 19.4 Q2.1 19.6 2.4 18.4 C3.4 17 9 15 10 8.5 C10.6 4.6 12.4 4 16 4 Z"/></svg>';
+  function currentTailSvg(){ return bubbleShape==='imessage2' ? TAIL_SVG2 : TAIL_SVG; }
 
   function closestBubble(node){
     var el = node && node.nodeType===3 ? node.parentNode : node;
@@ -1938,7 +1955,11 @@
     [].forEach.call(root.querySelectorAll('.g-bub'), function(b){
       var want = b.classList.contains('tail'), svg = null;
       for(var i=0;i<b.childNodes.length;i++){ var c=b.childNodes[i]; if(c.nodeType===1 && c.nodeName && c.nodeName.toLowerCase()==='svg'){ svg=c; break; } }
-      if(want && !svg){ var tmp=document.createElement('div'); tmp.innerHTML=TAIL_SVG; var node=tmp.firstChild; node.setAttribute('contenteditable','false'); b.appendChild(node); }
+      var wantType = (bubbleShape==='imessage2') ? '2' : '1';
+      if(want && (!svg || svg.getAttribute('data-t')!==wantType)){
+        if(svg && svg.parentNode) svg.parentNode.removeChild(svg);
+        var tmp=document.createElement('div'); tmp.innerHTML=currentTailSvg(); var node=tmp.firstChild; node.setAttribute('contenteditable','false'); b.appendChild(node);
+      }
       else if(!want && svg){ svg.parentNode.removeChild(svg); }
       else if(want && svg){ svg.setAttribute('contenteditable','false'); }
     });
