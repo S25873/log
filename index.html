@@ -2094,6 +2094,8 @@
   function absorbBubBreak(bub){
     if(!bub) return;
     var nx=bub.nextSibling;
+    // 말풍선과 <br> 사이에 낀 빈/제로폭 텍스트 노드는 건너뛰며 제거
+    while(nx && nx.nodeType===3 && nx.nodeValue.replace(/\u200b/g,'')===''){ var rm=nx; nx=nx.nextSibling; if(rm.parentNode) rm.parentNode.removeChild(rm); }
     if(nx && nx.nodeType===1 && nx.tagName==='BR' && nx.parentNode){ nx.parentNode.removeChild(nx); }
   }
   function insertCharBubbles(charId, side, tailMode){
@@ -2108,13 +2110,14 @@
     var sideCls=(side==='right')?'right':'left';
     var withName=(tailMode==='tail');
     var out=document.createDocumentFragment();
+    var insBub=null;
     if(range.collapsed){
       if(withName) out.appendChild(makeCharName(charId, sideCls));
       var eb=makeCharBub(charId, sideCls, tailMode==='tail'); if(withName) eb.setAttribute('data-av','1'); eb.appendChild(document.createTextNode('\u200b'));
       out.appendChild(eb);
       range.insertNode(out);
       var r=document.createRange(); r.selectNodeContents(eb); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
-      absorbBubBreak(eb);
+      insBub=eb;
     } else {
       var contents=range.extractContents();
       stripBubblesFrag(contents);
@@ -2133,9 +2136,9 @@
         out.appendChild(bub); lastBub=bub;
       });
       range.insertNode(out);
-      absorbBubBreak(lastBub);
+      insBub=lastBub;
     }
-    cleanEditor(); styleCharBubbles(editor); render(); saveSel(); updateFormatButtons();
+    cleanEditor(); absorbBubBreak(insBub); styleCharBubbles(editor); render(); saveSel(); updateFormatButtons();
   }
   // 말풍선 끝에 남은 개행/공백/<br>(pre-wrap에서 빈 줄로 보임)을 정리
   function trimBubbleTail(bub){
@@ -2555,9 +2558,17 @@
     }
     // 말풍선만 해제하고 안의 내용(글자)은 그대로 남긴다
     var svg=b.querySelector('svg.g-tail'); if(svg) b.removeChild(svg);
+    var prev=b.previousSibling;
+    while(prev && prev.nodeType===3 && prev.nodeValue.replace(/\u200b/g,'')===''){ prev=prev.previousSibling; }
+    var nextReal=b.nextSibling;
+    while(nextReal && nextReal.nodeType===3 && nextReal.nodeValue.replace(/\u200b/g,'')===''){ nextReal=nextReal.nextSibling; }
+    var hasNext=!!nextReal;
     var frag=document.createDocumentFragment();
+    // 블록이 없어지므로 앞 인라인 텍스트와 붙지 않게(앞에 br 없을 때만) 줄바꿈 보강
+    if(prev && !(prev.nodeType===1 && prev.tagName==='BR')){ frag.appendChild(document.createElement('br')); }
     while(b.firstChild){ frag.appendChild(b.firstChild); }
-    frag.appendChild(document.createElement('br'));
+    // 블록이 제공하던 아래 줄바꿈을 복원 — 뒤에 내용이 있을 때만
+    if(hasNext){ frag.appendChild(document.createElement('br')); }
     parent.insertBefore(frag, b);
     parent.removeChild(b);
   }
@@ -3600,6 +3611,7 @@
   function replaceInText(re, build, skip, absorbBub){
     var walker=document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false), nodes=[];
     while(walker.nextNode()){ nodes.push(walker.currentNode); }
+    var _absorbList=[];
     nodes.forEach(function(tn){
       var text=tn.nodeValue; if(!text) return;
       if(skip){ var p=tn.parentNode, bad=false; while(p && p!==editor){ if(p.nodeType===1 && skip(p)){ bad=true; break; } p=p.parentNode; } if(bad) return; }
@@ -3617,9 +3629,11 @@
         for(var k=frag.childNodes.length-1;k>=0;k--){ var cn=frag.childNodes[k]; if(cn.nodeType===1 && cn.classList && cn.classList.contains('g-bub')){ lastBub=cn; break; } }
       }
       if(tn.parentNode) tn.parentNode.replaceChild(frag, tn);
-      if(lastBub) absorbBubBreak(lastBub);
+      if(lastBub) _absorbList.push(lastBub);
     });
-    cleanEditor(); render(); if(!IS_TOUCH) editor.focus();
+    cleanEditor();
+    _absorbList.forEach(absorbBubBreak);
+    render(); if(!IS_TOUCH) editor.focus();
   }
   function grayMark(inner){ var mk=document.createElement('mark'); mk.className='gray'; mk.textContent=inner; return mk; }
   function isGrayEl(el){ return el.tagName==='MARK' && el.classList.contains('gray'); }
