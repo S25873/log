@@ -674,6 +674,13 @@
   #editor.bub-simple .g-bub>svg.g-tail{display:none;}
   #canvas.bub-simple .g-bub,.canvas-clone.bub-simple .g-bub{border-radius:.4em !important;}
   #canvas.bub-simple .g-bub>svg.g-tail,.canvas-clone.bub-simple .g-bub>svg.g-tail{display:none !important;}
+  /* 말풍선 모양: 심플(둥근 말풍선. 기본은 꼬리 없음=완전 둥글게, '꼬리'(.tail)가 켜진 칸만 이미지(아바타) 쪽 위 모서리를 각지게) */
+  #editor.bub-soft .g-bub>svg.g-tail{display:none;}
+  #editor.bub-soft .g-bub.tail.recv,#editor.bub-soft .g-bub.tail.char-bub.left{border-radius:14px;border-top-left-radius:4px;}
+  #editor.bub-soft .g-bub.tail.send,#editor.bub-soft .g-bub.tail.char-bub.right{border-radius:14px;border-top-right-radius:4px;}
+  #canvas.bub-soft .g-bub>svg.g-tail,.canvas-clone.bub-soft .g-bub>svg.g-tail{display:none !important;}
+  #canvas.bub-soft .g-bub.tail.recv,.canvas-clone.bub-soft .g-bub.tail.recv,#canvas.bub-soft .g-bub.tail.char-bub.left,.canvas-clone.bub-soft .g-bub.tail.char-bub.left{border-radius:1.15em !important;border-top-left-radius:.28em !important;}
+  #canvas.bub-soft .g-bub.tail.send,.canvas-clone.bub-soft .g-bub.tail.send,#canvas.bub-soft .g-bub.tail.char-bub.right,.canvas-clone.bub-soft .g-bub.tail.char-bub.right{border-radius:1.15em !important;border-top-right-radius:.28em !important;}
   /* 인물 말풍선 좌/우 정렬 (색은 인라인으로 인물별 적용) */
   #editor .g-bub.char-bub.left{margin-right:auto;margin-left:8px;}
   #editor .g-bub.char-bub.right{margin-left:auto;margin-right:8px;}
@@ -1227,6 +1234,7 @@
                 <span class="label">말풍선 모양</span>
                 <div class="seg" id="bub-shape-seg" style="height:auto">
                   <button type="button" data-shape="imessage" aria-pressed="true" style="padding:7px 2px;line-height:1.35">아이메시지<br><span style="font-size:10px;opacity:.8">(사진 없음 추천)</span></button>
+                  <button type="button" data-shape="soft" aria-pressed="false" style="padding:7px 2px;line-height:1.35">심플<br><span style="font-size:10px;opacity:.8">(꼬리 선택, 전부 호환)</span></button>
                   <button type="button" data-shape="simple" aria-pressed="false" style="padding:7px 2px;line-height:1.35">네모<br><span style="font-size:10px;opacity:.8">(꼬리 없음, 일반 대화 추천)</span></button>
                   <span class="seg__thumb"></span>
                 </div>
@@ -1403,7 +1411,7 @@
 
           <div class="section" style="margin-top:20px">
             <p class="section__head">초기화</p>
-            <p class="hint" style="margin:0 0 12px">프리셋을 제외한 모든 설정과 로그를 처음 상태로 되돌려요.</p>
+            <p class="hint" style="margin:0 0 12px">인물, 프리셋을 제외한 모든 설정과 입력을 처음 상태로 되돌려요.</p>
             <button class="btn btn--ghost" id="t-reset" type="button" style="width:100%;height:42px;font-size:13px;color:var(--danger,#d9534f)">전체 초기화</button>
           </div>
         </div>
@@ -1522,6 +1530,7 @@
       document.querySelector('.panel[data-panel="'+name+'"]').classList.add('is-active');
       fitStage();
       if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
+      if(typeof saveUIState==='function') saveUIState();
     });
   });
 
@@ -1743,10 +1752,13 @@
   function applyBubbleShape(){
     var simple = bubbleShape==='simple';
     var imsg2 = bubbleShape==='imessage2';
+    var soft = bubbleShape==='soft';
     editor.classList.toggle('bub-simple', simple);
     canvas.classList.toggle('bub-simple', simple);
     editor.classList.toggle('bub-imsg2', imsg2);
     canvas.classList.toggle('bub-imsg2', imsg2);
+    editor.classList.toggle('bub-soft', soft);
+    canvas.classList.toggle('bub-soft', soft);
     editor.classList.remove('bub-round','bub-card'); canvas.classList.remove('bub-round','bub-card');
   }
   function syncShapeSeg(){
@@ -3721,8 +3733,8 @@
       applyBgViews();
       photoOn = (bgMode==='photo') && !!photoData;
       updatePhotoUI();
-      bubbleShape = (data.bubbleShape==='simple')?'simple':'imessage';
-      document.querySelectorAll('#bub-shape-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-shape')===bubbleShape?'true':'false'); });
+      bubbleShape = ({imessage:1,imessage2:1,simple:1,soft:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
+      syncShapeSeg();
       applyBubbleShape();
       if(data.chrome){ chrome.topbar=!!data.chrome.topbar; chrome.src=(data.chrome.src==='custom')?'custom':'char'; chrome.charId=data.chrome.charId||null; chrome.name=data.chrome.name||''; chrome.photo=data.chrome.photo||null; chrome.inputbar=!!data.chrome.inputbar; }
       if(typeof syncChromeUI==='function') syncChromeUI();
@@ -3732,7 +3744,49 @@
   $('t-reset').addEventListener('click', function(){
     if(!confirm('모든 설정과 입력 내용을 기본값으로 되돌릴까요?')) return;
     try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+    try{ localStorage.removeItem(UI_KEY); }catch(e){}
     location.reload();
+  });
+
+  /* ============================================================
+     UI 상태 유지 (활성 탭 · 아코디언 펼침) — 별도 키
+     ============================================================ */
+  var UI_KEY = 'logmaker-ui-v1';
+  var _uiRestoring = false;
+  function saveUIState(){
+    if(_uiRestoring) return;
+    try{
+      var at=document.querySelector('.tab[aria-selected="true"]');
+      var tab=at?(at.getAttribute('data-tab')||'content'):'content';
+      var folds={};
+      document.querySelectorAll('details.fold[id]').forEach(function(d){ folds[d.id]=!!d.open; });
+      localStorage.setItem(UI_KEY, JSON.stringify({ tab:tab, folds:folds }));
+    }catch(e){}
+  }
+  function restoreUIState(){
+    var raw; try{ raw=localStorage.getItem(UI_KEY); }catch(e){ return; } if(!raw) return;
+    var data; try{ data=JSON.parse(raw); }catch(e){ return; }
+    _uiRestoring=true;
+    try{
+      if(data.folds){
+        document.querySelectorAll('details.fold[id]').forEach(function(d){
+          if(Object.prototype.hasOwnProperty.call(data.folds, d.id)){ d.open = !!data.folds[d.id]; }
+        });
+      }
+      if(data.tab){
+        var t=document.querySelector('.tab[data-tab="'+data.tab+'"]');
+        if(t){
+          document.querySelectorAll('.tab').forEach(function(x){ x.setAttribute('aria-selected','false'); });
+          document.querySelectorAll('.panel').forEach(function(x){ x.classList.remove('is-active'); });
+          t.setAttribute('aria-selected','true');
+          var p=document.querySelector('.panel[data-panel="'+data.tab+'"]'); if(p) p.classList.add('is-active');
+        }
+      }
+    }catch(e){}
+    _uiRestoring=false;
+  }
+  document.querySelectorAll('details.fold[id]').forEach(function(d){
+    d.addEventListener('toggle', function(){ saveUIState(); });
   });
 
   /* ============================================================
@@ -3760,8 +3814,8 @@
     document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-bgmode')===bgMode?'true':'false'); });
     applyBgViews();
     photoOn = (bgMode==='photo') && !!photoData;
-    bubbleShape = (s.bubbleShape==='simple')?'simple':'imessage';
-    document.querySelectorAll('#bub-shape-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-shape')===bubbleShape?'true':'false'); });
+    bubbleShape = ({imessage:1,imessage2:1,simple:1,soft:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
+    syncShapeSeg();
     applyBubbleShape();
     ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-em','c-em2','c-em3','c-em4','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-quote','c-hr','c-brecv-name','c-bsend-name'].forEach(function(cid){
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
@@ -4057,6 +4111,7 @@
      초기화
      ============================================================ */
   restoreState();
+  restoreUIState();
   renderMyPresets();
   syncPresetChips();
   updateEditorHl();
