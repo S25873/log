@@ -560,9 +560,9 @@
   .crop-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);opacity:0;transition:opacity .2s var(--ease);padding:16px;}
   .crop-overlay.is-open{opacity:1;}
   .crop-overlay[hidden]{display:none;}
-  .crop-card{background:var(--surface);border-radius:var(--radius,16px);padding:16px;width:100%;max-width:300px;box-shadow:var(--shadow-2);}
+  .crop-card{background:var(--surface);border-radius:var(--radius,16px);padding:16px;width:100%;max-width:min(92vw,380px);box-shadow:var(--shadow-2);}
   .crop-card__title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:14px;text-align:center;}
-  .crop-frame{position:relative;width:240px;height:240px;margin:0 auto;border-radius:12px;overflow:hidden;background:#111;touch-action:none;cursor:grab;user-select:none;}
+  .crop-frame{position:relative;width:min(80vw,340px);height:min(80vw,340px);margin:0 auto;border-radius:12px;overflow:hidden;background:#111;touch-action:none;cursor:grab;user-select:none;}
   .crop-frame:active{cursor:grabbing;}
   .crop-frame img{position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none;}
   .crop-frame__ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 9999px rgba(0,0,0,.34);pointer-events:none;}
@@ -715,6 +715,7 @@
   #canvas .g-avatar,.canvas-clone .g-avatar{width:2.5em !important;height:2.5em !important;flex:none !important;border-radius:50% !important;background-size:cover !important;background-position:center !important;background-repeat:no-repeat !important;margin-top:.15em !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:.92em !important;font-weight:700 !important;color:#fff !important;overflow:hidden !important;}
   #canvas .g-avatar.square,.canvas-clone .g-avatar.square{border-radius:.55em !important;}
   #canvas .g-avatar.noimg,.canvas-clone .g-avatar.noimg{background:#c3c7cd !important;}
+  #canvas .g-avatar img,.canvas-clone .g-avatar img{width:100% !important;height:100% !important;object-fit:cover !important;display:block !important;border-radius:inherit !important;}
   #canvas .g-msg-col,.canvas-clone .g-msg-col{flex:1 1 auto !important;min-width:0 !important;display:block !important;}
   #canvas .g-msg-col .g-bub:first-child,.canvas-clone .g-msg-col .g-bub:first-child{margin-top:0 !important;}
   #canvas .g-msg-col .g-bub-name:first-child,.canvas-clone .g-msg-col .g-bub-name:first-child{margin-top:0 !important;}
@@ -2022,7 +2023,7 @@
       if(wantAv){
         var c=findChar(g.cid);
         var av=document.createElement('span'); av.className='g-avatar '+g.side+((c&&c.photoShape==='square')?' square':'');
-        if(c&&c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; }
+        if(c&&c.photo){ var aim=document.createElement('img'); aim.src=c.photo; aim.alt=''; av.appendChild(aim); }
         else { av.className+=' noimg'; av.textContent=(c&&c.name)?c.name.charAt(0):'?'; }
         group.appendChild(av);
       }
@@ -3953,13 +3954,14 @@
   /* ============================================================
      사진 자르기 (크롭)
      ============================================================ */
-  var CROP_FRAME = 240;
-  var crop = { img:null, natW:0, natH:0, base:1, zoom:1, ox:0, oy:0, cb:null, drag:false, sx:0, sy:0 };
+  var CROP_FRAME = 240; // 폴백. 실제 계산은 crop.frame(열 때 프레임 실측)로 함
+  var crop = { img:null, natW:0, natH:0, base:1, zoom:1, ox:0, oy:0, cb:null, drag:false, sx:0, sy:0, frame:240 };
+  function cropFramePx(){ var f=$('crop-frame'); var w=f?Math.round(f.getBoundingClientRect().width):0; return w||CROP_FRAME; }
   function cropDisp(){ var s=crop.base*crop.zoom; return { w:crop.natW*s, h:crop.natH*s }; }
-  function cropClamp(){ var d=cropDisp(); crop.ox=Math.min(0, Math.max(CROP_FRAME-d.w, crop.ox)); crop.oy=Math.min(0, Math.max(CROP_FRAME-d.h, crop.oy)); }
+  function cropClamp(){ var F=crop.frame, d=cropDisp(); crop.ox=Math.min(0, Math.max(F-d.w, crop.ox)); crop.oy=Math.min(0, Math.max(F-d.h, crop.oy)); }
   function cropLayout(center){
-    var d=cropDisp(), im=$('crop-img'); if(!im) return;
-    if(center){ crop.ox=(CROP_FRAME-d.w)/2; crop.oy=(CROP_FRAME-d.h)/2; }
+    var F=crop.frame, d=cropDisp(), im=$('crop-img'); if(!im) return;
+    if(center){ crop.ox=(F-d.w)/2; crop.oy=(F-d.h)/2; }
     cropClamp();
     im.style.width=d.w+'px'; im.style.height=d.h+'px'; im.style.left=crop.ox+'px'; im.style.top=crop.oy+'px';
   }
@@ -3969,10 +3971,14 @@
     var img=new Image();
     img.onload=function(){
       crop.img=img; crop.natW=img.naturalWidth; crop.natH=img.naturalHeight;
-      crop.base=CROP_FRAME/Math.min(img.naturalWidth, img.naturalHeight); crop.zoom=1;
       im.src=src;
-      cropLayout(true);
-      ov.hidden=false; requestAnimationFrame(function(){ ov.classList.add('is-open'); });
+      ov.hidden=false;
+      requestAnimationFrame(function(){
+        ov.classList.add('is-open');
+        crop.frame=cropFramePx();
+        crop.base=crop.frame/Math.min(img.naturalWidth, img.naturalHeight); crop.zoom=1;
+        cropLayout(true);
+      });
     };
     img.src=src;
   }
@@ -4019,12 +4025,13 @@
     frame.addEventListener('pointercancel', endPt);
     $('crop-cancel').addEventListener('click', closeCropper);
     $('crop-apply').addEventListener('click', function(){
-      var OUT=256, s=OUT/CROP_FRAME, d=cropDisp();
+      var OUT=512, F=crop.frame||cropFramePx(), s=OUT/F, d=cropDisp();
       var cv=document.createElement('canvas'); cv.width=OUT; cv.height=OUT;
       var cx=cv.getContext('2d');
+      if(cx.imageSmoothingQuality!==undefined) cx.imageSmoothingQuality='high';
       cx.fillStyle='#ffffff'; cx.fillRect(0,0,OUT,OUT);
       cx.drawImage(crop.img, crop.ox*s, crop.oy*s, d.w*s, d.h*s);
-      var url; try{ url=cv.toDataURL('image/jpeg', 0.88); }catch(e){ url=null; }
+      var url; try{ url=cv.toDataURL('image/jpeg', 0.92); }catch(e){ url=null; }
       closeCropper();
       if(url && crop.cb) crop.cb(url);
     });
