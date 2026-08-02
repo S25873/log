@@ -608,6 +608,26 @@
   .mychip__x:hover{background:var(--danger);color:#fff;}
   .mychips__empty{font-size:11.5px;color:var(--ink-3);padding:2px 0;line-height:1.5;}
 
+  /* 입력 프리셋 (텍스트 대치·삭제 규칙) */
+  .mychip--rep .mychip__arrow{color:var(--ink-3);font-weight:700;margin:0 1px;}
+  .mychip--rep .mychip__to{color:var(--ink);}
+  .mychip--rep .mychip__to.is-del{color:var(--ink-3);font-style:italic;font-weight:500;}
+  .repform{
+    border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);
+    padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;
+  }
+  .repform[hidden]{display:none;}
+  .repform__arrow{text-align:center;color:var(--ink-3);font-size:15px;line-height:1;user-select:none;}
+  .repform__btns{display:flex;gap:8px;justify-content:flex-end;margin-top:2px;}
+  .repform__btns .btn{flex:none;height:36px;padding:0 18px;font-size:12.5px;border-radius:var(--radius-sm);}
+
+  /* 프리셋 칩 꾹 눌러 순서 바꾸기 (인물/입력/프리셋 공통) */
+  .reorderable{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+  .reordering{cursor:grabbing;}
+  .reordering .reorderable:not(.dragging){transition:transform .13s var(--ease);}
+  .reorderable.dragging{opacity:.92;transform:scale(1.06);box-shadow:var(--shadow-2);cursor:grabbing;position:relative;z-index:5;border-color:var(--ink) !important;}
+  .reorderable.dragging *{cursor:grabbing;}
+
   .photo-controls{margin-top:16px;}
   .photo-controls[hidden]{display:none;}
 
@@ -874,13 +894,10 @@
         <div class="label-row">
           <span class="label">입력</span>
           <div class="mini-row">
-            <button class="mini" id="t-star" type="button" title="별표(*) 모두 삭제">*</button>
             <button class="mini" id="t-star-gray" type="button" title="**강조** 안쪽을 서브색(회색)으로">* 회색</button>
-            <button class="mini" id="t-quote" type="button" title="휘어진 따옴표(&quot; &quot; &#39; &#39;)를 곧은 부호로">&quot;</button>
             <button class="mini" id="t-quote-bub" type="button" title="큰따옴표 안쪽을 인물 말풍선으로">&quot; 말풍선</button>
-            <button class="mini" id="t-paren" type="button" title="괄호 안쪽을 이탤릭(기울임)으로">( )</button>
+            <button class="mini" id="t-paren" type="button" title="괄호 안쪽을 이탤릭(기울임)으로">( ) 이탤릭</button>
             <button class="mini" id="t-paren-gray" type="button" title="괄호(포함)를 서브색(회색)으로">( ) 회색</button>
-            <button class="mini" id="t-dots" type="button" title="마침표 세 개를 가로 생략부호(⋯)로">⋯</button>
             <button class="mini" id="t-code" type="button" title="텍스트에 든 &lt;br&gt; &lt;sub&gt; &lt;/sub&gt; 삭제">코드</button>
             <button class="mini is-danger" id="t-clear" type="button">비우기</button>
           </div>
@@ -990,15 +1007,15 @@
               <div class="field">
                 <span class="label">제목</span>
                 <div id="title-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
-                     aria-label="제목 입력" data-placeholder="제목 (비워도 됩니다)"></div>
+                     aria-label="제목 입력" data-placeholder="제목 (비워도 됨)"></div>
               </div>
               <div class="field" style="margin-top:14px">
                 <span class="label">소제목</span>
                 <div id="subtitle-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
-                     aria-label="소제목 입력" data-placeholder="소제목 (비워도 됩니다)"></div>
+                     aria-label="소제목 입력" data-placeholder="소제목 (비워도 됨)"></div>
               </div>
               <div class="field" style="margin-top:16px">
-                <label class="label" for="title-font">제목·소제목 글꼴</label>
+                <label class="label" for="title-font">제목 · 소제목 글꼴</label>
                 <select id="title-font">
                   <option value="" selected>본문과 동일</option>
                   <option value='"Pretendard",sans-serif'>프리텐다드</option>
@@ -1033,7 +1050,7 @@
               <div class="field">
                 <span class="label">하단 정보</span>
                 <div id="name-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
-                     aria-label="하단 정보 입력" data-placeholder="이름·날짜 등 (비워도 됩니다)"></div>
+                     aria-label="하단 정보 입력" data-placeholder="캐릭터 이름 등 (비워도 됨)"></div>
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
@@ -1158,7 +1175,7 @@
             <p class="section__head">말풍선 삽입</p>
             <p class="hint" style="margin-top:0;margin-bottom:14px">인물을 눌러 말풍선을 삽입해요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 서로 다른 말풍선으로 처리돼요.</p>
             <div class="char-list" id="char-insert-list"></div>
-            <p class="hint" id="char-insert-empty" style="margin:0">아직 인물이 없어요. <b>아래 인물</b>에서 먼저 추가하세요.</p>
+            <p class="hint" id="char-insert-empty" style="margin:0">아직 인물이 없어요. 아래 <b>인물</b>에서 먼저 추가하세요.</p>
           </div>
 
           <details class="fold" id="fold-char" style="margin-top:14px">
@@ -1186,7 +1203,7 @@
                 </div>
                 <div class="field" style="margin-top:14px">
                   <span class="label">이름</span>
-                  <input class="txt-input" id="char-name" type="text" placeholder="예: 이서" maxlength="24">
+                  <input class="txt-input" id="char-name" type="text" placeholder="캐릭터 이름" maxlength="24">
                 </div>
                 <div class="cgrid cgrid--2" style="margin-top:14px">
                   <div class="cchip"><label>글자 색</label><div class="cchip__box"><input id="char-ink" type="color" value="#ffffff"><input class="cchip__hex" id="char-ink-txt" type="text" value="#ffffff"></div></div>
@@ -1372,16 +1389,19 @@
         <!-- ========== 설명 ========== -->
         <div class="panel" data-panel="help" role="tabpanel">
           <div class="section">
-            <p class="section__head">팁</p>
-            <details class="fold" id="fold-tips">
-            <summary>
-              간단한 설명
-              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0">· <b>*</b>: * 기호를 삭제해요.<br>· <b>* 회색</b>: * 사이의 지문을 서브 글자 색으로 변경해요.<br>· <b>&quot;</b>: 기울어진 따옴표를 곧은 따옴표로 변경해요.<br>· <b>&quot; 말풍선</b>: 따옴표 삭제 후 그 사이의 내용을 말풍선에 넣어요.<br>· <b>( )</b>: 괄호 포함 내용을 이탤릭으로 변경해요.<br>· <b>( ) 회색</b>: 괄호 포함 내용을 서브 글자 색으로 변경해요.<br>· <b>코드</b>: &lt;br&gt;, &lt;sub&gt;, &lt;/sub&gt;를 삭제해요.<br>· <b>⋯</b>: ...을 ⋯로 변경해요.<br><br>· <b>강조·형광펜</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br><br>· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일의 경우 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.<br><br>· <b>아이메시지</b>: 사진이 필요 없는 메시지를 추천해요.<br>· <b>심플</b>: 메시지와 일반 대화에 모두 호환돼요.<br>· <b>네모</b>: 메시지와 일반 대화에 모두 호환되지만, 일반 대화를 추천해요.</p>
+            <p class="section__head">입력 프리셋</p>
+            <p class="hint" style="margin:0 0 12px">특정 글자를 다른 글자로 바꾸거나 삭제해요.<br>저장한 프리셋을 클릭하면 입력과 미리보기에 바로 적용돼요.<br>예: <b>...</b> → <b>⋯</b>, <b>바보</b> → <b>사랑해</b></p>
+            <div class="mychips" id="replace-presets"></div>
+            <div class="repform" id="replace-form" hidden>
+              <input class="txt-input" id="replace-find" type="text" placeholder="무엇을 바꿀지" maxlength="120" autocomplete="off">
+              <div class="repform__arrow">↓</div>
+              <input class="txt-input" id="replace-to" type="text" placeholder="어떻게 바꿀지 (비우면 삭제 처리)" maxlength="120" autocomplete="off">
+              <div class="repform__btns">
+                <button class="btn btn--ghost" id="replace-cancel" type="button">취소</button>
+                <button class="btn btn--primary" id="replace-confirm" type="button">추가</button>
+              </div>
             </div>
-          </details>
+            <button class="btn btn--ghost" id="replace-add" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 규칙 추가</button>
           </div>
 
           <div class="section" style="margin-top:20px">
@@ -1395,6 +1415,19 @@
             <p class="section__head">초기화</p>
             <p class="hint" style="margin:0 0 12px">인물, 프리셋을 제외한 모든 설정과 입력을 처음 상태로 되돌려요.</p>
             <button class="btn btn--ghost" id="t-reset" type="button" style="width:100%;height:42px;font-size:13px;color:var(--danger,#d9534f)">전체 초기화</button>
+          </div>
+
+          <div class="section" style="margin-top:20px">
+            <p class="section__head">팁</p>
+            <details class="fold" id="fold-tips">
+            <summary>
+              간단한 설명
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0">· <b>* 회색</b>: * 사이의 지문을 서브 글자 색으로 변경해요.<br>· <b>&quot; 말풍선</b>: 따옴표 삭제 후 그 사이의 내용을 말풍선에 넣어요.<br>· <b>( ) 이탤릭</b>: 괄호 포함 내용을 이탤릭으로 변경해요.<br>· <b>( ) 회색</b>: 괄호 포함 내용을 서브 글자 색으로 변경해요.<br>· <b>코드</b>: &lt;br&gt;, &lt;sub&gt;, &lt;/sub&gt;를 삭제해요.<br><br>· <b>강조·형광펜</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br><br>· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일의 경우 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.<br><br>· <b>아이메시지</b>: 사진이 필요 없는 메시지를 추천해요.<br>· <b>심플</b>: 메시지와 일반 대화에 모두 호환돼요.<br>· <b>네모</b>: 메시지와 일반 대화에 모두 호환되지만, 일반 대화를 추천해요.<br><br>· <b>프리셋 순서</b>: 모든 프리셋(인물, 입력, 기본)은 저장된 타원 부분을 꾹 클릭한 뒤 드래그하여 순서를 변경할 수 있어요.</p>
+            </div>
+          </details>
           </div>
         </div>
       </div>
@@ -3743,18 +3776,12 @@
 
   // 비우기
   $('t-clear').addEventListener('click', function(){ if(!confirm('로그 내용을 모두 비울까요?')) return; editor.innerHTML=''; render(); });
-  // * 삭제: 별표 문자 모두 제거
-  $('t-star').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/\*/g,''); }); });
   // * 회색: **내용** 을 감지 → 내용을 서브색(회색)으로, ** 기호는 제거
   $('t-star-gray').addEventListener('click', function(){
     replaceInText(/\*\*([^\n]+?)\*\*/g, function(m){ return grayMark(m[1]); }, isGrayEl);
   });
-  // " : 휘어진 따옴표(큰·작은)를 곧은 부호로
-  $('t-quote').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033]/g,'"').replace(/[\u2018\u2019\u201A\u201B\u2032]/g,"'"); }); });
   // " 말풍선: 큰따옴표 안쪽을 인물 말풍선으로 (시트로 옵션 선택)
   $('t-quote-bub').addEventListener('click', function(){ openQuoteBubbleSheet(); });
-  // ⋯ 변환: 마침표 세 개/… → 가로 생략부호(⋯)
-  $('t-dots').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/\u2026/g,'\u22EF').replace(/\u00B7\u00B7\u00B7/g,'\u22EF').replace(/\.{3,}/g,'\u22EF'); }); });
   // 코드: 텍스트에 리터럴로 들어간 <br> <sub> </sub> 문자열 삭제 (실제 줄바꿈 <br> 요소는 텍스트 노드가 아니라 영향 없음)
   $('t-code').addEventListener('click', function(){ transformTextNodes(function(t){ return t.replace(/<br\s*\/?>|<\/?sub>/gi,''); }); });
   // ( ) 이탤릭: 괄호 안쪽(괄호 포함)을 이탤릭으로
@@ -3960,7 +3987,7 @@
     var wrap=$('my-presets'), list=loadMyPresets(); wrap.innerHTML='';
     if(!list.length){ return; }
     list.forEach(function(p, idx){
-      var chip=document.createElement('div'); chip.className='mychip'; chip.title='클릭하면 이 설정을 적용합니다';
+      var chip=document.createElement('div'); chip.className='mychip reorderable'; chip.title='클릭하면 이 설정을 적용합니다';
       var label=document.createElement('span'); label.textContent=p.name; chip.appendChild(label);
       var x=document.createElement('span'); x.className='mychip__x'; x.textContent='×'; x.title='삭제'; chip.appendChild(x);
       label.addEventListener('click', function(){ applySettings(p.data); });
@@ -3974,6 +4001,157 @@
     name=name.trim(); if(!name) return;
     var list=loadMyPresets(); list.push({ name:name, data:captureSettings() }); saveMyPresets(list); renderMyPresets();
   });
+
+  /* ============================================================
+     입력 프리셋 (텍스트 대치 / 삭제 규칙)
+     · 사용자 규칙 = { find:'찾을 글자', to:'바꿀 글자' }. to가 비면 삭제.
+     · 빌트인 기본 규칙 = { builtin:'star'|'quote'|'dots', label:'표시명' }.
+       (예전 상단 미니 도구 * / " / ⋯ 을 그대로 옮긴 것)
+     클릭 시 상단 미니 기능과 동일하게 입력(에디터 텍스트 노드) + 미리보기에 적용.
+     ============================================================ */
+  var REPLACE_KEY = 'logmaker-replace-presets-v1';
+  // 빌트인 규칙의 실제 변환 로직 (옛 t-star / t-quote / t-dots 와 동일)
+  var BUILTIN_RULES = {
+    star: function(t){ return t.replace(/\*/g,''); },
+    quote: function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033]/g,'"').replace(/[\u2018\u2019\u201A\u201B\u2032]/g,"'"); },
+    dots: function(t){ return t.replace(/\u2026/g,'\u22EF').replace(/\u00B7\u00B7\u00B7/g,'\u22EF').replace(/\.{3,}/g,'\u22EF'); }
+  };
+  // 빌트인 칩의 '표시용' find→to (사용자 규칙과 같은 형태로 보이게). to==='' 는 '삭제'로 표시.
+  // 저장값이 아니라 코드가 항상 우선 → 라벨을 바꾸면 이미 심어진 것도 즉시 반영됨.
+  var BUILTIN_META = {
+    star:  { find:'*',   to:'' },
+    quote: { find:'"',   to:'곧은따옴표' },
+    dots:  { find:'...', to:'⋯' }
+  };
+  // 앱 최초 실행 시 기본 입력 프리셋 3종을 심어둠 (이후엔 사용자가 지우면 다시 생기지 않음)
+  var DEFAULT_REPLACE_PRESETS = [
+    { builtin:'star' },
+    { builtin:'quote' },
+    { builtin:'dots' }
+  ];
+  function loadReplacePresets(){
+    var raw; try{ raw=localStorage.getItem(REPLACE_KEY); }catch(e){ raw=null; }
+    if(raw==null){ // 저장된 적이 없으면 기본값을 심고 저장
+      var seed=DEFAULT_REPLACE_PRESETS.slice();
+      saveReplacePresets(seed); return seed;
+    }
+    try{ return JSON.parse(raw); }catch(e){ return []; }
+  }
+  function saveReplacePresets(list){ try{ localStorage.setItem(REPLACE_KEY, JSON.stringify(list)); }catch(e){} }
+  // 규칙 적용: 빌트인이면 지정 변환, 아니면 find→to 문자열 치환(정규식 아님 → 특수문자 이스케이프 불필요)
+  function applyPreset(p){
+    if(p && p.builtin && BUILTIN_RULES[p.builtin]){ transformTextNodes(BUILTIN_RULES[p.builtin]); return; }
+    if(!p || !p.find) return;
+    var find=p.find, to=p.to;
+    transformTextNodes(function(t){ return t.split(find).join(to); });
+  }
+  function renderReplacePresets(){
+    var wrap=$('replace-presets'), list=loadReplacePresets(); wrap.innerHTML='';
+    if(!list.length){ return; }
+    list.forEach(function(p, idx){
+      var chip=document.createElement('div'); chip.className='mychip mychip--rep reorderable'; chip.title='클릭하면 입력과 미리보기에 적용합니다';
+      var label=document.createElement('span');
+      var disp = p.builtin ? (BUILTIN_META[p.builtin] || {find:p.builtin, to:''}) : p;
+      var f=document.createElement('span'); f.className='mychip__find'; f.textContent=disp.find;
+      var ar=document.createElement('span'); ar.className='mychip__arrow'; ar.textContent=' → ';
+      var to=document.createElement('span'); to.className='mychip__to';
+      if(!disp.to){ to.classList.add('is-del'); to.textContent='삭제'; } else { to.textContent=disp.to; }
+      label.appendChild(f); label.appendChild(ar); label.appendChild(to);
+      chip.appendChild(label);
+      var x=document.createElement('span'); x.className='mychip__x'; x.textContent='×'; x.title='삭제'; chip.appendChild(x);
+      label.addEventListener('click', function(){ applyPreset(p); });
+      chip.addEventListener('click', function(e){ if(e.target===chip){ applyPreset(p); } });
+      x.addEventListener('click', function(e){ e.stopPropagation(); if(!confirm('이 규칙을 삭제할까요?')) return; var cur=loadReplacePresets(); cur.splice(idx,1); saveReplacePresets(cur); renderReplacePresets(); });
+      wrap.appendChild(chip);
+    });
+  }
+  (function initReplaceForm(){
+    var form=$('replace-form'), addBtn=$('replace-add'), cancelBtn=$('replace-cancel'), okBtn=$('replace-confirm');
+    var findIn=$('replace-find'), toIn=$('replace-to');
+    if(!form||!addBtn) return;
+    function openForm(){ findIn.value=''; toIn.value=''; form.hidden=false; addBtn.hidden=true; findIn.focus(); }
+    function closeForm(){ form.hidden=true; addBtn.hidden=false; }
+    function confirmAdd(){
+      var find=findIn.value; var to=toIn.value;
+      if(!find){ findIn.focus(); return; } // 바꿀 대상은 필수
+      var list=loadReplacePresets(); list.push({ find:find, to:to }); saveReplacePresets(list); renderReplacePresets();
+      closeForm();
+    }
+    addBtn.addEventListener('click', openForm);
+    cancelBtn.addEventListener('click', closeForm);
+    okBtn.addEventListener('click', confirmAdd);
+    // 엔터로 확정 / Esc로 취소
+    [findIn, toIn].forEach(function(inp){
+      inp.addEventListener('keydown', function(e){
+        if(e.key==='Enter'){ e.preventDefault(); confirmAdd(); }
+        else if(e.key==='Escape'){ e.preventDefault(); closeForm(); }
+      });
+    });
+  })();
+
+  /* ============================================================
+     프리셋 칩 꾹 눌러 순서 바꾸기 (인물 / 입력 / 프리셋 공통)
+     · 꾹 누르면(롱프레스) 드래그 모드 → 끌어서 순서 변경 (마우스·터치 공통)
+     · wrap에 위임 리스너 1개만 걸어 재렌더 후에도 유지
+     - getList(): 현재 배열 반환   - onReorder(newList): 저장 + 재렌더
+     ============================================================ */
+  function enableChipReorder(wrap, getList, onReorder){
+    if(!wrap || wrap._reorderInit) return; wrap._reorderInit=true;
+    var LONGPRESS=320, MOVE_CANCEL=8;
+
+    // 칩에서 우클릭/롱프레스 컨텍스트 메뉴 방지
+    wrap.addEventListener('contextmenu', function(e){ if(e.target.closest('.reorderable')) e.preventDefault(); });
+    // 드래그 직후의 클릭(적용/편집) 억제 (캡처 단계에서 가로챔)
+    wrap.addEventListener('click', function(e){
+      if(wrap._suppressClick){ e.preventDefault(); e.stopPropagation(); wrap._suppressClick=false; }
+    }, true);
+
+    wrap.addEventListener('pointerdown', function(e){
+      if(e.pointerType==='mouse' && e.button!==0) return;
+      if(e.target.closest('.mychip__x')) return; // 삭제(×) 버튼 위에서는 시작하지 않음
+      var chip=e.target.closest('.reorderable'); if(!chip || chip.parentNode!==wrap) return;
+      var sx=e.clientX, sy=e.clientY, pid=e.pointerId, active=false, timer;
+
+      function insertTarget(x,y){
+        var kids=[].slice.call(wrap.children);
+        for(var i=0;i<kids.length;i++){ var el=kids[i]; if(el===chip) continue;
+          var r=el.getBoundingClientRect();
+          if(y < r.top-2) return el;                                   // 위쪽 줄
+          if(y <= r.bottom+2 && x < r.left+r.width/2) return el;       // 같은 줄, 왼쪽 절반
+        }
+        return null;                                                   // 맨 끝
+      }
+      function moveDrag(x,y){ var t=insertTarget(x,y); if(t){ if(t!==chip) wrap.insertBefore(chip,t); } else wrap.appendChild(chip); }
+      function activate(){
+        active=true;
+        [].forEach.call(wrap.children, function(el,i){ el._ri=i; });    // 현재(=배열) 순서 기록
+        wrap.classList.add('reordering'); chip.classList.add('dragging');
+        moveDrag(sx, sy);
+      }
+      function finish(commit){
+        wrap.classList.remove('reordering'); chip.classList.remove('dragging');
+        var list=getList()||[], nl=list;
+        if(commit){
+          var out=[]; [].slice.call(wrap.children).forEach(function(el){ if(el._ri!=null && list[el._ri]!=null) out.push(list[el._ri]); });
+          if(out.length===list.length){ nl=out; wrap._suppressClick=true; setTimeout(function(){ wrap._suppressClick=false; }, 500); }
+        }
+        onReorder(nl); // 커밋이면 새 순서 저장+재렌더 / 취소면 원래 순서로 재렌더(원상복구)
+      }
+      function onMove(ev){
+        if(ev.pointerId!==pid) return;
+        if(!active){ if(Math.abs(ev.clientX-sx)>MOVE_CANCEL || Math.abs(ev.clientY-sy)>MOVE_CANCEL){ clearTimeout(timer); cleanup(); } return; }
+        ev.preventDefault(); moveDrag(ev.clientX, ev.clientY);
+      }
+      function onUp(ev){ if(ev.pointerId!==pid) return; clearTimeout(timer); if(active){ ev.preventDefault(); finish(true); } cleanup(); }
+      function onCancel(ev){ if(ev.pointerId!==pid) return; clearTimeout(timer); if(active){ finish(false); } cleanup(); }
+      function cleanup(){ window.removeEventListener('pointermove',onMove,true); window.removeEventListener('pointerup',onUp,true); window.removeEventListener('pointercancel',onCancel,true); }
+
+      timer=setTimeout(activate, LONGPRESS);
+      window.addEventListener('pointermove', onMove, true);
+      window.addEventListener('pointerup', onUp, true);
+      window.addEventListener('pointercancel', onCancel, true);
+    });
+  }
 
   /* ============================================================
      프리셋 칩 선택표시
@@ -4085,7 +4263,7 @@
   function renderCharList(){
     var wrap=$('char-list'); if(!wrap) return; wrap.innerHTML='';
     characters.forEach(function(c){
-      var chip=document.createElement('button'); chip.type='button'; chip.className='char-chip'; chip.title=(c.name||'')+' 편집';
+      var chip=document.createElement('button'); chip.type='button'; chip.className='char-chip reorderable'; chip.title=(c.name||'')+' 편집';
       var av=document.createElement('span'); av.className='char-chip__av'+(c.photoShape==='square'?' square':'');
       if(c.photo){ av.style.backgroundImage='url("'+c.photo+'")'; } else { av.textContent=charInitial(c.name); }
       var nm=document.createElement('span'); nm.className='char-chip__name'; nm.textContent=c.name||'(이름 없음)';
@@ -4249,7 +4427,15 @@
   restoreState();
   restoreUIState();
   renderMyPresets();
+  renderReplacePresets();
   syncPresetChips();
+  // 프리셋 칩 꾹 눌러 순서 바꾸기 연결 (인물 / 입력 / 프리셋)
+  enableChipReorder($('char-list'), function(){ return characters; }, function(nl){
+    var copy=nl.slice(); characters.splice(0, characters.length); Array.prototype.push.apply(characters, copy);
+    saveChars(); renderCharList(); renderCharInsert(); if(typeof renderTopbarCharList==='function') renderTopbarCharList();
+  });
+  enableChipReorder($('replace-presets'), loadReplacePresets, function(nl){ saveReplacePresets(nl); renderReplacePresets(); });
+  enableChipReorder($('my-presets'), loadMyPresets, function(nl){ saveMyPresets(nl); renderMyPresets(); });
   updateEditorHl();
   updateEditorBub();
   render();
