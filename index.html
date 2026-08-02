@@ -1390,7 +1390,7 @@
         <div class="panel" data-panel="help" role="tabpanel">
           <div class="section">
             <p class="section__head">입력 프리셋</p>
-            <p class="hint" style="margin:0 0 12px">특정 글자를 다른 글자로 바꾸거나 삭제해요.<br>저장한 프리셋을 클릭하면 입력과 미리보기에 바로 적용돼요.<br>예: <b>...</b> → <b>⋯</b>, <b>바보</b> → <b>사랑해</b></p>
+            <p class="hint" style="margin:0 0 12px">특정 글자를 다른 글자로 바꾸거나 삭제해요.<br>저장한 프리셋을 클릭하면 입력과 미리보기에 바로 적용돼요.<br>예: ... → ⋯, 바보 → 사랑해</p>
             <div class="mychips" id="replace-presets"></div>
             <div class="repform" id="replace-form" hidden>
               <input class="txt-input" id="replace-find" type="text" placeholder="무엇을 바꿀지" maxlength="120" autocomplete="off">
@@ -4013,20 +4013,23 @@
   // 빌트인 규칙의 실제 변환 로직 (옛 t-star / t-quote / t-dots 와 동일)
   var BUILTIN_RULES = {
     star: function(t){ return t.replace(/\*/g,''); },
-    quote: function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033]/g,'"').replace(/[\u2018\u2019\u201A\u201B\u2032]/g,"'"); },
+    quote: function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033]/g,'"'); },
+    squote: function(t){ return t.replace(/[\u2018\u2019\u201A\u201B\u2032]/g,"'"); },
     dots: function(t){ return t.replace(/\u2026/g,'\u22EF').replace(/\u00B7\u00B7\u00B7/g,'\u22EF').replace(/\.{3,}/g,'\u22EF'); }
   };
   // 빌트인 칩의 '표시용' find→to (사용자 규칙과 같은 형태로 보이게). to==='' 는 '삭제'로 표시.
   // 저장값이 아니라 코드가 항상 우선 → 라벨을 바꾸면 이미 심어진 것도 즉시 반영됨.
   var BUILTIN_META = {
-    star:  { find:'*',   to:'' },
-    quote: { find:'"',   to:'곧은따옴표' },
-    dots:  { find:'...', to:'⋯' }
+    star:   { find:'*',        to:'' },
+    quote:  { find:'\u201C',   to:'"' },
+    squote: { find:'\u2018',   to:"'" },
+    dots:   { find:'...',      to:'\u22EF' }
   };
-  // 앱 최초 실행 시 기본 입력 프리셋 3종을 심어둠 (이후엔 사용자가 지우면 다시 생기지 않음)
+  // 앱 최초 실행 시 기본 입력 프리셋 4종을 심어둠 (이후엔 사용자가 지우면 다시 생기지 않음)
   var DEFAULT_REPLACE_PRESETS = [
     { builtin:'star' },
     { builtin:'quote' },
+    { builtin:'squote' },
     { builtin:'dots' }
   ];
   function loadReplacePresets(){
@@ -4035,7 +4038,17 @@
       var seed=DEFAULT_REPLACE_PRESETS.slice();
       saveReplacePresets(seed); return seed;
     }
-    try{ return JSON.parse(raw); }catch(e){ return []; }
+    var list; try{ list=JSON.parse(raw); }catch(e){ return []; }
+    // 1회 마이그레이션: 기존 사용자 목록에 squote(작은따옴표 곧게) 기본값을 quote 뒤에 추가
+    try{
+      if(!localStorage.getItem('logmaker-replace-mig-squote')){
+        var hasSq=false, qi=-1;
+        for(var i=0;i<list.length;i++){ if(list[i]&&list[i].builtin==='squote') hasSq=true; if(list[i]&&list[i].builtin==='quote'&&qi<0) qi=i; }
+        if(!hasSq){ if(qi>=0) list.splice(qi+1,0,{builtin:'squote'}); else list.push({builtin:'squote'}); saveReplacePresets(list); }
+        localStorage.setItem('logmaker-replace-mig-squote','1');
+      }
+    }catch(e){}
+    return list;
   }
   function saveReplacePresets(list){ try{ localStorage.setItem(REPLACE_KEY, JSON.stringify(list)); }catch(e){} }
   // 규칙 적용: 빌트인이면 지정 변환, 아니면 find→to 문자열 치환(정규식 아님 → 특수문자 이스케이프 불필요)
