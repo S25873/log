@@ -3577,6 +3577,32 @@
     canvas.style.boxShadow='none'; canvas.style.borderRadius='0';
     var layer=canvas.querySelector('.g-bg-layer');
 
+    function drawBakedAvatars(ctx, list, done){
+      if(!list || !list.length){ done(); return; }
+      var pending=list.length;
+      list.forEach(function(a){
+        var im=new Image();
+        im.onload=function(){
+          var x=a.x*2, y=a.y*2, w=a.w*2, h=a.h*2;
+          ctx.save();
+          ctx.beginPath();
+          if(a.square){
+            var rad=Math.min(w,h)*0.22;
+            ctx.moveTo(x+rad,y); ctx.arcTo(x+w,y,x+w,y+h,rad); ctx.arcTo(x+w,y+h,x,y+h,rad); ctx.arcTo(x,y+h,x,y,rad); ctx.arcTo(x,y,x+w,y,rad); ctx.closePath();
+          } else {
+            ctx.arc(x+w/2, y+h/2, Math.min(w,h)/2, 0, Math.PI*2);
+          }
+          ctx.clip();
+          ctx.imageSmoothingEnabled=true; if(ctx.imageSmoothingQuality!==undefined) ctx.imageSmoothingQuality='high';
+          var iw=im.naturalWidth||w, ih=im.naturalHeight||h, sc=Math.max(w/iw, h/ih), dw=iw*sc, dh=ih*sc, dx=x+(w-dw)/2, dy=y+(h-dh)/2;
+          ctx.drawImage(im, dx, dy, dw, dh);
+          ctx.restore();
+          if(--pending===0) done();
+        };
+        im.onerror=function(){ if(--pending===0) done(); };
+        im.src=a.src;
+      });
+    }
     function doCapture(){
       var h=canvas.offsetHeight, outW=w*2, outH=h*2;
       var canvasRect=canvas.getBoundingClientRect();
@@ -3596,6 +3622,15 @@
       });
       var tailRects=collectTailRects(canvas);
       var restoreTails=hideTails(canvas);
+      // 아바타 사진: html2canvas가 저해상도로 굽는 문제가 있어, 위치를 모아 두고 저장 중엔 숨긴 뒤 최종 캔버스에 원본으로 직접 고품질 렌더
+      var avBakes=[], avHidden=[];
+      [].forEach.call(canvas.querySelectorAll('.g-avatar'), function(av){
+        var im=av.querySelector('img'); if(!im||!im.src) return;
+        var r=av.getBoundingClientRect(); if(r.width<=0||r.height<=0) return;
+        avBakes.push({ x:r.left-canvasRect.left, y:r.top-canvasRect.top, w:r.width, h:r.height, src:im.src, square:av.classList.contains('square') });
+        avHidden.push([im, im.style.visibility]); im.style.visibility='hidden';
+      });
+      function restoreAvatars(){ avHidden.forEach(function(p){ if(p[1]) p[0].style.visibility=p[1]; else p[0].style.removeProperty('visibility'); }); }
       var hrRects=[];
       [].forEach.call(canvas.querySelectorAll('.g-hr.line, .g-hr.short'), function(hr){
         var r=hr.getBoundingClientRect(); if(r.width<=0||r.height<=0) return;
@@ -3622,7 +3657,7 @@
 
       html2canvas(canvas, { scale:2, backgroundColor:null, useCORS:true, logging:false, width:w, height:h, scrollX:0, scrollY:0, x:0, y:0, windowWidth:w, windowHeight:h })
       .then(function(textCanvas){
-        restoreMarks(); restoreTails(); restoreHrs(); restoreCanvasBg();
+        restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg();
         prepareBackground(function(bakedPhotoImg){
           var out=document.createElement('canvas'); out.width=outW; out.height=outH;
           var ctx=out.getContext('2d');
@@ -3632,9 +3667,9 @@
           hrRects.forEach(function(rc){ ctx.fillStyle=rc.color; ctx.fillRect(rc.x*2, rc.y*2, rc.w*2, rc.h*2); });
           tailRects.forEach(function(t){ ctx.save(); ctx.fillStyle=t.color; traceTailPath(ctx, t.x*2, t.y*2, t.w*2, t.h*2, t.flip); ctx.fill(); ctx.restore(); });
           ctx.drawImage(textCanvas, 0, 0, outW, outH);
-          deliverImage(out, type, cleanup, mode);
+          drawBakedAvatars(ctx, avBakes, function(){ deliverImage(out, type, cleanup, mode); });
         });
-      }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreCanvasBg(); cleanup(); });
+      }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); cleanup(); });
     }
 
     function prepareBackground(cb){
