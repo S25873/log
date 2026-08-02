@@ -291,6 +291,8 @@
     box-shadow:var(--shadow-1);transition:transform .28s var(--ease),width .28s var(--ease);
     z-index:0;pointer-events:none;
   }
+  .seg .align-ic{display:inline-flex;align-items:center;justify-content:center;color:inherit;}
+  .seg .align-ic svg{width:15px;height:15px;display:block;}
 
   /* 미니 버튼 */
   .mini-row{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
@@ -943,10 +945,10 @@
                 <div class="field">
                   <span class="label">정렬</span>
                   <div class="seg" id="align-seg">
-                    <button type="button" data-align="left" aria-pressed="false">좌</button>
-                    <button type="button" data-align="justify" aria-pressed="true">양</button>
-                    <button type="button" data-align="center" aria-pressed="false">중</button>
-                    <button type="button" data-align="right" aria-pressed="false">우</button>
+                    <button type="button" data-align="justify" aria-pressed="true" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                    <button type="button" data-align="left" aria-pressed="false" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
+                    <button type="button" data-align="center" aria-pressed="false" aria-label="가운데 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="4.75" y1="6.83" x2="11.25" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="4.75" y1="12" x2="11.25" y2="12"/></svg></span></button>
+                    <button type="button" data-align="right" aria-pressed="false" aria-label="오른쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="7" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="7" y1="12" x2="13.5" y2="12"/></svg></span></button>
                     <span class="seg__thumb"></span>
                   </div>
                 </div>
