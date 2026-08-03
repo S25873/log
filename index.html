@@ -982,9 +982,15 @@
                   </select>
                 </div>
               </div>
-              <div class="field" style="margin-top:16px">
-                <span class="label">글자 크기 <span class="val">32px</span></span>
-                <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="32"></div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">글자 크기 <span class="val">32px</span></span>
+                  <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="32"></div>
+                </div>
+                <div class="field">
+                  <span class="label">장평 <span class="val">100%</span></span>
+                  <div class="rangewrap"><input id="stretch" type="range" min="80" max="120" step="1" value="100"></div>
+                </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
@@ -996,15 +1002,9 @@
                   <div class="rangewrap"><input id="line-height" type="range" min="10" max="20" step="1" value="17"></div>
                 </div>
               </div>
-              <div class="grid-2" style="margin-top:16px">
-                <div class="field">
-                  <span class="label">장평 <span class="val">100%</span></span>
-                  <div class="rangewrap"><input id="stretch" type="range" min="80" max="120" step="1" value="100"></div>
-                </div>
-                <div class="field">
-                  <span class="label">문단 간격 <span class="val" id="para-gap-val">20px</span></span>
-                  <div class="rangewrap"><input id="para-gap" type="range" min="0" max="48" step="1" value="20"></div>
-                </div>
+              <div class="field" style="margin-top:16px">
+                <span class="label">문단 간격 <span class="val" id="para-gap-val">20px</span></span>
+                <div class="rangewrap"><input id="para-gap" type="range" min="0" max="48" step="1" value="20"></div>
               </div>
             </div>
           </details>
@@ -1055,7 +1055,7 @@
                   <div class="rangewrap"><input id="title-gap" type="range" min="0" max="24" step="1" value="9"></div>
                 </div>
                 <div class="field">
-                  <span class="label">소제목(없을 시 제목) ↔ 본문 간격 <span class="val" id="titleblk-gap-val">26px</span></span>
+                  <span class="label">소제목 (없을 시 제목) ↔ 본문 간격 <span class="val" id="titleblk-gap-val">26px</span></span>
                   <div class="rangewrap"><input id="titleblk-gap" type="range" min="0" max="72" step="1" value="26"></div>
                 </div>
               </div>
@@ -1266,19 +1266,19 @@
                 </div>
               </div>
 
-              <div class="field" style="margin-top:16px">
-                <span class="label">말풍선 ↔ 본문 간격 <span class="val" id="bub-body-gap-val">18px</span></span>
-                <div class="rangewrap"><input id="bub-body-gap" type="range" min="0" max="48" step="1" value="18"></div>
-              </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
-                  <span class="label">말풍선 ↔ 말풍선 간격 <span class="val" id="msg-gap-val">18px</span></span>
+                  <span class="label">말풍선 ↔ 말풍선 (서로 다른) 간격 <span class="val" id="msg-gap-val">18px</span></span>
                   <div class="rangewrap"><input id="msg-gap" type="range" min="0" max="48" step="1" value="18"></div>
                 </div>
                 <div class="field">
-                  <span class="label">연속 말풍선 간격 <span class="val" id="stack-gap-val">5px</span></span>
+                  <span class="label">말풍선 ↔ 말풍선 (연속) 간격 <span class="val" id="stack-gap-val">5px</span></span>
                   <div class="rangewrap"><input id="stack-gap" type="range" min="0" max="24" step="1" value="5"></div>
                 </div>
+              </div>
+              <div class="field" style="margin-top:16px">
+                <span class="label">말풍선 ↔ 본문 간격 <span class="val" id="bub-body-gap-val">18px</span></span>
+                <div class="rangewrap"><input id="bub-body-gap" type="range" min="0" max="48" step="1" value="18"></div>
               </div>
 
               <label class="switch" style="margin-top:16px">
