@@ -730,7 +730,12 @@
   #canvas .g-ib-field,.canvas-clone .g-ib-field{flex:1;border:1px solid #d1d1d6;border-radius:999px;color:#8e8e93;background:#fff;display:flex;align-items:center;}
   #canvas .g-ib-send,.canvas-clone .g-ib-send{flex:none;border-radius:50%;background:#0b93f6;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;line-height:1;}
   /* 아바타 + 메시지 묶음 (카톡 스타일) */
-  #canvas .g-msg-group,.canvas-clone .g-msg-group{display:flex !important;align-items:flex-start !important;gap:.45em !important;margin:.55em 0 !important;}
+  #canvas .g-msg-group,.canvas-clone .g-msg-group{display:flex !important;align-items:flex-start !important;gap:.45em !important;margin:0 !important;}
+  #canvas .g-msg-group.gmg-top-bub,.canvas-clone .g-msg-group.gmg-top-bub{margin-top:var(--msg-gap,.55em) !important;}
+  #canvas .g-msg-group.gmg-top-body,.canvas-clone .g-msg-group.gmg-top-body{margin-top:var(--bub-body-gap,.55em) !important;}
+  #canvas .g-msg-group.gmg-bot-bub,.canvas-clone .g-msg-group.gmg-bot-bub{margin-bottom:var(--msg-gap,.55em) !important;}
+  #canvas .g-msg-group.gmg-bot-body,.canvas-clone .g-msg-group.gmg-bot-body{margin-bottom:var(--bub-body-gap,.55em) !important;}
+  #canvas .g-para-gap,.canvas-clone .g-para-gap{display:block !important;width:100% !important;height:var(--para-gap,20px) !important;}
   #canvas .g-msg-group.left,.canvas-clone .g-msg-group.left{flex-direction:row !important;}
   #canvas .g-msg-group.right,.canvas-clone .g-msg-group.right{flex-direction:row-reverse !important;}
   #canvas .g-msg-group:first-child,.canvas-clone .g-msg-group:first-child{margin-top:0 !important;}
@@ -773,9 +778,9 @@
     text-decoration:underline !important;text-decoration-thickness:.05em !important;text-underline-offset:.12em !important;}
   #canvas mark.sub,.canvas-clone mark.sub{color:var(--sub-color,#8a8a8a) !important;background:transparent !important;display:inline !important;font-size:.8em !important;}
   #canvas mark.gray,.canvas-clone mark.gray{color:var(--sub-color,#8a8a8a) !important;background:transparent !important;display:inline !important;}
-  #canvas .g-title-blk,.canvas-clone .g-title-blk{display:block !important;margin:0 0 .8em !important;}
+  #canvas .g-title-blk,.canvas-clone .g-title-blk{display:block !important;margin:0 0 var(--titleblk-gap,.8em) !important;}
   #canvas .g-title-main,.canvas-clone .g-title-main{display:block !important;font-size:var(--title-size,1.6em) !important;font-weight:700 !important;font-family:var(--title-font,inherit) !important;color:var(--title-color,inherit) !important;line-height:1.25 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
-  #canvas .g-title-sub,.canvas-clone .g-title-sub{display:block !important;font-size:var(--subtitle-size,1.15em) !important;font-weight:400 !important;font-family:var(--title-font,inherit) !important;color:var(--subtitle-color,inherit) !important;margin-top:.25em !important;line-height:1.3 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-title-sub,.canvas-clone .g-title-sub{display:block !important;font-size:var(--subtitle-size,1.15em) !important;font-weight:400 !important;font-family:var(--title-font,inherit) !important;color:var(--subtitle-color,inherit) !important;margin-top:var(--title-gap,.25em) !important;line-height:1.3 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-quote,.canvas-clone .g-quote{display:block !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-quote.left,.canvas-clone .g-quote.left{border-left:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-left:.6em !important;}
   #canvas .g-quote.right,.canvas-clone .g-quote.right{border-right:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-right:.6em !important;text-align:right !important;}
@@ -783,14 +788,14 @@
   #canvas .g-hr.line:before,.canvas-clone .g-hr.line:before{content:"" !important;display:block !important;width:100% !important;height:2px !important;background:var(--hr-color,rgba(140,140,140,.5)) !important;}
   #canvas .g-hr.dots,.canvas-clone .g-hr.dots{letter-spacing:.4em !important;font-size:.9em !important;height:auto !important;color:var(--hr-color,rgba(140,140,140,.55)) !important;}
   #canvas .g-hr.short:before,.canvas-clone .g-hr.short:before{content:"" !important;display:block !important;width:12% !important;height:2px !important;background:var(--hr-color,rgba(140,140,140,.6)) !important;}
-  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:1.6em !important;font-size:var(--name-size,.7em) !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:var(--name-gap,1.6em) !important;font-size:var(--name-size,.7em) !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-name.right,.canvas-clone .g-name.right{text-align:right !important;}
   #canvas .g-name.left,.canvas-clone .g-name.left{text-align:left !important;}
   #canvas .g-name.s-bold,.canvas-clone .g-name.s-bold{font-weight:700 !important;}
   #canvas .g-name.s-bar,.canvas-clone .g-name.s-bar{font-weight:400 !important;color:var(--name-color,rgba(90,90,90,.85)) !important;}
   #canvas .g-name.s-bar.left,.canvas-clone .g-name.s-bar.left{border-left:.16em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-left:.55em !important;}
   #canvas .g-name.s-bar.right,.canvas-clone .g-name.s-bar.right{border-right:.16em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-right:.55em !important;}
-  #canvas .g-bub,.canvas-clone .g-bub{display:block !important;position:relative !important;max-width:75% !important;width:fit-content !important;margin:.15em 0 !important;padding:.5em .875em !important;border-radius:1.15em !important;text-align:left !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;word-break:normal !important;line-height:1.25 !important;}
+  #canvas .g-bub,.canvas-clone .g-bub{display:block !important;position:relative !important;max-width:75% !important;width:fit-content !important;margin:var(--stack-gap,.15em) 0 !important;padding:.5em .875em !important;border-radius:1.15em !important;text-align:left !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;word-break:normal !important;line-height:1.25 !important;}
   #canvas .g-bub.cont + .g-bub,.canvas-clone .g-bub.cont + .g-bub,#canvas .g-bub + .g-bub.cont,.canvas-clone .g-bub + .g-bub.cont{margin-top:.15em !important;}
   #canvas .g-bub:first-child,.canvas-clone .g-bub:first-child{margin-top:0 !important;}
   #canvas .g-bub.recv,.canvas-clone .g-bub.recv{margin-right:auto !important;margin-left:.4em !important;background:var(--bub-recv,#e5e5ea) !important;color:var(--bub-recv-ink,#000) !important;}
@@ -881,7 +886,7 @@
           <button class="tab" role="tab" aria-selected="false" data-tab="design">디자인</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="bubble">말풍선</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="layout">레이아웃</button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="help">프리셋 · 초기화</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="help">기타 편의성</button>
         </div>
         <button class="icon-btn" id="theme-toggle" type="button" title="라이트/다크 전환" aria-label="라이트/다크 전환">
           <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -977,15 +982,11 @@
                   </select>
                 </div>
               </div>
+              <div class="field" style="margin-top:16px">
+                <span class="label">글자 크기 <span class="val">32px</span></span>
+                <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="32"></div>
+              </div>
               <div class="grid-2" style="margin-top:16px">
-                <div class="field">
-                  <span class="label">글자 크기 <span class="val">32px</span></span>
-                  <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="32"></div>
-                </div>
-                <div class="field">
-                  <span class="label">장평 <span class="val">100%</span></span>
-                  <div class="rangewrap"><input id="stretch" type="range" min="80" max="120" step="1" value="100"></div>
-                </div>
                 <div class="field">
                   <span class="label">자간 <span class="val">-0.5</span></span>
                   <div class="rangewrap"><input id="letter-spacing" type="range" min="-2" max="2" step="0.1" value="-0.5"></div>
@@ -993,6 +994,16 @@
                 <div class="field">
                   <span class="label">행간 <span class="val">1.7</span></span>
                   <div class="rangewrap"><input id="line-height" type="range" min="10" max="20" step="1" value="17"></div>
+                </div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">장평 <span class="val">100%</span></span>
+                  <div class="rangewrap"><input id="stretch" type="range" min="80" max="120" step="1" value="100"></div>
+                </div>
+                <div class="field">
+                  <span class="label">문단 간격 <span class="val" id="para-gap-val">20px</span></span>
+                  <div class="rangewrap"><input id="para-gap" type="range" min="0" max="48" step="1" value="20"></div>
                 </div>
               </div>
             </div>
@@ -1038,6 +1049,16 @@
                   <div class="rangewrap"><input id="subtitle-size" type="range" min="16" max="56" step="2" value="36"></div>
                 </div>
               </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">제목 ↔ 소제목 간격 <span class="val" id="title-gap-val">9px</span></span>
+                  <div class="rangewrap"><input id="title-gap" type="range" min="0" max="24" step="1" value="9"></div>
+                </div>
+                <div class="field">
+                  <span class="label">소제목(없을 시 제목) ↔ 본문 간격 <span class="val" id="titleblk-gap-val">26px</span></span>
+                  <div class="rangewrap"><input id="titleblk-gap" type="range" min="0" max="72" step="1" value="26"></div>
+                </div>
+              </div>
             </div>
           </details>
 
@@ -1079,9 +1100,15 @@
                   </select>
                 </div>
               </div>
-              <div class="field" style="margin-top:16px">
-                <span class="label">하단 크기 <span class="val" id="name-size-val">22px</span></span>
-                <div class="rangewrap"><input id="name-size" type="range" min="12" max="36" step="1" value="22"></div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">하단 크기 <span class="val" id="name-size-val">22px</span></span>
+                  <div class="rangewrap"><input id="name-size" type="range" min="12" max="36" step="1" value="22"></div>
+                </div>
+                <div class="field">
+                  <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">35px</span></span>
+                  <div class="rangewrap"><input id="name-gap" type="range" min="0" max="72" step="1" value="35"></div>
+                </div>
               </div>
             </div>
           </details>
@@ -1096,7 +1123,7 @@
             </summary>
             <div class="fold__body">
               <div class="cgrid cgrid--2">
-                <div class="cchip"><label>글자</label><div class="cchip__box"><input id="c-fg" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-fg-txt" type="text" value="#2b2b2b"></div></div>
+                <div class="cchip"><label>본문 글자</label><div class="cchip__box"><input id="c-fg" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-fg-txt" type="text" value="#2b2b2b"></div></div>
                 <div class="cchip"><label>서브 글자</label><div class="cchip__box"><input id="c-sub" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-sub-txt" type="text" value="#8a8a8a"></div></div>
                 <div class="cchip"><label>제목</label><div class="cchip__box"><input id="c-title" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-title-txt" type="text" value="#1a1a1a"></div></div>
                 <div class="cchip"><label>소제목</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#1a1a1a"></div></div>
@@ -1236,6 +1263,21 @@
                   <button type="button" data-shape="soft" aria-pressed="false" style="padding:7px 2px;line-height:1.35">심플<br><span style="font-size:10px;opacity:.8">(꼬리 선택)</span></button>
                   <button type="button" data-shape="simple" aria-pressed="false" style="padding:7px 2px;line-height:1.35">네모<br><span style="font-size:10px;opacity:.8">(꼬리 없음)</span></button>
                   <span class="seg__thumb"></span>
+                </div>
+              </div>
+
+              <div class="field" style="margin-top:16px">
+                <span class="label">말풍선 ↔ 본문 간격 <span class="val" id="bub-body-gap-val">18px</span></span>
+                <div class="rangewrap"><input id="bub-body-gap" type="range" min="0" max="48" step="1" value="18"></div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">말풍선 ↔ 말풍선 간격 <span class="val" id="msg-gap-val">18px</span></span>
+                  <div class="rangewrap"><input id="msg-gap" type="range" min="0" max="48" step="1" value="18"></div>
+                </div>
+                <div class="field">
+                  <span class="label">연속 말풍선 간격 <span class="val" id="stack-gap-val">5px</span></span>
+                  <div class="rangewrap"><input id="stack-gap" type="range" min="0" max="24" step="1" value="5"></div>
                 </div>
               </div>
 
@@ -2065,6 +2107,53 @@
       group.appendChild(col);
       inner.insertBefore(group, ref);
     });
+  }
+  // 캔버스 후처리 1: 각 말풍선 그룹의 위/아래 이웃이 '말풍선 그룹'인지 '본문'인지 표시.
+  //   → 말풍선-말풍선 간격(--msg-gap)과 말풍선-본문 간격(--bub-body-gap)을 CSS에서 따로 적용.
+  //   말풍선 내부/구조는 전혀 건드리지 않고 .g-msg-group에 클래스만 부여(안전).
+  function tagMsgGroupNeighbors(root){
+    var inner = root.querySelector('.g-inner'); if(!inner) return;
+    function skip(n){ return n && n.classList && (n.classList.contains('g-bg-layer')||n.classList.contains('g-topbar')||n.classList.contains('g-inputbar')); }
+    function meaningfulSib(nd, dir){
+      var n = dir<0 ? nd.previousSibling : nd.nextSibling;
+      while(n){
+        if(n.nodeType===1){
+          if(skip(n)){ n = dir<0?n.previousSibling:n.nextSibling; continue; }
+          return n;
+        }
+        if(n.nodeType===3){
+          if(n.nodeValue.replace(/[\u200b\s]/g,'')===''){ n = dir<0?n.previousSibling:n.nextSibling; continue; }
+          return n; // 실제 본문 텍스트
+        }
+        n = dir<0?n.previousSibling:n.nextSibling;
+      }
+      return null;
+    }
+    function isGroup(n){ return n && n.nodeType===1 && n.classList && n.classList.contains('g-msg-group'); }
+    [].forEach.call(inner.querySelectorAll('.g-msg-group'), function(g){
+      g.classList.remove('gmg-top-bub','gmg-top-body','gmg-bot-bub','gmg-bot-body');
+      g.classList.add(isGroup(meaningfulSib(g,-1)) ? 'gmg-top-bub' : 'gmg-top-body');
+      g.classList.add(isGroup(meaningfulSib(g, 1)) ? 'gmg-bot-bub' : 'gmg-bot-body');
+    });
+  }
+  // 캔버스 후처리 2: 본문 빈 줄(=.g-inner 직속의 연속 <br> 2개 이상)을 문단 간격 스페이서로 치환.
+  //   말풍선 내부(.g-bub 안)의 <br>은 .g-inner 직속이 아니라 절대 대상이 되지 않음(안전).
+  function wrapParaGaps(root){
+    var inner = root.querySelector('.g-inner'); if(!inner) return;
+    var kids = [].slice.call(inner.childNodes), i=0;
+    while(i<kids.length){
+      var nd=kids[i];
+      if(nd && nd.nodeType===1 && nd.tagName==='BR' && nd.parentNode===inner){
+        var run=[nd], j=i+1;
+        while(j<kids.length && kids[j] && kids[j].nodeType===1 && kids[j].tagName==='BR' && kids[j].parentNode===inner){ run.push(kids[j]); j++; }
+        if(run.length>=2){
+          var anchor=run[0], gaps=run.length-1;
+          for(var g=0; g<gaps; g++){ var sp=document.createElement('div'); sp.className='g-para-gap'; inner.insertBefore(sp, anchor); }
+          run.forEach(function(b){ if(b.parentNode) b.parentNode.removeChild(b); });
+        }
+        i=j;
+      } else { i++; }
+    }
   }
   function stripBubblesFrag(frag){
     [].forEach.call(frag.querySelectorAll('svg.g-tail'), function(s){ if(s.parentNode) s.parentNode.removeChild(s); });
@@ -3091,6 +3180,16 @@
     if(tsz){ el.style.setProperty('--title-size', parseFloat(tsz.value)+'px'); }
     if(ssz){ el.style.setProperty('--subtitle-size', parseFloat(ssz.value)+'px'); }
     if(nsz){ el.style.setProperty('--name-size', parseFloat(nsz.value)+'px'); }
+    var tg=$('title-gap'), tbg=$('titleblk-gap');
+    if(tg){ el.style.setProperty('--title-gap', parseFloat(tg.value)+'px'); }
+    if(tbg){ el.style.setProperty('--titleblk-gap', parseFloat(tbg.value)+'px'); }
+    var ng=$('name-gap');
+    if(ng){ el.style.setProperty('--name-gap', parseFloat(ng.value)+'px'); }
+    var mg=$('msg-gap'), bbg=$('bub-body-gap'), pg=$('para-gap'), sg=$('stack-gap');
+    if(mg){ el.style.setProperty('--msg-gap', parseFloat(mg.value)+'px'); }
+    if(bbg){ el.style.setProperty('--bub-body-gap', parseFloat(bbg.value)+'px'); }
+    if(pg){ el.style.setProperty('--para-gap', parseFloat(pg.value)+'px'); }
+    if(sg){ el.style.setProperty('--stack-gap', parseFloat(sg.value)+'px'); }
     var tf=$('title-font'), nf=$('name-font');
     el.style.setProperty('--title-font', (tf && tf.value) ? tf.value : $('font').value);
     el.style.setProperty('--name-font', (nf && nf.value) ? nf.value : $('font').value);
@@ -3313,7 +3412,7 @@
     updateEmptyBubbles();
     styleCharBubbles(editor);
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
-    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); fitStage();
+    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); tagMsgGroupNeighbors(canvas); wrapParaGaps(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('stretch')) setVal('stretch', $('stretch').value+'%');
     if($('grad-angle')) setVal('grad-angle', angleLabel($('grad-angle').value));
@@ -3419,8 +3518,18 @@
     if(t){ var tv=$('title-size-val'); if(tv) tv.textContent=parseFloat(t.value)+'px'; }
     if(s){ var sv=$('subtitle-size-val'); if(sv) sv.textContent=parseFloat(s.value)+'px'; }
     if(n){ var nv=$('name-size-val'); if(nv) nv.textContent=parseFloat(n.value)+'px'; }
+    var tg=$('title-gap'), tbg=$('titleblk-gap');
+    if(tg){ var tgv=$('title-gap-val'); if(tgv) tgv.textContent=parseFloat(tg.value)+'px'; }
+    if(tbg){ var tbgv=$('titleblk-gap-val'); if(tbgv) tbgv.textContent=parseFloat(tbg.value)+'px'; }
+    var ng=$('name-gap');
+    if(ng){ var ngv=$('name-gap-val'); if(ngv) ngv.textContent=parseFloat(ng.value)+'px'; }
+    var mg=$('msg-gap'), bbg=$('bub-body-gap'), pg=$('para-gap'), sg=$('stack-gap');
+    if(mg){ var mgv=$('msg-gap-val'); if(mgv) mgv.textContent=parseFloat(mg.value)+'px'; }
+    if(bbg){ var bbgv=$('bub-body-gap-val'); if(bbgv) bbgv.textContent=parseFloat(bbg.value)+'px'; }
+    if(pg){ var pgv=$('para-gap-val'); if(pgv) pgv.textContent=parseFloat(pg.value)+'px'; }
+    if(sg){ var sgv=$('stack-gap-val'); if(sgv) sgv.textContent=parseFloat(sg.value)+'px'; }
   }
-  ['title-size','subtitle-size','name-size','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -3827,7 +3936,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','font-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','font-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-quote','c-quote-txt','c-hr','c-hr-txt',
