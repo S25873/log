@@ -4451,27 +4451,39 @@
       }
       return null;                                                 // 맨 끝
     }
+    var dragOff={x:0,y:0};
+    function positionDragged(chip,x,y){
+      chip.style.transform='none';                                 // 슬롯(레이아웃) 위치 측정
+      var r=chip.getBoundingClientRect();
+      chip.style.transform='translate('+((x-dragOff.x)-r.left)+'px,'+((y-dragOff.y)-r.top)+'px) scale(1.05)';
+    }
     function moveDrag(chip,x,y){
       var t=insertTarget(chip,x,y), before=chip.nextSibling;
       var sibs=[], first=[];
-      [].forEach.call(wrap.children, function(el){ if(el!==chip){ sibs.push(el); first.push(el.getBoundingClientRect()); } });
+      [].forEach.call(wrap.children, function(el){ if(el!==chip){ sibs.push(el); first.push(el.getBoundingClientRect()); } });  // First=현재 시각 위치(애니 중이면 그 지점)
       if(t){ if(t!==chip) wrap.insertBefore(chip,t); } else wrap.appendChild(chip);
-      if(chip.nextSibling===before) return;                        // 실제 순서 변화 없으면 스킵
-      sibs.forEach(function(el,i){                                   // FLIP: 비켜주는 칩들을 스르륵 이동
-        var f=first[i], l=el.getBoundingClientRect(), dx=f.left-l.left, dy=f.top-l.top;
-        if(!dx && !dy) return;
-        el.style.transition='none'; el.style.transform='translate('+dx+'px,'+dy+'px)';
-        requestAnimationFrame(function(){ el.style.transition=''; el.style.transform=''; });
-      });
+      if(chip.nextSibling!==before){
+        sibs.forEach(function(el,i){                                // FLIP: 비켜주는 칩들을 스르륵(끊겨도 이어서)
+          var f=first[i];
+          el.style.transition='none'; el.style.transform='';        // 잔여 변환 제거 → settled 레이아웃
+          var l=el.getBoundingClientRect(), dx=f.left-l.left, dy=f.top-l.top;
+          if(!dx && !dy) return;
+          el.style.transform='translate('+dx+'px,'+dy+'px)';
+          requestAnimationFrame(function(){ el.style.transition=''; el.style.transform=''; });
+        });
+      }
+      positionDragged(chip,x,y);                                    // 잡은 칩은 항상 손가락 밑
     }
     function beginDrag(chip,x,y){
       try{ var sel=window.getSelection&&window.getSelection(); if(sel&&sel.removeAllRanges) sel.removeAllRanges(); }catch(_){}
+      var r0=chip.getBoundingClientRect(); dragOff.x=x-r0.left; dragOff.y=y-r0.top;   // 잡은 지점 오프셋(dragging 스케일 전에 측정)
       [].forEach.call(wrap.children, function(el,i){ el._ri=i; });   // 현재(=배열) 순서 기록
-      wrap.classList.add('reordering'); chip.classList.add('dragging');
+      wrap.classList.add('reordering'); chip.classList.add('dragging'); chip.style.transition='none';
       moveDrag(chip,x,y);
     }
     function endDrag(chip,commit){
       wrap.classList.remove('reordering'); chip.classList.remove('dragging');
+      chip.style.transform=''; chip.style.transition='';
       var list=getList()||[], nl=list;
       if(commit){
         var out=[]; [].slice.call(wrap.children).forEach(function(el){ if(el._ri!=null && list[el._ri]!=null) out.push(list[el._ri]); });
