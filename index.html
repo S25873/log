@@ -637,7 +637,7 @@
   .reorderable{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
   .reorderable,.reorderable *{-webkit-user-select:none !important;user-select:none !important;-webkit-touch-callout:none !important;}
   .reordering{cursor:grabbing;}
-  .reordering .reorderable:not(.dragging){transition:transform .13s var(--ease);}
+  .reordering .reorderable:not(.dragging){transition:transform .17s var(--ease);}
   .reorderable.dragging{opacity:.92;transform:scale(1.06);box-shadow:var(--shadow-2);cursor:grabbing;position:relative;z-index:5;border-color:var(--ink) !important;}
   .reorderable.dragging *{cursor:grabbing;}
 
@@ -4451,7 +4451,19 @@
       }
       return null;                                                 // 맨 끝
     }
-    function moveDrag(chip,x,y){ var t=insertTarget(chip,x,y); if(t){ if(t!==chip) wrap.insertBefore(chip,t); } else wrap.appendChild(chip); }
+    function moveDrag(chip,x,y){
+      var t=insertTarget(chip,x,y), before=chip.nextSibling;
+      var sibs=[], first=[];
+      [].forEach.call(wrap.children, function(el){ if(el!==chip){ sibs.push(el); first.push(el.getBoundingClientRect()); } });
+      if(t){ if(t!==chip) wrap.insertBefore(chip,t); } else wrap.appendChild(chip);
+      if(chip.nextSibling===before) return;                        // 실제 순서 변화 없으면 스킵
+      sibs.forEach(function(el,i){                                   // FLIP: 비켜주는 칩들을 스르륵 이동
+        var f=first[i], l=el.getBoundingClientRect(), dx=f.left-l.left, dy=f.top-l.top;
+        if(!dx && !dy) return;
+        el.style.transition='none'; el.style.transform='translate('+dx+'px,'+dy+'px)';
+        requestAnimationFrame(function(){ el.style.transition=''; el.style.transform=''; });
+      });
+    }
     function beginDrag(chip,x,y){
       try{ var sel=window.getSelection&&window.getSelection(); if(sel&&sel.removeAllRanges) sel.removeAllRanges(); }catch(_){}
       [].forEach.call(wrap.children, function(el,i){ el._ri=i; });   // 현재(=배열) 순서 기록
