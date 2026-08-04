@@ -4434,61 +4434,89 @@
     if(!wrap || wrap._reorderInit) return; wrap._reorderInit=true;
     var LONGPRESS=320, MOVE_CANCEL=8;
 
-    // 칩에서 우클릭/롱프레스 컨텍스트 메뉴 방지
     wrap.addEventListener('contextmenu', function(e){ if(e.target.closest('.reorderable')) e.preventDefault(); });
-    // iOS 사파리: 롱프레스 시작 시 텍스트 선택(파란 하이라이트)이 잡혀 드래그가 pointercancel로 취소되는 것 차단
     wrap.addEventListener('selectstart', function(e){ if(e.target && e.target.closest && e.target.closest('.reorderable')) e.preventDefault(); });
     // 드래그 직후의 클릭(적용/편집) 억제 (캡처 단계에서 가로챔)
     wrap.addEventListener('click', function(e){
       if(wrap._suppressClick){ e.preventDefault(); e.stopPropagation(); wrap._suppressClick=false; }
     }, true);
 
+    // ── 공유 드래그 코어 ──
+    function insertTarget(chip,x,y){
+      var kids=[].slice.call(wrap.children);
+      for(var i=0;i<kids.length;i++){ var el=kids[i]; if(el===chip) continue;
+        var r=el.getBoundingClientRect();
+        if(y < r.top-2) return el;                                 // 위쪽 줄
+        if(y <= r.bottom+2 && x < r.left+r.width/2) return el;     // 같은 줄, 왼쪽 절반
+      }
+      return null;                                                 // 맨 끝
+    }
+    function moveDrag(chip,x,y){ var t=insertTarget(chip,x,y); if(t){ if(t!==chip) wrap.insertBefore(chip,t); } else wrap.appendChild(chip); }
+    function beginDrag(chip,x,y){
+      try{ var sel=window.getSelection&&window.getSelection(); if(sel&&sel.removeAllRanges) sel.removeAllRanges(); }catch(_){}
+      [].forEach.call(wrap.children, function(el,i){ el._ri=i; });   // 현재(=배열) 순서 기록
+      wrap.classList.add('reordering'); chip.classList.add('dragging');
+      moveDrag(chip,x,y);
+    }
+    function endDrag(chip,commit){
+      wrap.classList.remove('reordering'); chip.classList.remove('dragging');
+      var list=getList()||[], nl=list;
+      if(commit){
+        var out=[]; [].slice.call(wrap.children).forEach(function(el){ if(el._ri!=null && list[el._ri]!=null) out.push(list[el._ri]); });
+        if(out.length===list.length){ nl=out; wrap._suppressClick=true; setTimeout(function(){ wrap._suppressClick=false; }, 500); }
+      }
+      onReorder(nl);
+    }
+
+    // ── 마우스/펜: Pointer Events ──
     wrap.addEventListener('pointerdown', function(e){
+      if(e.pointerType==='touch') return;                          // 터치는 아래 전용 핸들러가 처리
       if(e.pointerType==='mouse' && e.button!==0) return;
-      if(e.target.closest('.mychip__x')) return; // 삭제(×) 버튼 위에서는 시작하지 않음
+      if(e.target.closest('.mychip__x')) return;
       var chip=e.target.closest('.reorderable'); if(!chip || chip.parentNode!==wrap) return;
       var sx=e.clientX, sy=e.clientY, pid=e.pointerId, active=false, timer;
-
-      function insertTarget(x,y){
-        var kids=[].slice.call(wrap.children);
-        for(var i=0;i<kids.length;i++){ var el=kids[i]; if(el===chip) continue;
-          var r=el.getBoundingClientRect();
-          if(y < r.top-2) return el;                                   // 위쪽 줄
-          if(y <= r.bottom+2 && x < r.left+r.width/2) return el;       // 같은 줄, 왼쪽 절반
-        }
-        return null;                                                   // 맨 끝
-      }
-      function moveDrag(x,y){ var t=insertTarget(x,y); if(t){ if(t!==chip) wrap.insertBefore(chip,t); } else wrap.appendChild(chip); }
-      function activate(){
-        active=true;
-        try{ var sel=window.getSelection&&window.getSelection(); if(sel&&sel.removeAllRanges) sel.removeAllRanges(); }catch(_){}
-        [].forEach.call(wrap.children, function(el,i){ el._ri=i; });    // 현재(=배열) 순서 기록
-        wrap.classList.add('reordering'); chip.classList.add('dragging');
-        moveDrag(sx, sy);
-      }
-      function finish(commit){
-        wrap.classList.remove('reordering'); chip.classList.remove('dragging');
-        var list=getList()||[], nl=list;
-        if(commit){
-          var out=[]; [].slice.call(wrap.children).forEach(function(el){ if(el._ri!=null && list[el._ri]!=null) out.push(list[el._ri]); });
-          if(out.length===list.length){ nl=out; wrap._suppressClick=true; setTimeout(function(){ wrap._suppressClick=false; }, 500); }
-        }
-        onReorder(nl); // 커밋이면 새 순서 저장+재렌더 / 취소면 원래 순서로 재렌더(원상복구)
-      }
       function onMove(ev){
         if(ev.pointerId!==pid) return;
         if(!active){ if(Math.abs(ev.clientX-sx)>MOVE_CANCEL || Math.abs(ev.clientY-sy)>MOVE_CANCEL){ clearTimeout(timer); cleanup(); } return; }
-        ev.preventDefault(); moveDrag(ev.clientX, ev.clientY);
+        ev.preventDefault(); moveDrag(chip, ev.clientX, ev.clientY);
       }
-      function onUp(ev){ if(ev.pointerId!==pid) return; clearTimeout(timer); if(active){ ev.preventDefault(); finish(true); } cleanup(); }
-      function onCancel(ev){ if(ev.pointerId!==pid) return; clearTimeout(timer); if(active){ finish(false); } cleanup(); }
+      function onUp(ev){ if(ev.pointerId!==pid) return; clearTimeout(timer); if(active){ ev.preventDefault(); endDrag(chip,true); } cleanup(); }
+      function onCancel(ev){ if(ev.pointerId!==pid) return; clearTimeout(timer); if(active){ endDrag(chip,false); } cleanup(); }
       function cleanup(){ window.removeEventListener('pointermove',onMove,true); window.removeEventListener('pointerup',onUp,true); window.removeEventListener('pointercancel',onCancel,true); }
-
-      timer=setTimeout(activate, LONGPRESS);
+      timer=setTimeout(function(){ active=true; beginDrag(chip,sx,sy); }, LONGPRESS);
       window.addEventListener('pointermove', onMove, true);
       window.addEventListener('pointerup', onUp, true);
       window.addEventListener('pointercancel', onCancel, true);
     });
+
+    // ── 터치(iOS 등): 전용 처리. touchstart에서 기본동작 차단→선택/롱프레스 확대(loupe) 원천 봉쇄, 탭은 합성 ──
+    var tg=null; // 현재 터치 제스처 상태
+    wrap.addEventListener('touchstart', function(e){
+      if(tg) return;
+      var chip=e.target.closest('.reorderable'); if(!chip || chip.parentNode!==wrap) return;
+      var pt=e.touches[0];
+      tg={ chip:chip, sx:pt.clientX, sy:pt.clientY, active:false, moved:false, isX:!!e.target.closest('.mychip__x'), target:e.target, start:Date.now(), timer:null };
+      e.preventDefault();                                          // iOS 텍스트 선택/확대 차단(네이티브 click은 touchend에서 합성)
+      if(!tg.isX){ tg.timer=setTimeout(function(){ if(tg && !tg.moved){ tg.active=true; beginDrag(tg.chip, tg.sx, tg.sy); } }, LONGPRESS); }
+    }, {passive:false});
+    wrap.addEventListener('touchmove', function(e){
+      if(!tg) return;
+      var pt=e.touches[0], dx=pt.clientX-tg.sx, dy=pt.clientY-tg.sy;
+      if(!tg.active){ if(Math.abs(dx)>MOVE_CANCEL || Math.abs(dy)>MOVE_CANCEL){ tg.moved=true; if(tg.timer) clearTimeout(tg.timer); } return; }
+      e.preventDefault(); moveDrag(tg.chip, pt.clientX, pt.clientY);
+    }, {passive:false});
+    function endTouch(commit){
+      if(!tg) return;
+      if(tg.timer) clearTimeout(tg.timer);
+      if(tg.active){ endDrag(tg.chip, commit); }
+      else if(commit && !tg.moved && (Date.now()-tg.start)<500){
+        var tt=tg.target;                                          // 탭: 원래 타깃에 click 합성(적용/편집/삭제 실행)
+        if(tt && tt.dispatchEvent){ wrap._suppressClick=false; tt.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window})); }
+      }
+      tg=null;
+    }
+    wrap.addEventListener('touchend', function(){ endTouch(true); }, {passive:false});
+    wrap.addEventListener('touchcancel', function(){ endTouch(false); }, {passive:false});
   }
 
   /* ============================================================
