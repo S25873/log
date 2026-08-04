@@ -754,6 +754,9 @@
   #canvas .g-msg-group.gmg-top-body,.canvas-clone .g-msg-group.gmg-top-body{margin-top:var(--bub-body-gap,.55em) !important;}
   #canvas .g-msg-group.gmg-bot-bub,.canvas-clone .g-msg-group.gmg-bot-bub{margin-bottom:var(--msg-gap,.55em) !important;}
   #canvas .g-msg-group.gmg-bot-body,.canvas-clone .g-msg-group.gmg-bot-body{margin-bottom:var(--bub-body-gap,.55em) !important;}
+  /* 맨 마지막 말풍선(뒤에 실제 내용 없음)은 아래 여백 제거 */
+  #canvas .g-msg-group.g-endbub,.canvas-clone .g-msg-group.g-endbub{margin-bottom:0 !important;}
+  #canvas .g-bub.g-endbub,.canvas-clone .g-bub.g-endbub{margin-bottom:0 !important;}
   #canvas .g-para-gap,.canvas-clone .g-para-gap{display:block !important;width:100% !important;height:var(--para-gap,20px) !important;}
   #canvas .g-msg-group.left,.canvas-clone .g-msg-group.left{flex-direction:row !important;}
   #canvas .g-msg-group.right,.canvas-clone .g-msg-group.right{flex-direction:row-reverse !important;}
@@ -2239,6 +2242,32 @@
       } else { i++; }
     }
   }
+  // 캔버스 후처리 3: 맨 마지막 말풍선(뒤에 실제 내용 없음)의 아래 여백 제거.
+  //   후행 공백·제로폭·<br>·바 요소는 '내용 없음'으로 간주하고 건너뜀. para-gap(의도적 빈 줄)·본문 텍스트가 뒤에 있으면 대상 아님.
+  function stripLastGap(root){
+    var inner = root.querySelector('.g-inner'); if(!inner) return;
+    [].forEach.call(inner.querySelectorAll('.g-endbub'), function(e){ e.classList.remove('g-endbub'); });
+    function meaningful(n){
+      if(!n) return false;
+      if(n.nodeType===3) return n.nodeValue.replace(/[\u200b\s]/g,'')!=='';
+      if(n.nodeType===1){
+        if(n.tagName==='BR') return false;
+        if(n.classList && (n.classList.contains('g-bg-layer')||n.classList.contains('g-topbar')||n.classList.contains('g-inputbar'))) return false;
+        return true;
+      }
+      return false;
+    }
+    var last=inner.lastChild;
+    while(last && !meaningful(last)) last=last.previousSibling;
+    if(!last || last.nodeType!==1 || !last.classList) return;
+    if(last.classList.contains('g-msg-group')){
+      last.classList.add('g-endbub');
+      var bubs=last.querySelectorAll('.g-bub');
+      if(bubs.length) bubs[bubs.length-1].classList.add('g-endbub');
+    } else if(last.classList.contains('g-bub')){
+      last.classList.add('g-endbub');
+    }
+  }
   function stripBubblesFrag(frag){
     [].forEach.call(frag.querySelectorAll('svg.g-tail'), function(s){ if(s.parentNode) s.parentNode.removeChild(s); });
     [].forEach.call(frag.querySelectorAll('.g-bub'), function(b){ var p=b.parentNode; if(!p) return; while(b.firstChild){ p.insertBefore(b.firstChild,b); } p.removeChild(b); });
@@ -3526,7 +3555,7 @@
     updateEmptyBubbles();
     styleCharBubbles(editor);
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
-    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); tagMsgGroupNeighbors(canvas); wrapParaGaps(canvas); fitStage();
+    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); tagMsgGroupNeighbors(canvas); wrapParaGaps(canvas); stripLastGap(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('stretch')) setVal('stretch', $('stretch').value+'%');
     if($('grad-angle')) setVal('grad-angle', angleLabel($('grad-angle').value));
