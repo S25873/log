@@ -635,6 +635,7 @@
 
   /* 프리셋 칩 꾹 눌러 순서 바꾸기 (인물/입력/프리셋 공통) */
   .reorderable{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+  .reorderable,.reorderable *{-webkit-user-select:none !important;user-select:none !important;-webkit-touch-callout:none !important;}
   .reordering{cursor:grabbing;}
   .reordering .reorderable:not(.dragging){transition:transform .13s var(--ease);}
   .reorderable.dragging{opacity:.92;transform:scale(1.06);box-shadow:var(--shadow-2);cursor:grabbing;position:relative;z-index:5;border-color:var(--ink) !important;}
@@ -4435,6 +4436,8 @@
 
     // 칩에서 우클릭/롱프레스 컨텍스트 메뉴 방지
     wrap.addEventListener('contextmenu', function(e){ if(e.target.closest('.reorderable')) e.preventDefault(); });
+    // iOS 사파리: 롱프레스 시작 시 텍스트 선택(파란 하이라이트)이 잡혀 드래그가 pointercancel로 취소되는 것 차단
+    wrap.addEventListener('selectstart', function(e){ if(e.target && e.target.closest && e.target.closest('.reorderable')) e.preventDefault(); });
     // 드래그 직후의 클릭(적용/편집) 억제 (캡처 단계에서 가로챔)
     wrap.addEventListener('click', function(e){
       if(wrap._suppressClick){ e.preventDefault(); e.stopPropagation(); wrap._suppressClick=false; }
@@ -4458,6 +4461,7 @@
       function moveDrag(x,y){ var t=insertTarget(x,y); if(t){ if(t!==chip) wrap.insertBefore(chip,t); } else wrap.appendChild(chip); }
       function activate(){
         active=true;
+        try{ var sel=window.getSelection&&window.getSelection(); if(sel&&sel.removeAllRanges) sel.removeAllRanges(); }catch(_){}
         [].forEach.call(wrap.children, function(el,i){ el._ri=i; });    // 현재(=배열) 순서 기록
         wrap.classList.add('reordering'); chip.classList.add('dragging');
         moveDrag(sx, sy);
