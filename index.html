@@ -2369,10 +2369,18 @@
       av.style.marginRight = mAv;
     });
     // ── 삽입 사진들: 장평(scaleX)이 사진의 크기·비율·둥글기·'위치'에 영향 못 주게.
-    //   ★핵심: transform(scaleX 역보정) 절대 안 씀 — 그게 origin 기준이라 압축된 레이아웃 안 사진을 옆으로 밀었음(위치 드리프트의 원인).
-    //   대신 부모 scaleX(s)를 사진의 '레이아웃 치수'로 흡수: 폭=w0/s(→시각폭 w0 고정), 높이=w0*비율(→시각높이 고정).
-    //   사진은 일반 흐름 그대로라 위치가 안 밀림. 둥근모서리는 가로만 s배 눌리므로 border-radius를 (R/s)/R 타원으로 pre-보정→시각 원형.
+    //   ★핵심: transform(scaleX 역보정) 안 씀 — origin 기준 스케일이라 사진을 옆으로 밀었음.
+    //   부모 scaleX(s)를 사진의 '레이아웃 치수'로 흡수: 폭=w0/s(→시각폭 w0), 높이=w0*비율(→시각높이 고정). 일반 흐름이라 위치 안 밀림.
+    //   ★★진짜 버그였던 것: render가 매번 canvas.innerHTML을 새로 만들어 캔버스 img가 새 요소→naturalWidth=0(디코드 전)이라
+    //     아래 크기고정이 매번 건너뛰어져 CSS 기본값으로 눌렸음. → 편집창(살아있어 디코드됨) img들의 src→자연크기 맵으로 보완.
     var _bw = (typeof baseW==='function'?baseW():(root.clientWidth||360));
+    var _natMap={};
+    [].forEach.call(editor.querySelectorAll('img'), function(e){ if(e.naturalWidth){ _natMap[e.src]=[e.naturalWidth, e.naturalHeight]; } });
+    function _nat(im){
+      var w=im.naturalWidth||0, h=im.naturalHeight||0;
+      if(!w){ var m=_natMap[im.src]; if(m){ w=m[0]; h=m[1]; } }
+      return [w, h];
+    }
     function _fixRadius(im){
       im.style.removeProperty('border-radius');
       if(s===1) return;
@@ -2385,7 +2393,7 @@
     [].forEach.call(inner.querySelectorAll('.g-bub-img'), function(im){
       im.style.transform=''; im.style.transformOrigin='';
       if(s===1){ im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); _fixRadius(im); return; }
-      var natW=im.naturalWidth||0, natH=im.naturalHeight||0;
+      var nn=_nat(im), natW=nn[0], natH=nn[1];
       var w0=(natW ? Math.min(_photoPx, natW) : _photoPx);
       im.style.setProperty('width', (w0/s)+'px', 'important');       // 시각폭 = (w0/s)*s = w0
       im.style.setProperty('max-width', (w0/s)+'px', 'important');
@@ -2399,14 +2407,14 @@
       var im=gi.querySelector('img'); if(!im) return;
       im.style.transform=''; im.style.transformOrigin='';
       if(s===1){ im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); _fixRadius(im); return; }
-      var natW=im.naturalWidth||0, natH=im.naturalHeight||0;
-      if(natW && natH){
-        var contentVis=(gi.offsetWidth||_bw)*s;                      // 본문 시각폭(≈상수: 부푼 폭*s)
-        var w0=Math.min(natW, Math.round(contentVis*_lisz/100));
-        im.style.setProperty('width', (w0/s)+'px', 'important');
-        im.style.setProperty('max-width', (w0/s)+'px', 'important');
-        im.style.setProperty('height', (w0*(natH/natW))+'px', 'important');
-      } else { im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); }
+      var nn=_nat(im), natW=nn[0], natH=nn[1];
+      var contentVis=(gi.offsetWidth||_bw)*s;                        // 본문 시각폭(≈상수: 부푼 폭*s)
+      var w0=Math.round(contentVis*_lisz/100);
+      if(natW) w0=Math.min(w0, natW);
+      im.style.setProperty('width', (w0/s)+'px', 'important');
+      im.style.setProperty('max-width', (w0/s)+'px', 'important');
+      if(natW && natH) im.style.setProperty('height', (w0*(natH/natW))+'px', 'important');
+      else im.style.removeProperty('height');
       _fixRadius(im);
     });
   }
