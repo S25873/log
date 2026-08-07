@@ -1663,18 +1663,13 @@
 
           <div class="section" style="margin-top:20px">
             <p class="section__head">초기화</p>
-            <p class="hint" style="margin:0 0 12px">프리셋(인물·삽입·입력·내)을 제외한 모든 설정과 입력을 처음 상태로 되돌려요.</p>
+            <p class="hint" style="margin:0 0 12px">전체 초기화: 프리셋을 제외한 모든 설정과 입력을 처음 상태로 되돌려요.<br>나머지 초기화: 각 프리셋에 저장된 내용을 초기화해요.</p>
             <button class="btn btn--ghost" id="t-reset" type="button" style="width:100%;height:42px;font-size:13px;color:var(--danger,#d9534f)">전체 초기화</button>
-          </div>
-
-          <div class="section" style="margin-top:20px">
-            <p class="section__head">특수 초기화</p>
-            <p class="hint" style="margin:0 0 12px">현재 프리셋에 저장된 내용을 초기화해요.</p>
-            <div class="grid-2">
-              <button class="btn btn--ghost" id="reset-chars" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">인물</button>
-              <button class="btn btn--ghost" id="reset-bubpreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">말풍선 삽입</button>
-              <button class="btn btn--ghost" id="reset-replace" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">입력 프리셋</button>
-              <button class="btn btn--ghost" id="reset-mypreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">내 프리셋</button>
+            <div class="grid-2" style="margin-top:12px">
+              <button class="btn btn--ghost" id="reset-chars" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">인물 초기화</button>
+              <button class="btn btn--ghost" id="reset-bubpreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">말풍선 삽입 초기화</button>
+              <button class="btn btn--ghost" id="reset-replace" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">입력 프리셋 초기화</button>
+              <button class="btn btn--ghost" id="reset-mypreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">내 프리셋 초기화</button>
             </div>
           </div>
 
@@ -2965,26 +2960,27 @@
   editor.addEventListener('keydown', function(e){
     if((e.key==='Backspace'||e.key==='Delete') && _selImg && editor.contains(_selImg)){ e.preventDefault(); removeImg(_selImg); }
   });
-  // 사진 말풍선(말풍선 안 이미지) 클릭: 커서를 사진 오른쪽(말풍선 안)에 두고 말풍선 도구 표시
-  var _activeBub=null;   // 터치에서 포커스(키보드) 없이 도구가 대상으로 삼을 말풍선
+  // 사진 말풍선(말풍선 안 이미지) 클릭: 사진을 좌우 반반으로 나눠, 왼쪽을 누르면 사진 앞·오른쪽을 누르면 사진 뒤에 커서를 둠(모바일 포함). 데스크톱·모바일 동일하게 실제 커서를 붙여 바로 편집(앞 띄우기 등) 가능.
+  var _activeBub=null;   // (호환용) 도구가 대상으로 삼는 말풍선 — 이제는 실제 커서로 판별되지만 남겨둠
   editor.addEventListener('click', function(e){
     var t=e.target;
     var isBubImg = t && t.classList && t.classList.contains('g-bub-img');
     if(!isBubImg){ if(_activeBub){ _activeBub=null; updateFormatButtons(); } return; }
     var host=closestBubble(t); if(!host) return;
     e.preventDefault();
-    if(IS_TOUCH){
-      // 모바일: 키보드 안 뜨게 포커스/캡션 커서 없이 대상 말풍선만 기억하고 도구 표시
-      _activeBub=host;
-      var s=window.getSelection(); if(s) s.removeAllRanges();
-      editor.blur();
-      updateFormatButtons();
-      return;
-    }
+    _activeBub=null;
     editor.focus();
-    var after=t.nextSibling;
-    var tn=(after && after.nodeType===3) ? after : null;
-    if(!tn){ tn=document.createTextNode('\u200b'); if(after) host.insertBefore(tn, after); else host.appendChild(tn); }
+    // 클릭 지점이 사진 가로 중앙보다 왼쪽이면 '앞', 오른쪽이면 '뒤'
+    var rect=t.getBoundingClientRect();
+    var before = e.clientX < (rect.left + rect.width/2);
+    var ref = before ? t.previousSibling : t.nextSibling;
+    var tn=(ref && ref.nodeType===3) ? ref : null;
+    if(!tn){
+      tn=document.createTextNode('\u200b');
+      if(before){ host.insertBefore(tn, t); }
+      else if(ref){ host.insertBefore(tn, ref); }
+      else { host.appendChild(tn); }
+    }
     var sel=window.getSelection(), r=document.createRange();
     r.setStart(tn, tn.nodeValue.length); r.collapse(true);
     sel.removeAllRanges(); sel.addRange(r);
