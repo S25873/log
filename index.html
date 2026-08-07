@@ -2368,21 +2368,41 @@
       av.style.marginLeft = mAv;
       av.style.marginRight = mAv;
     });
-    // 말풍선 삽입 사진: 폭을 고정 px로 강제(!important, %인플레이션 제거) + scaleX(1/s)로 가로압축 되돌림
-    //   → 크기는 오직 '말풍선 사진 크기' 슬라이더로만 결정, 장평엔 완전 무관.
+    // ── 삽입 사진들: 장평(scaleX)이 크기·비율·모서리둥글기에 '전혀' 영향 못 주게.
+    //   각 사진 폭을 고정 px(!important, %인플레이션 제거)로 못박고 scaleX(1/s)로 부모의 가로압축을 정확히 상쇄.
+    //   → 시각 폭=고정, 높이 auto라 비율 유지, border-radius도 (부모 압축을 사진이 되돌려) 원형 복원. 축소 없음.
+    //   크기는 오직 사진 크기 슬라이더(말풍선=photo-size / 본문=logimg-size)로만 결정.
+    var inv = (s===1) ? '' : 'scaleX('+(1/s)+')';
+    var _bw = (typeof baseW==='function'?baseW():(root.clientWidth||360));
+    // 말풍선 삽입 사진(g-bub-img): origin은 말풍선 방향(오른쪽 말풍선=right, 그 외=left)
     var _pw=$('photo-size'); var _ppv=_pw?parseFloat(_pw.value):60; if(isNaN(_ppv))_ppv=60;
-    var _photoPx=Math.round((typeof baseW==='function'?baseW():(root.clientWidth||360))*_ppv/100);
-    var invImg = (s===1) ? '' : 'scaleX('+(1/s)+')';
+    var _photoPx=Math.round(_bw*_ppv/100);
     [].forEach.call(inner.querySelectorAll('.g-bub-img'), function(im){
-      if(s===1){ im.style.transform=''; im.style.transformOrigin=''; im.style.removeProperty('width'); im.style.removeProperty('max-width'); return; }
+      if(s===1){ im.style.transform=''; im.style.transformOrigin=''; im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); return; }
       var natW=im.naturalWidth||0;
       var wpx=(natW ? Math.min(_photoPx, natW) : _photoPx);
       im.style.setProperty('width', wpx+'px', 'important');
       im.style.setProperty('max-width', wpx+'px', 'important');
-      im.style.transform = invImg;
+      im.style.removeProperty('height');
+      im.style.transform = inv;
       var bub=im.closest?im.closest('.g-bub'):null;
       var rightSide=bub && (bub.classList.contains('send') || (bub.classList.contains('char-bub') && bub.classList.contains('right')));
       im.style.transformOrigin = rightSide ? 'right center' : 'left center';
+    });
+    // 본문 삽입 사진(g-img > img): origin은 사진 정렬(왼/가운데/오)
+    var _liszEl=$('logimg-size'); var _lisz=_liszEl?parseFloat(_liszEl.value):100; if(isNaN(_lisz))_lisz=100;
+    [].forEach.call(inner.querySelectorAll('.g-img'), function(gi){
+      var im=gi.querySelector('img'); if(!im) return;
+      if(s===1){ im.style.transform=''; im.style.transformOrigin=''; im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); return; }
+      var contentW=(gi.offsetWidth||_bw)*s;             // inner가 100/s%로 부푼 걸 s로 되돌린 실제 본문 폭
+      var target=Math.round(contentW*_lisz/100);
+      var natW=im.naturalWidth||0;
+      var wpx=(natW ? Math.min(target, natW) : target);
+      im.style.setProperty('width', wpx+'px', 'important');
+      im.style.setProperty('max-width', wpx+'px', 'important');
+      im.style.removeProperty('height');
+      im.style.transform = inv;
+      im.style.transformOrigin = gi.classList.contains('al-left') ? 'left center' : (gi.classList.contains('al-right') ? 'right center' : 'center');
     });
   }
   // 캔버스 후처리 1: 각 말풍선 그룹의 위/아래 이웃이 '말풍선 그룹'인지 '본문'인지 표시.
