@@ -2359,6 +2359,40 @@
     var inner = root.querySelector('.g-inner'); if(!inner) return;
     var st = parseFloat($('stretch') ? $('stretch').value : 100); if(isNaN(st)) st=100;
     var s = st/100;
+    var _natMap={};
+    [].forEach.call(editor.querySelectorAll('img'), function(e){ if(e.naturalWidth){ _natMap[e.src]=[e.naturalWidth, e.naturalHeight]; } });
+    function _nat(im){ var w=im.naturalWidth||0,h=im.naturalHeight||0; if(!w){ var m=_natMap[im.src]; if(m){ w=m[0]; h=m[1]; } } return [w,h]; }
+    function _fixRadius(im){
+      im.style.removeProperty('border-radius');
+      if(s===1) return;
+      var R=parseFloat(getComputedStyle(im).borderTopLeftRadius)||0;
+      if(R>0) im.style.borderRadius=(R/s)+'px / '+R+'px';
+    }
+    // ── 삽입 사진(말풍선 g-bub-img + 본문 g-img>img) 크기 고정: 장평이 크기·비율·둥글기에 영향 못 주게.
+    //   ★추정 금지: 말풍선 종류마다 CSS 폭 기준(%/px·어느 컨테이너)이 달라 계속 빗나갔음.
+    //   → 매 렌더에서 inner 폭 인플레이션(width:100/s%)을 잠깐 100%로 되돌려(=장평 100% 레이아웃) 각 사진의
+    //     '진짜 폭'을 offsetWidth로 직접 측정하고(offsetWidth는 transform 무관·inner width에만 반응),
+    //     폭=W/s(→시각폭 W 고정)·높이=W*비율(→시각높이 고정)로 못박는다. 종류·컨테이너 불문 정확.
+    //   (캔버스는 매 렌더 새로 그려져 사진에 이전 인라인이 없어 측정이 깨끗함.)
+    var photos=[].slice.call(inner.querySelectorAll('.g-bub-img, .g-img > img'));
+    if(s!==1 && photos.length){
+      var _sw=inner.style.width, _stf=inner.style.transform;
+      inner.style.width='100%'; inner.style.transform='none';   // 장평 100% 레이아웃으로 잠깐 되돌림
+      var w1=photos.map(function(im){ return im.offsetWidth; }); // 각 사진의 s=1 실제 폭
+      inner.style.width=_sw; inner.style.transform=_stf;         // 원복
+      photos.forEach(function(im,i){
+        im.style.transform=''; im.style.transformOrigin='';
+        var W=w1[i]; if(!W){ im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); _fixRadius(im); return; }
+        var nn=_nat(im), natW=nn[0], natH=nn[1];
+        im.style.setProperty('width', (W/s)+'px', 'important');       // 시각폭 = (W/s)*s = W (장평 100%와 동일)
+        im.style.setProperty('max-width', (W/s)+'px', 'important');
+        if(natW && natH) im.style.setProperty('height', (W*(natH/natW))+'px', 'important');  // 시각높이 = W*비율 고정
+        else im.style.removeProperty('height');
+        _fixRadius(im);
+      });
+    } else {
+      photos.forEach(function(im){ im.style.transform=''; im.style.transformOrigin=''; im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); im.style.removeProperty('border-radius'); });
+    }
     // 아바타: scaleX(1/s)로 원·글자·사진 복구 + 좌우 마진으로 레이아웃 슬롯 보정(겹침 방지)
     var invAv = (s===1) ? '' : 'scaleX('+(1/s)+')';
     var mAv = (s===1) ? '' : (1.25*(1/s-1))+'em';
@@ -2367,59 +2401,6 @@
       av.style.transformOrigin = 'center';
       av.style.marginLeft = mAv;
       av.style.marginRight = mAv;
-    });
-    // ── 삽입 사진들: 장평(scaleX)이 사진의 크기·비율·둥글기·'위치'에 영향 못 주게.
-    //   ★핵심: transform(scaleX 역보정) 안 씀 — origin 기준 스케일이라 사진을 옆으로 밀었음.
-    //   부모 scaleX(s)를 사진의 '레이아웃 치수'로 흡수: 폭=w0/s(→시각폭 w0), 높이=w0*비율(→시각높이 고정). 일반 흐름이라 위치 안 밀림.
-    //   ★★진짜 버그였던 것: render가 매번 canvas.innerHTML을 새로 만들어 캔버스 img가 새 요소→naturalWidth=0(디코드 전)이라
-    //     아래 크기고정이 매번 건너뛰어져 CSS 기본값으로 눌렸음. → 편집창(살아있어 디코드됨) img들의 src→자연크기 맵으로 보완.
-    var _bw = (typeof baseW==='function'?baseW():(root.clientWidth||360));
-    var _natMap={};
-    [].forEach.call(editor.querySelectorAll('img'), function(e){ if(e.naturalWidth){ _natMap[e.src]=[e.naturalWidth, e.naturalHeight]; } });
-    function _nat(im){
-      var w=im.naturalWidth||0, h=im.naturalHeight||0;
-      if(!w){ var m=_natMap[im.src]; if(m){ w=m[0]; h=m[1]; } }
-      return [w, h];
-    }
-    function _fixRadius(im){
-      im.style.removeProperty('border-radius');
-      if(s===1) return;
-      var R=parseFloat(getComputedStyle(im).borderTopLeftRadius)||0;
-      if(R>0) im.style.borderRadius=(R/s)+'px / '+R+'px';
-    }
-    // 말풍선 삽입 사진(g-bub-img)
-    var _pw=$('photo-size'); var _ppv=_pw?parseFloat(_pw.value):60; if(isNaN(_ppv))_ppv=60;
-    var _photoPx=Math.round(_bw*_ppv/100);
-    [].forEach.call(inner.querySelectorAll('.g-bub-img'), function(im){
-      im.style.transform=''; im.style.transformOrigin='';
-      // ★폭은 절대 강제하지 않는다 — 말풍선 사진 폭은 말풍선 CSS 제약(--photo-w/--photo-w-px)에 묶여 있어,
-      //   폭을 고정 px로 박으면 장평 줄일 때 그 값이 커져 말풍선·프로필·옆 영역을 침범한다(그게 그 버그였음).
-      im.style.removeProperty('width'); im.style.removeProperty('max-width');
-      if(s===1){ im.style.removeProperty('height'); _fixRadius(im); return; }
-      var nn=_nat(im), natW=nn[0], natH=nn[1];
-      if(natW && natH){
-        // 부모 scaleX(s)가 폭만 s배 눌러 세로는 안 눌려 종횡비가 깨진다(가로로 찌그러짐).
-        //   높이를 '시각폭(=레이아웃폭*s)*비율'로 직접 지정 → 종횡비 정상. 사진은 말풍선과 함께 장평만큼
-        //   균일하게 커지고 작아지며(위치·오버플로 문제 없음) 비율은 항상 유지된다.
-        im.style.setProperty('height', (im.offsetWidth*s*(natH/natW))+'px', 'important');
-      } else { im.style.removeProperty('height'); }
-      _fixRadius(im);
-    });
-    // 본문 삽입 사진(g-img > img)
-    var _liszEl=$('logimg-size'); var _lisz=_liszEl?parseFloat(_liszEl.value):100; if(isNaN(_lisz))_lisz=100;
-    [].forEach.call(inner.querySelectorAll('.g-img'), function(gi){
-      var im=gi.querySelector('img'); if(!im) return;
-      im.style.transform=''; im.style.transformOrigin='';
-      if(s===1){ im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); _fixRadius(im); return; }
-      var nn=_nat(im), natW=nn[0], natH=nn[1];
-      var contentVis=(gi.offsetWidth||_bw)*s;                        // 본문 시각폭(≈상수: 부푼 폭*s)
-      var w0=Math.round(contentVis*_lisz/100);
-      if(natW) w0=Math.min(w0, natW);
-      im.style.setProperty('width', (w0/s)+'px', 'important');
-      im.style.setProperty('max-width', (w0/s)+'px', 'important');
-      if(natW && natH) im.style.setProperty('height', (w0*(natH/natW))+'px', 'important');
-      else im.style.removeProperty('height');
-      _fixRadius(im);
     });
   }
   // 캔버스 후처리 1: 각 말풍선 그룹의 위/아래 이웃이 '말풍선 그룹'인지 '본문'인지 표시.
