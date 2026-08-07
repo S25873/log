@@ -2392,13 +2392,17 @@
     var _photoPx=Math.round(_bw*_ppv/100);
     [].forEach.call(inner.querySelectorAll('.g-bub-img'), function(im){
       im.style.transform=''; im.style.transformOrigin='';
-      if(s===1){ im.style.removeProperty('width'); im.style.removeProperty('max-width'); im.style.removeProperty('height'); _fixRadius(im); return; }
+      // ★폭은 절대 강제하지 않는다 — 말풍선 사진 폭은 말풍선 CSS 제약(--photo-w/--photo-w-px)에 묶여 있어,
+      //   폭을 고정 px로 박으면 장평 줄일 때 그 값이 커져 말풍선·프로필·옆 영역을 침범한다(그게 그 버그였음).
+      im.style.removeProperty('width'); im.style.removeProperty('max-width');
+      if(s===1){ im.style.removeProperty('height'); _fixRadius(im); return; }
       var nn=_nat(im), natW=nn[0], natH=nn[1];
-      var w0=(natW ? Math.min(_photoPx, natW) : _photoPx);
-      im.style.setProperty('width', (w0/s)+'px', 'important');       // 시각폭 = (w0/s)*s = w0
-      im.style.setProperty('max-width', (w0/s)+'px', 'important');
-      if(natW && natH) im.style.setProperty('height', (w0*(natH/natW))+'px', 'important');  // 시각높이 고정
-      else im.style.removeProperty('height');
+      if(natW && natH){
+        // 부모 scaleX(s)가 폭만 s배 눌러 세로는 안 눌려 종횡비가 깨진다(가로로 찌그러짐).
+        //   높이를 '시각폭(=레이아웃폭*s)*비율'로 직접 지정 → 종횡비 정상. 사진은 말풍선과 함께 장평만큼
+        //   균일하게 커지고 작아지며(위치·오버플로 문제 없음) 비율은 항상 유지된다.
+        im.style.setProperty('height', (im.offsetWidth*s*(natH/natW))+'px', 'important');
+      } else { im.style.removeProperty('height'); }
       _fixRadius(im);
     });
     // 본문 삽입 사진(g-img > img)
