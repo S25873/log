@@ -2848,6 +2848,8 @@
     if(e.key==='Backspace' && !e.isComposing && e.keyCode!==229){
       var sel=window.getSelection();
       if(sel && sel.rangeCount && sel.isCollapsed){
+        var _imgSide=caretImgSide();
+        if(_imgSide){ e.preventDefault(); removeImg(_imgSide.img); return; }   // 사진 옆 커서서 백스페이스 = 사진 삭제
         var hrPrev=hrBeforeCaret(sel.getRangeAt(0));
         if(hrPrev){ e.preventDefault(); removeHr(hrPrev); return; }
         // 두 말풍선 사이 구분자(제로폭) 위에서 백스페이스: 한 번에 구분자 제거→합치고 커서를 위 말풍선 끝으로
@@ -3037,6 +3039,37 @@
     (typeof bindTap==='function'?bindTap:function(b,f){b.addEventListener('click',f);})($('li-right'), _liTap('right'));
     (typeof bindTap==='function'?bindTap:function(b,f){b.addEventListener('click',f);})($('li-del'), function(e){ if(e){ e.preventDefault(); e.stopPropagation(); } if(_selImg) removeImg(_selImg); });
   }
+  // 본문 사진 좌/우에 '커서만' 놓는다(앵커 텍스트노드를 넣지 않아 클릭 즉시 빈 줄이 안 생김).
+  //   부모 레벨에 collapsed 커서를 두고, 빈 문단은 '엔터'에서만 만든다. 정렬/삭제 도구는 표시(선택박스·✕ 없음).
+  function caretAtImg(box, after){
+    editor.focus();
+    var parent=box.parentNode, idx=[].indexOf.call(parent.childNodes, box);
+    var r=document.createRange(); r.setStart(parent, after ? idx+1 : idx); r.collapse(true);
+    var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    _selImg=box; _logimgToolsShow(true, box);
+    saveSel();
+  }
+  // 커서가 본문 사진 바로 앞/뒤(부모 레벨)에 있으면 {img, after} 반환 — 엔터(빈 문단)·백스페이스(삭제) 판정용
+  function caretImgSide(){
+    var sel=window.getSelection(); if(!sel.rangeCount) return null;
+    var r=sel.getRangeAt(0); if(!r.collapsed) return null;
+    var c=r.startContainer, o=r.startOffset;
+    if(c.nodeType===1){
+      var af=c.childNodes[o], bf=c.childNodes[o-1];
+      if(af && af.nodeType===1 && af.classList && af.classList.contains('g-img')) return {img:af, after:false};
+      if(bf && bf.nodeType===1 && bf.classList && bf.classList.contains('g-img')) return {img:bf, after:true};
+    }
+    return null;
+  }
+  // 엔터: 커서가 사진 앞이면 사진 '위'에, 뒤면 '아래'에 빈 문단(빈 줄) 생성. 커서는 그 빈 줄로.
+  function insertBlankAtImg(side){
+    var img=side.img, parent=img.parentNode, anchor=document.createTextNode('\u200b');
+    if(side.after){ parent.insertBefore(anchor, img.nextSibling); }   // 블록 사진이라 뒤 anchor는 아래 줄
+    else { parent.insertBefore(anchor, img); }                        // 앞 anchor는 위 줄
+    var r=document.createRange(); r.setStart(anchor, anchor.nodeValue.length); r.collapse(true);
+    var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    saveSel(); render();
+  }
   function removeImg(el){
     if(!el || !el.parentNode) return;
     var nx=el.nextSibling, pv=el.previousSibling;
@@ -3045,33 +3078,13 @@
     else if(pv && pv.nodeType===1 && pv.tagName==='BR' && pv.parentNode){ pv.parentNode.removeChild(pv); }
     _selImg=null; cleanEditor(); render(); saveSel(); updateFormatButtons(); editor.focus();
   }
-  // 본문 사진 위/아래에 커서를 놓아 앞뒤로 내용을 추가할 수 있게 한다(정렬·삭제 도구는 그대로 표시).
-  function caretAroundImg(box, after){
-    editor.focus();
-    var anchor=document.createTextNode('\u200b');
-    if(after){
-      var ref=box.nextSibling;
-      if(ref && ref.nodeType===1 && ref.tagName==='BR'){ ref=ref.nextSibling; }   // 사진 뒤 br이 있으면 그 다음
-      if(ref){ box.parentNode.insertBefore(anchor, ref); } else { box.parentNode.appendChild(anchor); }
-    } else {
-      box.parentNode.insertBefore(anchor, box);
-    }
-    var r=document.createRange(); r.setStart(anchor, anchor.nodeValue.length); r.collapse(true);
-    var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
-    selectImg(box);                 // ✕·정렬 도구 표시(커서는 anchor에 유지)
-    saveSel(); updateFormatButtons();
-  }
   editor.addEventListener('click', function(e){
     var t=e.target, box=(t && t.closest)?t.closest('.g-img'):null;
     if(box && editor.contains(box)){
       e.preventDefault();
-      var rect=box.getBoundingClientRect();
-      // 선택 상태에서 우상단 ✕ → 삭제
-      if(box.classList.contains('is-sel') && e.clientX>=rect.right-24 && e.clientY<=rect.top+24){ removeImg(box); return; }
-      // 좌/우 반반: 왼쪽 클릭=사진 앞에 커서, 오른쪽=사진 뒤에 커서 (사진 img 기준)
-      var _im=box.querySelector('img'); var irect=_im?_im.getBoundingClientRect():rect;
-      var after = e.clientX > (irect.left + irect.width/2);
-      caretAroundImg(box, after);
+      // 좌/우 반반(사진 img 기준): 왼쪽=사진 앞 커서, 오른쪽=사진 뒤 커서. 선택박스·✕ 없음.
+      var _im=box.querySelector('img'); var irect=_im?_im.getBoundingClientRect():box.getBoundingClientRect();
+      caretAtImg(box, e.clientX > (irect.left + irect.width/2));
       return;
     }
     clearImgSel();
@@ -3597,6 +3610,7 @@
     var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
     var range=sel.getRangeAt(0);
     if(!editor.contains(range.startContainer)) return false;
+    if(!forceBreak){ var _imgS=caretImgSide(); if(_imgS){ insertBlankAtImg(_imgS); return true; } }  // 사진 앞/뒤 커서서 엔터 = 위/아래 빈 문단
     if(!forceBreak && inBub && inBub.classList.contains('char-bub') && isCaretAtBubEnd(inBub, range)){ exitCharBub(inBub); return true; }
     if(!forceBreak && inBub && inBub.classList.contains('char-bub') && isCaretAtBubStart(inBub, range)){ exitCharBubUp(inBub); return true; }
     range.deleteContents();
