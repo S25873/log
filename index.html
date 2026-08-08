@@ -2431,6 +2431,31 @@
       g.classList.add(isGroup(meaningfulSib(g, 1)) ? 'gmg-bot-bub' : 'gmg-bot-body');
     });
   }
+  // 캔버스 후처리: 본문 사진(.g-img)의 위/아래에 '실제 내용'이 있는지 감지해 마진(.5em)을 조건부로 제거.
+  //   - 위에 내용 없음 → margin-top 0(바깥 패딩과 겹쳐 넓어지는 것 방지)
+  //   - 아래 내용 없음 → margin-bottom 0
+  //   - 있으면 그대로(.5em 유지=인접 요소/사진과의 간격 역할). 사진만 있으면 위·아래 둘 다 0.
+  function trimImgMargins(root){
+    var inner = root.querySelector('.g-inner'); if(!inner) return;
+    function meaningful(node){
+      if(!node) return false;
+      if(node.nodeType===3) return (node.nodeValue||'').replace(/\u200b/g,'').trim()!=='';
+      if(node.nodeType===1){
+        if(node.tagName==='BR') return false;
+        if(node.classList && node.classList.contains('g-para-gap')) return false; // 문단 간격 스페이서는 내용 아님
+        var t=(node.textContent||'').replace(/\u200b/g,'').trim();
+        if(t==='' && !node.querySelector('img,svg,hr')) return false;             // 빈 요소 무시(단 이미지/구분선 등은 내용)
+        return true;
+      }
+      return false;
+    }
+    [].forEach.call(inner.querySelectorAll('.g-img'), function(gi){
+      var up=false, n=gi.previousSibling; while(n){ if(meaningful(n)){ up=true; break; } n=n.previousSibling; }
+      var dn=false; n=gi.nextSibling;      while(n){ if(meaningful(n)){ dn=true; break; } n=n.nextSibling; }
+      if(up) gi.style.removeProperty('margin-top');    else gi.style.setProperty('margin-top','0','important');
+      if(dn) gi.style.removeProperty('margin-bottom'); else gi.style.setProperty('margin-bottom','0','important');
+    });
+  }
   // 캔버스 후처리 2: 본문 빈 줄(=.g-inner 직속의 연속 <br> 2개 이상)을 문단 간격 스페이서로 치환.
   //   말풍선 내부(.g-bub 안)의 <br>은 .g-inner 직속이 아니라 절대 대상이 되지 않음(안전).
   function wrapParaGaps(root){
@@ -4096,7 +4121,7 @@
     updateEmptyBubbles();
     styleCharBubbles(editor);
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
-    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); tagMsgGroupNeighbors(canvas); wrapParaGaps(canvas); stripLastGap(canvas); fitStage();
+    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); tagMsgGroupNeighbors(canvas); wrapParaGaps(canvas); stripLastGap(canvas); trimImgMargins(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('subtext-size')) setVal('subtext-size', $('subtext-size').value+'px');
     if($('stretch')) setVal('stretch', $('stretch').value+'%');
