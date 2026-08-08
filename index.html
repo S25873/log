@@ -2849,7 +2849,7 @@
       var sel=window.getSelection();
       if(sel && sel.rangeCount && sel.isCollapsed){
         var _imgSide=caretImgSide();
-        if(_imgSide){ e.preventDefault(); removeImg(_imgSide.img); return; }   // 사진 옆 커서서 백스페이스 = 사진 삭제
+        if(_imgSide && _imgSide.after){ e.preventDefault(); removeImg(_imgSide.img); return; }   // 사진 '바로 뒤' 커서서 백스페이스 = 사진 삭제(빈 줄 위에선 안 지워짐)
         var hrPrev=hrBeforeCaret(sel.getRangeAt(0));
         if(hrPrev){ e.preventDefault(); removeHr(hrPrev); return; }
         // 두 말풍선 사이 구분자(제로폭) 위에서 백스페이스: 한 번에 구분자 제거→합치고 커서를 위 말풍선 끝으로
@@ -3610,7 +3610,6 @@
     var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
     var range=sel.getRangeAt(0);
     if(!editor.contains(range.startContainer)) return false;
-    if(!forceBreak){ var _imgS=caretImgSide(); if(_imgS){ insertBlankAtImg(_imgS); return true; } }  // 사진 앞/뒤 커서서 엔터 = 위/아래 빈 문단
     if(!forceBreak && inBub && inBub.classList.contains('char-bub') && isCaretAtBubEnd(inBub, range)){ exitCharBub(inBub); return true; }
     if(!forceBreak && inBub && inBub.classList.contains('char-bub') && isCaretAtBubStart(inBub, range)){ exitCharBubUp(inBub); return true; }
     range.deleteContents();
