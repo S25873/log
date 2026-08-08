@@ -2849,7 +2849,14 @@
       var sel=window.getSelection();
       if(sel && sel.rangeCount && sel.isCollapsed){
         var _imgSide=caretImgSide();
-        if(_imgSide && _imgSide.after){ e.preventDefault(); removeImg(_imgSide.img); return; }   // 사진 '바로 뒤' 커서서 백스페이스 = 사진 삭제(빈 줄 위에선 안 지워짐)
+        if(_imgSide){
+          var _img=_imgSide.img, _p=_img.parentNode, _i=[].indexOf.call(_p.childNodes, _img);
+          var _adj=_imgSide.after ? _p.childNodes[_i+1] : _p.childNodes[_i-1];
+          e.preventDefault();
+          if(_adj && _adj.nodeType===1 && _adj.tagName==='BR'){ _p.removeChild(_adj); saveSel(); render(); }  // 사진 옆 빈 줄(br)부터 제거
+          else { removeImg(_img); }                                                                            // 빈 줄 없으면 사진 삭제
+          return;
+        }
         var hrPrev=hrBeforeCaret(sel.getRangeAt(0));
         if(hrPrev){ e.preventDefault(); removeHr(hrPrev); return; }
         // 두 말풍선 사이 구분자(제로폭) 위에서 백스페이스: 한 번에 구분자 제거→합치고 커서를 위 말풍선 끝으로
@@ -3063,10 +3070,11 @@
   }
   // 엔터: 커서가 사진 앞이면 사진 '위'에, 뒤면 '아래'에 빈 문단(빈 줄) 생성. 커서는 그 빈 줄로.
   function insertBlankAtImg(side){
-    var img=side.img, parent=img.parentNode, anchor=document.createTextNode('\u200b');
-    if(side.after){ parent.insertBefore(anchor, img.nextSibling); }   // 블록 사진이라 뒤 anchor는 아래 줄
-    else { parent.insertBefore(anchor, img); }                        // 앞 anchor는 위 줄
-    var r=document.createRange(); r.setStart(anchor, anchor.nodeValue.length); r.collapse(true);
+    var img=side.img, parent=img.parentNode, br=document.createElement('br');
+    if(side.after){ parent.insertBefore(br, img.nextSibling); }   // 사진 아래 빈 줄
+    else { parent.insertBefore(br, img); }                        // 사진 위 빈 줄
+    var idx=[].indexOf.call(parent.childNodes, img);
+    var r=document.createRange(); r.setStart(parent, side.after ? idx+1 : idx); r.collapse(true);  // 커서 사진 옆 유지
     var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
     saveSel(); render();
   }
@@ -3610,6 +3618,7 @@
     var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
     var range=sel.getRangeAt(0);
     if(!editor.contains(range.startContainer)) return false;
+    if(!forceBreak){ var _imgS=caretImgSide(); if(_imgS){ insertBlankAtImg(_imgS); return true; } }  // 사진 옆 커서서 엔터 = 위/아래 빈 줄(br 하나)
     if(!forceBreak && inBub && inBub.classList.contains('char-bub') && isCaretAtBubEnd(inBub, range)){ exitCharBub(inBub); return true; }
     if(!forceBreak && inBub && inBub.classList.contains('char-bub') && isCaretAtBubStart(inBub, range)){ exitCharBubUp(inBub); return true; }
     range.deleteContents();
