@@ -866,6 +866,7 @@
   #canvas *,.canvas-clone *{margin:0;padding:0;background:transparent;}
   #canvas .g-inner,.canvas-clone .g-inner{position:relative;z-index:1;}
   #canvas .g-bg-layer,.canvas-clone .g-bg-layer{position:absolute;inset:0;background-size:cover;background-position:center;pointer-events:none;z-index:0;}
+  #canvas .g-frame,.canvas-clone .g-frame{position:absolute;background-size:cover;background-position:center;pointer-events:none;z-index:2;}
   #canvas mark.hl,.canvas-clone mark.hl{color:inherit !important;text-decoration:none !important;display:inline !important;
     background:var(--hl-solid,#eaeaea) !important;padding:0 !important;
     -webkit-box-decoration-break:clone;box-decoration-break:clone;}
@@ -989,7 +990,6 @@
     .mini-row{gap:3px;}
     .mini{padding:0 4px;gap:2px;min-width:24px;}
     .hist-row{gap:3px;}
-    .histbtn{width:21px;}
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
     .presets--bg{grid-template-columns:repeat(6,minmax(0,1fr));}
     .preview__meta{display:none;}
@@ -1704,6 +1704,38 @@
             </div>
           </details>
 
+          <details class="fold" id="fold-frame">
+            <summary>
+              꾸밈
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:0 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>고정 비율에서는 적용되지 않아요.</p>
+              <div class="field">
+                <span class="label">위치</span>
+                <div class="seg" id="frame-pos-seg">
+                  <button type="button" data-fpos="none" aria-pressed="true">없음</button>
+                  <button type="button" data-fpos="left" aria-pressed="false">왼쪽</button>
+                  <button type="button" data-fpos="right" aria-pressed="false">오른쪽</button>
+                  <button type="button" data-fpos="top" aria-pressed="false">위</button>
+                  <button type="button" data-fpos="bottom" aria-pressed="false">아래</button>
+                  <button type="button" data-fpos="all" aria-pressed="false">사방</button>
+                  <span class="seg__thumb"></span>
+                </div>
+              </div>
+              <div id="frame-opts" hidden>
+                <input id="frame-file" type="file" accept="image/*" hidden>
+                <div class="mini-row" style="justify-content:flex-start;margin-top:12px">
+                  <button class="mini" id="frame-pick" type="button">🖼 사진 선택</button>
+                </div>
+                <div class="field" style="margin-top:14px">
+                  <span class="label">두께 <span class="val" id="frame-size-val">20%</span></span>
+                  <div class="rangewrap"><input id="frame-size" type="range" min="5" max="50" step="5" value="20"></div>
+                </div>
+              </div>
+            </div>
+          </details>
+
           <details class="fold" id="fold-size">
             <summary>
               크기 · 비율
@@ -1866,6 +1898,7 @@
   var bgValue = '#ffffff';
   var photoOn = false;
   var photoData = null;
+  var framePos = 'none', frameData = null;   // 테두리 꾸밈(가장자리 사진 띠)
   var bgMode = 'solid';  // 'solid' | 'gradient' | 'photo'
   var bubbleShape = 'imessage';  // 'imessage' | 'simple'
 
@@ -4273,7 +4306,47 @@
     el.style.fontSize = fs+'px';
     el.style.letterSpacing = ls+'px';
     el.style.lineHeight = String((parseFloat($('line-height').value)/10).toFixed(2));
-    el.style.padding = pad+'px';
+    // ── 테두리 꾸밈(가장자리 사진 띠). 고정 비율에선 적용하지 않음.
+    var frameOn = (framePos!=='none' && frameData && sizeMode!=='ratio');
+    var fThick = 0;
+    if(frameOn){
+      var fp = parseFloat($('frame-size') ? $('frame-size').value : 20); if(isNaN(fp)) fp=20;
+      fThick = Math.round(el.clientWidth * fp/100);   // 두께는 '전체 폭' 기준
+    }
+    // 띠가 차지하는 만큼 안쪽으로 밀어 글이 띠를 침범하지 않게(여백은 띠 안쪽에 남음)
+    el.style.padding = frameOn
+      ? ((pad + (framePos==='top'||framePos==='all' ? fThick : 0))+'px '
+        +(pad + (framePos==='right'||framePos==='all' ? fThick : 0))+'px '
+        +(pad + (framePos==='bottom'||framePos==='all' ? fThick : 0))+'px '
+        +(pad + (framePos==='left'||framePos==='all' ? fThick : 0))+'px')
+      : (pad+'px');
+    (function(){
+      [].forEach.call(el.querySelectorAll('.g-frame'), function(f){ f.parentNode.removeChild(f); });
+      if(!frameOn) return;
+      var isAll = (framePos==='all');
+      var W = el.clientWidth, H = el.clientHeight;
+      var sides = isAll ? ['left','right','top','bottom'] : [framePos];
+      sides.forEach(function(sd){
+        var f=document.createElement('div'); f.className='g-frame';
+        f.style.setProperty('background-image','url("'+frameData+'")','important');
+        if(sd==='left'||sd==='right'){
+          f.style.top='0'; f.style.bottom='0'; f.style.width=fThick+'px'; f.style[sd]='0';
+        } else {
+          f.style.left='0'; f.style.right='0'; f.style.height=fThick+'px'; f.style[sd]='0';
+        }
+        if(isAll){
+          // 사방: 사진 한 장을 캔버스 전체 크기로 깔고 각 변이 '그 자리'만 보여주게 → 모서리가 이어짐
+          f.style.setProperty('background-size', W+'px '+H+'px','important');
+          var ox = (sd==='right') ? -(W-fThick) : 0;
+          var oy = (sd==='bottom') ? -(H-fThick) : 0;
+          f.style.setProperty('background-position', ox+'px '+oy+'px','important');
+        } else {
+          f.style.setProperty('background-size','cover','important');
+          f.style.setProperty('background-position','center','important');
+        }
+        el.appendChild(f);
+      });
+    })();
     el.style.setProperty('--gpad', pad+'px');
     // 아이메시지 상단바 / 입력창 (폰트 기준 크기 — 레퍼런스 이식)
     var _barBg = barBgColor(), _accent = barAccentColor(), _nameCol = barNameColor(), _avatar = barAvatarColor(), _plus = barPlusColor(), _arrow = barArrowColor();
@@ -4642,7 +4715,7 @@
     var lisz=$('logimg-size'); if(lisz){ var liszv=$('logimg-size-val'); if(liszv) liszv.textContent=parseFloat(lisz.value)+'%'; }
     var lirad=$('logimg-radius'); if(lirad){ var liradv=$('logimg-radius-val'); if(liradv) liradv.textContent=parseFloat(lirad.value)+'px'; }
   }
-  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','logimg-size','logimg-radius','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','logimg-size','logimg-radius','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -4656,6 +4729,35 @@
   function updatePhotoUI(){
     var pick=$('photo-pick'); if(pick){ pick.textContent = photoData ? '🖼 사진 변경' : '🖼 사진 선택'; }
   }
+  // ── 테두리 꾸밈 UI
+  function updateFrameUI(){
+    var opts=$('frame-opts'); if(opts) opts.hidden = (framePos==='none');
+    var pick=$('frame-pick'); if(pick) pick.textContent = frameData ? '🖼 사진 변경' : '🖼 사진 선택';
+    var v=$('frame-size-val'); if(v && $('frame-size')) v.textContent = $('frame-size').value+'%';
+  }
+  if($('frame-pos-seg')){
+    document.querySelectorAll('#frame-pos-seg button').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('#frame-pos-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+        btn.setAttribute('aria-pressed','true');
+        framePos = btn.getAttribute('data-fpos') || 'none';
+        moveThumb($('frame-pos-seg')); updateFrameUI();
+        if(framePos!=='none' && !frameData){ $('frame-file').click(); }
+        render(); saveState();
+      });
+    });
+    $('frame-pick').addEventListener('click', function(){ $('frame-file').click(); });
+    $('frame-file').addEventListener('change', function(e){
+      var file=e.target.files && e.target.files[0]; if(!file) return;
+      var rd=new FileReader();
+      rd.onload=function(ev){ frameData=ev.target.result; updateFrameUI(); render(); saveState(); };
+      rd.readAsDataURL(file); e.target.value='';
+    });
+    $('frame-size').addEventListener('input', function(){ updateFrameUI(); render(); });
+    $('frame-size').addEventListener('change', saveState);
+  }
+  var _foldFrame=$('fold-frame');
+  if(_foldFrame){ _foldFrame.addEventListener('toggle', function(){ if(_foldFrame.open){ requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); }); } }); }
   $('photo-pick').addEventListener('click', function(){ $('photo-file').click(); });
   $('photo-file').addEventListener('change', function(e){
     var file=e.target.files && e.target.files[0]; if(!file) return;
@@ -5275,7 +5377,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','logimg-size','logimg-radius','font-size','subtext-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','logimg-size','logimg-radius','font-size','subtext-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt',
@@ -5288,7 +5390,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:editor.innerHTML, nameHtml:nameEd?nameEd.innerHTML:'',
         titleHtml:($('title-ed')?$('title-ed').innerHTML:''), subtitleHtml:($('subtitle-ed')?$('subtitle-ed').innerHTML:''),
-        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, photoOn:photoOn, photoData:photoData, chrome:chrome };
+        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
     }catch(e){}
@@ -5345,6 +5447,11 @@
       applyBgViews();
       photoOn = (bgMode==='photo') && !!photoData;
       updatePhotoUI();
+      frameData = (typeof data.frameData==='string') ? data.frameData : null;
+      framePos = ({none:1,left:1,right:1,top:1,bottom:1,all:1})[data.framePos] ? data.framePos : 'none';
+      document.querySelectorAll('#frame-pos-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-fpos')===framePos?'true':'false'); });
+      if(typeof updateFrameUI==='function') updateFrameUI();
+      requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); });
       bubbleShape = ({imessage:1,simple:1,soft:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
       syncShapeSeg();
       applyBubbleShape();
