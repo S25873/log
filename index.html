@@ -1728,9 +1728,25 @@
                 <div class="mini-row" style="justify-content:flex-start;margin-top:12px">
                   <button class="mini" id="frame-pick" type="button">🖼 사진 선택</button>
                 </div>
-                <div class="field" style="margin-top:14px">
-                  <span class="label">두께 <span class="val" id="frame-size-val">20%</span></span>
-                  <div class="rangewrap"><input id="frame-size" type="range" min="5" max="50" step="5" value="20"></div>
+                <div class="grid-2" style="margin-top:14px">
+                  <div class="field">
+                    <span class="label">두께 <span class="val" id="frame-size-val">20%</span></span>
+                    <div class="rangewrap"><input id="frame-size" type="range" min="5" max="50" step="5" value="20"></div>
+                  </div>
+                  <div class="field">
+                    <span class="label">사진 확대 <span class="val" id="frame-zoom-val">100%</span></span>
+                    <div class="rangewrap"><input id="frame-zoom" type="range" min="100" max="200" step="5" value="100"></div>
+                  </div>
+                </div>
+                <div class="grid-2" style="margin-top:14px">
+                  <div class="field">
+                    <span class="label">사진 좌우 <span class="val" id="frame-x-val">50%</span></span>
+                    <div class="rangewrap"><input id="frame-x" type="range" min="0" max="100" step="5" value="50"></div>
+                  </div>
+                  <div class="field">
+                    <span class="label">사진 위아래 <span class="val" id="frame-y-val">50%</span></span>
+                    <div class="rangewrap"><input id="frame-y" type="range" min="0" max="100" step="5" value="50"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1898,7 +1914,16 @@
   var bgValue = '#ffffff';
   var photoOn = false;
   var photoData = null;
-  var framePos = 'none', frameData = null;   // 테두리 꾸밈(가장자리 사진 띠)
+  var framePos = 'none', frameData = null;   // 꾸밈(가장자리 사진 띠)
+  var frameNatW = 0, frameNatH = 0;          // 꾸밈 사진 원본 크기(확대·위치 계산용)
+  function loadFrameNat(cb){
+    frameNatW=0; frameNatH=0;
+    if(!frameData){ if(cb) cb(); return; }
+    var im=new Image();
+    im.onload=function(){ frameNatW=im.naturalWidth||0; frameNatH=im.naturalHeight||0; if(cb) cb(); };
+    im.onerror=function(){ if(cb) cb(); };
+    im.src=frameData;
+  }
   var bgMode = 'solid';  // 'solid' | 'gradient' | 'photo'
   var bubbleShape = 'imessage';  // 'imessage' | 'simple'
 
@@ -4336,15 +4361,24 @@
         } else {
           f.style.left='0'; f.style.right='0'; f.style.height=fThick+'px'; f.style[sd]='0';
         }
-        if(isAll){
-          // 사방: 사진 한 장을 캔버스 전체 크기로 깔고 각 변이 '그 자리'만 보여주게 → 모서리가 이어짐
-          f.style.setProperty('background-size', W+'px '+H+'px','important');
-          var ox = (sd==='right') ? -(W-fThick) : 0;
-          var oy = (sd==='bottom') ? -(H-fThick) : 0;
-          f.style.setProperty('background-position', ox+'px '+oy+'px','important');
+        // 확대·좌우·위아래 슬라이더 반영 (원본 크기를 알아야 정확 — 모르면 cover/center로 폴백)
+        var zoom = (parseFloat($('frame-zoom') ? $('frame-zoom').value : 100)||100)/100;
+        var px = (parseFloat($('frame-x') ? $('frame-x').value : 50)||0)/100;
+        var py = (parseFloat($('frame-y') ? $('frame-y').value : 50)||0)/100;
+        var boxW = isAll ? W : (sd==='left'||sd==='right' ? fThick : W);
+        var boxH = isAll ? H : (sd==='top'||sd==='bottom' ? fThick : H);
+        if(frameNatW>0 && frameNatH>0){
+          var sc = Math.max(boxW/frameNatW, boxH/frameNatH) * zoom;   // 최소 '꽉 채움' 보장 → 빈 공간 안 생김
+          var bw = frameNatW*sc, bh = frameNatH*sc;
+          var bx = -(bw-boxW)*px, by = -(bh-boxH)*py;                 // 남는 만큼만 이동(끝에서 더 안 밀림)
+          if(isAll){ bx -= (sd==='right') ? (W-fThick) : 0; by -= (sd==='bottom') ? (H-fThick) : 0; }
+          f.style.setProperty('background-size', bw+'px '+bh+'px','important');
+          f.style.setProperty('background-position', bx+'px '+by+'px','important');
         } else {
-          f.style.setProperty('background-size','cover','important');
-          f.style.setProperty('background-position','center','important');
+          f.style.setProperty('background-size', isAll ? (W+'px '+H+'px') : 'cover','important');
+          var ox0 = (isAll && sd==='right') ? -(W-fThick) : 0;
+          var oy0 = (isAll && sd==='bottom') ? -(H-fThick) : 0;
+          f.style.setProperty('background-position', isAll ? (ox0+'px '+oy0+'px') : 'center','important');
         }
         el.appendChild(f);
       });
@@ -4717,7 +4751,7 @@
     var lisz=$('logimg-size'); if(lisz){ var liszv=$('logimg-size-val'); if(liszv) liszv.textContent=parseFloat(lisz.value)+'%'; }
     var lirad=$('logimg-radius'); if(lirad){ var liradv=$('logimg-radius-val'); if(liradv) liradv.textContent=parseFloat(lirad.value)+'px'; }
   }
-  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','logimg-size','logimg-radius','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -4736,6 +4770,9 @@
     var opts=$('frame-opts'); if(opts) opts.hidden = (framePos==='none');
     var pick=$('frame-pick'); if(pick) pick.textContent = frameData ? '🖼 사진 변경' : '🖼 사진 선택';
     var v=$('frame-size-val'); if(v && $('frame-size')) v.textContent = $('frame-size').value+'%';
+    [['frame-zoom','frame-zoom-val'],['frame-x','frame-x-val'],['frame-y','frame-y-val']].forEach(function(pair){
+      var el=$(pair[0]), lb=$(pair[1]); if(el && lb) lb.textContent = el.value+'%';
+    });
   }
   if($('frame-pos-seg')){
     document.querySelectorAll('#frame-pos-seg button').forEach(function(btn){
@@ -4752,11 +4789,14 @@
     $('frame-file').addEventListener('change', function(e){
       var file=e.target.files && e.target.files[0]; if(!file) return;
       var rd=new FileReader();
-      rd.onload=function(ev){ frameData=ev.target.result; updateFrameUI(); render(); saveState(); };
+      rd.onload=function(ev){ frameData=ev.target.result; loadFrameNat(render); updateFrameUI(); render(); saveState(); };
       rd.readAsDataURL(file); e.target.value='';
     });
-    $('frame-size').addEventListener('input', function(){ updateFrameUI(); render(); });
-    $('frame-size').addEventListener('change', saveState);
+    ['frame-size','frame-zoom','frame-x','frame-y'].forEach(function(id){
+      var el=$(id); if(!el) return;
+      el.addEventListener('input', function(){ updateFrameUI(); render(); });
+      el.addEventListener('change', saveState);
+    });
   }
   var _foldFrame=$('fold-frame');
   if(_foldFrame){ _foldFrame.addEventListener('toggle', function(){ if(_foldFrame.open){ requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); }); } }); }
@@ -5379,7 +5419,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','logimg-size','logimg-radius','font-size','subtext-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','font-size','subtext-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt',
@@ -5452,6 +5492,7 @@
       frameData = (typeof data.frameData==='string') ? data.frameData : null;
       framePos = ({none:1,left:1,right:1,top:1,bottom:1,all:1})[data.framePos] ? data.framePos : 'none';
       document.querySelectorAll('#frame-pos-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-fpos')===framePos?'true':'false'); });
+      loadFrameNat(render);
       if(typeof updateFrameUI==='function') updateFrameUI();
       requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); });
       bubbleShape = ({imessage:1,simple:1,soft:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
