@@ -486,7 +486,7 @@
   .sheet-overlay.is-open .sheet{transform:translateY(0);}
   .help-sheet{max-width:520px;}
   .help-body{max-height:min(64vh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 4px 4px;margin-bottom:10px;}
-  .help-body .hint{font-size:12px;line-height:1.7;margin:0 0 2px;}
+  .help-body .hint{font-size:11.5px;line-height:1.55;margin:0 0 2px;}   /* 각 탭 안내(.hint)와 완전 동일하게 */
   .help-body b{color:inherit;font-weight:600;}
   .help-cat{font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.04em;margin:16px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--line);}
   .help-cat:first-child{margin-top:2px;}
@@ -1028,8 +1028,10 @@
             <button class="mini" id="t-paren-gray" type="button" title="괄호(포함)를 (색)의 색깔로">(색)</button>
             <button class="mini" id="t-paren" type="button" title="괄호 안쪽을 이탤릭(기울임)으로">(I)</button>
             <button class="mini" id="t-paren-sub" type="button" title="괄호(포함)를 작은 글자 크기로">(Aa)</button>
-            <button class="mini" id="t-quote-bub" type="button" title="큰따옴표로 감싼 부분을 말풍선으로">&quot;말풍선&quot;</button>
-            <button class="mini" id="t-quote-line" type="button" title="큰따옴표로 감싼 부분을 인용선으로">&quot;인용선&quot;</button>
+            <button class="mini" id="t-quote-add" type="button" title="기호가 없는 문단 앞뒤에 큰따옴표 넣기">&quot;넣&quot;</button>
+            <button class="mini" id="t-quote-em" type="button" title="큰따옴표로 감싼 부분을 강조색으로">&quot;색&quot;</button>
+            <button class="mini" id="t-quote-bub" type="button" title="큰따옴표로 감싼 부분을 말풍선으로">&quot;말&quot;</button>
+            <button class="mini" id="t-quote-line" type="button" title="큰따옴표로 감싼 부분을 인용선으로">&quot;인&quot;</button>
             <button class="mini is-danger" id="t-clear" type="button" title="전체 비우기 (본문 · 제목 · 소제목 · 하단)" aria-label="전체 비우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 12.5a1.6 1.6 0 0 0 1.6 1.5h6.8a1.6 1.6 0 0 0 1.6-1.5L18 7M10 11v6M14 11v6"/></svg></button>
           </div>
         </div>
@@ -1306,8 +1308,8 @@
               <div class="cgrid cgrid--2">
                 <div class="cchip"><label>본문 글자</label><div class="cchip__box"><input id="c-fg" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-fg-txt" type="text" value="#2b2b2b"></div></div>
                 <div class="cchip"><label>작은 글자</label><div class="cchip__box"><input id="c-sub" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-sub-txt" type="text" value="#8a8a8a"></div></div>
-                <div class="cchip"><label>제목</label><div class="cchip__box"><input id="c-title" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-title-txt" type="text" value="#1a1a1a"></div></div>
-                <div class="cchip"><label>소제목</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#1a1a1a"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#1a1a1a"></div></div>
+                <div class="cchip"><label>제목</label><div class="cchip__box"><input id="c-title" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-title-txt" type="text" value="#2b2b2b"></div></div>
+                <div class="cchip"><label>소제목</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#2b2b2b"></div></div>
                 <div class="cchip"><label>하단 글자</label><div class="cchip__box"><input id="c-name" type="color" value="#6c6c6c"><input class="cchip__hex" id="c-name-txt" type="text" value="#6c6c6c"></div></div>
                 <div class="cchip"><label>구분선</label><div class="cchip__box"><input id="c-hr" type="color" value="#c8c8c8"><input class="cchip__hex" id="c-hr-txt" type="text" value="#c8c8c8"></div></div>
                 <div class="cchip"><label>*색*</label><div class="cchip__box"><input id="c-star" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-star-txt" type="text" value="#8a8a8a"></div></div>
@@ -1327,6 +1329,8 @@
                 <div class="cchip"><label>강조 2</label><div class="cchip__box"><input id="c-em2" type="color" value="#5d74a6"><input class="cchip__hex" id="c-em2-txt" type="text" value="#5d74a6"></div></div>
                 <div class="cchip"><label>강조 3</label><div class="cchip__box"><input id="c-em3" type="color" value="#5e9b72"><input class="cchip__hex" id="c-em3-txt" type="text" value="#5e9b72"></div></div>
                 <div class="cchip"><label>강조 4</label><div class="cchip__box"><input id="c-em4" type="color" value="#9a5e8e"><input class="cchip__hex" id="c-em4-txt" type="text" value="#9a5e8e"></div></div>
+                <div class="cchip"><label>강조 5</label><div class="cchip__box"><input id="c-em5" type="color" value="#a9756a"><input class="cchip__hex" id="c-em5-txt" type="text" value="#a9756a"></div></div>
+                <div class="cchip"><label>강조 6</label><div class="cchip__box"><input id="c-em6" type="color" value="#6b7280"><input class="cchip__hex" id="c-em6-txt" type="text" value="#6b7280"></div></div>
               </div>
               <div class="section">
                 <p class="section__head">프리셋</p>
@@ -1337,6 +1341,8 @@
                     <button type="button" data-slot="2" aria-pressed="false">2</button>
                     <button type="button" data-slot="3" aria-pressed="false">3</button>
                     <button type="button" data-slot="4" aria-pressed="false">4</button>
+                    <button type="button" data-slot="5" aria-pressed="false">5</button>
+                    <button type="button" data-slot="6" aria-pressed="false">6</button>
                     <span class="seg__thumb"></span>
                   </div>
                 </div>
@@ -1357,6 +1363,8 @@
                 <div class="cchip"><label>형광펜 2</label><div class="cchip__box"><input id="c-hl2" type="color" value="#b4d3ec"><input class="cchip__hex" id="c-hl2-txt" type="text" value="#b4d3ec"></div></div>
                 <div class="cchip"><label>형광펜 3</label><div class="cchip__box"><input id="c-hl3" type="color" value="#efbcd3"><input class="cchip__hex" id="c-hl3-txt" type="text" value="#efbcd3"></div></div>
                 <div class="cchip"><label>형광펜 4</label><div class="cchip__box"><input id="c-hl4" type="color" value="#c4e1ac"><input class="cchip__hex" id="c-hl4-txt" type="text" value="#c4e1ac"></div></div>
+                <div class="cchip"><label>형광펜 5</label><div class="cchip__box"><input id="c-hl5" type="color" value="#e9d2c6"><input class="cchip__hex" id="c-hl5-txt" type="text" value="#e9d2c6"></div></div>
+                <div class="cchip"><label>형광펜 6</label><div class="cchip__box"><input id="c-hl6" type="color" value="#dadce0"><input class="cchip__hex" id="c-hl6-txt" type="text" value="#dadce0"></div></div>
               </div>
               <div class="section">
                 <p class="section__head">프리셋</p>
@@ -1367,6 +1375,8 @@
                     <button type="button" data-slot="2" aria-pressed="false">2</button>
                     <button type="button" data-slot="3" aria-pressed="false">3</button>
                     <button type="button" data-slot="4" aria-pressed="false">4</button>
+                    <button type="button" data-slot="5" aria-pressed="false">5</button>
+                    <button type="button" data-slot="6" aria-pressed="false">6</button>
                     <span class="seg__thumb"></span>
                   </div>
                 </div>
@@ -1387,6 +1397,8 @@
                 <div class="cchip"><label>인용선 2</label><div class="cchip__box"><input id="c-quote2" type="color" value="#b4d3ec"><input class="cchip__hex" id="c-quote2-txt" type="text" value="#b4d3ec"></div></div>
                 <div class="cchip"><label>인용선 3</label><div class="cchip__box"><input id="c-quote3" type="color" value="#efbcd3"><input class="cchip__hex" id="c-quote3-txt" type="text" value="#efbcd3"></div></div>
                 <div class="cchip"><label>인용선 4</label><div class="cchip__box"><input id="c-quote4" type="color" value="#c4e1ac"><input class="cchip__hex" id="c-quote4-txt" type="text" value="#c4e1ac"></div></div>
+                <div class="cchip"><label>인용선 5</label><div class="cchip__box"><input id="c-quote5" type="color" value="#bfa08f"><input class="cchip__hex" id="c-quote5-txt" type="text" value="#bfa08f"></div></div>
+                <div class="cchip"><label>인용선 6</label><div class="cchip__box"><input id="c-quote6" type="color" value="#9aa3ad"><input class="cchip__hex" id="c-quote6-txt" type="text" value="#9aa3ad"></div></div>
                 <div class="cchip cchip--wide" style="grid-column:1/-1"><label>하단 인용선</label><div class="cchip__box"><input id="c-bar" type="color" value="#c8c8c8"><input class="cchip__hex" id="c-bar-txt" type="text" value="#c8c8c8"></div></div>
               </div>
               <div class="section">
@@ -1398,6 +1410,8 @@
                     <button type="button" data-slot="2" aria-pressed="false">2</button>
                     <button type="button" data-slot="3" aria-pressed="false">3</button>
                     <button type="button" data-slot="4" aria-pressed="false">4</button>
+                    <button type="button" data-slot="5" aria-pressed="false">5</button>
+                    <button type="button" data-slot="6" aria-pressed="false">6</button>
                     <button type="button" data-slot="bar" aria-pressed="false">하단</button>
                     <span class="seg__thumb"></span>
                   </div>
@@ -1447,27 +1461,33 @@
                   <input class="txt-input" id="char-name" type="text" placeholder="캐릭터 이름" maxlength="24">
                 </div>
                 <div class="cgrid cgrid--2" style="margin-top:14px">
-                  <div class="cchip"><label>글자 색</label><div class="cchip__box"><input id="char-ink" type="color" value="#ffffff"><input class="cchip__hex" id="char-ink-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>이름 색</label><div class="cchip__box"><input id="char-namecolor" type="color" value="#8a8a8a"><input class="cchip__hex" id="char-namecolor-txt" type="text" value="#8a8a8a"></div></div>
+                  <div class="cchip"><label>글자</label><div class="cchip__box"><input id="char-ink" type="color" value="#ffffff"><input class="cchip__hex" id="char-ink-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>이름</label><div class="cchip__box"><input id="char-namecolor" type="color" value="#8a8a8a"><input class="cchip__hex" id="char-namecolor-txt" type="text" value="#8a8a8a"></div></div>
                 </div>
-                <div class="cchip cchip--wide" style="margin-top:14px">
-                  <label>괄호 색 <span class="val" style="font-weight:400;color:var(--ink-3)">(색깔) 적용 시</span></label>
-                  <div class="cchip__box"><input id="char-subcolor" type="color" value="#8a8a8a"><input class="cchip__hex" id="char-subcolor-txt" type="text" value="#8a8a8a"></div>
+                <div class="cgrid cgrid--2" style="margin-top:14px">
+                  <div class="cchip"><label>(색)</label><div class="cchip__box"><input id="char-subcolor" type="color" value="#8a8a8a"><input class="cchip__hex" id="char-subcolor-txt" type="text" value="#8a8a8a"></div></div>
+                  <div class="cchip"><label>말풍선</label><div class="cchip__box"><input id="char-bub" type="color" value="#248bf5"><input class="cchip__hex" id="char-bub-txt" type="text" value="#248bf5"></div></div>
                 </div>
-                <div class="cchip cchip--wide" style="margin-top:14px">
-                  <label>말풍선 색</label>
-                  <div class="cchip__box"><input id="char-bub" type="color" value="#248bf5"><input class="cchip__hex" id="char-bub-txt" type="text" value="#248bf5"></div>
+                <div class="field" style="margin-top:14px">
+                  <span class="label">적용할 색 <span class="val" id="char-slot-val">글자</span></span>
+                  <div class="seg" id="char-slot-seg">
+                    <button type="button" data-cslot="ink" aria-pressed="true">글자</button>
+                    <button type="button" data-cslot="name" aria-pressed="false">이름</button>
+                    <button type="button" data-cslot="sub" aria-pressed="false">(색)</button>
+                    <button type="button" data-cslot="bub" aria-pressed="false">말풍선</button>
+                    <span class="seg__thumb"></span>
+                  </div>
                 </div>
-                <div class="presets presets--bg" id="char-bub-presets" style="margin-top:12px"></div>
+                <div class="dots" id="char-color-presets" style="margin-top:10px"></div>
                 <div style="margin-top:16px;display:flex;align-items:center;gap:8px;justify-content:flex-end">
-                  <button class="btn btn--ghost" id="char-delete" type="button" style="height:42px;font-size:12.5px;color:var(--danger);border-color:var(--danger);flex:none;width:76px;padding:0;margin-right:auto">삭제</button>
-                  <button class="btn btn--ghost" id="char-cancel" type="button" style="height:42px;font-size:12.5px;flex:none;width:76px;padding:0">취소</button>
-                  <button class="btn btn--primary" id="char-save" type="button" style="height:42px;font-size:12.5px;flex:none;width:76px;padding:0">저장</button>
+                  <button class="btn btn--ghost" id="char-delete" type="button" style="height:36px;font-size:12.5px;color:var(--danger);border-color:var(--danger);flex:none;padding:0 18px;margin-right:auto">삭제</button>
+                  <button class="btn btn--ghost" id="char-cancel" type="button" style="height:36px;font-size:12.5px;flex:none;padding:0 18px">취소</button>
+                  <button class="btn btn--primary" id="char-save" type="button" style="height:36px;font-size:12.5px;flex:none;padding:0 18px">저장</button>
                 </div>
               </div>
 
               <p class="section__head" style="margin-top:24px">삽입 방식</p>
-              <p class="hint" style="margin:0 0 12px">말풍선 삽입을 위해 인물을 눌렀을 때 뜨는 방식이에요.<br>각 캐릭터마다 삽입 방식을 다르게 저장할 수 있어요.<br>어떤 옵션을 선택하더라도 삽입 후 방향·프사 등을 추가 조정 가능해요.</p>
+              <p class="hint" style="margin:0 0 12px">말풍선 삽입을 위해 인물을 눌렀을 때 뜨는 방식이에요.<br>각 캐릭터마다 삽입 방식을 다르게 저장할 수 있어요.<br>어떤 옵션을 선택하더라도 삽입 후 방향·프사 등을 조정할 수 있어요.</p>
               <div class="mychips" id="bubpreset-list"></div>
               <div class="repform" id="bubpreset-form" hidden>
                 <div class="field">
@@ -1502,6 +1522,7 @@
                   <div class="bpchars" id="bp-char-select" hidden></div>
                 </div>
                 <div class="repform__btns">
+                  <button class="btn btn--ghost" id="bubpreset-delete" type="button" style="color:var(--danger);border-color:var(--danger);margin-right:auto">삭제</button>
                   <button class="btn btn--ghost" id="bubpreset-cancel" type="button">취소</button>
                   <button class="btn btn--primary" id="bubpreset-confirm" type="button">저장</button>
                 </div>
@@ -1791,7 +1812,7 @@
     <div class="sheet__title">도움말</div>
     <div class="help-body">
       <p class="help-cat">입력 도구</p>
-      <p class="hint">· <b>*색*</b>: *지문* 영역을 * 포함 *색*의 색깔로 변경해요.<br>· <b>(색)</b>: (지문) 영역을 ( ) 포함 (색)의 색깔로 변경해요. 말풍선 안의 (지문)은 각 인물별로 지정된 (색)을 사용해요.<br>· <b>(I)</b>: (지문) 영역을 ( ) 포함 이탤릭으로 변경해요.<br>· <b>(Aa)</b>: (지문) 영역을 ( ) 포함 작은 글자 크기로 변경해요. 크기만 반영하기 때문에 색깔은 그대로 유지돼요.<br>· <b>&quot;말풍선&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 말풍선으로 변경해요. 바로 아래 줄에 (지문)이 있으면 하나의 말풍선에 같이 들어가요.<br>· <b>&quot;인용선&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 인용선으로 변경해요. 바로 아래 줄에 (지문)이 있으면 하나의 인용선에 같이 들어가요.<br><br><b>TIP!</b><br>· *색*과 (색)에 사용되는 색깔은 디자인-글자 · 보조에서 변경돼요.<br>· 말풍선 안의 (색)에 사용되는 색깔은 말풍선-인물에서 인물별로 변경돼요.<br>· 프리셋-텍스트 대치에서 특정 글자를 다른 글자로 변환·삭제할 수 있어요.</p>
+      <p class="hint">· <b>*색*</b>: *지문* 영역을 * 포함 *색*의 색깔로 변경해요.<br>· <b>(색)</b>: (지문) 영역을 ( ) 포함 (색)의 색깔로 변경해요. 말풍선 안의 (지문)은 각 인물별로 지정된 (색)을 사용해요.<br>· <b>(I)</b>: (지문) 영역을 ( ) 포함 이탤릭으로 변경해요.<br>· <b>(Aa)</b>: (지문) 영역을 ( ) 포함 작은 글자 크기로 변경해요. 크기만 반영하기 때문에 색깔은 그대로 유지돼요.<br>· <b>&quot;넣&quot;</b>: 문단의 앞뒤에 &quot; &quot;를 넣어요. 문단의 앞뒤에 *, ( ), 큰따옴표, 작은따옴표가 하나라도 있다면 적용되지 않아요.<br>· <b>&quot;색&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 강조색으로 변경해요. 강조 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 강조와 똑같이 조정돼요.<br>· <b>&quot;말&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 말풍선으로 변경해요. 바로 아래 줄에 (지문)이 있으면 하나의 말풍선에 같이 들어가요.<br>· <b>&quot;인&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 인용선으로 변경해요. 바로 아래 줄에 (지문)이 있으면 하나의 인용선에 같이 들어가요. 인용선 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 인용선과 똑같이 조정돼요.<br><br><b>TIP!</b><br>· *색*과 (색)에 사용되는 색깔은 디자인-글자 · 보조에서 변경돼요.<br>· 말풍선 안의 (색)에 사용되는 색깔은 말풍선-인물에서 인물별로 변경돼요.<br>· 프리셋-텍스트 대치에서 특정 글자를 다른 글자로 변환·삭제할 수 있어요.</p>
       <p class="help-cat">서식</p>
       <p class="hint">· <b>강조·형광펜·인용선</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조·형광펜·인용선을 삭제하고 싶을 경우, 칠해진 모든 영역을 드래그하는 대신 일부에 커서만 둬도 전체를 삭제할 수 있어요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.</p>
       <p class="help-cat">말풍선</p>
@@ -1918,6 +1939,7 @@
     {c:'#c3c1eb', label:'인디고'}, {c:'#d0c2e8', label:'라벤더'}, {c:'#debee3', label:'바이올렛'}, {c:'#efbcd3', label:'로즈'},
     {c:'#e9d2c6', label:'클레이'}, {c:'#ddccbf', label:'코코아'}, {c:'#dadce0', label:'그레이'}, {c:'#e6e6e6', label:'페일'}
   ];
+  // 강조색 = 말풍선 팔레트와 동일한 16색(앞 4칸: 아이메시지 파랑·회색·흰색·검정)
   var emPresets = [
     {c:'#c25b57', label:'브릭'}, {c:'#cf7b57', label:'테라코타'}, {c:'#c9995a', label:'오커'}, {c:'#9aa35c', label:'올리브'},
     {c:'#5e9b72', label:'그린'}, {c:'#4e9a98', label:'틸'}, {c:'#5b87a8', label:'스틸블루'}, {c:'#5d74a6', label:'데님'},
@@ -2163,10 +2185,14 @@
   linkColor('c-hl2','c-hl2-txt',false,false, function(){ recolorSlotMarks('hl',2,$('c-hl2').value); });
   linkColor('c-hl3','c-hl3-txt',false,false, function(){ recolorSlotMarks('hl',3,$('c-hl3').value); });
   linkColor('c-hl4','c-hl4-txt',false,false, function(){ recolorSlotMarks('hl',4,$('c-hl4').value); });
+  linkColor('c-hl5','c-hl5-txt',false,false, function(){ recolorSlotMarks('hl',5,$('c-hl5').value); });
+  linkColor('c-hl6','c-hl6-txt',false,false, function(){ recolorSlotMarks('hl',6,$('c-hl6').value); });
   linkColor('c-em','c-em-txt',false,false, function(){ recolorSlotMarks('em',1,$('c-em').value); });
   linkColor('c-em2','c-em2-txt',false,false, function(){ recolorSlotMarks('em',2,$('c-em2').value); });
   linkColor('c-em3','c-em3-txt',false,false, function(){ recolorSlotMarks('em',3,$('c-em3').value); });
   linkColor('c-em4','c-em4-txt',false,false, function(){ recolorSlotMarks('em',4,$('c-em4').value); });
+  linkColor('c-em5','c-em5-txt',false,false, function(){ recolorSlotMarks('em',5,$('c-em5').value); });
+  linkColor('c-em6','c-em6-txt',false,false, function(){ recolorSlotMarks('em',6,$('c-em6').value); });
   linkColor('c-name','c-name-txt',false,false);
   linkColor('c-bar','c-bar-txt',false,false);
   linkColor('c-brecv','c-brecv-txt',false,false,updateEditorBub);
@@ -2182,6 +2208,8 @@
   linkColor('c-quote2','c-quote2-txt',false,false, function(){ recolorQuoteSlot(2, $('c-quote2').value); });
   linkColor('c-quote3','c-quote3-txt',false,false, function(){ recolorQuoteSlot(3, $('c-quote3').value); });
   linkColor('c-quote4','c-quote4-txt',false,false, function(){ recolorQuoteSlot(4, $('c-quote4').value); });
+  linkColor('c-quote5','c-quote5-txt',false,false, function(){ recolorQuoteSlot(5, $('c-quote5').value); });
+  linkColor('c-quote6','c-quote6-txt',false,false, function(){ recolorQuoteSlot(6, $('c-quote6').value); });
   linkColor('c-hr','c-hr-txt',false,false);
   linkColor('c-brecv-name','c-brecv-name-txt',false,false,updateEditorBub);
   linkColor('c-bsend-name','c-bsend-name-txt',false,false,updateEditorBub);
@@ -3364,8 +3392,9 @@
     if(a && a===b && parseInt(a.getAttribute('data-slot')||'1',10)===slot) return a;
     return null;
   }
-  function stripMarkChain(el, cls){
-    if(!el) return;
+  // 커서가 놓인 마크에서 좌우로 '이어진' 같은 종류 마크 묶음을 모은다(사이에 보이는 내용이 없을 때만 이어짐)
+  function markChain(el, cls){
+    if(!el) return [];
     function skipEmpty(node, dir){
       while(node && node.nodeType===3 && node.nodeValue.replace(/[\u200b]/g,'')===''){ node = dir<0 ? node.previousSibling : node.nextSibling; }
       return node;
@@ -3375,7 +3404,17 @@
     while(n && n.nodeType===1 && n.tagName==='MARK' && n.classList.contains(cls)){ chain.unshift(n); n=skipEmpty(n.previousSibling,-1); }
     n=skipEmpty(el.nextSibling,1);
     while(n && n.nodeType===1 && n.tagName==='MARK' && n.classList.contains(cls)){ chain.push(n); n=skipEmpty(n.nextSibling,1); }
-    chain.forEach(function(m){ var pr=m.parentNode; if(!pr) return; while(m.firstChild){ pr.insertBefore(m.firstChild, m); } pr.removeChild(m); });
+    return chain;
+  }
+  function stripMarkChain(el, cls){
+    if(!el) return;
+    markChain(el, cls).forEach(function(m){ var pr=m.parentNode; if(!pr) return; while(m.firstChild){ pr.insertBefore(m.firstChild, m); } pr.removeChild(m); });
+    cleanEditor(); render(); saveSel();
+  }
+  // 커서만 둔 상태에서 다른 번호를 고르면 그 묶음 전체의 색(슬롯)을 교체
+  function repaintMarkChain(el, cls, varName, color, slot){
+    if(!el) return;
+    markChain(el, cls).forEach(function(m){ m.style.setProperty(varName, color); m.setAttribute('data-slot', String(slot)); });
     cleanEditor(); render(); saveSel();
   }
   function applyFormat(fmt, tail, side, withName, color){
@@ -3404,7 +3443,11 @@
       var hs=(color!=null&&color!=='__remove__')?color:hlSlot;
       var sameHl=(color==='__remove__')?null:sameSlotAtSel('hl', hs);
       if(sameHl){ stripMarkChain(sameHl,'hl'); return; }   // 같은 번호 다시 선택 = 해제(토글)
-      if(range.collapsed){ if(color==='__remove__'){ stripMarkChain(caretMarkEl('hl'),'hl'); } return; }   // 커서만 있을 때도 지우기 동작
+      if(range.collapsed){
+        if(color==='__remove__'){ stripMarkChain(caretMarkEl('hl'),'hl'); return; }
+        var _mh=caretMarkEl('hl'); if(_mh){ repaintMarkChain(_mh,'hl','--hl',hlColorOf(hs),hs); }   // 칠해진 영역 전체 색 교체
+        return;
+      }
       if(color==='__remove__'){ stripMarks(range, 'hl'); }
       else { paintUnion(range, 'hl', '--hl', hlColorOf(hs), hs); }
     }
@@ -3413,7 +3456,11 @@
       var es=(color!=null&&color!=='__remove__')?color:emSlot;
       var sameEm=(color==='__remove__')?null:sameSlotAtSel('em', es);
       if(sameEm){ stripMarkChain(sameEm,'em'); return; }   // 같은 번호 다시 선택 = 해제
-      if(range2.collapsed){ if(color==='__remove__'){ stripMarkChain(caretMarkEl('em'),'em'); } return; }
+      if(range2.collapsed){
+        if(color==='__remove__'){ stripMarkChain(caretMarkEl('em'),'em'); return; }
+        var _me=caretMarkEl('em'); if(_me){ repaintMarkChain(_me,'em','--em',emColorOf(es),es); }
+        return;
+      }
       if(color==='__remove__'){ stripMarks(range2, 'em'); }
       else { paintUnion(range2, 'em', '--em', emColorOf(es), es); }
     }
@@ -3492,7 +3539,7 @@
       { label: '구분선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', noFocus:true, run: function(){ openSheet('hr'); } }
     ]},
     hl: { title: '형광펜', options: function(){
-      var opts=[1,2,3,4].map(function(n){
+      var opts=[1,2,3,4,5,6].map(function(n){
         return { label: '형광펜 '+n, preview: function(){ return swatchHtml(hlColorOf(n)); }, run: function(){ applyFormat('hl', null, null, false, n); } };
       });
       // '지우기'는 이미 칠해진 곳(커서 또는 드래그 범위)일 때만 노출
@@ -3500,7 +3547,7 @@
       return opts;
     } },
     em: { title: '강조색', options: function(){
-      var opts=[1,2,3,4].map(function(n){
+      var opts=[1,2,3,4,5,6].map(function(n){
         return { label: '강조 '+n, preview: function(){ return swatchHtml(emColorOf(n)); }, run: function(){ applyFormat('emph', null, null, false, n); } };
       });
       if(hasMarkAtSel('em')) opts.push({ label: '강조 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } });
@@ -3581,13 +3628,13 @@
   // 인용선 색(슬롯) 선택 시트 — 왼쪽/오른쪽을 고른 다음에 뜬다
   // 이미 있는 인용선의 색(슬롯)만 교체
   function openQuoteEditColorSheet(q){
-    openSheetDef({ title:'인용선 색', noFocus:true, options:[1,2,3,4].map(function(n){
+    openSheetDef({ title:'인용선 색', noFocus:true, options:[1,2,3,4,5,6].map(function(n){
       return { label:'인용선 '+n, preview:function(){ return swatchHtml(quoteSlotColor(n)); },
         run:function(){ paintQuote(q, n); cleanEditor(); render(); saveSel(); } };
     })});
   }
   function openQuoteColorSheet(side){
-    var opts=[1,2,3,4].map(function(n){
+    var opts=[1,2,3,4,5,6].map(function(n){
       return { label:'인용선 '+n, preview: swatchHtml(quoteSlotColor(n) || '#c8c8c8'),
                run:function(){ applyFormat('quote', null, side, false, n); } };
     });
@@ -5031,6 +5078,8 @@
     replaceInText(/\([^()\n]*\)/g, function(m){ return subMark(m[0]); }, isSubEl);
   });
   $('t-quote-line').addEventListener('click', function(){ openQuoteLineSheet(); });
+  $('t-quote-add').addEventListener('click', function(){ wrapPlainLines(editor); cleanEditor(); render(); saveSel(); });
+  $('t-quote-em').addEventListener('click', function(){ openQuoteEmSheet(); });
   $('t-quote-bub').addEventListener('click', function(){
     if(!characters || !characters.length){ alert('먼저 말풍선 탭에서 인물을 등록해 주세요.'); return; }
     openQuoteBubbleSheet();
@@ -5093,6 +5142,59 @@
       return out;
     }, isBubEl, true, mergeQuoteParens);
   }
+  // ===== 따옴표 → 강조색 (미니 도구 '"색"') =====
+  //   큰따옴표로 감싼 부분(따옴표 포함)을 강조색 mark.em으로. data-slot·인라인 --em을 넣으므로
+  //   나중에 커서만 두고 슬롯 변경·해제하는 기존 강조색 편집이 그대로 먹힌다.
+  function isEmEl(el){ return el.tagName==='MARK' && el.classList.contains('em'); }
+  function quoteToEm(slot){
+    slot = slot || 1;
+    var re=/[\u201C\u201D\u201E\u201F\u2033"]([^\u201C\u201D\u201E\u201F\u2033"\n]*)[\u201C\u201D\u201E\u201F\u2033"]/g;
+    replaceInText(re, function(m){
+      var mk=document.createElement('mark'); mk.className='em';
+      mk.setAttribute('data-slot', String(slot));
+      mk.style.setProperty('--em', emColorOf(slot));
+      mk.textContent=m[0];   // 따옴표 기호 유지
+      return mk;
+    }, isEmEl);
+  }
+  function openQuoteEmSheet(){
+    openSheetDef({ title:'따옴표 → 강조색', noFocus:true, options:[1,2,3,4,5,6].map(function(n){
+      return { label:'강조 '+n, preview:function(){ return swatchHtml(emColorOf(n)); }, run:function(){ quoteToEm(n); } };
+    })});
+  }
+  // ===== 따옴표 넣기 (미니 도구 '"넣"') =====
+  //   각 문단(줄)을 훑어 앞뒤에 " 를 붙인다. 단, 아래는 건너뜀:
+  //   ① 줄 '앞/뒤 글자'가 따옴표(큰·작은, 곧은/휜 것) 또는 * ( ) 인 줄  ② 빈 줄. 중간에 있는 기호는 무시.
+  //   말풍선·인용선 '안쪽' 줄도 대상(단 위 조건은 동일). 사진·구분선·이름표 등 블록은 건너뜀.
+  var _EDGE_SKIP='*()（）"\'\u201C\u201D\u201E\u201F\u2018\u2019\u201B\u2032\u2033';   // 앞뒤 글자로 오면 건너뛸 기호(큰·작은따옴표는 휜 것/곧은 것 모두)
+  function _isBlockish(n){
+    return n.nodeType===1 && n.classList && (n.classList.contains('g-img')||n.classList.contains('g-hr')||
+           n.classList.contains('g-bub-name')||n.classList.contains('g-title-blk')||n.classList.contains('g-para-gap'));
+  }
+  function _isLineHost(n){
+    return n.nodeType===1 && n.classList && (n.classList.contains('g-bub')||n.classList.contains('g-quote'));
+  }
+  function _wrapSeg(parent, seg){
+    if(!seg.length) return;
+    var txt=''; seg.forEach(function(n){ txt += (n.textContent||''); });
+    txt = txt.replace(/\u200b/g,'').trim();
+    if(!txt) return;
+    if(_EDGE_SKIP.indexOf(txt.charAt(0))>-1) return;                // 앞이 * ( )
+    if(_EDGE_SKIP.indexOf(txt.charAt(txt.length-1))>-1) return;     // 뒤가 * ( )
+    parent.insertBefore(document.createTextNode('"'), seg[0]);      // 서식 '바깥'에 붙음
+    var last=seg[seg.length-1];
+    parent.insertBefore(document.createTextNode('"'), last.nextSibling);
+  }
+  function wrapPlainLines(host){
+    var seg=[], kids=[].slice.call(host.childNodes);
+    kids.forEach(function(n){
+      if(n.nodeType===1 && n.tagName==='BR'){ _wrapSeg(host, seg); seg=[]; return; }
+      if(_isBlockish(n)){ _wrapSeg(host, seg); seg=[]; return; }
+      if(_isLineHost(n)){ _wrapSeg(host, seg); seg=[]; wrapPlainLines(n); return; }
+      seg.push(n);
+    });
+    _wrapSeg(host, seg);
+  }
   // ===== 따옴표 → 인용선 (미니 도구 '인용선') =====
   //   " 말풍선과 같은 방식: 큰따옴표로 감싼 줄을 따옴표째 인용선 블록으로. 바로 아래(빈 줄 없이) 괄호 줄은 같은 인용선에 흡수.
   //   말풍선과 달리 '연속' 개념 없음 — 각 인용선은 독립 블록.
@@ -5137,7 +5239,7 @@
     ]});
   }
   function openQuoteLineColorSheet(side){
-    openSheetDef({ title:'인용선 색', noFocus:true, options:[1,2,3,4].map(function(n){
+    openSheetDef({ title:'인용선 색', noFocus:true, options:[1,2,3,4,5,6].map(function(n){
       return { label:'인용선 '+n, preview:function(){ return swatchHtml(quoteSlotColor(n)); }, run:function(){ quoteToQuoteLines(side, n); } };
     })});
   }
@@ -5169,9 +5271,9 @@
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
   var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','logimg-size','logimg-radius','font-size','subtext-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
-    'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-name','c-name-txt','c-bar','c-bar-txt',
+    'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
-    'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-hr','c-hr-txt',
+    'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt',
     'c-brecv-name','c-brecv-name-txt','c-bsend-name','c-bsend-name-txt','c-bar-bg','c-bar-bg-txt','c-bar-accent','c-bar-accent-txt','c-bar-name','c-bar-name-txt','c-bar-avatar','c-bar-avatar-txt','c-bar-plus','c-bar-plus-txt','c-bar-arrow','c-bar-arrow-txt','opacity','bright','c-grad1','c-grad1-txt','c-grad2','c-grad2-txt','grad-angle'];
   var _restoring=false;
 
@@ -5423,7 +5525,7 @@
     bubbleShape = ({imessage:1,simple:1,soft:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
     syncShapeSeg();
     applyBubbleShape();
-    ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-em','c-em2','c-em3','c-em4','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-star','c-paren','c-quote','c-quote2','c-quote3','c-quote4','c-hr','c-brecv-name','c-bsend-name','c-bar-bg','c-bar-accent','c-bar-name','c-bar-avatar','c-bar-plus','c-bar-arrow'].forEach(function(cid){
+    ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-hl5','c-hl6','c-em','c-em2','c-em3','c-em4','c-em5','c-em6','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-star','c-paren','c-quote','c-quote2','c-quote3','c-quote4','c-quote5','c-quote6','c-hr','c-brecv-name','c-bsend-name','c-bar-bg','c-bar-accent','c-bar-name','c-bar-avatar','c-bar-plus','c-bar-arrow'].forEach(function(cid){
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
     });
     if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
@@ -5463,7 +5565,7 @@
   var BUILTIN_RULES = {
     star: function(t){ return t.replace(/\*/g,''); },
     quote: function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033]/g,'"'); },
-    squote: function(t){ return t.replace(/[\u2018\u2019\u201A\u201B\u2032]/g,"'"); },
+    squote: function(t){ return t.replace(/[\u2018\u2019\u201B\u2032]/g,"'"); },
     dots: function(t){ return t.replace(/\u2026/g,'\u22EF').replace(/\u00B7\u00B7\u00B7/g,'\u22EF').replace(/\.{3,}/g,'\u22EF'); },
     paren: function(t){ return t.replace(/[()（）]/g,''); },   // 괄호 기호만 삭제(안쪽 글자는 유지), 반각·전각 모두
     code: function(t){ return t.replace(/<br\s*\/?>|<\/?sub>/gi,''); }   // 텍스트에 리터럴로 들어간 <br> <sub> </sub> 삭제(한 규칙으로 전부)
@@ -5618,7 +5720,11 @@
       var sub=document.createElement('span'); sub.style.cssText='margin-left:6px;color:var(--ink-3);font-size:10.5px'; sub.textContent=bubPresetSummary(p); chip.appendChild(sub);
       var x=document.createElement('span'); x.className='mychip__x'; x.textContent='×'; x.title='삭제'; chip.appendChild(x);
       x.addEventListener('click',function(e){ e.stopPropagation(); if(!confirm('"'+(p.name||'')+'" 프리셋을 삭제할까요?')) return; var cur=loadBubPresets(); cur.splice(idx,1); saveBubPresets(cur); renderBubPresets(); });
-      chip.addEventListener('click',function(){ openBpForm(idx); });
+      chip.addEventListener('click',function(){
+        var form=$('bubpreset-form');
+        if(_editingBpIdx===idx && form && !form.hidden){ closeBpForm(); }   // 같은 걸 다시 누르면 닫힘(인물과 동일)
+        else { openBpForm(idx); }
+      });
       wrap.appendChild(chip);
     });
   }
@@ -5651,6 +5757,7 @@
     renderBpCharSelect(p.chars||[]);
     bpApplyType();
     okBtn.textContent=_editingBpIdx>=0?'저장':'추가';
+    var delBtn=$('bubpreset-delete'); if(delBtn) delBtn.style.display = (_editingBpIdx>=0) ? '' : 'none';
     form.hidden=false; addBtn.hidden=true; if(!IS_TOUCH) nameIn.focus();
   }
   function closeBpForm(){ var form=$('bubpreset-form'),addBtn=$('bubpreset-add'); if(form) form.hidden=true; if(addBtn) addBtn.hidden=false; _editingBpIdx=-1; }
@@ -5669,6 +5776,11 @@
   if($('bubpreset-add')){
     $('bubpreset-add').addEventListener('click',function(){ openBpForm(-1); });
     $('bubpreset-cancel').addEventListener('click', closeBpForm);
+    if($('bubpreset-delete')){ $('bubpreset-delete').addEventListener('click', function(){
+      if(_editingBpIdx<0) return;
+      if(!confirm('이 삽입 방식을 삭제할까요?')) return;
+      var list=loadBubPresets(); list.splice(_editingBpIdx,1); saveBubPresets(list); renderBubPresets(); closeBpForm();
+    }); }
     $('bubpreset-confirm').addEventListener('click', confirmBpSave);
     $('bubpreset-name').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); confirmBpSave(); } else if(e.key==='Escape'){ e.preventDefault(); closeBpForm(); } });
     [].forEach.call($('bp-type-seg').querySelectorAll('button'), function(b){ b.addEventListener('click', function(){ bpSetSeg('bp-type-seg', b.getAttribute('data-bptype'),'data-bptype'); bpApplyType(); }); });
@@ -5933,10 +6045,8 @@
     var empty=$('char-insert-empty'); if(empty) empty.style.display = characters.length ? 'none' : '';
   }
   function setColorPair(base, val){ var c=$(base), t=$(base+'-txt'); if(c) c.value=val; if(t) t.value=val; }
-  function syncCharBubPreset(val){
-    var wrap=$('char-bub-presets'); if(!wrap) return; var v=(val||'').toLowerCase();
-    [].forEach.call(wrap.children, function(x){ x.classList.toggle('on', (x.getAttribute('data-col')||'').toLowerCase()===v); });
-  }
+  // 색이 바뀌면 통합 팔레트의 선택 표시를 갱신(대상이 그 색일 때만 표시됨)
+  function syncCharBubPreset(){ if(typeof _renderCharPaletteHook==='function') _renderCharPaletteHook(); }
   function updateCharPhotoPreview(){
     var av=$('char-photo-preview'); if(!av) return;
     av.className='char-avatar'+(tmpShape==='square'?' square':'');
@@ -5947,6 +6057,7 @@
     document.querySelectorAll('#char-shape-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-shape')===shape?'true':'false'); });
     requestAnimationFrame(function(){ moveThumb($('char-shape-seg')); });
   }
+  var _renderCharPaletteHook = null;
   function openCharEditor(id){
     editingCharId = id || null;
     var c = id ? findChar(id) : null;
@@ -5961,23 +6072,52 @@
     updateCharPhotoPreview(); setShapeSeg(tmpShape);
     $('char-delete').style.display = id ? '' : 'none';
     $('char-editor').hidden = false; $('char-add').hidden = true;
+    requestAnimationFrame(function(){ moveThumb($('char-slot-seg')); if(typeof _renderCharPaletteHook==='function') _renderCharPaletteHook(); });
   }
   function closeCharEditor(){ $('char-editor').hidden=true; $('char-add').hidden=false; editingCharId=null; tmpPhoto=null; }
   if($('char-add')){
     linkColor('char-bub','char-bub-txt',false,false, function(){ syncCharBubPreset($('char-bub').value); });
-    linkColor('char-ink','char-ink-txt',false,false);
-    linkColor('char-namecolor','char-namecolor-txt',false,false);
-    linkColor('char-subcolor','char-subcolor-txt',false,false);
-    var charBubPresets = ['#248bf5','#e5e5ea','#1c1c1e','#ffffff','#ffd1d1','#ffe0b8','#fbf0b0','#cdeccb','#cbe0fb','#ddd0f5','#f6c9de','#cdb29a'];
-    var cbpWrap = $('char-bub-presets');
-    if(cbpWrap){
-      charBubPresets.forEach(function(col){
-        var b=document.createElement('button'); b.type='button'; b.className='chip'; b.setAttribute('data-col', col);
-        b.style.background=col; b.title='말풍선 색';
-        b.addEventListener('click', function(){ setColorPair('char-bub', col); syncCharBubPreset(col); });
-        cbpWrap.appendChild(b);
+    linkColor('char-ink','char-ink-txt',false,false, syncCharBubPreset);
+    linkColor('char-namecolor','char-namecolor-txt',false,false, syncCharBubPreset);
+    linkColor('char-subcolor','char-subcolor-txt',false,false, syncCharBubPreset);
+    // 색 팔레트 하나로 통합 — 세그(글자/이름/(색)/말풍선)로 대상만 고르고 같은 팔레트에서 색 선택.
+    //   공용 컬러 12색은 모든 대상이 공유하고, 앞쪽 '중요한 색'만 대상에 따라 달라진다.
+    var SHARED_COLORS = ['#bd524c','#b05e3b','#956c37','#727944','#4a7d5b','#407d7b',
+                         '#4f7796','#5b72a4','#6e6faa','#8765a4','#ad5882','#bd6288'];
+    var BUB_KEEP = ['#248bf5','#e5e5ea','#ffffff','#1c1c1e'];      // 아이메시지 파랑·회색 / 흰 / 검정
+    var INK_KEEP = ['#2b2b2b','#6c6c6c','#8a8a8a','#ffffff'];      // 본문색 / 하단색 / 회색 / 흰색 (말풍선과 같은 4칸)
+    var _charSlot='ink';
+    function charSlotInput(k){ return $(k==='name'?'char-namecolor':(k==='sub'?'char-subcolor':(k==='bub'?'char-bub':'char-ink'))); }
+    function charSlotLabel(k){ return k==='name'?'이름':(k==='sub'?'(색)':(k==='bub'?'말풍선':'글자')); }
+    function charSlotColors(k){ return (k==='bub'?BUB_KEEP:INK_KEEP).concat(SHARED_COLORS); }
+    function renderCharPalette(){
+      var wrap=$('char-color-presets'); if(!wrap) return;
+      var cols=charSlotColors(_charSlot), cur=(charSlotInput(_charSlot).value||'').toLowerCase();
+      wrap.innerHTML='';
+      cols.forEach(function(col){
+        var b=document.createElement('button'); b.type='button'; b.className='dot'+(col.toLowerCase()===cur?' on':'');
+        b.setAttribute('data-col', col); b.title=col;
+        var i=document.createElement('i'); i.style.background=col; b.appendChild(i);
+        b.addEventListener('click', function(){
+          [].forEach.call(wrap.children, function(x){ x.classList.remove('on'); });
+          b.classList.add('on');
+          setColorPair(charSlotInput(_charSlot).id, col);
+        });
+        wrap.appendChild(b);
       });
     }
+    _renderCharPaletteHook = renderCharPalette;
+    document.querySelectorAll('#char-slot-seg button').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('#char-slot-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+        btn.setAttribute('aria-pressed','true');
+        _charSlot = btn.getAttribute('data-cslot') || 'ink';
+        var lbl=$('char-slot-val'); if(lbl) lbl.textContent = charSlotLabel(_charSlot);
+        moveThumb($('char-slot-seg'));
+        renderCharPalette();
+      });
+    });
+    renderCharPalette();
     $('char-add').addEventListener('click', function(){ openCharEditor(null); });
     $('char-cancel').addEventListener('click', closeCharEditor);
     if($('char-photo-preview')){
