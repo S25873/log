@@ -5323,7 +5323,11 @@
     replaceInText(/\([^()\n]*\)/g, function(m){ return subMark(m[0]); }, isSubEl);
   });
   $('t-quote-line').addEventListener('click', function(){ openQuoteLineSheet(); });
-  $('t-quote-add').addEventListener('click', function(){ wrapPlainLines(editor); cleanEditor(); render(); saveSel(); });
+  $('t-quote-add').addEventListener('click', function(){
+    wrapPlainLines(editor);
+    editor.normalize();   // 새로 넣은 " 를 옆 글자와 한 덩어리로 합침 — 안 그러면 "말"·"인"이 못 잡음
+    cleanEditor(); render(); saveSel();
+  });
   $('t-quote-em').addEventListener('click', function(){ openQuoteEmSheet(); });
   $('t-quote-bub').addEventListener('click', function(){
     if(!characters || !characters.length){ alert('먼저 말풍선 탭에서 인물을 등록해 주세요.'); return; }
