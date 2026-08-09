@@ -2984,7 +2984,8 @@
     }
     if(range.collapsed){
       var qE=document.createElement('div'); qE.className='g-quote '+side; paintQuote(qE, slot); qE.appendChild(document.createTextNode('\u200b'));
-      range.insertNode(qE); var r0=document.createRange(); r0.selectNodeContents(qE); r0.collapse(false); sel.removeAllRanges(); sel.addRange(r0); return;
+      range.insertNode(qE); absorbBubBreak(qE);
+      var r0=document.createRange(); r0.selectNodeContents(qE); r0.collapse(false); sel.removeAllRanges(); sel.addRange(r0); return;
     }
     var frag = range.extractContents();
     [].forEach.call(frag.querySelectorAll('.g-quote'), function(b){ var p=b.parentNode; while(b.firstChild){ p.insertBefore(b.firstChild,b); } p.removeChild(b); });
@@ -2994,6 +2995,7 @@
     while(q.lastChild && edgeStrippable(q.lastChild)){ q.removeChild(q.lastChild); }
     if(!q.childNodes.length){ q.appendChild(document.createTextNode('\u200b')); }
     range.insertNode(q);
+    absorbBubBreak(q);   // 블록이라 뒤에 남는 빈 줄 하나 제거
     var r=document.createRange(); r.selectNodeContents(q); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
   }
 
@@ -5146,7 +5148,7 @@
       if(last<text.length){ frag.appendChild(document.createTextNode(text.slice(last))); }
       var lastBub=null;
       if(absorbBub){
-        for(var k=frag.childNodes.length-1;k>=0;k--){ var cn=frag.childNodes[k]; if(cn.nodeType===1 && cn.classList && cn.classList.contains('g-bub')){ lastBub=cn; break; } }
+        for(var k=frag.childNodes.length-1;k>=0;k--){ var cn=frag.childNodes[k]; if(cn.nodeType===1 && cn.classList && (cn.classList.contains('g-bub')||cn.classList.contains('g-quote'))){ lastBub=cn; break; } }
       }
       if(tn.parentNode) tn.parentNode.replaceChild(frag, tn);
       if(lastBub) _absorbList.push(lastBub);
