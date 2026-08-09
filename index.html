@@ -254,6 +254,15 @@
     margin-left:auto;color:var(--ink);font-weight:600;
     font-variant-numeric:tabular-nums;font-size:11.5px;
   }
+  /* 값 부분을 눌러 직접 숫자 입력 */
+  .label .val.is-editable{cursor:text;border-bottom:1px dashed var(--line-strong);padding-bottom:1px;}
+  .label .val.is-editable:hover{color:var(--accent);}
+  .val-input{
+    margin-left:auto;align-self:center;width:auto;min-width:0;height:auto;padding:0;
+    text-align:right;line-height:inherit;box-sizing:content-box;
+    border:none;border-bottom:1px solid var(--accent);border-radius:0;background:transparent;color:var(--ink);
+    font:inherit;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;outline:none;
+  }
   .label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;}
   .label-row .label{margin:0;}
   .hist-row{display:flex;align-items:center;gap:5px;}
@@ -1133,11 +1142,11 @@
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <span class="label">본문 글자 크기 <span class="val">32px</span></span>
-                  <div class="rangewrap"><input id="font-size" type="range" min="20" max="50" value="32"></div>
+                  <div class="rangewrap"><input id="font-size" type="range" min="10" max="50" value="32"></div>
                 </div>
                 <div class="field">
                   <span class="label">작은 글자 크기 <span class="val">26px</span></span>
-                  <div class="rangewrap"><input id="subtext-size" type="range" min="12" max="36" step="1" value="26"></div>
+                  <div class="rangewrap"><input id="subtext-size" type="range" min="6" max="36" step="1" value="26"></div>
                 </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
@@ -1219,11 +1228,11 @@
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <span class="label">제목 글자 크기 <span class="val" id="title-size-val">52px</span></span>
-                  <div class="rangewrap"><input id="title-size" type="range" min="20" max="80" step="2" value="52"></div>
+                  <div class="rangewrap"><input id="title-size" type="range" min="10" max="80" step="2" value="52"></div>
                 </div>
                 <div class="field">
                   <span class="label">소제목 글자 크기 <span class="val" id="subtitle-size-val">36px</span></span>
-                  <div class="rangewrap"><input id="subtitle-size" type="range" min="16" max="56" step="2" value="36"></div>
+                  <div class="rangewrap"><input id="subtitle-size" type="range" min="8" max="56" step="2" value="36"></div>
                 </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
@@ -1291,7 +1300,7 @@
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <span class="label">하단 글자 크기 <span class="val" id="name-size-val">22px</span></span>
-                  <div class="rangewrap"><input id="name-size" type="range" min="12" max="36" step="1" value="22"></div>
+                  <div class="rangewrap"><input id="name-size" type="range" min="6" max="36" step="1" value="22"></div>
                 </div>
                 <div class="field">
                   <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">35px</span></span>
@@ -1619,7 +1628,7 @@
                 <input id="inputbar-on" type="checkbox" style="margin-left:auto">
               </label>
 
-              <div class="cgrid cgrid--2">
+              <div class="cgrid cgrid--2" style="margin-top:16px">
                 <div class="cchip"><label>바 배경</label><div class="cchip__box"><input id="c-bar-bg" type="color" value="#f5f5f7"><input class="cchip__hex" id="c-bar-bg-txt" type="text" value="#f5f5f7"></div></div>
                 <div class="cchip"><label>이름 글자</label><div class="cchip__box"><input id="c-bar-name" type="color" value="#000000"><input class="cchip__hex" id="c-bar-name-txt" type="text" value="#000000"></div></div>
                 <div class="cchip"><label>아바타</label><div class="cchip__box"><input id="c-bar-avatar" type="color" value="#c7c7cc"><input class="cchip__hex" id="c-bar-avatar-txt" type="text" value="#c7c7cc"></div></div>
@@ -1710,7 +1719,7 @@
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
-              <p class="hint" style="margin:0 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>고정 비율에서는 적용되지 않아요.</p>
+              <p class="hint" style="margin:0 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>시범 기능이기에 고정 비율에서는 적용되지 않아요.</p>
               <div class="field">
                 <span class="label">위치</span>
                 <div class="seg" id="frame-pos-seg">
@@ -3677,6 +3686,7 @@
       b.innerHTML = pv + '<span>'+opt.label+'</span>';
       b.addEventListener('click', function(ev){
         ev.preventDefault(); ev.stopPropagation();
+        if(opt.keepOpen){ opt.run(); return; }   // 체크 토글처럼 시트를 닫지 않는 항목
         closeSheet();
         if(!opt.noFocus && _sheetSavedRange && editor.contains(_sheetSavedRange.startContainer)){
           editor.focus();
@@ -4124,7 +4134,13 @@
     thumb.style.width = aRect.width + 'px';
     thumb.style.transform = 'translateX(' + (aRect.left - segRect.left - pad) + 'px)';
   }
-  function moveAllThumbs(){ moveThumb($('align-seg')); moveThumb($('size-seg')); moveThumb($('ratio-seg')); moveThumb($('hl-slot-seg')); moveThumb($('em-slot-seg')); moveThumb($('quote-slot-seg')); moveThumb($('bg-mode-seg')); moveThumb($('char-shape-seg')); moveThumb($('bub-shape-seg')); moveThumb($('topbar-src-seg')); }
+  function moveAllThumbs(){ [].forEach.call(document.querySelectorAll('.seg'), moveThumb); }
+  // 세그가 '숨김→보임'으로 바뀌는 순간(아코디언 열기·탭 전환 등) 폭이 0이라 막대 위치를 못 잡던 문제:
+  //   폭이 바뀔 때마다 다시 계산해 두면 막대가 빠지는 경우가 없어진다(막대가 없으면 흰 글자만 남아 안 보임).
+  if(window.ResizeObserver){
+    var _segRO = new ResizeObserver(function(entries){ entries.forEach(function(en){ moveThumb(en.target); }); });
+    requestAnimationFrame(function(){ [].forEach.call(document.querySelectorAll('.seg'), function(sg){ try{ _segRO.observe(sg); }catch(e){} }); });
+  }
 
   document.querySelectorAll('#align-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -4566,6 +4582,53 @@
   /* ============================================================
      렌더 + 스케일링
      ============================================================ */
+  // 슬라이더 값 표시를 눌러 숫자를 직접 입력 — 범위·단위를 벗어나면 가장 가까운 값으로 맞춤
+  function nearestSliderValue(sl, raw){
+    var min=parseFloat(sl.min), max=parseFloat(sl.max), st=parseFloat(sl.step)||1;
+    if(isNaN(min)) min=0; if(isNaN(max)) max=100;
+    var v=parseFloat(raw); if(isNaN(v)) return parseFloat(sl.value);
+    v=Math.min(max, Math.max(min, v));                 // 범위 밖이면 끝값으로
+    v=min + Math.round((v-min)/st)*st;                 // 단위에 맞는 가장 가까운 값으로
+    v=Math.min(max, Math.max(min, v));
+    return Math.round(v*1000)/1000;
+  }
+  function enableValueEditing(){
+    [].forEach.call(document.querySelectorAll('.rangewrap input[type="range"]'), function(sl){
+      var wrap=sl.closest('.rangewrap'); if(!wrap) return;
+      var lbl=wrap.previousElementSibling; if(!lbl) return;
+      var span=lbl.querySelector('.val'); if(!span || span._editInit) return;
+      span._editInit=true; span.classList.add('is-editable'); span.title='눌러서 숫자 입력';
+      span.addEventListener('click', function(){
+        if(span.hidden) return;
+        var inp=document.createElement('input');
+        inp.type='text'; inp.className='val-input'; inp.inputMode='decimal';
+        inp.value=sl.value;
+        function fitW(){ inp.size = Math.max(2, String(inp.value||'').length); }   // 숫자 길이만큼만
+        fitW(); inp.addEventListener('input', fitW);
+        span.hidden=true; span.parentNode.insertBefore(inp, span.nextSibling);
+        inp.focus(); inp.select();
+        var done=false;
+        function finish(apply){
+          if(done) return; done=true;
+          if(apply){
+            var nv=nearestSliderValue(sl, inp.value);
+            if(String(nv)!==String(sl.value)){
+              sl.value=nv;
+              sl.dispatchEvent(new Event('input', {bubbles:true}));
+              sl.dispatchEvent(new Event('change', {bubbles:true}));
+            }
+          }
+          if(inp.parentNode) inp.parentNode.removeChild(inp);
+          span.hidden=false;
+        }
+        inp.addEventListener('keydown', function(e){
+          if(e.key==='Enter'){ e.preventDefault(); finish(true); }
+          else if(e.key==='Escape'){ e.preventDefault(); finish(false); }
+        });
+        inp.addEventListener('blur', function(){ finish(true); });
+      });
+    });
+  }
   function setVal(sliderId, text){
     var s=$(sliderId); if(!s) return;
     var wrap=s.closest('.rangewrap'); var lbl=wrap?wrap.previousElementSibling:null;
@@ -5205,16 +5268,44 @@
   function isBubEl(el){ return el.classList && (el.classList.contains('g-bub') || el.classList.contains('g-bub-name')); }
 
   // 전체 비우기 (본문 + 제목·소제목·하단 정보)
-  $('t-clear').addEventListener('click', function(){
-    if(!confirm('본문·제목·소제목·하단을 모두 비울까요?')) return;
-    editor.innerHTML='';
-    ['title-ed','subtitle-ed','name-ed'].forEach(function(id){ var el=$(id); if(el) el.innerHTML=''; });
+  // 비우기: 무엇을 비울지 고르는 시트(선택은 기억됨)
+  var CLEAR_KEY='logmaker-clear-targets-v1';
+  var clearTargets = (function(){
+    try{ var v=JSON.parse(localStorage.getItem(CLEAR_KEY)); if(v && typeof v==='object') return v; }catch(e){}
+    return { body:true, title:true, subtitle:true, name:true };
+  })();
+  function saveClearTargets(){ try{ localStorage.setItem(CLEAR_KEY, JSON.stringify(clearTargets)); }catch(e){} }
+  function runClear(){
+    if(clearTargets.body) editor.innerHTML='';
+    if(clearTargets.title){ var t=$('title-ed'); if(t) t.innerHTML=''; }
+    if(clearTargets.subtitle){ var st=$('subtitle-ed'); if(st) st.innerHTML=''; }
+    if(clearTargets.name){ var nm=$('name-ed'); if(nm) nm.innerHTML=''; }
     if(typeof clearHrSel==='function') clearHrSel();
     if(typeof cleanEditor==='function') cleanEditor();
     if(typeof updateTitleSizeLabels==='function') updateTitleSizeLabels();
     render();
     if(typeof scheduleSave==='function') scheduleSave(); else if(typeof saveState==='function') saveState();
-  });
+  }
+  function openClearSheet(){
+    var defs=[['body','본문'],['title','제목'],['subtitle','소제목'],['name','하단']];
+    openSheetDef({ title:'무엇을 비울까요?', noFocus:true, options:
+      defs.map(function(d){
+        return { label:d[1], preview: clearTargets[d[0]] ? '<span class="s-preview">✓</span>' : '<span class="s-preview" style="opacity:.25">✓</span>',
+          keepOpen:true,
+          run:function(){ clearTargets[d[0]]=!clearTargets[d[0]]; saveClearTargets(); openClearSheet(); } };
+      }).concat([
+        { label:'선택한 항목 비우기', preview:'<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 12.5A1.6 1.6 0 0 0 8.6 21h6.8a1.6 1.6 0 0 0 1.6-1.5L18 7"/></svg></span>',
+          run:function(){
+            var names=[]; if(clearTargets.body) names.push('본문'); if(clearTargets.title) names.push('제목');
+            if(clearTargets.subtitle) names.push('소제목'); if(clearTargets.name) names.push('하단');
+            if(!names.length){ alert('비울 항목을 하나 이상 골라 주세요.'); return; }
+            if(!confirm(names.join(' · ')+'을(를) 비울까요?')) return;
+            runClear();
+          } }
+      ])
+    });
+  }
+  $('t-clear').addEventListener('click', openClearSheet);
   // * 회색: **내용** 을 감지 → 내용을 서브색(회색)으로, ** 기호는 제거
   $('t-star-gray').addEventListener('click', function(){
     replaceInText(/\*([^\n*]+?)\*/g, function(m){ return grayMark(m[1]); }, isGrayEl);
@@ -5722,7 +5813,8 @@
     quote: function(t){ return t.replace(/[\u201C\u201D\u201E\u201F\u2033]/g,'"'); },
     squote: function(t){ return t.replace(/[\u2018\u2019\u201B\u2032]/g,"'"); },
     dots: function(t){ return t.replace(/\u2026/g,'\u22EF').replace(/\u00B7\u00B7\u00B7/g,'\u22EF').replace(/\.{3,}/g,'\u22EF'); },
-    paren: function(t){ return t.replace(/[()（）]/g,''); },   // 괄호 기호만 삭제(안쪽 글자는 유지), 반각·전각 모두
+    paren: function(t){ return t.replace(/[()（）]/g,''); },
+    quotedel: function(t){ return t.replace(/["\u201C\u201D]/g,''); },   // 큰따옴표 3종(곧은 " · 여는 \u201C · 닫는 \u201D) 삭제   // 괄호 기호만 삭제(안쪽 글자는 유지), 반각·전각 모두
     code: function(t){ return t.replace(/<br\s*\/?>|<\/?sub>/gi,''); }   // 텍스트에 리터럴로 들어간 <br> <sub> </sub> 삭제(한 규칙으로 전부)
   };
   // 빌트인 칩의 '표시용' find→to (사용자 규칙과 같은 형태로 보이게). to==='' 는 '삭제'로 표시.
@@ -5733,6 +5825,7 @@
     squote: { find:'\u2018',   to:"'" },
     dots:   { find:'...',      to:'\u22EF' },
     paren:  { find:'( , )',    to:'' },
+    quotedel: { find:'" , \u201C , \u201D', to:'' },
     code:   { find:'<br>, <sub>, </sub>', to:'' }
   };
   // 앱 최초 실행 시 기본 입력 프리셋 4종을 심어둠 (이후엔 사용자가 지우면 다시 생기지 않음)
@@ -5742,6 +5835,7 @@
     { builtin:'dots' },
     { builtin:'star' },
     { builtin:'paren' },
+    { builtin:'quotedel' },
     { builtin:'code' }
   ];
   function loadReplacePresets(){
@@ -5766,6 +5860,14 @@
           if(ci>=0) list.splice(ci,0,{builtin:'paren'}); else list.push({builtin:'paren'});   // 항상 '코드' 앞에
           saveReplacePresets(list); }
         localStorage.setItem('logmaker-replace-mig-paren','1');
+      }
+      if(!localStorage.getItem('logmaker-replace-mig-quotedel')){
+        var hasQd=false;
+        for(var q1=0;q1<list.length;q1++){ if(list[q1]&&list[q1].builtin==='quotedel') hasQd=true; }
+        if(!hasQd){ var ci2=-1; for(var q2=0;q2<list.length;q2++){ if(list[q2]&&list[q2].builtin==='code'){ ci2=q2; break; } }
+          if(ci2>=0) list.splice(ci2,0,{builtin:'quotedel'}); else list.push({builtin:'quotedel'});
+          saveReplacePresets(list); }
+        localStorage.setItem('logmaker-replace-mig-quotedel','1');
       }
       if(!localStorage.getItem('logmaker-replace-mig-code')){   // 미니툴바 '코드' 버튼을 입력 프리셋으로 이동
         var hasCode=false;
@@ -6383,6 +6485,7 @@
   histInit();
   updateFormatButtons();
   requestAnimationFrame(function(){ if(typeof moveAllThumbs==='function') moveAllThumbs(); });
+  enableValueEditing();
   window.addEventListener('resize', function(){ if(typeof moveAllThumbs==='function') moveAllThumbs(); });
 })();
 
