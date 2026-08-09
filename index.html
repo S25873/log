@@ -314,7 +314,7 @@
     box-shadow:var(--shadow-1);transition:transform .28s var(--ease),width .28s var(--ease);
     z-index:0;pointer-events:none;
   }
-  .seg .align-ic{display:inline-flex;align-items:center;justify-content:center;color:inherit;}
+  .seg .align-ic{display:flex;height:100%;align-items:center;justify-content:center;color:inherit;}   /* 글자 기준선에 걸려 위로 쏠리던 것 → 버튼 높이 전체 기준 중앙 정렬 */
   .seg .align-ic svg{width:15px;height:15px;display:block;}
 
   /* 미니 버튼 */
@@ -322,7 +322,8 @@
   .mini{
     border:1px solid var(--line);background:var(--surface);color:var(--ink-3);
     border-radius:6px;height:22px;padding:0 6px;font-size:10px;font-weight:600;
-    cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;
+    min-width:26px;   /* (I)처럼 라벨이 짧아도 누르기 편하게 최소 폭 확보 */
+    cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:3px;
     transition:background .16s var(--ease),color .16s,border-color .16s,transform .1s;
   }
   .mini:hover{background:var(--ink);color:var(--surface);border-color:var(--ink);}
@@ -986,7 +987,7 @@
     .fbtn .quote-ic svg,.fbtn .hr-ic svg{width:13px;height:13px;}
     .fmt-row{gap:3px;}
     .mini-row{gap:3px;}
-    .mini{padding:0 4px;gap:2px;}
+    .mini{padding:0 4px;gap:2px;min-width:24px;}
     .hist-row{gap:3px;}
     .histbtn{width:21px;}
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
