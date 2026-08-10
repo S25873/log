@@ -734,7 +734,7 @@
     -webkit-box-decoration-break:clone;box-decoration-break:clone;}
   #editor mark.em{color:var(--em,inherit) !important;background:transparent;}
   #editor mark.ul{background:transparent;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;}
-  #editor mark.sub{color:var(--sub-color,#8a8a8a) !important;background:transparent;font-size:.8em !important;}
+  #editor mark.sub{color:inherit;background:transparent;font-size:.8em !important;}
   /* (서브)=크기, (색깔)=색 — 겹칠 때 순서와 무관하게 색은 항상 별/괄호 색이 이기도록 */
   #editor mark.gray mark.sub{color:inherit !important;}
   #editor mark.gray{color:var(--star-color,var(--sub-color,#8a8a8a)) !important;background:transparent;}
@@ -887,7 +887,7 @@
   #canvas mark.em,.canvas-clone mark.em{color:var(--em) !important;background:transparent !important;display:inline !important;}
   #canvas mark.ul,.canvas-clone mark.ul{color:inherit !important;background:transparent !important;display:inline !important;
     text-decoration:underline !important;text-decoration-thickness:.05em !important;text-underline-offset:.12em !important;}
-  #canvas mark.sub,.canvas-clone mark.sub{color:var(--sub-color,#8a8a8a) !important;background:transparent !important;display:inline !important;font-size:var(--sub-size,.8em) !important;}
+  #canvas mark.sub,.canvas-clone mark.sub{color:inherit !important;background:transparent !important;display:inline !important;font-size:var(--sub-size,.8em) !important;}
   #canvas mark.gray mark.sub,.canvas-clone mark.gray mark.sub{color:inherit !important;}
   #canvas mark.gray,.canvas-clone mark.gray{color:var(--star-color,var(--sub-color,#8a8a8a)) !important;background:transparent !important;display:inline !important;}
   #canvas mark.gray.paren,.canvas-clone mark.gray.paren{color:var(--paren-color,var(--sub-color,#8a8a8a)) !important;}
