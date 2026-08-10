@@ -2279,8 +2279,8 @@
   linkColor('c-title','c-title-txt',false,false);
   linkColor('c-subtitle','c-subtitle-txt',false,false);
   linkColor('c-sub','c-sub-txt',false,false);
-  linkColor('c-star','c-star-txt',false,false);
-  linkColor('c-paren','c-paren-txt',false,false);
+  linkColor('c-star','c-star-txt',false,false,updateEditorBub);
+  linkColor('c-paren','c-paren-txt',false,false,updateEditorBub);
   linkColor('c-quote','c-quote-txt',false,false, function(){ recolorQuoteSlot(1, $('c-quote').value); });
   linkColor('c-quote2','c-quote2-txt',false,false, function(){ recolorQuoteSlot(2, $('c-quote2').value); });
   linkColor('c-quote3','c-quote3-txt',false,false, function(){ recolorQuoteSlot(3, $('c-quote3').value); });
@@ -5275,6 +5275,12 @@
   // isParen=true면 'paren' 클래스를 붙여 (색깔)용으로 구분 — 별(*색깔*)과 색을 따로 지정하기 위함
   function grayMark(inner, isParen){ var mk=document.createElement('mark'); mk.className='gray'+(isParen?' paren':''); mk.textContent=inner; return mk; }
   function isGrayEl(el){ return el.tagName==='MARK' && el.classList.contains('gray'); }
+  // *색*과 (색)이 서로 겹칠 수 있도록 skip을 좁힘:
+  //  - (색)은 '이미 (색) 처리된 것'(gray.paren)만 건너뜀 → *색* gray 안의 괄호는 통과해 색이 먹음
+  //  - *색*은 '이미 *색* 처리된 것'(paren 아닌 gray)만 건너뜀 → (색) 안의 별도 통과
+  //  임시로 *색*을 씌워 색을 확인하고 나중에 *를 지우는 워크플로우 지원
+  function isParenGrayEl(el){ return el.tagName==='MARK' && el.classList.contains('gray') && el.classList.contains('paren'); }
+  function isStarGrayEl(el){ return el.tagName==='MARK' && el.classList.contains('gray') && !el.classList.contains('paren'); }
   function isItalicEl(el){ return el.tagName==='I' || el.tagName==='EM'; }
   function isBubEl(el){ return el.classList && (el.classList.contains('g-bub') || el.classList.contains('g-bub-name')); }
 
@@ -5319,7 +5325,7 @@
   $('t-clear').addEventListener('click', openClearSheet);
   // * 회색: *내용* 을 감지 → 별(*)까지 포함해 통째로 서브색(회색)으로 (별 유지)
   $('t-star-gray').addEventListener('click', function(){
-    replaceInText(/\*([^\n*]+?)\*/g, function(m){ return grayMark(m[0]); }, isGrayEl, null, null, '별표로 감싼 부분이 없어요. 예: *내용*');
+    replaceInText(/\*([^\n*]+?)\*/g, function(m){ return grayMark(m[0]); }, isStarGrayEl, null, null, '별표로 감싼 부분이 없어요. 예: *내용*');
   });
   // " 말풍선: 큰따옴표 안쪽을 인물 말풍선으로 (시트로 옵션 선택)
   // (서브): 괄호 포함 내용을 서브 '크기'로. 색은 (색깔)이 맡음(겹치면 색은 괄호색 우선 — CSS로 처리)
@@ -5348,7 +5354,7 @@
   });
   // ( ) 회색: 괄호(포함) 전체를 서브색(회색)으로
   $('t-paren-gray').addEventListener('click', function(){
-    replaceInText(/\([^()\n]*\)/g, function(m){ return grayMark(m[0], true); }, isGrayEl, null, null, '괄호로 감싼 부분이 없어요. 예: (내용)');
+    replaceInText(/\([^()\n]*\)/g, function(m){ return grayMark(m[0], true); }, isParenGrayEl, null, null, '괄호로 감싼 부분이 없어요. 예: (내용)');
   });
 
   /* ===== 큰따옴표 → 인물 말풍선 ===== */
