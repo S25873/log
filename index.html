@@ -5333,7 +5333,7 @@
     editor.normalize();   // 쪼개진 텍스트 조각을 먼저 합쳐 '가끔 안 먹힘' 예방
     _wrapCount=0;
     wrapPlainLines(editor);
-    if(_wrapCount===0){ alert('따옴표를 넣을 문단이 없어요.\n(빈 줄이거나 이미 따옴표·괄호·별표로 시작하는 줄은 건너뛰어요.)'); return; }
+    if(_wrapCount===0){ alert('따옴표를 넣을 문단이 없어요.'); return; }
     editor.normalize();   // 새로 넣은 " 를 옆 글자와 한 덩어리로 합침 — 안 그러면 "말"·"인"이 못 잡음
     cleanEditor(); render(); saveSel();
   });
@@ -5398,7 +5398,7 @@
         out.appendChild(gb);
       }
       return out;
-    }, isBubEl, true, mergeQuoteParens, '큰따옴표로 감싼 문장이 없어요.');
+    }, isBubEl, true, mergeQuoteParens, '큰따옴표로 감싼 부분이 없어요. 예: "내용"');
   }
   // ===== 따옴표 → 강조색 (미니 도구 '"색"') =====
   //   큰따옴표로 감싼 부분(따옴표 포함)을 강조색 mark.em으로. data-slot·인라인 --em을 넣으므로
@@ -5413,7 +5413,7 @@
       mk.style.setProperty('--em', emColorOf(slot));
       mk.textContent=m[0];   // 따옴표 기호 유지
       return mk;
-    }, isEmEl, null, null, '큰따옴표로 감싼 문장이 없어요.');
+    }, isEmEl, null, null, '큰따옴표로 감싼 부분이 없어요. 예: "내용"');
   }
   function openQuoteEmSheet(){
     openSheetDef({ title:'따옴표 → 강조색', noFocus:true, options:[1,2,3,4,5,6].map(function(n){
@@ -5489,7 +5489,7 @@
       q.setAttribute('data-ql','1');
       q.appendChild(document.createTextNode(m[0]));   // 따옴표 기호 유지
       return q;
-    }, isQuoteEl, true, mergeQuoteLineParens, '큰따옴표로 감싼 문장이 없어요.');
+    }, isQuoteEl, true, mergeQuoteLineParens, '큰따옴표로 감싼 부분이 없어요. 예: "내용"');
   }
   // 1단계 왼쪽/오른쪽 → 2단계 색 슬롯
   function openQuoteLineSheet(){
