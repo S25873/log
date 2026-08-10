@@ -5311,9 +5311,9 @@
     });
   }
   $('t-clear').addEventListener('click', openClearSheet);
-  // * 회색: **내용** 을 감지 → 내용을 서브색(회색)으로, ** 기호는 제거
+  // * 회색: *내용* 을 감지 → 별(*)까지 포함해 통째로 서브색(회색)으로 (별 유지)
   $('t-star-gray').addEventListener('click', function(){
-    replaceInText(/\*([^\n*]+?)\*/g, function(m){ return grayMark(m[1]); }, isGrayEl);
+    replaceInText(/\*([^\n*]+?)\*/g, function(m){ return grayMark(m[0]); }, isGrayEl);
   });
   // " 말풍선: 큰따옴표 안쪽을 인물 말풍선으로 (시트로 옵션 선택)
   // (서브): 괄호 포함 내용을 서브 '크기'로. 색은 (색깔)이 맡음(겹치면 색은 괄호색 우선 — CSS로 처리)
