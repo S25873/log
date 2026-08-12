@@ -827,6 +827,11 @@
   #canvas .g-msg-group.no-av .g-bub.recv,.canvas-clone .g-msg-group.no-av .g-bub.recv,
   #canvas .g-msg-group.no-av .g-bub-name.char-name.left,.canvas-clone .g-msg-group.no-av .g-bub-name.char-name.left,
   #canvas .g-msg-group.no-av .g-bub-name.recv,.canvas-clone .g-msg-group.no-av .g-bub-name.recv{margin-left:0 !important;}
+  /* 프사 없는 그룹: 오른쪽 말풍선·이름의 들여쓰기(.4em)를 없애 본문 오른쪽 끝에 정렬 */
+  #canvas .g-msg-group.no-av .g-bub.char-bub.right,.canvas-clone .g-msg-group.no-av .g-bub.char-bub.right,
+  #canvas .g-msg-group.no-av .g-bub.send,.canvas-clone .g-msg-group.no-av .g-bub.send,
+  #canvas .g-msg-group.no-av .g-bub-name.char-name.right,.canvas-clone .g-msg-group.no-av .g-bub-name.char-name.right,
+  #canvas .g-msg-group.no-av .g-bub-name.send,.canvas-clone .g-msg-group.no-av .g-bub-name.send{margin-right:0 !important;}
   /* 아이메시지 상단바 / 입력창 (레퍼런스 디자인, 크기는 인라인) */
   #canvas .g-topbar,.canvas-clone .g-topbar{position:relative;z-index:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:calc(-1*var(--gpad,16px)) calc(-1*var(--gpad,16px)) 0;width:calc(100% + 2*var(--gpad,16px));background:#f5f5f7;border-bottom:1px solid rgba(0,0,0,0.08);}
   #canvas .g-tb-av,.canvas-clone .g-tb-av{border-radius:50%;background:#c7c7cc;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;overflow:hidden;flex:none;}
