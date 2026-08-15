@@ -5852,6 +5852,16 @@
     });
     if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
     if(typeof updateTitleSizeLabels==='function'){ updateTitleSizeLabels(); }
+    // 프리셋의 강조·형광펜·인용선 색을 본문에 이미 적용된 마크들에 다시 칠한다.
+    // (이 색들은 각 마크에 인라인으로 박혀 있어, 색칩만 되돌려선 화면 색이 안 바뀜)
+    (function reapplySlotColors(){
+      function chip(base, n){ return $(n===1 ? 'c-'+base : 'c-'+base+n); }
+      for(var n=1; n<=6; n++){
+        var em=chip('em',n);   if(em && typeof recolorSlotMarks==='function') recolorSlotMarks('em', n, em.value);
+        var hl=chip('hl',n);   if(hl && typeof recolorSlotMarks==='function') recolorSlotMarks('hl', n, hl.value);
+        var q =chip('quote',n);if(q  && typeof recolorQuoteSlot==='function') recolorQuoteSlot(n, q.value);
+      }
+    })();
     render();
   }
   function loadMyPresets(){ try{ var raw=localStorage.getItem(PRESET_KEY); return raw?JSON.parse(raw):[]; }catch(e){ return []; } }
