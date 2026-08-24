@@ -20,8 +20,6 @@
   @font-face{font-family:'Presentation';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2') format('woff2');}
   @font-face{font-family:'Presentation';font-weight:600;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-6SemiBold.woff2') format('woff2');}
   @font-face{font-family:'Presentation';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-7Bold.woff2') format('woff2');}
-  @font-face{font-family:'ElegantSerif';font-weight:500;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2604-1@1.0/GraceSerif-Regular.woff2') format('woff2');}
-  @font-face{font-family:'ElegantSerif';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2604-1@1.0/GraceSerif-Bold.woff2') format('woff2');}
   @font-face{font-family:'OgRenaissanceSecret';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2312-1@1.1/OG_Renaissance_Secret-Rg.woff2') format('woff2');}
   @font-face{font-family:'BookkMyungjo';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Lt.woff2') format('woff2');}
   @font-face{font-family:'BookkMyungjo';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Bd.woff2') format('woff2');}
@@ -33,7 +31,6 @@
   @font-face{font-family:'OngleipYoonwoo';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105@1.1/Yoonwoo.woff') format('woff');}
   @font-face{font-family:'OngleipKonkon';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2412-1@1.0/Ownglyph_corncorn-Rg.woff2') format('woff2');}
   @font-face{font-family:'ChosunIlboMyungjo';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');}
-  @font-face{font-family:'EarlySummerFloweringTreeV20JangHyeri';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2604-1@1.0/Asummerflowertree-Bold.woff2') format('woff2');}
 
   /* ============================================================
      디자인 토큰 — 순수 모노톤
@@ -274,14 +271,14 @@
   .rangewrap .val{
     flex:1;min-width:0;height:38px;line-height:36px;text-align:center;
     border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);
-    color:var(--ink);font-weight:500;font-size:13px;font-variant-numeric:tabular-nums;
+    color:var(--ink);font-weight:400;font-size:13px;font-variant-numeric:tabular-nums;
     cursor:text;overflow:hidden;white-space:nowrap;
   }
   .rangewrap .val:hover{border-color:var(--line-strong);}
   .rangewrap input.val-input[type=text]{
     flex:1;min-width:0;width:auto;margin:0 !important;align-self:stretch;
     height:38px !important;padding:0 !important;box-sizing:border-box !important;
-    text-align:center;font-size:13px !important;font-weight:500;
+    text-align:center;font-size:13px !important;font-weight:400;
     border:1px solid var(--line-strong) !important;border-radius:var(--radius-sm) !important;
     background:var(--surface) !important;
   }
@@ -542,6 +539,14 @@
   .sheet__grip{width:38px;height:4px;border-radius:99px;background:var(--line-strong);margin:6px auto 12px;}
   .sheet__title{font-size:12px;font-weight:700;color:var(--ink-3);letter-spacing:.02em;padding:0 4px 10px;}
   .sheet__list{display:flex;flex-direction:column;gap:6px;}
+  /* 색 슬롯이 6개라 세로로 길다 → 좁은 화면에선 2열 3줄로 접어 키보드가 올라와도 다 보이게.
+     넓은 화면은 가운데 모달이라 자리가 넉넉하므로 한 줄씩 그대로 둔다 */
+  @media (max-width:900px){
+    .sheet__list.is-grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+    .sheet__list.is-grid2 > button{padding:12px 10px;gap:8px;}
+    .sheet__list.is-grid2 > button .s-preview{width:24px;}
+    .sheet__list.is-grid2 > .is-full{grid-column:1 / -1;}
+  }
   .sheet__list button{
     display:flex;align-items:center;gap:12px;width:100%;text-align:left;
     border:1px solid var(--line);background:var(--surface-2);cursor:pointer;
@@ -628,9 +633,10 @@
   .cgrid--3{grid-template-columns:repeat(3,minmax(0,1fr));}
   .cgrid--2{grid-template-columns:repeat(2,minmax(0,1fr));}
   .cchip{position:relative;min-width:0;}
+  /* 색칩 라벨도 다른 라벨(.label)과 같은 색·굵기·자간으로 — 한 화면에 섞여 있어서 달라 보이면 안 됨 */
   .cchip>label{
-    display:block;font-size:11px;color:var(--ink-2);font-weight:500;margin:0 0 4px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;
+    display:block;font-size:11px;color:var(--ink-3);font-weight:600;margin:0 0 4px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;
   }
   .cchip__box{
     position:relative;display:flex;align-items:center;gap:7px;min-width:0;
@@ -1127,7 +1133,7 @@
 
         <!-- 크기 불러오기 안내 — 고를 대상(입력창) 바로 위에 붙는다 -->
         <div class="pickbar" id="pick-bar" hidden>
-          <span id="pick-msg">크기를 가져올 글자를 눌러 주세요</span>
+          <span id="pick-msg">크기를 가져올 글자를 톡 눌러 주세요 (스크롤 가능)</span>
           <button type="button" id="pick-cancel">취소</button>
         </div>
 
@@ -1143,7 +1149,7 @@
             <button class="fbtn" type="button" data-fmt="strike" title="취소선" aria-label="취소선"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 5H9.5a3 3 0 0 0-2.6 4.4M14 12.5a3.8 3.8 0 0 1-.6 7.5H6.8M4 12h16"/></svg></button>
             <button class="fbtn" type="button" data-sheet="hl" title="형광펜(하이라이터)" aria-label="형광펜"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 12.4 15.3 5a2.5 2.5 0 0 1 3.5 0l1.3 1.3a2.5 2.5 0 0 1 0 3.5l-7.4 7.4z"/><path d="M7.9 12.4 5 15.3l3.6 3.6 2.9-2.9"/><path d="M5 15.3 3 19.4v.6h3.9l1.7-1.1"/><path class="fb-hl-bar" d="M3.4 22h17.2" stroke="#f9ee9a" stroke-width="2.6"/></svg></button>
             <button class="fbtn" type="button" data-sheet="em" title="글자색(강조)" aria-label="글자색(강조)"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.0 19.8 8.3 4.8l6.3 15"/><path d="M4.4 15.6h7.8"/><circle class="fb-em-dot" cx="20.4" cy="17.8" r="3.0" fill="#c25b57" stroke="none"/></svg></button>
-            <button class="fbtn" type="button" data-fmt="sub" data-sheet="sub" title="글자 크기" aria-label="글자 크기"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.8 6.0v12.4M1.9 7.9 3.8 6.0 5.7 7.9M1.9 16.5 3.8 18.4 5.7 16.5"/><path d="M8.9 19.2 15.0 4.8l6.1 14.4"/><path d="M11.2 15.2h7.6"/></svg></button>
+            <button class="fbtn" type="button" data-fmt="sub" data-sheet="sub" title="글자 크기" aria-label="글자 크기"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.0 19.8 8.3 4.8l6.3 15"/><path d="M4.4 15.6h7.8"/><path d="M20.4 6.0v12.4M18.5 7.9 20.4 6.0 22.3 7.9M18.5 16.5 20.4 18.4 22.3 16.5"/></svg></button>
             <button class="fbtn" type="button" data-sheet="insert" title="삽입 (사진 · 인용선 · 구분선)">
               <svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.2v13.6M5.2 12h13.6"/></svg>
             </button>
@@ -1185,7 +1191,7 @@
                 <span class="label">(작게) 글자 크기 <span class="val">26px</span></span>
                 <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="36" step="1" value="26"></div>
               </div>
-              <p class="hint" style="margin-top:10px">· 입력 위 미니 도구 <b>*색*</b> · <b>(색)</b> · <b>(작게)</b>에 쓰이는 값이에요.<br>· 말풍선 안의 <b>(색)</b>은 말풍선-인물에서 인물별로 지정한 색을 써요.<br>· <b>(작게)</b>로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이미 적용한 것까지 함께 변해요.</p>
+              <p class="hint" style="margin-top:10px">미니 도구 *색* · (색) · (작게)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색을 써요.<br>(작게)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이미 적용한 것까지 함께 변해요.</p>
             </div>
           </details>
 
@@ -1196,25 +1202,6 @@
             </summary>
             <div class="fold__body">
               <div class="grid-2">
-                <div class="field">
-                  <span class="label">정렬</span>
-                  <div class="seg" id="align-seg">
-                    <button type="button" data-align="justify" aria-pressed="true" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
-                    <button type="button" data-align="left" aria-pressed="false" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
-                    <button type="button" data-align="center" aria-pressed="false" aria-label="가운데 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="4.75" y1="6.83" x2="11.25" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="4.75" y1="12" x2="11.25" y2="12"/></svg></span></button>
-                    <button type="button" data-align="right" aria-pressed="false" aria-label="오른쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="7" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="7" y1="12" x2="13.5" y2="12"/></svg></span></button>
-                    <span class="seg__thumb"></span>
-                  </div>
-                </div>
-                <div class="field">
-                  <label class="label" for="break-mode">줄바꿈 기준</label>
-                  <select id="break-mode">
-                    <option value="word">단어 단위</option>
-                    <option value="char" selected>글자 단위</option>
-                  </select>
-                </div>
-              </div>
-              <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <label class="label" for="font">본문 글꼴</label>
                   <select id="font">
@@ -1234,10 +1221,27 @@
                   <option class="optcat" disabled>【 장식 】</option>
                   <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
                   <option value="'PfStardust',sans-serif">PF스타더스트</option>
-                  <option value="'ElegantSerif',serif">우아한 세리프</option>
                   <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
-                  <option value="'EarlySummerFloweringTreeV20JangHyeri',sans-serif">오뉴월의 꽃나무체</option>
                   </select>
+                </div>
+                <div class="field">
+                  <label class="label" for="break-mode">줄바꿈 기준</label>
+                  <select id="break-mode">
+                    <option value="word">단어 단위</option>
+                    <option value="char" selected>글자 단위</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">정렬</span>
+                  <div class="seg" id="align-seg">
+                    <button type="button" data-align="justify" aria-pressed="true" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                    <button type="button" data-align="left" aria-pressed="false" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
+                    <button type="button" data-align="center" aria-pressed="false" aria-label="가운데 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="4.75" y1="6.83" x2="11.25" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="4.75" y1="12" x2="11.25" y2="12"/></svg></span></button>
+                    <button type="button" data-align="right" aria-pressed="false" aria-label="오른쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="7" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="7" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                    <span class="seg__thumb"></span>
+                  </div>
                 </div>
                 <div class="field">
                   <span class="label">본문 글자 크기 <span class="val">32px</span></span>
@@ -1272,8 +1276,16 @@
                   <div class="rangewrap"><input id="para-gap" type="range" min="0" max="48" step="1" value="20"></div>
                 </div>
               </div>
+              <label class="switch" style="margin-top:16px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">크기 도우미</span>
+                  <span class="switch__sub">본문 글자 크기에 맞춰 값을 자동으로 정해요</span>
+                </span>
+                <input id="size-helper" type="checkbox" style="margin-left:auto">
+              </label>
+              <p class="hint" style="margin-top:8px">크기 변경: 제목 · 소제목 · 하단 · (작게)<br>간격 변경: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요. 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 정상 저장돼요.</p>
 
-              <p class="section__head" style="margin-top:24px">(＋로 넣는) 사진</p>
+              <p class="section__head" style="margin-top:18px">(＋로 넣는) 사진</p>
               <div class="grid-2" style="margin-top:2px">
                 <div class="field">
                   <span class="label">사진 크기 <span class="val" id="logimg-size-val">100%</span></span>
@@ -1323,9 +1335,7 @@
                   <option class="optcat" disabled>【 장식 】</option>
                   <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
                   <option value="'PfStardust',sans-serif">PF스타더스트</option>
-                  <option value="'ElegantSerif',serif">우아한 세리프</option>
                   <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
-                  <option value="'EarlySummerFloweringTreeV20JangHyeri',sans-serif">오뉴월의 꽃나무체</option>
                 </select>
               </div>
               <div class="grid-2" style="margin-top:16px">
@@ -1394,9 +1404,7 @@
                     <option class="optcat" disabled>【 장식 】</option>
                     <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
                     <option value="'PfStardust',sans-serif">PF스타더스트</option>
-                    <option value="'ElegantSerif',serif">우아한 세리프</option>
                     <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
-                    <option value="'EarlySummerFloweringTreeV20JangHyeri',sans-serif">오뉴월의 꽃나무체</option>
                   </select>
                 </div>
               </div>
@@ -1432,7 +1440,7 @@
                      --sub-color 폴백과 인물 (색) 기본값으로 값이 아직 쓰여서 input 은 숨겨서 유지 -->
                 <div class="cchip" style="display:none"><label>작은 글자</label><div class="cchip__box"><input id="c-sub" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-sub-txt" type="text" value="#8a8a8a"></div></div>
               </div>
-              <p class="hint" style="margin-top:10px">· <b>*색*</b> · <b>(색)</b>의 색깔은 내용-자동화 도구에 있어요.</p>
+              <p class="hint" style="margin-top:10px">*색* · (색)의 색깔은 내용-자동화 도구에 있어요.</p>
             </div>
           </details>
 
@@ -1746,7 +1754,7 @@
                 <span class="label">상하단바 ↔ 본문 <span class="val" id="bar-body-gap-val">32px</span></span>
                 <div class="rangewrap"><input id="bar-body-gap" type="range" min="0" max="72" step="1" value="32"></div>
               </div>
-              <p class="hint" style="margin:14px 0 0">상하단바의 요소들은 레이아웃의 여백에 영향을 받아요.<br>메시지만 구성할 경우 40~60으로 여백을 조정한 후 저장 추천드려요.</p>
+              <p class="hint" style="margin:14px 0 0">상하단바의 요소들은 레이아웃-여백의 값에 영향을 받아요.<br>메시지만 구성할 경우 40~60으로 여백을 조정한 후 저장 추천드려요.</p>
             </div>
           </details>
 
@@ -1981,14 +1989,17 @@
     <div class="sheet__grip"></div>
     <div class="sheet__title">로그 이미지 발췌기 업데이트 중!</div>
     <div class="help-body">
+      <p class="help-cat">크기 도우미</p>
+      <p class="hint">· 내용 탭에 <b>크기 도우미</b>가 생겼어요. 켜 두면 본문 글자 크기 하나만 정해도 제목 · 소제목 · 하단 · (작게) 크기와 문단 · 제목 · 하단 간격이 알아서 맞춰져요.<br>· 켠 상태에서 다른 값을 직접 고쳐도 되지만, 본문 글자 크기를 다시 바꾸면 전부 새로 계산돼요.<br>· 끄면 켜기 전 값으로 돌아가요. 직접 고친 값도 함께 사라지니 남기고 싶다면 프리셋에 저장해 주세요.</p>
+
       <p class="help-cat">글자 크기</p>
-      <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 <b>글자 크기</b> 도구가 됐어요. 이제 작게도, 크게도 자유롭게 정할 수 있어요.<br>· 누르면 크기를 바로 정할 수 있고, 드래그한 부분에만 적용돼요.<br>· 정한 크기는 다음에도 남아 있고, 적용한 글자는 그때의 크기를 그대로 유지해요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 그대로 가져올 수 있어요.<br>· 크기를 지정한 글자에 <b>커서만 두고</b> 다시 누르면 <b>이 크기로 변경</b>과 <b>원래 크기로 되돌리기</b>가 떠요. 드래그하지 않아도 그 부분 전체에 적용돼요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39;는 이 도구로 옮겨졌어요.</p>
+      <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 <b>글자 크기</b> 도구가 됐어요. 이제 작게도, 크게도 자유롭게 정할 수 있어요.<br>· 누르면 크기를 바로 정할 수 있고, 드래그한 부분에만 적용돼요.<br>· 정한 크기는 다음에도 남아 있고, 적용한 글자는 그때의 크기를 그대로 유지해요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 그대로 가져올 수 있어요.<br>· 크기를 지정한 글자에 <b>커서만 두고</b> 다시 누르면 <b>이 크기로 변경</b>과 <b>원래 크기로 되돌리기</b>가 떠요. 드래그하지 않아도 그 부분 전체에 적용돼요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39; 슬라이더는 삭제 후 이 도구에 합쳐졌어요.</p>
 
       <p class="help-cat">자동화 도구</p>
       <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(작게)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(작게)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(작게)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.</p>
 
       <p class="help-cat">화면</p>
-      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요. 글자색과 형광펜은 지금 고른 색이 아이콘에 그대로 보여요.<br>· 길게 늘어져 있던 슬라이더를 <b>− 값 +</b> 로 바꿨어요. 숫자를 누르면 직접 입력할 수 있고, 길게 누르면 계속 오르내려요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요.</p>
+      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요. 글자색과 형광펜은 지금 고른 색이 아이콘에 그대로 보여요.<br>· 길게 늘어져 있던 슬라이더를 <b>− 값 +</b> 로 바꿨어요. 숫자를 누르면 직접 입력할 수 있고, 길게 누르면 계속 오르내려요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요. 길게 써도 안쪽 스크롤 없이 다 보여요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서 두 칸씩 나와요. 키보드가 올라와도 여섯 칸이 다 보여요.<br>· 셀렉트 · 세그 · 숫자칸의 높이와 글자 크기를 하나로 맞췄어요.</p>
     </div>
     <button class="sheet__cancel" id="notice-close" type="button">확인</button>
   </div>
@@ -3825,7 +3836,7 @@
   function swatchHtml(color){
     return '<span class="s-preview"><i style="display:block;width:20px;height:20px;border-radius:50%;background:'+color+';box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)"></i></span>';
   }
-  var subIconHtml = '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 6.0v12.4M1.9 7.9 3.8 6.0 5.7 7.9M1.9 16.5 3.8 18.4 5.7 16.5"/><path d="M8.9 19.2 15.0 4.8l6.1 14.4"/><path d="M11.2 15.2h7.6"/></svg></span>';
+  var subIconHtml = '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.0 19.8 8.3 4.8l6.3 15"/><path d="M4.4 15.6h7.8"/><path d="M20.4 6.0v12.4M18.5 7.9 20.4 6.0 22.3 7.9M18.5 16.5 20.4 18.4 22.3 16.5"/></svg></span>';
   /* 작은 글자 시트의 크기 조절 행 — 값은 내용 탭 슬라이더(#subtext-size)와 같은 것을 쓰므로 다음에도 그대로 남는다 */
   function buildSubSizeRow(){
     var row=document.createElement('div'); row.className='sheet__num';
@@ -3853,19 +3864,19 @@
       { label: '인용선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="2.4" height="16" rx="1.2" fill="currentColor"/><line x1="10" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', noFocus:true, run: function(){ openSheet('quote'); } },
       { label: '구분선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', noFocus:true, run: function(){ openSheet('hr'); } }
     ]},
-    hl: { title: '형광펜', options: function(){
+    hl: { title: '형광펜', grid2:true, options: function(){
       var opts=[1,2,3,4,5,6].map(function(n){
         return { label: '형광펜 '+n, preview: function(){ return swatchHtml(hlColorOf(n)); }, run: function(){ applyFormat('hl', null, null, false, n); } };
       });
       // '지우기'는 이미 칠해진 곳(커서 또는 드래그 범위)일 때만 노출
-      if(hasMarkAtSel('hl')) opts.push({ label: '형광펜 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('hl', null, null, false, '__remove__'); } });
+      if(hasMarkAtSel('hl')) opts.push({ label: '형광펜 지우기', full:true, preview: removeSwatchHtml, run: function(){ applyFormat('hl', null, null, false, '__remove__'); } });
       return opts;
     } },
-    em: { title: '강조색', options: function(){
+    em: { title: '강조색', grid2:true, options: function(){
       var opts=[1,2,3,4,5,6].map(function(n){
         return { label: '강조 '+n, preview: function(){ return swatchHtml(emColorOf(n)); }, run: function(){ applyFormat('emph', null, null, false, n); } };
       });
-      if(hasMarkAtSel('em')) opts.push({ label: '강조 지우기', preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } });
+      if(hasMarkAtSel('em')) opts.push({ label: '강조 지우기', full:true, preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } });
       return opts;
     } },
     sub: { title: '글자 크기', options: function(){
@@ -3931,11 +3942,13 @@
     var sel = window.getSelection();
     _sheetSavedRange = (sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)) ? sel.getRangeAt(0).cloneRange() : (_savedRange ? _savedRange.cloneRange() : null);
     sheetTitle.textContent = def.title;
+    sheetList.classList.toggle('is-grid2', !!def.grid2);   // 색 슬롯 시트는 좁은 화면에서 2열
     sheetList.innerHTML = '';
     var _opts = (typeof def.options==='function') ? def.options() : def.options;   // 함수면 열 때마다 생성(색 최신 반영)
     _opts.forEach(function(opt){
       if(opt.custom){ var node=opt.custom(); if(node) sheetList.appendChild(node); return; }   // 버튼이 아닌 직접 만든 행(숫자 조절 등)
       var b = document.createElement('button'); b.type='button';
+      if(opt.full) b.className='is-full';                  // 지우기 등은 2열에서도 한 줄 전체
       var pv = (typeof opt.preview==='function') ? opt.preview() : (opt.preview||'');
       b.innerHTML = pv + '<span>'+opt.label+'</span>';
       b.addEventListener('click', function(ev){
@@ -3957,7 +3970,7 @@
   // 인용선 색(슬롯) 선택 시트 — 왼쪽/오른쪽을 고른 다음에 뜬다
   // 이미 있는 인용선의 색(슬롯)만 교체
   function openQuoteEditColorSheet(q){
-    openSheetDef({ title:'인용선 색', noFocus:true, options:[1,2,3,4,5,6].map(function(n){
+    openSheetDef({ title:'인용선 색', noFocus:true, grid2:true, options:[1,2,3,4,5,6].map(function(n){
       return { label:'인용선 '+n, preview:function(){ return swatchHtml(quoteSlotColor(n)); },
         run:function(){ paintQuote(q, n); cleanEditor(); render(); saveSel(); } };
     })});
@@ -3967,7 +3980,7 @@
       return { label:'인용선 '+n, preview: swatchHtml(quoteSlotColor(n) || '#c8c8c8'),
                run:function(){ applyFormat('quote', null, side, false, n); } };
     });
-    openSheetDef({ title:'인용선 색', options: opts });
+    openSheetDef({ title:'인용선 색', grid2:true, options: opts });
   }
   function closeSheet(){
     if(!sheetOverlay) return;
@@ -3978,8 +3991,10 @@
   /* ===== 글자 크기 불러오기(스포이드) =====
      시트에서 '불러오기'를 누른 뒤 편집창이나 미리보기의 글자를 누르면 그 글자의 크기를 값으로 가져온다.
      작은 글자든 일반 본문이든 예외 없이 '그 자리의 글자 크기'만 본다.
-     · 누를 때 preventDefault 하므로 커서·선택은 그대로 유지된다(모바일 키보드도 안 뜸) */
-  var _picking = false, _pickPrevRange = null;
+     · 누르자마자 고르면 스크롤을 못 하므로, '손가락을 뗄 때'까지 보고 움직임이 없을 때만 고른다
+       (8px 넘게 움직이면 스크롤로 보고 그냥 넘긴다 → 픽 모드에서도 입력창·미리보기 스크롤 가능)
+     · 고른 뒤엔 뒤따라오는 click 을 한 번 삼켜 커서 이동·모바일 키보드가 뜨지 않게 한다 */
+  var _picking = false, _pickPrevRange = null, _pkDown = null;
   function numVal(id, dflt){ var e=$(id); var v=e?parseFloat(e.value):NaN; return isNaN(v)?dflt:v; }
   function sizeAtNode(node){
     var n = (node && node.nodeType===3) ? node.parentNode : node;
@@ -4001,29 +4016,66 @@
     }
     return numVal('font-size', 32);   // 그 밖에는 전부 본문 글자 크기
   }
+  function pickTargetOk(t){ return !!(t && (editor.contains(t) || canvas.contains(t))); }
   function onPickDown(e){
-    var t = e.target;
-    if(!t || !(editor.contains(t) || canvas.contains(t))) return;   // 안내 바·바깥은 무시(취소는 버튼으로)
+    if(!pickTargetOk(e.target)){ _pkDown=null; return; }
+    _pkDown = { x:e.clientX, y:e.clientY, t:Date.now(), moved:false };
+    // 여기서는 preventDefault 하지 않는다 → 스크롤이 그대로 살아 있음
+  }
+  function onPickMove(e){
+    if(!_pkDown) return;
+    if(Math.abs(e.clientX-_pkDown.x) > 8 || Math.abs(e.clientY-_pkDown.y) > 8) _pkDown.moved = true;
+  }
+  function onPickUp(e){
+    var st=_pkDown; _pkDown=null;
+    if(!st || st.moved) return;                       // 끌었으면 스크롤 → 아무것도 안 함
+    if(Date.now()-st.t > 700) return;                 // 꾹 누른 것도 탭으로 안 침(길게 눌러 선택 등)
+    if(!pickTargetOk(e.target)) return;
     e.preventDefault(); e.stopPropagation();
-    endSizePick(sizeAtNode(t));
+    swallowNextClick();
+    endSizePick(sizeAtNode(e.target));
+  }
+  // 탭 뒤에 따라오는 click 한 번만 삼킨다(커서 이동·키보드 방지). 안 오면 잠시 뒤 스스로 풀림
+  function swallowNextClick(){
+    function eat(ev){ ev.preventDefault(); ev.stopPropagation(); off(); }
+    function off(){ document.removeEventListener('click', eat, true); clearTimeout(tm); }
+    var tm=setTimeout(off, 500);
+    document.addEventListener('click', eat, true);
+  }
+  function pickListeners(on){
+    var f = on ? 'addEventListener' : 'removeEventListener';
+    if(window.PointerEvent){
+      document[f]('pointerdown', onPickDown, true);
+      document[f]('pointermove', onPickMove, true);
+      document[f]('pointerup', onPickUp, true);
+      document[f]('pointercancel', onPickMove, true);
+    } else {
+      document[f]('touchstart', onPickDown, true);
+      document[f]('touchmove', onPickMove, true);
+      document[f]('touchend', onPickUp, true);
+      document[f]('mousedown', onPickDown, true);
+      document[f]('mouseup', onPickUp, true);
+    }
   }
   function startSizePick(){
     if(_picking) return;
-    _picking = true;
+    _picking = true; _pkDown = null;
     _pickPrevRange = _sheetSavedRange ? _sheetSavedRange.cloneRange() : (_savedRange ? _savedRange.cloneRange() : null);
     editor.classList.add('is-picking'); if(canvas) canvas.classList.add('is-picking');
     var bar=$('pick-bar'); if(bar) bar.hidden=false;
-    document.addEventListener('pointerdown', onPickDown, true);
-    if(!window.PointerEvent){ document.addEventListener('touchstart', onPickDown, {capture:true, passive:false}); document.addEventListener('mousedown', onPickDown, true); }
+    pickListeners(true);
   }
   function endSizePick(px){
     if(!_picking) return;
-    _picking = false;
+    _picking = false; _pkDown = null;
     editor.classList.remove('is-picking'); if(canvas) canvas.classList.remove('is-picking');
     var bar=$('pick-bar'); if(bar) bar.hidden=true;
-    document.removeEventListener('pointerdown', onPickDown, true);
-    if(!window.PointerEvent){ document.removeEventListener('touchstart', onPickDown, true); document.removeEventListener('mousedown', onPickDown, true); }
-    if(_pickPrevRange && editor.contains(_pickPrevRange.startContainer)){ _savedRange = _pickPrevRange; }   // 고르기 전 선택 복구용
+    pickListeners(false);
+    // 고르기 전 선택으로 되돌린다(탭 때문에 커서가 움직였을 수 있음)
+    if(_pickPrevRange && editor.contains(_pickPrevRange.startContainer)){
+      _savedRange = _pickPrevRange;
+      try{ var sl=window.getSelection(); sl.removeAllRanges(); sl.addRange(_pickPrevRange.cloneRange()); }catch(err){}
+    }
     _pickPrevRange = null;
     if(px!=null && !isNaN(px)) setSubSizeNow(px);
     openSheet('sub');   // 값을 확인하고 바로 적용할 수 있게 시트를 다시 연다
@@ -4054,7 +4106,7 @@
      (기존 사용자는 저장된 값이 없으므로 이번에 한 번 보게 된다)
      ============================================================ */
   (function(){
-    var NOTICE_ID = '2026-08-24';                    // ★공지를 새로 띄우려면 이 값만 바꾼다
+    var NOTICE_ID = '2026-08-24b';                    // ★공지를 새로 띄우려면 이 값만 바꾼다
     var NOTICE_KEY = 'logmaker-notice-seen';
     var ov=$('notice-overlay'), btn=$('notice-close'), t=null;
     if(!ov) return;
@@ -5842,7 +5894,7 @@
     }, isEmEl, null, null, '큰따옴표로 감싼 부분이 없어요. 예: "내용"');
   }
   function openQuoteEmSheet(){
-    openSheetDef({ title:'따옴표 → 강조색', noFocus:true, options:[1,2,3,4,5,6].map(function(n){
+    openSheetDef({ title:'따옴표 → 강조색', noFocus:true, grid2:true, options:[1,2,3,4,5,6].map(function(n){
       return { label:'강조 '+n, preview:function(){ return swatchHtml(emColorOf(n)); }, run:function(){ quoteToEm(n); } };
     })});
   }
@@ -5925,7 +5977,7 @@
     ]});
   }
   function openQuoteLineColorSheet(side){
-    openSheetDef({ title:'인용선 색', noFocus:true, options:[1,2,3,4,5,6].map(function(n){
+    openSheetDef({ title:'인용선 색', noFocus:true, grid2:true, options:[1,2,3,4,5,6].map(function(n){
       return { label:'인용선 '+n, preview:function(){ return swatchHtml(quoteSlotColor(n)); }, run:function(){ quoteToQuoteLines(side, n); } };
     })});
   }
@@ -5953,6 +6005,67 @@
   }
 
   /* ============================================================
+     크기 도우미 — 본문 글자 크기 하나만 보고 나머지 크기를 맞춘다
+     · 켤 때 지금 값을 통째로 찍어 두고(_sizeSnap), 끄면 그대로 되돌린다
+       (켠 동안 직접 고친 값도 함께 되돌아감 = '이 도우미를 안 쓴 셈' 규칙)
+     · 켠 상태에서 본문 크기를 바꾸면 나머지를 다시 계산한다
+     ============================================================ */
+  /* 본문 글자 크기 대비 배율 — 기본 상태(본문 32)의 값을 그대로 비율로 환산한 것이라
+     기본값에서 켜면 아무것도 변하지 않고, 본문만 키우면 그 균형이 유지된다 */
+  var SIZE_RATIOS = {
+    'title-size':    1.60,            // 제목 52
+    'subtitle-size': 1.10,            // 소제목 36
+    'name-size':     0.70,            // 하단 22
+    'parensub-size': 0.80,            // 미니 (작게) 26 — 이미 적용한 글자까지 같이 변해 효과가 눈에 보인다
+    /* 글자가 커지면 간격도 같이 벌어져야 답답해 보이지 않는다 */
+    'para-gap':      0.63,            // 문단 간격 20
+    'title-gap':     0.28,            // 제목 ↔ 소제목 9
+    'titleblk-gap':  0.81,            // 제목 ↔ 본문 26
+    'name-gap':      1.09             // 하단 ↔ 본문 35
+    /* 서식 툴바 ↕A(subtext-size)는 뺐다: '앞으로 적용할 값'이라 켜도 화면이 안 바뀌어 오히려 헷갈림.
+       말풍선 쪽 간격(msg-gap·stack-gap·bub-body-gap·bar-body-gap)도 뺐다: 대화 UI의 리듬이라
+       본문 글자 크기와 직접 관계가 약하고, 말풍선 모양·프사 유무에 더 좌우된다 */
+  };
+  var _sizeSnap = null, _sizeBusy = false;
+  function sizeHelperOn(){ var c=$('size-helper'); return !!(c && c.checked); }
+  function setSlider(id, v){
+    var sl=$(id); if(!sl) return;
+    var nv=nearestSliderValue(sl, v);
+    if(String(nv)===String(sl.value)) return;
+    sl.value=nv;
+    sl.dispatchEvent(new Event('input', {bubbles:true}));
+    sl.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+  function applySizeHelper(){
+    if(_sizeBusy) return;
+    _sizeBusy=true;
+    var base=numVal('font-size',32);
+    Object.keys(SIZE_RATIOS).forEach(function(id){ setSlider(id, base*SIZE_RATIOS[id]); });
+    _sizeBusy=false;
+  }
+  function snapSizes(){
+    var o={}; Object.keys(SIZE_RATIOS).forEach(function(id){ var e=$(id); if(e) o[id]=e.value; });
+    return o;
+  }
+  function restoreSizes(snap){
+    if(!snap) return;
+    _sizeBusy=true;
+    Object.keys(snap).forEach(function(id){ setSlider(id, snap[id]); });
+    _sizeBusy=false;
+  }
+  if($('size-helper')){
+    $('size-helper').addEventListener('change', function(){
+      if(_restoring) return;
+      if(this.checked){ _sizeSnap = snapSizes(); applySizeHelper(); }
+      else { restoreSizes(_sizeSnap); _sizeSnap = null; }
+      scheduleSave();
+    });
+  }
+  if($('font-size')){
+    $('font-size').addEventListener('input', function(){ if(sizeHelperOn() && !_sizeBusy && !_restoring) applySizeHelper(); });
+  }
+
+  /* ============================================================
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
@@ -5969,7 +6082,8 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:editor.innerHTML, nameHtml:nameEd?nameEd.innerHTML:'',
         titleHtml:($('title-ed')?$('title-ed').innerHTML:''), subtitleHtml:($('subtitle-ed')?$('subtitle-ed').innerHTML:''),
-        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome };
+        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome,
+        sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
     }catch(e){}
@@ -5990,10 +6104,19 @@
     }
     e.value=val;
   }
+  /* 저장된 글꼴이 목록에서 사라졌을 때(폰트를 뺀 경우) 성한 값으로 되돌린다.
+     ★options[0]은 '【 고딕 】' 같은 비활성 분류 머리라 그걸 고르면 안 됨 → 첫 '고를 수 있는' 옵션으로 */
+  function firstSelectableFont(sel){
+    for(var i=0;i<sel.options.length;i++){ if(!sel.options[i].disabled) return sel.options[i].value; }
+    return '';
+  }
   function ensureFontValid(){
-    var sel=$('font'); if(!sel) return; var ok=false;
-    for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===sel.value){ ok=true; break; } }
-    if(!ok){ sel.value=sel.options[0].value; }
+    ['font','title-font','name-font'].forEach(function(id){
+      var sel=$(id); if(!sel) return;
+      var ok=false;
+      for(var i=0;i<sel.options.length;i++){ if(!sel.options[i].disabled && sel.options[i].value===sel.value){ ok=true; break; } }
+      if(!ok){ sel.value = firstSelectableFont(sel); }   // 제목·하단은 첫 항목이 '본문과 동일'
+    });
   }
   function restoreState(){
     var raw; try{ raw=localStorage.getItem(STORE_KEY); }catch(e){ return; } if(!raw) return;
@@ -6004,6 +6127,11 @@
       ensureFontValid();
       if(typeof data.editorHtml==='string'){ editor.innerHTML=data.editorHtml; syncTails(editor); clearHrSel(); [].forEach.call(editor.querySelectorAll('img'), reRenderOnDecode); }
       if(nameEd && typeof data.nameHtml==='string'){ nameEd.innerHTML=data.nameHtml; }
+      if($('size-helper')){
+        var sh=data.sizeHelper;
+        $('size-helper').checked = !!(sh && sh.on);
+        _sizeSnap = (sh && sh.snap) ? sh.snap : null;     // 값은 이미 저장돼 있으므로 다시 계산하지 않는다
+      }
       if($('title-ed') && typeof data.titleHtml==='string'){ $('title-ed').innerHTML=data.titleHtml; }
       if($('subtitle-ed') && typeof data.subtitleHtml==='string'){ $('subtitle-ed').innerHTML=data.subtitleHtml; }
       updateTitleSizeLabels();
@@ -6199,6 +6327,10 @@
   }
   function applySettings(s){
     if(!s) return;
+    // 프리셋은 '값 자체'를 정해 주는 것이므로 크기 도우미는 끈다.
+    // (켜진 채로 두면 나중에 본문 크기를 만지는 순간 프리셋 값이 덮어써지고,
+    //  끌 때는 프리셋 이전 값으로 돌아가 버려 어느 쪽도 예상과 다름)
+    if($('size-helper')){ $('size-helper').checked=false; _sizeSnap=null; }
     if(s.vals){ TEXT_IDS.forEach(function(id){ if(s.vals[id]!=null){ safeRestoreValue(id, s.vals[id]); } }); }
     ensureFontValid();
     bgValue = s.bgValue || $('c-bg').value;
