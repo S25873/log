@@ -5967,25 +5967,47 @@
   // mode: 'plain'(말풍선만) | 'named'(사진+이름: 말풍선마다 각각 이름+아바타)
   // " 말풍선 후처리: 따옴표 말풍선 '바로 아래'(빈 줄 없이)에 괄호 줄이 오면 같은 말풍선 안으로 흡수(괄호 유지, 줄바꿈 유지).
   //   빈 줄(br 2개)이 있으면 흡수 안 함. 연속 괄호 줄은 모두 흡수. 따옴표 없는 괄호는 대상 아님(data-qb 없음).
+  /* ===== '바로 아래 괄호 줄' 흡수 공통부 =====
+     예전엔 다음 줄이 '순수 텍스트 노드'일 때만 흡수했다. 그래서
+       · (내용)에 (작게)나 강조색 등 서식이 걸려 있으면 → 노드가 <mark> 이라 흡수 실패
+       · "문장" 자체가 강조색 안에 있으면 → 만들어진 블록이 <mark> 안에 들어가 형제 탐색이 끊김
+     둘 다 흔한 상황이라, 줄을 이루는 노드를 통째로 모아 판정하고 '서식을 살린 채' 옮기도록 바꿈. */
+  var ABSORB_PAREN=/^\s*\*?\s*[（(][\s\S]*[)）]\s*\*?\s*$/;   // (지문) · *(지문)* 형태
+  function _blankNode(n){ return n && n.nodeType===3 && n.nodeValue.replace(/[\u200b\s]/g,'')===''; }
+  function _isBr(n){ return n && n.nodeType===1 && n.tagName==='BR'; }
+  // 인라인 서식(<mark> 등) 안에 들어가 있어도 '다음 줄'을 찾을 수 있게 위로 올라가며 형제를 찾는다
+  function _afterNode(el){
+    var n=el;
+    while(n && n!==editor && !n.nextSibling){ n=n.parentNode; }
+    return (n && n!==editor) ? n.nextSibling : null;
+  }
+  /* block 바로 아래(빈 줄 없이) 괄호 줄이 있으면 그 줄 전체를 block 안으로 옮긴다.
+     옮겼으면 true. 서식 요소는 그대로 살려서 이동한다. */
+  function absorbParenLine(block){
+    var br=_afterNode(block);
+    while(_blankNode(br)){ br=br.nextSibling; }
+    if(!_isBr(br)) return false;                       // 바로 아래 줄바꿈 없음
+
+    var first=br.nextSibling;
+    while(_blankNode(first)){ first=first.nextSibling; }
+    if(_isBr(first) || !first) return false;           // 빈 줄(br 2개) → 흡수 안 함
+
+    // 다음 <br> 전까지가 '한 줄'
+    var line=[], n=first;
+    while(n && !_isBr(n)){ line.push(n); n=n.nextSibling; }
+    if(!line.length) return false;
+    var txt=line.map(function(x){ return x.textContent||''; }).join('').replace(/^\s+|\s+$/g,'');
+    if(!ABSORB_PAREN.test(txt)) return false;          // 괄호 줄 아님
+
+    block.appendChild(document.createElement('br'));   // 블록 안 줄바꿈
+    line.forEach(function(x){ block.appendChild(x); });// 서식째 이동
+    if(br.parentNode) br.parentNode.removeChild(br);
+    return true;
+  }
   function mergeQuoteParens(){
-    var PAREN=/^\s*\*?\s*[（(][\s\S]*[)）]\s*\*?\s*$/;   // (지문) 뿐 아니라 *(지문)* 형태도 흡수
     [].slice.call(editor.querySelectorAll('.g-bub[data-qb]')).forEach(function(bub){
       bub.removeAttribute('data-qb');
-      while(true){
-        var n=bub.nextSibling;
-        while(n && n.nodeType===3 && n.nodeValue.replace(/[\u200b\s]/g,'')===''){ n=n.nextSibling; }
-        if(!(n && n.nodeType===1 && n.tagName==='BR')) break;         // 바로 아래 줄바꿈 없음
-        var a=n.nextSibling;
-        while(a && a.nodeType===3 && a.nodeValue.replace(/[\u200b\s]/g,'')===''){ a=a.nextSibling; }
-        if(a && a.nodeType===1 && a.tagName==='BR') break;            // 빈 줄(br 2개) → 흡수 안 함
-        if(!(a && a.nodeType===3)) break;                            // 괄호 텍스트 아님
-        var txt=a.nodeValue.replace(/^\s+|\s+$/g,'');
-        if(!PAREN.test(txt)) break;                                  // 괄호 줄 아님
-        bub.appendChild(document.createElement('br'));               // 말풍선 안 줄바꿈
-        bub.appendChild(document.createTextNode(txt));               // 괄호 그대로
-        var rm=n; while(rm && rm!==a){ var nx=rm.nextSibling; rm.parentNode.removeChild(rm); rm=nx; }
-        if(a.parentNode) a.parentNode.removeChild(a);
-      }
+      while(absorbParenLine(bub)){}                    // 연속된 괄호 줄은 모두 흡수
     });
   }
   function quoteToBubbles(opts, cid){
@@ -6071,24 +6093,9 @@
   //   말풍선과 달리 '연속' 개념 없음 — 각 인용선은 독립 블록.
   function isQuoteEl(el){ return el.tagName==='DIV' && el.classList && el.classList.contains('g-quote'); }
   function mergeQuoteLineParens(){
-    var PAREN=/^\s*\*?\s*[（(][\s\S]*[)）]\s*\*?\s*$/;   // (지문) 뿐 아니라 *(지문)* 형태도 흡수
     [].slice.call(editor.querySelectorAll('.g-quote[data-ql]')).forEach(function(q){
       q.removeAttribute('data-ql');
-      while(true){
-        var n=q.nextSibling;
-        while(n && n.nodeType===3 && n.nodeValue.replace(/[\u200b\s]/g,'')===''){ n=n.nextSibling; }
-        if(!(n && n.nodeType===1 && n.tagName==='BR')) break;
-        var a=n.nextSibling;
-        while(a && a.nodeType===3 && a.nodeValue.replace(/[\u200b\s]/g,'')===''){ a=a.nextSibling; }
-        if(a && a.nodeType===1 && a.tagName==='BR') break;     // 빈 줄이면 다른 인용선으로 분리
-        if(!(a && a.nodeType===3)) break;
-        var txt=a.nodeValue.replace(/^\s+|\s+$/g,'');
-        if(!PAREN.test(txt)) break;
-        q.appendChild(document.createElement('br'));
-        q.appendChild(document.createTextNode(txt));
-        var rm=n; while(rm && rm!==a){ var nx=rm.nextSibling; rm.parentNode.removeChild(rm); rm=nx; }
-        if(a.parentNode) a.parentNode.removeChild(a);
-      }
+      while(absorbParenLine(q)){}
     });
   }
   function quoteToQuoteLines(side, slot){
