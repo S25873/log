@@ -1462,8 +1462,8 @@
                 <div class="rangewrap"><input id="name-size" type="range" min="6" max="50" step="1" value="26"></div>
               </div>
               <div class="field">
-                <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">35px</span></span>
-                <div class="rangewrap"><input id="name-gap" type="range" min="0" max="72" step="1" value="35"></div>
+                <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">26px</span></span>
+                <div class="rangewrap"><input id="name-gap" type="range" min="0" max="72" step="1" value="26"></div>
               </div>
             </div>
           </details>
@@ -6123,7 +6123,7 @@
     'para-gap':      0.63,            // 문단 간격 20
     'title-gap':     0.28,            // 제목 ↔ 소제목 9
     'titleblk-gap':  0.81,            // 제목 ↔ 본문 26
-    'name-gap':      1.09             // 하단 ↔ 본문 35
+    'name-gap':      0.81             // 하단 ↔ 본문 26 (제목 쪽과 같은 값 — 상태창·페이지 수를 넣으면 본문에 이어지는 정보라 멀면 동떨어져 보임)
     /* 서식 툴바 ↕A(subtext-size)는 뺐다: '앞으로 적용할 값'이라 켜도 화면이 안 바뀌어 오히려 헷갈림.
        말풍선 쪽 간격(msg-gap·stack-gap·bub-body-gap·bar-body-gap)도 뺐다: 대화 UI의 리듬이라
        본문 글자 크기와 직접 관계가 약하고, 말풍선 모양·프사 유무에 더 좌우된다 */
