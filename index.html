@@ -254,32 +254,44 @@
   /* 슬라이더 자리를 [− 값 +] 한 덩어리로 대체.
      실제 <input type=range> 는 숨긴 채 그대로 두고 버튼이 그 값을 바꾼다
      → 렌더·저장·내 프리셋·초기화 배선을 하나도 안 건드림 */
-  .rangewrap{display:flex;align-items:center;gap:4px;height:38px;}
+  /* 세 조각(− 값 +)을 테두리 하나로 감싼 한 덩어리로. 사이는 짧은 세로선으로만 나눈다 */
+  .rangewrap{
+    display:flex;align-items:stretch;gap:0;height:38px;
+    border:1px solid var(--line);border-radius:var(--radius-sm);
+    background:var(--surface-2);overflow:hidden;
+    transition:border-color .14s var(--ease);
+  }
+  .rangewrap:hover{border-color:var(--line-strong);}
   .rangewrap input[type=range]{display:none;}
   .stepbtn{
-    flex:none;width:34px;height:38px;padding:0;
+    position:relative;flex:none;width:34px;padding:0;
     display:flex;align-items:center;justify-content:center;
-    border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);
-    border-radius:var(--radius-sm);cursor:pointer;
-    font-size:15px;font-weight:700;line-height:1;
+    border:none;background:transparent;color:var(--ink-2);
+    cursor:pointer;font-size:15px;font-weight:700;line-height:1;
     user-select:none;-webkit-user-select:none;touch-action:manipulation;
-    transition:background .14s var(--ease),border-color .14s,transform .1s;
+    transition:background .14s var(--ease);
   }
-  .stepbtn:hover{background:var(--surface-3);border-color:var(--line-strong);}
-  .stepbtn:active{transform:scale(.94);}
-  .stepbtn[disabled]{opacity:.3;cursor:default;transform:none;}
+  /* 칸 사이 구분선 — 위아래를 띄워 짧게 */
+  .rangewrap .stepbtn:first-child::after,
+  .rangewrap .stepbtn:last-child::before{
+    content:"";position:absolute;top:7px;bottom:7px;width:1px;background:var(--line);
+  }
+  .rangewrap .stepbtn:first-child::after{right:0;}
+  .rangewrap .stepbtn:last-child::before{left:0;}
+  .stepbtn:hover{background:var(--surface-3);}
+  .stepbtn:active{background:var(--line);}                 /* 덩어리 안이라 크기를 줄이지 않고 배경만 */
+  .stepbtn[disabled]{cursor:default;background:transparent;color:var(--line-strong);}   /* 테두리는 두고 글자만 흐리게 */
   .rangewrap .val{
-    flex:1;min-width:0;height:38px;line-height:36px;text-align:center;
-    border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);
+    flex:1;min-width:0;line-height:36px;text-align:center;
+    border:none;background:transparent;
     color:var(--ink);font-weight:400;font-size:13px;font-variant-numeric:tabular-nums;
     cursor:text;overflow:hidden;white-space:nowrap;
   }
-  .rangewrap .val:hover{border-color:var(--line-strong);}
   .rangewrap input.val-input[type=text]{
     flex:1;min-width:0;width:auto;margin:0 !important;align-self:stretch;
-    height:38px !important;padding:0 !important;box-sizing:border-box !important;
+    height:100% !important;padding:0 !important;box-sizing:border-box !important;
     text-align:center;font-size:13px !important;font-weight:400;
-    border:1px solid var(--line-strong) !important;border-radius:var(--radius-sm) !important;
+    border:none !important;border-radius:0 !important;
     background:var(--surface) !important;
   }
   /* 값 부분을 눌러 직접 숫자 입력 */
@@ -571,11 +583,25 @@
     border-radius:var(--radius-sm);padding:9px 10px 9px 15px;
   }
   .sheet__num-lab{font-size:13.5px;font-weight:600;color:var(--ink);}
-  .sheet__num-ctl{display:flex;align-items:center;gap:5px;}
-  .sheet__list .sheet__num-b{
-    width:34px;height:34px;padding:0;flex:none;justify-content:center;
-    font-size:15px;font-weight:700;color:var(--ink-2);border-radius:9px;background:var(--surface);
+  /* 설정 탭 스테퍼와 같은 모양 — 셋을 테두리 하나로 묶고 사이만 짧은 세로선 */
+  .sheet__num-ctl{
+    display:flex;align-items:stretch;gap:0;height:36px;
+    border:1px solid var(--line);border-radius:var(--radius-sm);
+    background:var(--surface);overflow:hidden;
   }
+  .sheet__list .sheet__num-b{
+    position:relative;width:36px;height:auto;padding:0;flex:none;justify-content:center;
+    font-size:15px;font-weight:700;color:var(--ink-2);
+    border:none;border-radius:0;background:transparent;
+  }
+  .sheet__num-ctl .sheet__num-b:first-child::after,
+  .sheet__num-ctl .sheet__num-b:last-child::before{
+    content:"";position:absolute;top:7px;bottom:7px;width:1px;background:var(--line);
+  }
+  .sheet__num-ctl .sheet__num-b:first-child::after{right:0;}
+  .sheet__num-ctl .sheet__num-b:last-child::before{left:0;}
+  .sheet__list .sheet__num-b:hover{background:var(--surface-3);}
+  .sheet__list .sheet__num-b:active{background:var(--line);transform:none;}
   /* 크기 불러오기(스포이드) 모드 */
   .pickbar{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -594,10 +620,11 @@
   #editor.is-picking{cursor:crosshair;border-color:var(--ink-2);box-shadow:0 0 0 2px var(--ink-2) inset;}
   #canvas.is-picking{cursor:crosshair;}
   input.sheet__num-in[type=text]{
-    width:58px !important;height:34px !important;padding:0 !important;
-    text-align:center;font-size:13.5px !important;font-weight:700;
-    border:1px solid var(--line) !important;border-radius:9px !important;
-    background:var(--surface) !important;color:var(--ink);
+    width:62px !important;height:auto !important;align-self:stretch;padding:0 !important;
+    text-align:center;font-size:13.5px !important;font-weight:400;
+    font-variant-numeric:tabular-nums;
+    border:none !important;border-radius:0 !important;
+    background:transparent !important;color:var(--ink);
   }
   .sheet__cancel{
     width:100%;margin-top:12px;height:46px;border:none;cursor:pointer;
@@ -1222,6 +1249,16 @@
             <div class="fold__body">
               <div class="grid-2">
                 <div class="field">
+                  <span class="label">정렬</span>
+                  <div class="seg" id="align-seg">
+                    <button type="button" data-align="justify" aria-pressed="true" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                    <button type="button" data-align="left" aria-pressed="false" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
+                    <button type="button" data-align="center" aria-pressed="false" aria-label="가운데 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="4.75" y1="6.83" x2="11.25" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="4.75" y1="12" x2="11.25" y2="12"/></svg></span></button>
+                    <button type="button" data-align="right" aria-pressed="false" aria-label="오른쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="7" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="7" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                    <span class="seg__thumb"></span>
+                  </div>
+                </div>
+                <div class="field">
                   <label class="label" for="font">본문 글꼴</label>
                   <select id="font">
                   <option class="optcat" disabled>【 고딕 】</option>
@@ -1243,24 +1280,14 @@
                   <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
                   </select>
                 </div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <label class="label" for="break-mode">줄바꿈 기준</label>
                   <select id="break-mode">
                     <option value="word">단어 단위</option>
                     <option value="char" selected>글자 단위</option>
                   </select>
-                </div>
-              </div>
-              <div class="grid-2" style="margin-top:16px">
-                <div class="field">
-                  <span class="label">정렬</span>
-                  <div class="seg" id="align-seg">
-                    <button type="button" data-align="justify" aria-pressed="true" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
-                    <button type="button" data-align="left" aria-pressed="false" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
-                    <button type="button" data-align="center" aria-pressed="false" aria-label="가운데 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="4.75" y1="6.83" x2="11.25" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="4.75" y1="12" x2="11.25" y2="12"/></svg></span></button>
-                    <button type="button" data-align="right" aria-pressed="false" aria-label="오른쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="7" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="7" y1="12" x2="13.5" y2="12"/></svg></span></button>
-                    <span class="seg__thumb"></span>
-                  </div>
                 </div>
                 <div class="field">
                   <span class="label">본문 글자 크기 <span class="val">32px</span></span>
