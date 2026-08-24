@@ -990,8 +990,16 @@
   #canvas .g-img.al-right,.canvas-clone .g-img.al-right{text-align:right !important;}
   #canvas .g-img img,.canvas-clone .g-img img{max-width:var(--logimg-w,100%) !important;height:auto !important;border-radius:var(--logimg-radius,10px) !important;display:inline-block !important;vertical-align:top !important;}
   #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:var(--name-gap,1.6em) !important;font-size:var(--name-size,.7em) !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
-  #canvas .g-name.right,.canvas-clone .g-name.right{text-align:right !important;}
-  #canvas .g-name.left,.canvas-clone .g-name.left{text-align:left !important;}
+  #canvas .g-name.al-right,.canvas-clone .g-name.al-right{text-align:right !important;}
+  #canvas .g-name.al-left,.canvas-clone .g-name.al-left{text-align:left !important;}
+  #canvas .g-name.al-center,.canvas-clone .g-name.al-center{text-align:center !important;}
+  #canvas .g-name.al-justify,.canvas-clone .g-name.al-justify{text-align:justify !important;}
+  /* 막대가 캔버스 끝이 아니라 글자 옆에 붙도록 폭을 글 길이만큼만(본문 인용선과 같은 방식).
+     왼쪽 막대+왼쪽 글, 오른쪽 막대+오른쪽 글은 이미 붙어 있으므로 손대지 않는다 */
+  #canvas .g-name.s-bar.al-center,.canvas-clone .g-name.s-bar.al-center{width:fit-content !important;max-width:100% !important;margin-left:auto !important;margin-right:auto !important;}
+  #canvas .g-name.s-bar.left.al-right,.canvas-clone .g-name.s-bar.left.al-right{width:fit-content !important;max-width:100% !important;margin-left:auto !important;margin-right:0 !important;}
+  #canvas .g-name.s-bar.right.al-left,.canvas-clone .g-name.s-bar.right.al-left{width:fit-content !important;max-width:100% !important;margin-right:auto !important;margin-left:0 !important;}
+  #canvas .g-name.s-bar.right.al-justify,.canvas-clone .g-name.s-bar.right.al-justify{width:fit-content !important;max-width:100% !important;margin-right:auto !important;margin-left:0 !important;}
   #canvas .g-name.s-bold,.canvas-clone .g-name.s-bold{font-weight:700 !important;}
   #canvas .g-name.s-bar,.canvas-clone .g-name.s-bar{font-weight:400 !important;color:var(--name-color,rgba(90,90,90,.85)) !important;}
   #canvas .g-name.s-bar.left,.canvas-clone .g-name.s-bar.left{border-left:.16em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-left:.55em !important;}
@@ -1199,7 +1207,7 @@
                 <span class="label">(작게) 글자 크기 <span class="val">26px</span></span>
                 <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="36" step="1" value="26"></div>
               </div>
-              <p class="hint" style="margin-top:10px">미니 도구 *색* · (색) · (작게)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색을 써요.<br>(작게)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이미 적용한 것까지 함께 변해요.</p>
+              <p class="hint" style="margin-top:10px">자동화 도구 *색* · (색) · (작게)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색을 써요.<br>(작게)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이미 적용한 것까지 함께 변해요.</p>
             </div>
           </details>
 
@@ -1378,53 +1386,84 @@
               <div class="field">
                 <span class="label">하단</span>
                 <div id="name-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
-                     aria-label="하단 입력" data-placeholder="캐릭터 이름 등 (비워도 됨)"></div>
+                     aria-label="하단 입력" data-placeholder="캐릭터 이름 · 상태창 · 페이지 수 등 (비워도 됨)"></div>
               </div>
-              <div class="grid-2" style="margin-top:16px">
-                <div class="field">
-                  <label class="label" for="name-pos">하단 배치</label>
-                  <select id="name-pos">
-                    <option value="plain-left" selected>기본 (좌)</option>
-                    <option value="plain-right">기본 (우)</option>
-                    <option value="bold-left">볼드 (좌)</option>
-                    <option value="bold-right">볼드 (우)</option>
-                    <option value="bar-left">인용선 (좌)</option>
-                    <option value="bar-right">인용선 (우)</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label class="label" for="name-font">하단 글꼴</label>
-                  <select id="name-font">
-                    <option value="" selected>본문과 동일</option>
-                    <option class="optcat" disabled>【 고딕 】</option>
-                    <option value='"Pretendard",sans-serif'>프리텐다드</option>
-                    <option value='"Paperozi",sans-serif'>페이퍼로지</option>
-                    <option value="'Presentation',sans-serif">프리젠테이션</option>
-                    <option class="optcat" disabled>【 명조 】</option>
-                    <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
-                    <option value='"Ridibatang",serif'>리디바탕</option>
-                    <option value="'MaruBuri',serif">마루 부리</option>
-                    <option value="'BookkMyungjo',serif">부크크 명조</option>
-                    <option value="'ChosunIlboMyungjo',serif">조선일보명조체</option>
-                    <option class="optcat" disabled>【 손글씨 】</option>
-                    <option value="'OngleipYoonwoo',sans-serif">온글잎 윤우체</option>
-                    <option value="'OngleipKonkon',sans-serif">온글잎 콘콘체</option>
-                    <option class="optcat" disabled>【 장식 】</option>
-                    <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
-                    <option value="'PfStardust',sans-serif">PF스타더스트</option>
-                    <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
-                  </select>
+              <div class="field" style="margin-top:16px">
+                <span class="label">하단 스타일</span>
+                <div class="seg" id="name-style-seg">
+                  <button type="button" data-nstyle="plain" aria-pressed="true">기본</button>
+                  <button type="button" data-nstyle="bold" aria-pressed="false">볼드</button>
+                  <button type="button" data-nstyle="barl" aria-pressed="false">인용선 (좌)</button>
+                  <button type="button" data-nstyle="barr" aria-pressed="false">인용선 (우)</button>
+                  <span class="seg__thumb"></span>
                 </div>
               </div>
+              <!-- 하단 배치 값 보관용: 위 두 세그가 여기에 '스타일-정렬' 형태로 써 넣는다.
+                   id 를 그대로 둬서 저장·내 프리셋·복원 배선을 하나도 안 건드림 -->
+              <select id="name-pos" style="display:none">
+                <option value="plain-justify">기본 양쪽</option>
+                <option value="plain-left" selected>기본 좌</option>
+                <option value="plain-center">기본 중앙</option>
+                <option value="plain-right">기본 우</option>
+                <option value="bold-justify">볼드 양쪽</option>
+                <option value="bold-left">볼드 좌</option>
+                <option value="bold-center">볼드 중앙</option>
+                <option value="bold-right">볼드 우</option>
+                <option value="barl-justify">인용선 (좌) 양쪽</option>
+                <option value="barl-left">인용선 (좌) 좌</option>
+                <option value="barl-center">인용선 (좌) 중앙</option>
+                <option value="barl-right">인용선 (좌) 우</option>
+                <option value="barr-justify">인용선 (우) 양쪽</option>
+                <option value="barr-left">인용선 (우) 좌</option>
+                <option value="barr-center">인용선 (우) 중앙</option>
+                <option value="barr-right">인용선 (우) 우</option>
+                              <!-- 옛 저장값(인용선 좌/우 구분 전) 호환용. 불러오는 즉시 새 값으로 바뀐다 -->
+                <option value="bar-left">인용선 좌(구)</option>
+                <option value="bar-right">인용선 우(구)</option>
+              </select>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
-                  <span class="label">하단 글자 크기 <span class="val" id="name-size-val">22px</span></span>
-                  <div class="rangewrap"><input id="name-size" type="range" min="6" max="36" step="1" value="22"></div>
+                <span class="label">하단 정렬</span>
+                <div class="seg" id="name-align-seg">
+                <button type="button" data-nalign="justify" aria-pressed="true" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                <button type="button" data-nalign="left" aria-pressed="false" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
+                <button type="button" data-nalign="center" aria-pressed="false" aria-label="가운데 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="4.75" y1="6.83" x2="11.25" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="4.75" y1="12" x2="11.25" y2="12"/></svg></span></button>
+                <button type="button" data-nalign="right" aria-pressed="false" aria-label="오른쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="7" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="7" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                <span class="seg__thumb"></span>
+                </div>
                 </div>
                 <div class="field">
-                  <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">35px</span></span>
-                  <div class="rangewrap"><input id="name-gap" type="range" min="0" max="72" step="1" value="35"></div>
+                <label class="label" for="name-font">하단 글꼴</label>
+                <select id="name-font">
+                <option value="" selected>본문과 동일</option>
+                <option class="optcat" disabled>【 고딕 】</option>
+                <option value='"Pretendard",sans-serif'>프리텐다드</option>
+                <option value='"Paperozi",sans-serif'>페이퍼로지</option>
+                <option value="'Presentation',sans-serif">프리젠테이션</option>
+                <option class="optcat" disabled>【 명조 】</option>
+                <option value="'Nanum Myeongjo','나눔명조',serif">나눔명조</option>
+                <option value='"Ridibatang",serif'>리디바탕</option>
+                <option value="'MaruBuri',serif">마루 부리</option>
+                <option value="'BookkMyungjo',serif">부크크 명조</option>
+                <option value="'ChosunIlboMyungjo',serif">조선일보명조체</option>
+                <option class="optcat" disabled>【 손글씨 】</option>
+                <option value="'OngleipYoonwoo',sans-serif">온글잎 윤우체</option>
+                <option value="'OngleipKonkon',sans-serif">온글잎 콘콘체</option>
+                <option class="optcat" disabled>【 장식 】</option>
+                <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
+                <option value="'PfStardust',sans-serif">PF스타더스트</option>
+                <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
+                </select>
                 </div>
+              </div>
+              <div class="grid-2" style="margin-top:16px">
+              <div class="field">
+                <span class="label">하단 글자 크기 <span class="val" id="name-size-val">22px</span></span>
+                <div class="rangewrap"><input id="name-size" type="range" min="6" max="36" step="1" value="22"></div>
+              </div>
+              <div class="field">
+                <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">35px</span></span>
+                <div class="rangewrap"><input id="name-gap" type="range" min="0" max="72" step="1" value="35"></div>
               </div>
             </div>
           </details>
@@ -2003,11 +2042,14 @@
       <p class="help-cat">글자 크기</p>
       <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 <b>글자 크기</b> 도구가 됐어요. 이제 작게도, 크게도 자유롭게 정할 수 있어요.<br>· 누르면 크기를 바로 정할 수 있고, 드래그한 부분에만 적용돼요.<br>· 정한 크기는 다음에도 남아 있고, 적용한 글자는 그때의 크기를 그대로 유지해요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 그대로 가져올 수 있어요.<br>· 크기를 지정한 글자에 <b>커서만 두고</b> 다시 누르면 <b>이 크기로 변경</b>과 <b>원래 크기로 되돌리기</b>가 떠요. 드래그하지 않아도 그 부분 전체에 적용돼요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39; 슬라이더는 삭제 후 이 도구에 합쳐졌어요.</p>
 
+      <p class="help-cat">하단</p>
+      <p class="hint">· <b>하단 스타일</b>과 <b>하단 정렬</b>이 따로 나뉘었어요. 기본 · 볼드 · 인용선(좌) · 인용선(우)에 양쪽 · 왼쪽 · 가운데 · 오른쪽을 자유롭게 섞을 수 있어요.<br>· 가운데 정렬이 새로 생겼고, 인용선 막대는 캔버스 끝이 아니라 글자 옆에 붙어요. 본문 인용선도 같아졌어요.<br>· 예전에 쓰던 설정은 그대로 옮겨져요.</p>
+
       <p class="help-cat">자동화 도구</p>
       <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(작게)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(작게)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(작게)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.</p>
 
       <p class="help-cat">화면</p>
-      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 길게 늘어져 있던 슬라이더를 <b>− 값 +</b> 로 바꿨어요. 숫자를 누르면 직접 입력할 수 있고, 길게 누르면 계속 오르내려요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요. 길게 써도 안쪽 스크롤 없이 다 보여요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서 두 칸씩 나와요. 키보드가 올라와도 여섯 칸이 다 보여요.<br>· 셀렉트 · 세그 · 숫자칸의 높이와 글자 크기를 하나로 맞췄어요.</p>
+      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 길게 늘어져 있던 슬라이더를 <b>− 값 +</b> 로 바꿨어요. 숫자를 누르면 직접 입력할 수 있고, 길게 누르면 계속 오르내려요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요. 길게 써도 안쪽 스크롤 없이 다 보여요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서 두 칸씩 나와요. 키보드가 올라와도 여섯 칸이 다 보여요.<br>· 셀렉트 · 세그 · 숫자칸의 높이와 글자 크기를 하나로 맞췄어요.<br>· 설정 옆 안내 문구를 정리했어요.<br>· 잘 쓰이지 않던 글꼴 두 가지(우아한 세리프 · 오뉴월의 꽃나무체)를 뺐어요. 그 글꼴을 쓰고 있었다면 프리텐다드로 바뀌어요.</p>
     </div>
     <button class="sheet__cancel" id="notice-close" type="button">확인</button>
   </div>
@@ -4111,7 +4153,7 @@
      (기존 사용자는 저장된 값이 없으므로 이번에 한 번 보게 된다)
      ============================================================ */
   (function(){
-    var NOTICE_ID = '2026-08-24b';                    // ★공지를 새로 띄우려면 이 값만 바꾼다
+    var NOTICE_ID = '2026-08-24c';                    // ★공지를 새로 띄우려면 이 값만 바꾼다
     var NOTICE_KEY = 'logmaker-notice-seen';
     var ov=$('notice-overlay'), btn=$('notice-close'), t=null;
     if(!ov) return;
@@ -4967,8 +5009,12 @@
     if(!nameIsEmpty()){
       var opt = $('name-pos').value || 'plain-left';
       var parts = opt.split('-'), style=parts[0]||'plain', align=parts[1]||'left';
+      // barl/barr = 인용선(막대 좌/우). 옛 저장값 'bar-*' 는 좌로 취급
+      var isBar = (style==='barl' || style==='barr' || style==='bar');
+      var side  = (style==='barr') ? 'right' : 'left';
+      var cls   = isBar ? ('s-bar '+side) : ('s-'+style);
       var nameColor = $('c-name').value || '#737373', barColor = $('c-bar').value || '#d1d1d1';
-      html += '<span class="g-name s-'+style+' '+align+'" style="--name-color:'+nameColor+';--bar-color:'+barColor+';">'+ nameHtml() +'</span>';
+      html += '<span class="g-name '+cls+' al-'+align+'" style="--name-color:'+nameColor+';--bar-color:'+barColor+';">'+ nameHtml() +'</span>';
     }
     return html;
   }
@@ -5203,7 +5249,12 @@
   editor.addEventListener('input', renderSoon);
 
   if(nameEd){
-    nameEd.addEventListener('input', render);
+    // 제목·소제목과 같은 처리: 다 지우면 남은 <br> 을 치워 안내 문구가 다시 보이게
+    nameEd.addEventListener('input', function(){
+      var txt=(nameEd.textContent||'').replace(/[\u200b\u00a0\s]/g,'');
+      if(txt==='' && !nameEd.querySelector('img') && nameEd.innerHTML!==''){ nameEd.innerHTML=''; }
+      render();
+    });
     function nameLineBreak(){
       var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return false;
       var range=sel.getRangeAt(0);
@@ -5237,7 +5288,13 @@
   // 제목/소제목 입력창(간단 편집: 줄바꿈 + 붙여넣기 평문화)
   function bindSimpleEditor(el){
     if(!el) return;
-    el.addEventListener('input', render);
+    /* 다 지워도 <br> 이나 빈 노드가 남아 :empty 가 안 걸려서 안내 문구(placeholder)가 안 돌아온다.
+       보이는 글자가 하나도 없으면 통째로 비워 준다 — 그때 커서는 어차피 맨 앞이라 위치가 안 튄다 */
+    function clearIfBlank(){
+      var txt=(el.textContent||'').replace(/[\u200b\u00a0\s]/g,'');
+      if(txt==='' && !el.querySelector('img') && el.innerHTML!==''){ el.innerHTML=''; }
+    }
+    el.addEventListener('input', function(){ clearIfBlank(); render(); });
     function lineBreak(){
       var sel=window.getSelection(); if(!sel || sel.rangeCount===0) return;
       var range=sel.getRangeAt(0);
@@ -6008,6 +6065,48 @@
   }
 
   /* ============================================================
+     하단 배치 — 스타일 세그 + 정렬 세그가 숨긴 #name-pos 에 '스타일-정렬'로 써 넣는다
+     ============================================================ */
+  /* 옛 저장값 'bar-left' / 'bar-right' 를 새 형식으로 한 번 바꿔 둔다.
+     옛 'bar-right' 는 '막대도 오른쪽, 글도 오른쪽'이었으므로 barr-right 로 옮긴다 */
+  function normalizeNamePos(){
+    var sel=$('name-pos'); if(!sel) return;
+    var v=sel.value||'';
+    if(v.indexOf('bar-')===0){
+      var al=v.split('-')[1]||'left';
+      sel.value = (al==='right' ? 'barr' : 'barl') + '-' + al;
+    }
+    if(!sel.value) sel.value='plain-left';
+  }
+  function namePosParts(){
+    var v=($('name-pos') && $('name-pos').value) || 'plain-left';
+    var p=v.split('-');
+    return { style:p[0]||'plain', align:p[1]||'left' };
+  }
+  function setNamePos(style, align){
+    var sel=$('name-pos'); if(!sel) return;
+    sel.value = style+'-'+align;
+    syncNameSegs();
+    render(); scheduleSave();
+  }
+  function syncNameSegs(){
+    var cur=namePosParts();
+    var ss=$('name-style-seg'), as=$('name-align-seg');
+    if(ss){ [].forEach.call(ss.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-nstyle')===cur.style?'true':'false'); }); moveThumb(ss); }
+    if(as){ [].forEach.call(as.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-nalign')===cur.align?'true':'false'); }); moveThumb(as); }
+  }
+  if($('name-style-seg')){
+    [].forEach.call($('name-style-seg').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ setNamePos(b.getAttribute('data-nstyle'), namePosParts().align); });
+    });
+  }
+  if($('name-align-seg')){
+    [].forEach.call($('name-align-seg').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ setNamePos(namePosParts().style, b.getAttribute('data-nalign')); });
+    });
+  }
+
+  /* ============================================================
      크기 도우미 — 본문 글자 크기 하나만 보고 나머지 크기를 맞춘다
      · 켤 때 지금 값을 통째로 찍어 두고(_sizeSnap), 끄면 그대로 되돌린다
        (켠 동안 직접 고친 값도 함께 되돌아감 = '이 도우미를 안 쓴 셈' 규칙)
@@ -6130,6 +6229,8 @@
       ensureFontValid();
       if(typeof data.editorHtml==='string'){ editor.innerHTML=data.editorHtml; syncTails(editor); clearHrSel(); [].forEach.call(editor.querySelectorAll('img'), reRenderOnDecode); }
       if(nameEd && typeof data.nameHtml==='string'){ nameEd.innerHTML=data.nameHtml; }
+      if(typeof normalizeNamePos==='function') normalizeNamePos();
+      if(typeof syncNameSegs==='function') syncNameSegs();
       if($('size-helper')){
         var sh=data.sizeHelper;
         $('size-helper').checked = !!(sh && sh.on);
@@ -6334,6 +6435,8 @@
     // (켜진 채로 두면 나중에 본문 크기를 만지는 순간 프리셋 값이 덮어써지고,
     //  끌 때는 프리셋 이전 값으로 돌아가 버려 어느 쪽도 예상과 다름)
     if($('size-helper')){ $('size-helper').checked=false; _sizeSnap=null; }
+    if(typeof normalizeNamePos==='function') normalizeNamePos();
+    if(typeof syncNameSegs==='function') setTimeout(syncNameSegs, 0);
     if(s.vals){ TEXT_IDS.forEach(function(id){ if(s.vals[id]!=null){ safeRestoreValue(id, s.vals[id]); } }); }
     ensureFontValid();
     bgValue = s.bgValue || $('c-bg').value;
