@@ -976,6 +976,11 @@
   #canvas .g-quote,.canvas-clone .g-quote{display:block !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-quote.left,.canvas-clone .g-quote.left{border-left:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-left:.6em !important;}
   #canvas .g-quote.right,.canvas-clone .g-quote.right{border-right:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-right:.6em !important;text-align:right !important;}
+  /* 가운데·오른쪽 정렬에서는 인용선 막대가 캔버스 끝이 아니라 '글자 옆'에 붙게.
+     블록 폭을 글 길이만큼만 잡고(fit-content) 그 덩어리를 통째로 정렬한다.
+     왼쪽·양쪽 정렬은 어차피 글 시작 = 블록 시작이라 손대지 않는다(양쪽 정렬은 폭을 줄이면 깨짐) */
+  #canvas[data-align="center"] .g-quote,.canvas-clone[data-align="center"] .g-quote{width:fit-content !important;max-width:100% !important;margin-left:auto !important;margin-right:auto !important;}
+  #canvas[data-align="right"] .g-quote,.canvas-clone[data-align="right"] .g-quote{width:fit-content !important;max-width:100% !important;margin-left:auto !important;margin-right:0 !important;}
   #canvas .g-hr,.canvas-clone .g-hr{display:flex !important;align-items:center !important;justify-content:center !important;margin:.7em 0 !important;height:1em !important;line-height:1 !important;color:transparent !important;overflow:visible !important;}
   #canvas .g-hr.line:before,.canvas-clone .g-hr.line:before{content:"" !important;display:block !important;width:100% !important;height:2px !important;background:var(--hr-color,rgba(140,140,140,.5)) !important;}
   #canvas .g-hr.dots,.canvas-clone .g-hr.dots{letter-spacing:.4em !important;font-size:.9em !important;height:auto !important;color:var(--hr-color,rgba(140,140,140,.55)) !important;}
@@ -4810,6 +4815,7 @@
       var _sd=_comp.querySelector('.g-ib-send'); if(_sd){ var sd=fs*1.55; _sd.style.background=_accent+' center/78% no-repeat '+barSendSvg(_arrow); _sd.style.width=sd+'px'; _sd.style.height=sd+'px'; _sd.style.marginLeft=(fs*0.5)+'px'; }
     }
     el.style.textAlign = currentAlign;
+    el.setAttribute('data-align', currentAlign);   // 인용선·하단 막대를 글자 옆에 붙이는 데 씀
     el.style.wordBreak = (mode==='word') ? 'keep-all' : 'break-all';
     var inner = el.querySelector('.g-inner');
     if(inner){
