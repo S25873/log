@@ -467,11 +467,14 @@
   .fbtn:active{transform:scale(.95);}
   .fbtn[hidden]{display:none;}
   .fbtn.is-active{background:var(--accent);border-color:var(--accent);color:var(--ink-on-accent);}
+  /* 서식 아이콘의 색은 고정 — 형광펜 = 옐로(#f9ee9a), 강조 = 브릭(#c25b57).
+     각각 프리셋 팔레트의 색이며, 슬롯 색을 따라가게 하지 않는다
+     (지금 몇 번이 물려 있는지 모른 채 보면 '색을 바꿨는데 아이콘이 그대로'로 읽혀 헷갈림) */
   /* 서식 아이콘 — 폰트 글리프 대신 SVG.
      같은 viewBox·같은 획 두께라 B/I/U/S 의 굵기·크기가 눈으로도 실제로 같아진다.
      색은 currentColor 라 is-active(먹색 배경) 때 자동으로 반전된다. */
   .fbtn .fb-ic{width:16px;height:16px;display:block;}
-  /* 강조색·형광펜의 색 부분은 '지금 물려 있는 슬롯 색'을 그대로 보여 준다(syncFmtIcons) */
+  /* 강조색의 점·형광펜의 띠는 색 고정(노랑·빨강) — 무엇을 하는 버튼인지 알려주는 장식 */
   .fbtn .fb-hl-bar{opacity:.85;}
   /* 인용선 아이콘 */
   .fbtn .quote-ic{display:inline-flex;align-items:center;justify-content:center;color:var(--ink);}
@@ -1283,7 +1286,7 @@
                 </span>
                 <input id="size-helper" type="checkbox" style="margin-left:auto">
               </label>
-              <p class="hint" style="margin-top:8px">크기 변경: 제목 · 소제목 · 하단 · (작게)<br>간격 변경: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요. 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 정상 저장돼요.</p>
+              <p class="hint" style="margin-top:8px">크기 변경: 제목 · 소제목 · 하단 · (작게)<br>간격 변경: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요. 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 저장돼요.</p>
 
               <p class="section__head" style="margin-top:18px">(＋로 넣는) 사진</p>
               <div class="grid-2" style="margin-top:2px">
@@ -1999,7 +2002,7 @@
       <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(작게)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(작게)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(작게)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.</p>
 
       <p class="help-cat">화면</p>
-      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요. 글자색과 형광펜은 지금 고른 색이 아이콘에 그대로 보여요.<br>· 길게 늘어져 있던 슬라이더를 <b>− 값 +</b> 로 바꿨어요. 숫자를 누르면 직접 입력할 수 있고, 길게 누르면 계속 오르내려요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요. 길게 써도 안쪽 스크롤 없이 다 보여요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서 두 칸씩 나와요. 키보드가 올라와도 여섯 칸이 다 보여요.<br>· 셀렉트 · 세그 · 숫자칸의 높이와 글자 크기를 하나로 맞췄어요.</p>
+      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 길게 늘어져 있던 슬라이더를 <b>− 값 +</b> 로 바꿨어요. 숫자를 누르면 직접 입력할 수 있고, 길게 누르면 계속 오르내려요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요. 길게 써도 안쪽 스크롤 없이 다 보여요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서 두 칸씩 나와요. 키보드가 올라와도 여섯 칸이 다 보여요.<br>· 셀렉트 · 세그 · 숫자칸의 높이와 글자 크기를 하나로 맞췄어요.</p>
     </div>
     <button class="sheet__cancel" id="notice-close" type="button">확인</button>
   </div>
@@ -2081,12 +2084,9 @@
   function emInput(slot){ return $(slot===1 ? 'c-em' : 'c-em'+slot); }
   function hlTxt(slot){ return $((slot===1 ? 'c-hl' : 'c-hl'+slot)+'-txt'); }
   function emTxt(slot){ return $((slot===1 ? 'c-em' : 'c-em'+slot)+'-txt'); }
-  /* 서식 툴바의 강조색·형광펜 아이콘에 '지금 고른 슬롯 색'을 칠한다 */
-  function syncFmtIcons(){
-    var ec=emColorOf(emSlot);
-    [].forEach.call(document.querySelectorAll('.fb-em-dot'), function(e){ e.setAttribute('fill', ec); });
-    var hb=document.querySelector('.fb-hl-bar'); if(hb) hb.setAttribute('stroke', hlColorOf(hlSlot));
-  }
+  /* 서식 툴바 아이콘의 색은 고정(노랑·빨강).
+     슬롯 색을 따라가게도 해 봤지만, 시트에서 고른 색은 '물린 슬롯'을 바꾸지 않아서
+     실제로 칠한 색과 아이콘이 어긋나 보였다 → 장식으로만 두는 편이 덜 헷갈림 */
   function hlColorOf(slot){ var e=hlInput(slot); return e ? e.value : '#f9ee9a'; }
   function emColorOf(slot){ var e=emInput(slot); return e ? e.value : '#c25b57'; }
 
@@ -4559,7 +4559,6 @@
       btn.setAttribute('aria-pressed','true');
       hlSlot = parseInt(btn.getAttribute('data-slot'),10) || 1;
       var lbl=$('hl-slot-val'); if(lbl){ lbl.textContent = '형광펜 '+hlSlot; }
-      syncFmtIcons();
       moveThumb($('hl-slot-seg'));
       markDot(hlWrap, hlPresets, hlColorOf(hlSlot));
     });
@@ -4581,7 +4580,6 @@
       btn.setAttribute('aria-pressed','true');
       emSlot = parseInt(btn.getAttribute('data-slot'),10) || 1;
       var lbl=$('em-slot-val'); if(lbl){ lbl.textContent = '강조 '+emSlot; }
-      syncFmtIcons();
       moveThumb($('em-slot-seg'));
       markDot(emWrap, emPresets, emColorOf(emSlot));
     });
@@ -5156,7 +5154,6 @@
     syncSubFixedEm();
     canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
     renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); fitStage();
-    syncFmtIcons();
     setVal('font-size', $('font-size').value+'px');
     if($('subtext-size')) setVal('subtext-size', $('subtext-size').value+'px');
     if($('parensub-size')) setVal('parensub-size', $('parensub-size').value+'px');
