@@ -1963,7 +1963,7 @@
         <div class="panel" data-panel="help" role="tabpanel">
           <div class="section">
             <p class="section__head">텍스트 대치</p>
-            <p class="hint" style="margin:0 0 12px">특정 글자를 다른 글자로 변환·삭제해요.<br>변환은 한 프리셋당 하나만 1:1로 지원해요.<br>삭제는 한 프리셋당 여러 개를 지원하며 쉼표로 구분해요.<br>저장한 프리셋을 클릭하면 입력과 미리보기에 바로 적용돼요.<br>예: ... → ⋯ / 바보 → 사랑해 / 케이크, 푸딩 → 삭제</p>
+            <p class="hint" style="margin:0 0 12px">특정 글자를 다른 글자로 변환·삭제해요.<br>변환은 한 프리셋당 하나만 1:1로 지원해요.<br>삭제는 한 프리셋당 여러 개를 지원하며 쉼표로 구분해요.<br>저장한 프리셋을 클릭하면 본문 · 제목 · 소제목 · 하단에 한꺼번에 적용돼요.<br>예: ... → ⋯ / 바보 → 사랑해 / 케이크, 푸딩 → 삭제</p>
             <div class="mychips" id="replace-presets"></div>
             <div class="repform" id="replace-form" hidden>
               <input class="txt-input" id="replace-find" type="text" placeholder="무엇을 바꿀지 (여러 개 삭제는 ,로 구분)" maxlength="120" autocomplete="off">
@@ -5760,10 +5760,20 @@
      ============================================================ */
   // 터치 기기: 상단 미니 도구 적용 후 editor.focus()를 하면 소프트 키보드가 떠서, 터치에서는 포커스를 주지 않음
   var IS_TOUCH = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  /* 텍스트 대치는 본문뿐 아니라 제목·소제목·하단에도 함께 적용한다
+     (셋 다 글을 적는 칸이라 '⋯' 치환 같은 규칙을 본문에만 걸면 서로 어긋남) */
   function transformTextNodes(fn){
-    var walker=document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false), nodes=[];
-    while(walker.nextNode()){ nodes.push(walker.currentNode); }
-    nodes.forEach(function(n){ n.nodeValue=fn(n.nodeValue); });
+    [editor, $('title-ed'), $('subtitle-ed'), $('name-ed')].forEach(function(root){
+      if(!root) return;
+      var walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false), nodes=[];
+      while(walker.nextNode()){ nodes.push(walker.currentNode); }
+      nodes.forEach(function(n){ n.nodeValue=fn(n.nodeValue); });
+      if(root!==editor){
+        // 다 지워졌으면 안내 문구가 다시 보이도록 비운다(제목·소제목·하단 공통 규칙)
+        var txt=(root.textContent||'').replace(/[\u200b\u00a0\s]/g,'');
+        if(txt==='' && !root.querySelector('img') && root.innerHTML!==''){ root.innerHTML=''; }
+      }
+    });
     cleanEditor(); render(); if(!IS_TOUCH) editor.focus();
   }
   // 텍스트 노드를 순회하며 정규식 매칭 구간을 커스텀 노드로 치환하는 공통 헬퍼.
@@ -6311,7 +6321,8 @@
        자체 스냅샷 스택으로 처리. 메모리 보관(새로고침 시 초기화).
      ============================================================ */
   var HISTORY_LIMIT = 100;    // 보관할 단계 수 (이 숫자만 바꾸면 됨)
-  var _hist = [];             // 스냅샷(editor.innerHTML) 배열
+  var HIST_EDS = ['title-ed','subtitle-ed','name-ed'];   // 본문과 함께 되돌릴 입력칸
+  var _hist = [];             // 스냅샷(본문+제목+소제목+하단) 배열
   var _histIdx = -1;          // 현재 위치
   var _histLast = null;       // 마지막으로 담긴 내용
   var _histTimer = null;
@@ -6326,7 +6337,9 @@
     // 선택 표시(is-sel)는 일시적 UI 상태 → 스냅샷에서 제외(선택만으로 기록이 쌓이지 않게)
     var c=editor.cloneNode(true);
     [].forEach.call(c.querySelectorAll('.is-sel'), function(x){ x.classList.remove('is-sel'); });
-    return c.innerHTML;
+    var snap={ body:c.innerHTML };
+    HIST_EDS.forEach(function(id){ var e=$(id); if(e) snap[id]=e.innerHTML; });
+    return JSON.stringify(snap);
   }
   function _histCommit(){
     if(_histApplying) return;
@@ -6346,9 +6359,12 @@
   }
   function _histApply(html){
     _histApplying = true;
-    editor.innerHTML = html;
+    var snap; try{ snap=JSON.parse(html); }catch(e){ snap={ body:html }; }   // 옛 형식(문자열)도 받아줌
+    editor.innerHTML = snap.body || '';
+    HIST_EDS.forEach(function(id){ var e=$(id); if(e && typeof snap[id]==='string') e.innerHTML = snap[id]; });
     _histLast = html;
     syncTails(editor); clearHrSel(); if(typeof clearImgSel==='function') clearImgSel();
+    [].forEach.call(editor.querySelectorAll('img'), reRenderOnDecode);
     render();
     requestAnimationFrame(function(){ _histApplying=false; _histButtons(); });
   }
@@ -6368,17 +6384,24 @@
     _hist = [_histSnapshotHtml()]; _histIdx = 0; _histLast = _hist[0];
     _histButtons();
     if(window.MutationObserver){
-      new MutationObserver(_histSchedule).observe(editor, {childList:true,subtree:true,characterData:true,attributes:true});
+      var mo=new MutationObserver(_histSchedule);
+      mo.observe(editor, {childList:true,subtree:true,characterData:true,attributes:true});
+      HIST_EDS.forEach(function(id){ var e=$(id); if(e) mo.observe(e, {childList:true,subtree:true,characterData:true}); });
     }
   }
   if($('t-undo')) $('t-undo').addEventListener('click', histUndo);
   if($('t-redo')) $('t-redo').addEventListener('click', histRedo);
-  editor.addEventListener('keydown', function(e){
-    if(!(e.ctrlKey || e.metaKey) || e.isComposing) return;
-    var k = (e.key||'').toLowerCase();
-    if(k==='z' && !e.shiftKey){ e.preventDefault(); histUndo(); }
-    else if((k==='z' && e.shiftKey) || k==='y'){ e.preventDefault(); histRedo(); }
-  });
+  function bindHistKeys(el){
+    if(!el) return;
+    el.addEventListener('keydown', function(e){
+      if(!(e.ctrlKey || e.metaKey) || e.isComposing) return;
+      var k = (e.key||'').toLowerCase();
+      if(k==='z' && !e.shiftKey){ e.preventDefault(); histUndo(); }
+      else if((k==='z' && e.shiftKey) || k==='y'){ e.preventDefault(); histRedo(); }
+    });
+  }
+  bindHistKeys(editor);
+  HIST_EDS.forEach(function(id){ bindHistKeys($(id)); });
 
   /* ============================================================
      UI 상태 유지 (활성 탭 · 아코디언 펼침) — 별도 키
