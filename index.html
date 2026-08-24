@@ -989,7 +989,7 @@
   #canvas .g-img.al-left,.canvas-clone .g-img.al-left{text-align:left !important;}
   #canvas .g-img.al-right,.canvas-clone .g-img.al-right{text-align:right !important;}
   #canvas .g-img img,.canvas-clone .g-img img{max-width:var(--logimg-w,100%) !important;height:auto !important;border-radius:var(--logimg-radius,10px) !important;display:inline-block !important;vertical-align:top !important;}
-  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:var(--name-gap,1.6em) !important;font-size:var(--name-size,.7em) !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:var(--name-gap,1.6em) !important;font-size:var(--name-size,.8em) !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-name.al-right,.canvas-clone .g-name.al-right{text-align:right !important;}
   #canvas .g-name.al-left,.canvas-clone .g-name.al-left{text-align:left !important;}
   #canvas .g-name.al-center,.canvas-clone .g-name.al-center{text-align:center !important;}
@@ -1205,7 +1205,7 @@
               </div>
               <div class="field" style="margin-top:16px">
                 <span class="label">(작게) 글자 크기 <span class="val">26px</span></span>
-                <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="36" step="1" value="26"></div>
+                <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="50" step="1" value="26"></div>
               </div>
               <p class="hint" style="margin-top:10px">자동화 도구 *색* · (색) · (작게)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색을 써요.<br>(작게)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이미 적용한 것까지 함께 변해요.</p>
             </div>
@@ -1360,8 +1360,8 @@
                   <div class="rangewrap"><input id="title-size" type="range" min="10" max="80" step="2" value="52"></div>
                 </div>
                 <div class="field">
-                  <span class="label">소제목 글자 크기 <span class="val" id="subtitle-size-val">36px</span></span>
-                  <div class="rangewrap"><input id="subtitle-size" type="range" min="8" max="56" step="2" value="36"></div>
+                  <span class="label">소제목 글자 크기 <span class="val" id="subtitle-size-val">38px</span></span>
+                  <div class="rangewrap"><input id="subtitle-size" type="range" min="8" max="72" step="2" value="38"></div>
                 </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
@@ -1458,8 +1458,8 @@
               </div>
               <div class="grid-2" style="margin-top:16px">
               <div class="field">
-                <span class="label">하단 글자 크기 <span class="val" id="name-size-val">22px</span></span>
-                <div class="rangewrap"><input id="name-size" type="range" min="6" max="36" step="1" value="22"></div>
+                <span class="label">하단 글자 크기 <span class="val" id="name-size-val">26px</span></span>
+                <div class="rangewrap"><input id="name-size" type="range" min="6" max="50" step="1" value="26"></div>
               </div>
               <div class="field">
                 <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">35px</span></span>
@@ -4055,8 +4055,8 @@
       }
       if(n.classList){
         if(n.classList.contains('g-title-main')) return numVal('title-size', 44);
-        if(n.classList.contains('g-title-sub'))  return numVal('subtitle-size', 28);
-        if(n.classList.contains('g-name'))       return numVal('name-size', 22);
+        if(n.classList.contains('g-title-sub'))  return numVal('subtitle-size', 38);
+        if(n.classList.contains('g-name'))       return numVal('name-size', 26);
       }
       if(n===editor || n===canvas) break;
       n = n.parentNode;
@@ -6116,8 +6116,8 @@
      기본값에서 켜면 아무것도 변하지 않고, 본문만 키우면 그 균형이 유지된다 */
   var SIZE_RATIOS = {
     'title-size':    1.60,            // 제목 52
-    'subtitle-size': 1.10,            // 소제목 36
-    'name-size':     0.70,            // 하단 22
+    'subtitle-size': 1.20,            // 소제목 38 (본문 대비 20% — 12.5%는 위계가 애매했음)
+    'name-size':     0.80,            // 하단 26 (0.7=22 는 흐린 회색이라 더 작아 보여서 올림)
     'parensub-size': 0.80,            // 미니 (작게) 26 — 이미 적용한 글자까지 같이 변해 효과가 눈에 보인다
     /* 글자가 커지면 간격도 같이 벌어져야 답답해 보이지 않는다 */
     'para-gap':      0.63,            // 문단 간격 20
