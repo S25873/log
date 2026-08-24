@@ -5981,6 +5981,26 @@
     while(n && n!==editor && !n.nextSibling){ n=n.parentNode; }
     return (n && n!==editor) ? n.nextSibling : null;
   }
+  /* 만들어진 블록이 강조색 같은 인라인 서식 '안'에 들어가 있으면 밖으로 빼낸다.
+     안 그러면 뒤에 흡수한 (내용)까지 그 서식에 물들어 버린다.
+     블록의 원래 내용("문장")은 서식을 유지해야 하므로 안쪽에 같은 마크를 다시 씌운다. */
+  var _INLINE_FMT={MARK:1,B:1,I:1,U:1,S:1,STRONG:1,EM:1};
+  function liftBlockOut(block){
+    var p=block.parentNode;
+    while(p && p!==editor && p.nodeType===1 && _INLINE_FMT[p.tagName]){
+      if(block.firstChild){                       // 원래 내용에는 그 서식을 그대로 남긴다
+        var inner=p.cloneNode(false);
+        while(block.firstChild){ inner.appendChild(block.firstChild); }
+        block.appendChild(inner);
+      }
+      var after=p.cloneNode(false), n=block.nextSibling;
+      while(n){ var nx=n.nextSibling; after.appendChild(n); n=nx; }
+      p.parentNode.insertBefore(block, p.nextSibling);
+      if(after.childNodes.length){ p.parentNode.insertBefore(after, block.nextSibling); }
+      if(!p.childNodes.length){ p.parentNode.removeChild(p); }
+      p=block.parentNode;
+    }
+  }
   /* block 바로 아래(빈 줄 없이) 괄호 줄이 있으면 그 줄 전체를 block 안으로 옮긴다.
      옮겼으면 true. 서식 요소는 그대로 살려서 이동한다. */
   function absorbParenLine(block){
@@ -6007,6 +6027,7 @@
   function mergeQuoteParens(){
     [].slice.call(editor.querySelectorAll('.g-bub[data-qb]')).forEach(function(bub){
       bub.removeAttribute('data-qb');
+      liftBlockOut(bub);
       while(absorbParenLine(bub)){}                    // 연속된 괄호 줄은 모두 흡수
     });
   }
@@ -6095,6 +6116,7 @@
   function mergeQuoteLineParens(){
     [].slice.call(editor.querySelectorAll('.g-quote[data-ql]')).forEach(function(q){
       q.removeAttribute('data-ql');
+      liftBlockOut(q);
       while(absorbParenLine(q)){}
     });
   }
