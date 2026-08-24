@@ -605,6 +605,9 @@
     border-radius:var(--radius-sm);transition:background .14s var(--ease),color .14s;
   }
   .sheet__cancel:hover{background:var(--surface-2);color:var(--ink);}
+  .notice-btns{display:flex;gap:8px;}
+  .notice-btns .sheet__cancel{margin-top:12px;}
+  /* 두 버튼은 대등한 선택지 — 배경도 글자색도 한쪽만 강조하지 않는다 */
 
   /* 말풍선 버튼 라벨 */
   .fbtn .lbl{font-size:12px;font-weight:600;letter-spacing:-.02em;}
@@ -1131,8 +1134,8 @@
       <div class="editor-fixed">
         <div class="label-row">
           <div class="hist-row">
-            <button class="histbtn" id="t-undo" type="button" title="되돌리기 (Ctrl+Z)" aria-label="되돌리기" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-1"/></svg></button>
-            <button class="histbtn" id="t-redo" type="button" title="다시 실행 (Ctrl+Shift+Z)" aria-label="다시 실행" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h1"/></svg></button>
+            <button class="histbtn" id="t-undo" type="button" title="뒤로가기 (Ctrl+Z)" aria-label="뒤로가기" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-1"/></svg></button>
+            <button class="histbtn" id="t-redo" type="button" title="앞으로가기 (Ctrl+Shift+Z)" aria-label="앞으로가기" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h1"/></svg></button>
           </div>
           <div class="mini-row">
             <button class="mini" id="t-star-gray" type="button" title="*내용* 을 *색*의 색깔로">*색*</button>
@@ -2037,21 +2040,27 @@
     <div class="sheet__title">로그 이미지 발췌기 업데이트 중!</div>
     <div class="help-body">
       <p class="help-cat">크기 도우미</p>
-      <p class="hint">· 내용 탭에 <b>크기 도우미</b>가 생겼어요. 켜 두면 본문 글자 크기 하나만 정해도 제목 · 소제목 · 하단 · (작게) 크기와 문단 · 제목 · 하단 간격이 알아서 맞춰져요.<br>· 켠 상태에서 다른 값을 직접 고쳐도 되지만, 본문 글자 크기를 다시 바꾸면 전부 새로 계산돼요.<br>· 끄면 켜기 전 값으로 돌아가요. 직접 고친 값도 함께 사라지니 남기고 싶다면 프리셋에 저장해 주세요.</p>
+      <p class="hint">· 내용 탭에 <b>크기 도우미</b>가 생겼어요. 버튼을 키면 본문 글자 크기 하나만 정해도 제목 · 소제목 · 하단 · (작게) 크기와 문단 · 제목 · 하단 간격이 알아서 맞춰져요.<br>· 켠 상태에서 값을 직접 고쳐도 되지만, 본문 글자 크기를 바꾸면 직접 고친 값까지 새로 계산돼요.<br>· 끄면 켜기 전 값으로 돌아가요. 직접 고친 값도 함께 사라지니 남기고 싶다면 프리셋에 저장해 주세요.</p>
 
       <p class="help-cat">글자 크기</p>
-      <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 <b>글자 크기</b> 도구가 됐어요. 이제 작게도, 크게도 자유롭게 정할 수 있어요.<br>· 누르면 크기를 바로 정할 수 있고, 드래그한 부분에만 적용돼요.<br>· 정한 크기는 다음에도 남아 있고, 적용한 글자는 그때의 크기를 그대로 유지해요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 그대로 가져올 수 있어요.<br>· 크기를 지정한 글자에 <b>커서만 두고</b> 다시 누르면 <b>이 크기로 변경</b>과 <b>원래 크기로 되돌리기</b>가 떠요. 드래그하지 않아도 그 부분 전체에 적용돼요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39; 슬라이더는 삭제 후 이 도구에 합쳐졌어요.</p>
+      <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 새로운 도구가 됐어요. 이제 본문보다 작게 · 크게 모두 대응해요.<br>· 드래그한 부분에만 적용돼요. 크기는 각각 적용 당시 값으로 유지되며, 크기를 변경해도 이전 것까지 바뀌지 않아요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 가져올 수 있어요.<br>· 크기를 지정한 글자는 드래그하지 않고 <b>커서만 둬도</b> 그 부분 전체에 적용돼요. 이때는 <b>원래 크기로 되돌리기</b>도 함께 떠요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39; 슬라이더는 삭제 후 이 도구에 합쳐졌어요.</p>
 
       <p class="help-cat">하단</p>
-      <p class="hint">· <b>하단 스타일</b>과 <b>하단 정렬</b>이 따로 나뉘었어요. 기본 · 볼드 · 인용선(좌) · 인용선(우)에 양쪽 · 왼쪽 · 가운데 · 오른쪽을 자유롭게 섞을 수 있어요.<br>· 가운데 정렬이 새로 생겼고, 인용선 막대는 캔버스 끝이 아니라 글자 옆에 붙어요. 본문 인용선도 같아졌어요.<br>· 예전에 쓰던 설정은 그대로 옮겨져요.</p>
+      <p class="hint">· <b>하단 스타일</b>과 <b>하단 정렬</b>이 따로 나뉘었어요.<br>기본 · 볼드 · 인용선(좌) · 인용선(우)에 양쪽 · 왼쪽 · 가운데 · 오른쪽을 자유롭게 섞을 수 있어요.<br>· 인용선 막대는 캔버스 끝이 아니라 글자 옆에 붙어요.</p>
+
+      <p class="help-cat">제목 · 소제목 · 하단</p>
+      <p class="hint">· <b>텍스트 대치</b>가 본문뿐 아니라 제목 · 소제목 · 하단에도 함께 적용돼요.<br>· <b>뒤로가기 · 앞으로가기</b>도 네 칸을 함께 다뤄요.</p>
 
       <p class="help-cat">자동화 도구</p>
       <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(작게)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(작게)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(작게)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.</p>
 
       <p class="help-cat">화면</p>
-      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 길게 늘어져 있던 슬라이더를 <b>− 값 +</b> 로 바꿨어요. 숫자를 누르면 직접 입력할 수 있고, 길게 누르면 계속 오르내려요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요. 길게 써도 안쪽 스크롤 없이 다 보여요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서 두 칸씩 나와요. 키보드가 올라와도 여섯 칸이 다 보여요.<br>· 셀렉트 · 세그 · 숫자칸의 높이와 글자 크기를 하나로 맞췄어요.<br>· 설정 옆 안내 문구를 정리했어요.<br>· 잘 쓰이지 않던 글꼴 두 가지(우아한 세리프 · 오뉴월의 꽃나무체)를 뺐어요. 그 글꼴을 쓰고 있었다면 프리텐다드로 바뀌어요.</p>
+      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 슬라이더를 <b>− 값 +</b> 로 바꿨어요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서는 두 개씩 묶어 보여요.</p>
     </div>
-    <button class="sheet__cancel" id="notice-close" type="button">확인</button>
+    <div class="notice-btns">
+      <button class="sheet__cancel" id="notice-never" type="button">다시 보지 않기</button>
+      <button class="sheet__cancel" id="notice-close" type="button">확인</button>
+    </div>
   </div>
 </div>
 
@@ -2063,7 +2072,7 @@
       <p class="help-cat">자동화 도구</p>
       <p class="hint">· <b>*색*</b>: *지문* 영역을 * 포함 *색*의 색깔로 변경해요.<br>· <b>(색)</b>: (지문) 영역을 ( ) 포함 (색)의 색깔로 변경해요. 말풍선 안의 (지문)은 각 인물별로 지정된 (색)을 사용해요.<br>· <b>(휨)</b>: (지문) 영역을 ( ) 포함 이탤릭으로 변경해요.<br>· <b>(작게)</b>: (지문) 영역을 ( ) 포함 작은 글자 크기로 변경해요. 크기만 반영하기 때문에 색깔은 그대로 유지돼요. 크기는 내용-자동화 도구에서 지정하며, 값을 바꾸면 이미 적용한 것도 함께 변해요.<br>· <b>&quot;넣&quot;</b>: 문단 앞뒤에 &quot; &quot;를 넣어요. 문단이 별표·괄호·따옴표로 시작하거나 끝나면 건너뛰어요.<br>· <b>&quot;색&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 강조색으로 변경해요. 강조 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 강조와 똑같이 조정돼요.<br>· <b>&quot;인&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 인용선으로 변경해요. 바로 아래 줄에 (지문)이나 *(지문)*이 있으면 하나의 인용선에 같이 들어가요. 인용선 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 인용선과 똑같이 조정돼요.<br>· <b>&quot;말&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 말풍선으로 변경해요. 바로 아래 줄에 (지문)이나 *(지문)*이 있으면 하나의 말풍선에 같이 들어가요.<br><br><b>TIP!</b><br>· *색*과 (색)에 사용되는 색깔은 내용-자동화 도구에서 변경돼요.<br>· 말풍선 안의 (색)에 사용되는 색깔은 말풍선-인물에서 인물별로 변경돼요.<br>· 프리셋-텍스트 대치에서 특정 글자를 다른 글자로 변환·삭제할 수 있어요.</p>
       <p class="help-cat">서식</p>
-      <p class="hint">· <b>글자 크기</b>: 드래그한 부분만 크기를 따로 정할 수 있어요. 본문보다 작게도, 크게도 만들 수 있어요. 정한 크기는 다음에도 남아 있고, 적용된 글자는 그때의 크기를 그대로 유지해요. 크기를 바꾸고 싶다면 그 부분에 커서를 두고 다시 적용해 주세요.<br>· <b>글자 크기 불러오기</b>: 글자 크기에서 불러오기를 누른 뒤 입력이나 미리보기의 글자를 누르면 그 글자의 크기를 그대로 가져와요. 크기를 따로 준 적 없는 일반 본문·제목을 눌러도 돼요.<br>· <b>강조·형광펜·인용선</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조·형광펜·인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.</p>
+      <p class="hint">· <b>글자 크기</b>: 드래그한 부분만 크기를 따로 정할 수 있어요. 본문보다 작게도, 크게도 만들 수 있어요. 정한 크기는 다음에도 남아 있고, 적용된 글자는 그때의 크기를 그대로 유지해요. 크기를 바꾸고 싶다면 그 부분에 커서를 두고 크기 값 적용을 다시 눌러 주세요.<br>· <b>글자 크기 불러오기</b>: 글자 크기에서 불러오기를 누른 뒤 입력이나 미리보기의 글자를 누르면 그 글자의 크기를 그대로 가져와요. 크기를 따로 준 적 없는 일반 본문·제목을 눌러도 돼요.<br>· <b>강조·형광펜·인용선</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조·형광펜·인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.</p>
       <p class="help-cat">말풍선</p>
       <p class="hint">· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 이름</b>: 말풍선 이름은 입력에서 조정 가능한 텍스트가 아니에요. 이름을 바꾸고 싶다면 인물에서 변경해 주세요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 앞·맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일은 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.</p>
       <p class="help-cat">말풍선 간격</p>
@@ -3887,7 +3896,7 @@
   /* 작은 글자 시트의 크기 조절 행 — 값은 내용 탭 슬라이더(#subtext-size)와 같은 것을 쓰므로 다음에도 그대로 남는다 */
   function buildSubSizeRow(){
     var row=document.createElement('div'); row.className='sheet__num';
-    row.innerHTML='<span class="sheet__num-lab">크기</span>'+
+    row.innerHTML='<span class="sheet__num-lab">크기 값</span>'+
       '<span class="sheet__num-ctl">'+
         '<button type="button" class="sheet__num-b" data-d="-1" aria-label="작게">−</button>'+
         '<input type="text" class="sheet__num-in" inputmode="numeric" aria-label="글자 크기">'+
@@ -3932,7 +3941,7 @@
         preview:'<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5a2.1 2.1 0 0 1 3 3l-7.6 7.6-3.6.6.6-3.6z"/><path d="M4 20h6"/></svg></span>',
         run: function(){ startSizePick(); } });
       var inSub = hasMarkAtSel('sub');
-      opts.push({ label: inSub ? '이 크기로 변경' : '이 크기로 적용', preview: subIconHtml,
+      opts.push({ label: '크기 값 적용', preview: subIconHtml,
                   run: function(){ applyFormat('sub'); } });
       if(inSub) opts.push({ label:'원래 크기로 되돌리기', preview: removeSwatchHtml,
                   run: function(){ applyFormat('sub', null, null, false, '__remove__'); } });
@@ -4153,20 +4162,38 @@
      (기존 사용자는 저장된 값이 없으므로 이번에 한 번 보게 된다)
      ============================================================ */
   (function(){
-    var NOTICE_ID = '2026-08-24c';                    // ★공지를 새로 띄우려면 이 값만 바꾼다
-    var NOTICE_KEY = 'logmaker-notice-seen';
-    var ov=$('notice-overlay'), btn=$('notice-close'), t=null;
+    var NOTICE_ID   = '2026-08-24d';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
+    var NOTICE_FROM = '2026-08-24T00:00:00';         // 이 기간에는 볼 때마다 뜬다
+    var NOTICE_TO   = '2026-08-26T00:00:00';         // (끝나는 날 자정 = 25일까지)
+    var NOTICE_KEY  = 'logmaker-notice-v2';
+    var ov=$('notice-overlay'), okBtn=$('notice-close'), neverBtn=$('notice-never'), t=null;
     if(!ov) return;
-    var seen=null; try{ seen=localStorage.getItem(NOTICE_KEY); }catch(e){ seen=NOTICE_ID; }   // 저장 못 쓰면 안 띄움(매번 뜨는 것 방지)
-    if(seen===NOTICE_ID) return;
-    function close(){
-      try{ localStorage.setItem(NOTICE_KEY, NOTICE_ID); }catch(e){}
+
+    var st=null;
+    try{ st=JSON.parse(localStorage.getItem(NOTICE_KEY)||'{}'); }catch(e){ st=null; }
+    if(!st) return;                                   // 저장을 못 쓰면 아예 안 띄움(매번 뜨는 것 방지)
+    function save(){ try{ localStorage.setItem(NOTICE_KEY, JSON.stringify(st)); }catch(e){} }
+
+    var now=Date.now(), until=new Date(NOTICE_TO).getTime();
+    var inWindow = now < until;                       // 기간 중(시계가 이르면 기간 중으로 봄)
+
+    // 다시 보지 않기를 눌렀으면 기간과 무관하게 끝
+    if(st.never===NOTICE_ID) return;
+    // 기간이 지났다면, 기간 중에 이미 봤거나 이후에 한 번 봤으면 끝
+    if(!inWindow && (st.seen===NOTICE_ID || st.post===NOTICE_ID)) return;
+
+    function close(never){
+      if(never){ st.never=NOTICE_ID; }
+      else if(inWindow){ st.seen=NOTICE_ID; }         // 기간 중에 봤다는 기록
+      else { st.post=NOTICE_ID; }                     // 기간 뒤 한 번 봤다는 기록
+      save();
       ov.classList.remove('is-open');
       t=setTimeout(function(){ ov.hidden=true; t=null; }, 260);
     }
-    if(btn) btn.addEventListener('click', close);
-    ov.addEventListener('click', function(e){ if(e.target===ov) close(); });
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !ov.hidden) close(); });
+    if(okBtn) okBtn.addEventListener('click', function(){ close(false); });
+    if(neverBtn) neverBtn.addEventListener('click', function(){ close(true); });
+    ov.addEventListener('click', function(e){ if(e.target===ov) close(false); });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !ov.hidden) close(false); });
     // 복원·렌더가 끝난 뒤에 띄운다
     setTimeout(function(){ ov.hidden=false; requestAnimationFrame(function(){ ov.classList.add('is-open'); }); }, 400);
   })();
