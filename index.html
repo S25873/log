@@ -406,6 +406,15 @@
   .fold[open] > summary .fold__chevron{transform:rotate(180deg);}
   .fold[open] > summary{border-bottom:1px solid var(--line);}
   .fold__body{padding:15px;}
+  /* 아코디언 맨 아래 닫기 — 길게 펼쳐진 뒤 제목까지 올라가지 않아도 접을 수 있게 */
+  .fold__closewrap{display:flex;justify-content:flex-end;margin-top:16px;}
+  .fold__close{
+    border:1px solid var(--line);background:var(--surface-2);color:var(--ink-3);
+    border-radius:99px;padding:7px 16px;cursor:pointer;
+    font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.02em;
+    transition:background .14s var(--ease),color .14s,border-color .14s;
+  }
+  .fold__close:hover{background:var(--surface-3);color:var(--ink-2);border-color:var(--line-strong);}
 
   /* 큰 버튼 */
   .btn{
@@ -7258,6 +7267,24 @@
   requestAnimationFrame(function(){ if(typeof moveAllThumbs==='function') moveAllThumbs(); });
   enableValueEditing();
   stepperize();
+
+  /* 아코디언마다 맨 아래에 닫기 버튼을 하나씩 붙인다.
+     (open=false 로 두면 브라우저가 toggle 이벤트를 알아서 쏘므로 저장·thumb 갱신은 그대로 동작) */
+  (function addFoldClose(){
+    [].forEach.call(document.querySelectorAll('details.fold'), function(d){
+      var body=d.querySelector('.fold__body');
+      if(!body || body.querySelector('.fold__close')) return;
+      var wrap=document.createElement('div'); wrap.className='fold__closewrap';
+      var b=document.createElement('button'); b.type='button'; b.className='fold__close'; b.textContent='닫기';
+      b.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        d.open=false;
+        // 접히면서 내용이 위로 당겨지므로, 제목이 화면 밖이면 보이는 위치로 옮겨 준다
+        try{ d.scrollIntoView({block:'nearest'}); }catch(err){}
+      });
+      wrap.appendChild(b); body.appendChild(wrap);
+    });
+  })();
   window.addEventListener('resize', function(){ if(typeof moveAllThumbs==='function') moveAllThumbs(); });
 })();
 
