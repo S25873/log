@@ -962,7 +962,7 @@
   #canvas .g-msg-group.left,.canvas-clone .g-msg-group.left{flex-direction:row !important;}
   #canvas .g-msg-group.right,.canvas-clone .g-msg-group.right{flex-direction:row-reverse !important;}
   #canvas .g-msg-group:first-child,.canvas-clone .g-msg-group:first-child{margin-top:0 !important;}
-  #canvas .g-avatar,.canvas-clone .g-avatar{width:2.5em !important;height:2.5em !important;flex:none !important;border-radius:50% !important;background-size:cover !important;background-position:center !important;background-repeat:no-repeat !important;margin-top:.15em !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:.92em !important;font-weight:700 !important;color:#fff !important;overflow:hidden !important;}
+  #canvas .g-avatar,.canvas-clone .g-avatar{width:2.5em !important;height:2.5em !important;flex:none !important;border-radius:50% !important;background-size:cover !important;background-position:center !important;background-repeat:no-repeat !important;margin-top:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:.92em !important;font-weight:700 !important;color:#fff !important;overflow:hidden !important;}
   #canvas .g-avatar.square,.canvas-clone .g-avatar.square{border-radius:.55em !important;}
   #canvas .g-avatar.noimg,.canvas-clone .g-avatar.noimg{background:#c3c7cd !important;}
   #canvas .g-avatar img,.canvas-clone .g-avatar img{width:100% !important;height:100% !important;object-fit:cover !important;display:block !important;border-radius:inherit !important;}
@@ -1048,7 +1048,7 @@
   #canvas .g-bub:first-child,.canvas-clone .g-bub:first-child{margin-top:0 !important;}
   #canvas .g-bub.recv,.canvas-clone .g-bub.recv{margin-right:auto !important;margin-left:.4em !important;background:var(--bub-recv,#e5e5ea) !important;color:var(--bub-recv-ink,#000) !important;}
   #canvas .g-bub.send,.canvas-clone .g-bub.send{margin-left:auto !important;margin-right:.4em !important;background:var(--bub-send,#248bf5) !important;color:var(--bub-send-ink,#fff) !important;}
-  #canvas .g-bub-name,.canvas-clone .g-bub-name{display:block !important;width:fit-content !important;max-width:75% !important;font-size:.8em !important;font-weight:700 !important;line-height:1.2 !important;margin:.5em 0 .35em !important;padding:0 .3em !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-bub-name,.canvas-clone .g-bub-name{display:block !important;width:fit-content !important;max-width:75% !important;font-size:.88em !important;font-weight:700 !important;line-height:1.2 !important;margin:.5em 0 .35em !important;padding:0 .3em !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-bub-name.recv,.canvas-clone .g-bub-name.recv{margin-right:auto !important;margin-left:.4em !important;text-align:left !important;color:var(--bub-name-recv,#8a8a8a) !important;}
   #canvas .g-bub-name.send,.canvas-clone .g-bub-name.send{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;color:var(--bub-name-send,#8a8a8a) !important;}
   #canvas .g-bub-name + .g-bub,.canvas-clone .g-bub-name + .g-bub{margin-top:.25em !important;}
@@ -2018,7 +2018,7 @@
 
           <div class="section" style="margin-top:20px">
             <p class="section__head">내 프리셋</p>
-            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 배경 이미지는 프리셋에 저장되지 않아요.</p>
+            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 사진 배경은 프리셋에 저장되지 않아요.</p>
             <div class="mychips" id="my-presets"></div>
             <button class="btn btn--ghost" id="preset-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 설정 저장</button>
           </div>
@@ -4331,7 +4331,7 @@
       var isPhoto = !!(b && b.querySelector && b.querySelector('img'));
       if(!(IS_TOUCH && isPhoto)){ editor.focus(); restoreSel(); b = caretInBubble() || b; }
       if(!isCharBub(b) || !characters.length) return;
-      openSheetDef({ title:'인물 변경', options: characters.map(function(c){
+      openSheetDef({ title:'인물 변경', grid2:true, options: characters.map(function(c){
         return { label:c.name||'(이름 없음)', preview:function(){ return '<span class="s-preview"><i style="display:block;width:20px;height:20px;border-radius:50%;background:'+c.bub+'"></i></span>'; },
           run:function(){ b.setAttribute('data-char', c.id); var nm=bubNameBefore(b); if(nm) nm.setAttribute('data-char', c.id); cleanEditor(); styleCharBubbles(editor); render(); saveSel(); } };
       }) });
@@ -6161,7 +6161,7 @@
   }
   function openQuoteBubbleSheet(){
     if(!characters || !characters.length){ openQuoteStyleSheet(null); return; }
-    openSheetDef({ title:'따옴표 → 말풍선 · 인물 선택', options: characters.map(function(c){
+    openSheetDef({ title:'따옴표 → 말풍선 · 인물 선택', grid2:true, options: characters.map(function(c){
       return { label:c.name||'(이름 없음)', preview:function(){ return '<span class="s-preview"><i style="display:block;width:20px;height:20px;border-radius:50%;background:'+c.bub+'"></i></span>'; }, noFocus:true, run:function(){ openQuoteStyleSheet(c.id); } };
     }) });
   }
