@@ -590,8 +590,16 @@
     display:flex;align-items:center;justify-content:space-between;gap:10px;
     border:1px solid var(--line);background:var(--surface-2);
     border-radius:var(--radius-sm);padding:9px 10px 9px 15px;
+    cursor:pointer;transition:background .14s var(--ease),border-color .14s;
   }
-  .sheet__num-lab{font-size:13.5px;font-weight:600;color:var(--ink);}
+  .sheet__list .sheet__num:hover{background:var(--surface-3);border-color:var(--line-strong);}
+  .sheet__list .sheet__num:active{background:var(--line);}
+  .sheet__num-lab{
+    display:flex;align-items:center;gap:12px;min-width:0;
+    font-size:13.5px;font-weight:600;color:var(--ink);
+  }
+  .sheet__num-lab .s-preview{flex:none;}
+  .sheet__num-ctl{cursor:default;}
   /* 설정 탭 스테퍼와 같은 모양 — 셋을 테두리 하나로 묶고 사이만 짧은 세로선 */
   .sheet__num-ctl{
     display:flex;align-items:stretch;gap:0;height:36px;
@@ -2079,7 +2087,7 @@
       <p class="hint">· 내용 탭에 <b>크기 도우미</b>가 생겼어요. 버튼을 키면 본문 글자 크기 하나만 정해도 제목 · 소제목 · 하단 · (작게) 크기와 문단 · 제목 · 하단 간격이 알아서 맞춰져요.<br>· 켠 상태에서 값을 직접 고쳐도 되지만, 본문 글자 크기를 바꾸면 직접 고친 값까지 새로 계산돼요.<br>· 끄면 켜기 전 값으로 돌아가요. 직접 고친 값도 함께 사라지니 남기고 싶다면 프리셋에 저장해 주세요.</p>
 
       <p class="help-cat">글자 크기</p>
-      <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 새로운 도구가 됐어요. 이제 본문보다 작게 · 크게 모두 대응해요.<br>· 드래그한 부분에만 적용돼요. 크기는 각각 적용 당시 값으로 유지되며, 크기를 변경해도 이전 것까지 바뀌지 않아요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 가져올 수 있어요.<br>· 크기를 지정한 글자는 드래그하지 않고 <b>커서만 둬도</b> 그 부분 전체에 적용돼요. 이때는 <b>원래 크기로 되돌리기</b>도 함께 떠요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39; 슬라이더는 삭제 후 이 도구에 합쳐졌어요.</p>
+      <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 새로운 도구가 됐어요. 이제 본문보다 작게 · 크게 모두 대응해요.<br>· 드래그한 부분에만 적용돼요. 크기는 각각 적용 당시 값으로 유지되며, 크기를 변경해도 이전 것까지 바뀌지 않아요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 가져올 수 있어요.<br>· 크기를 지정한 글자는 드래그하지 않고 <b>커서만 둬도</b> 그 부분 전체에 적용돼요. 이때는 <b>본문 글자 크기로 되돌리기</b>도 함께 떠요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39; 슬라이더는 삭제 후 이 도구에 합쳐졌어요.</p>
 
       <p class="help-cat">하단</p>
       <p class="hint">· <b>하단 스타일</b>과 <b>하단 정렬</b>이 따로 나뉘었어요.<br>기본 · 볼드 · 인용선(좌) · 인용선(우)에 양쪽 · 왼쪽 · 가운데 · 오른쪽을 자유롭게 섞을 수 있어요.<br>· 인용선 막대는 캔버스 끝이 아니라 글자 옆에 붙어요.</p>
@@ -3929,10 +3937,12 @@
     return '<span class="s-preview"><i style="display:block;width:20px;height:20px;border-radius:50%;background:'+color+';box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)"></i></span>';
   }
   var subIconHtml = '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.0 19.8 8.3 4.8l6.3 15"/><path d="M4.4 15.6h7.8"/><path d="M20.4 6.0v12.4M18.5 7.9 20.4 6.0 22.3 7.9M18.5 16.5 20.4 18.4 22.3 16.5"/></svg></span>';
-  /* 작은 글자 시트의 크기 조절 행 — 값은 내용 탭 슬라이더(#subtext-size)와 같은 것을 쓰므로 다음에도 그대로 남는다 */
+  /* 크기 값 행 — 왼쪽(글씨 쪽)을 누르면 그 값으로 바로 적용, 오른쪽 −/값/+ 은 값만 조절.
+     항목을 따로 두지 않고 한 줄에서 '정하고 누르기'가 끝나게 했다.
+     값 자체는 숨겨 둔 #subtext-size 와 같은 것을 쓰므로 다음에도 그대로 남는다 */
   function buildSubSizeRow(){
     var row=document.createElement('div'); row.className='sheet__num';
-    row.innerHTML='<span class="sheet__num-lab">크기 값</span>'+
+    row.innerHTML='<span class="sheet__num-lab">'+subIconHtml+'<span>글자 크기 적용</span></span>'+
       '<span class="sheet__num-ctl">'+
         '<button type="button" class="sheet__num-b" data-d="-1" aria-label="작게">−</button>'+
         '<input type="text" class="sheet__num-in" inputmode="numeric" aria-label="글자 크기">'+
@@ -3947,6 +3957,17 @@
     inp.addEventListener('focus', function(){ inp.value=String(subSizeNow()); setTimeout(function(){ try{ inp.select(); }catch(e){} }, 0); });   // 고칠 땐 숫자만 남겨 바로 덮어쓰게
     inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
     inp.addEventListener('blur', function(){ setV(inp.value); });
+    // 스테퍼 안을 누른 건 값 조절이므로 적용으로 안 친다
+    row.querySelector('.sheet__num-ctl').addEventListener('click', function(e){ e.stopPropagation(); });
+    row.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      closeSheet();
+      if(_sheetSavedRange && editor.contains(_sheetSavedRange.startContainer)){
+        editor.focus();
+        var sl=window.getSelection(); sl.removeAllRanges(); sl.addRange(_sheetSavedRange);
+      }
+      applyFormat('sub');
+    });
     return row;
   }
   var removeSwatchHtml = '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><line x1="6.5" y1="17.5" x2="17.5" y2="6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>';
@@ -3977,9 +3998,7 @@
         preview:'<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5a2.1 2.1 0 0 1 3 3l-7.6 7.6-3.6.6.6-3.6z"/><path d="M4 20h6"/></svg></span>',
         run: function(){ startSizePick(); } });
       var inSub = hasMarkAtSel('sub');
-      opts.push({ label: '크기 값 적용', preview: subIconHtml,
-                  run: function(){ applyFormat('sub'); } });
-      if(inSub) opts.push({ label:'원래 크기로 되돌리기', preview: removeSwatchHtml,
+      if(inSub) opts.push({ label:'본문 글자 크기로 되돌리기', preview: removeSwatchHtml,
                   run: function(){ applyFormat('sub', null, null, false, '__remove__'); } });
       return opts;
     } },
