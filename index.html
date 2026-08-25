@@ -160,7 +160,6 @@
     content:"";position:absolute;left:11px;right:11px;bottom:-1px;height:2px;
     background:var(--ink);border-radius:2px;
   }
-  .tabbar__spacer{flex:1;}
   .icon-btn{
     width:36px;height:36px;flex:none;
     border:1px solid var(--line);background:var(--surface);
@@ -232,8 +231,6 @@
   :root[data-theme="dark"] .act--primary:hover{filter:brightness(1.12);}
   .act--ghost{flex:1;background:transparent;color:var(--ink);border:1px solid var(--line-strong);}
   .act--ghost:hover{background:var(--surface-2);border-color:var(--ink);}
-  .act--reset{flex:none;padding:0 13px;background:transparent;color:var(--ink-3);border:1px solid var(--line);}
-  .act--reset:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
   .act:active{transform:scale(.97);}
 
   /* ============================================================
@@ -341,7 +338,6 @@
   textarea{height:auto;padding:11px 13px;line-height:1.6;resize:vertical;}
 
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
-  .divider{height:1px;background:var(--line);margin:22px 0;border:0;}
 
   .section{margin-top:26px;}
   .section:first-child{margin-top:0;}
@@ -498,28 +494,8 @@
   /* 강조색의 점·형광펜의 띠는 색 고정(노랑·빨강) — 무엇을 하는 버튼인지 알려주는 장식 */
   .fbtn .fb-hl-bar{opacity:.85;}
   /* 인용선 아이콘 */
-  .fbtn .quote-ic{display:inline-flex;align-items:center;justify-content:center;color:var(--ink);}
-  .fbtn .quote-ic svg{width:14px;height:14px;display:block;}
-  .fbtn.is-active .quote-ic{color:var(--ink-on-accent);}
   /* 구분: 대시 아이콘 */
-  .fbtn .hr-ic{display:inline-flex;align-items:center;justify-content:center;color:var(--ink);}
-  .fbtn .hr-ic svg{width:14px;height:14px;display:block;}
-  .fbtn.is-active .hr-ic{color:var(--ink-on-accent);}
   /* 삽입(+) 아이콘 */
-  .fbtn .ins-ic{display:inline-flex;align-items:center;justify-content:center;color:var(--ink);}
-  .fbtn .ins-ic svg{width:15px;height:15px;display:block;}
-  .fbtn.is-active .ins-ic{color:var(--ink-on-accent);}
-
-  .bub-ic{position:relative;display:inline-block;width:20px;height:13px;border-radius:6.5px;}
-  .bub-ic>svg{position:absolute;bottom:0;width:11px;height:7px;overflow:visible;}
-  .bub-ic--recv{background:var(--ink-3);}
-  .bub-ic--send{background:var(--ink);}
-  .bub-ic--recv>svg{left:-3px;}
-  .bub-ic--send>svg{right:-3px;transform:scaleX(-1);}
-  .bub-ic--recv>svg path{fill:var(--ink-3);}
-  .bub-ic--send>svg path{fill:var(--ink);}
-  .fbtn.is-active .bub-ic{background:var(--ink-on-accent) !important;}
-  .fbtn.is-active .bub-ic>svg path{fill:var(--ink-on-accent) !important;}
 
   /* 서식 선택 바텀시트 */
   .sheet-overlay{
@@ -649,6 +625,10 @@
     border-radius:var(--radius-sm);transition:background .14s var(--ease),color .14s;
   }
   .sheet__cancel:hover{background:var(--surface-2);color:var(--ink);}
+  /* 두 단계 이상인 시트는 [뒤로][취소] 두 칸 */
+  .sheet__btns{display:flex;gap:8px;}
+  .sheet__btns .sheet__cancel{flex:1;}
+  .sheet__btns .sheet__cancel[hidden]{display:none;}
   .notice-btns{display:flex;gap:8px;}
   .notice-btns .sheet__cancel{margin-top:12px;}
   /* 두 버튼은 대등한 선택지 — 배경도 글자색도 한쪽만 강조하지 않는다 */
@@ -670,8 +650,6 @@
   .lowtools[hidden]{display:none;}
   .subtools{display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;}
   .subtools[hidden]{display:none;}
-  .fbtn--exit{background:var(--surface-2);border-color:var(--line-strong);font-size:11.5px;font-weight:700;}
-  .fbtn--exit:hover{background:var(--ink);color:var(--surface);border-color:var(--ink);}
   .fbtn--del{font-size:11.5px;color:var(--danger);}
   .fbtn--del:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
   .fbtn--exit[hidden],.fbtn--del[hidden]{display:none;}
@@ -816,9 +794,6 @@
   .reordering .reorderable:not(.dragging){transition:transform .17s var(--ease);}
   .reorderable.dragging{opacity:.92;transform:scale(1.06);box-shadow:var(--shadow-2);cursor:grabbing;position:relative;z-index:5;border-color:var(--ink) !important;}
   .reorderable.dragging *{cursor:grabbing;}
-
-  .photo-controls{margin-top:16px;}
-  .photo-controls[hidden]{display:none;}
 
   .hint{font-size:11.5px;color:var(--ink-3);line-height:1.55;margin:12px 0 0;}
 
@@ -1138,7 +1113,6 @@
     .tab{padding:0 10px;font-size:13px;}
     .fbtn{height:30px;font-size:11px;}
     .fbtn .fb-ic{width:15px;height:15px;}
-    .fbtn .quote-ic svg,.fbtn .hr-ic svg{width:13px;height:13px;}
     .fmt-row{gap:3px;}
     .mini-row{gap:3px;}
     .mini{padding:0 4px;gap:2px;min-width:24px;}
@@ -1196,7 +1170,7 @@
 
         <!-- 크기 불러오기 안내 — 고를 대상(입력창) 바로 위에 붙는다 -->
         <div class="pickbar" id="pick-bar" hidden>
-          <span id="pick-msg">크기를 가져올 글자를 톡 눌러 주세요 (스크롤 가능)</span>
+          <span id="pick-msg">크기를 가져올 글자를 톡 눌러 주세요</span>
           <button type="button" id="pick-cancel">취소</button>
         </div>
 
@@ -2070,7 +2044,10 @@
     <div class="sheet__grip"></div>
     <div class="sheet__title" id="sheet-title">선택</div>
     <div class="sheet__list" id="sheet-list"></div>
-    <button class="sheet__cancel" id="sheet-cancel" type="button">취소</button>
+    <div class="sheet__btns">
+      <button class="sheet__cancel" id="sheet-back" type="button" hidden>뒤로</button>
+      <button class="sheet__cancel" id="sheet-cancel" type="button">취소</button>
+    </div>
   </div>
 </div>
 
@@ -2096,10 +2073,10 @@
       <p class="hint">· <b>텍스트 대치</b>가 본문뿐 아니라 제목 · 소제목 · 하단에도 함께 적용돼요.<br>· <b>뒤로가기 · 앞으로가기</b>도 네 칸을 함께 다뤄요.</p>
 
       <p class="help-cat">자동화 도구</p>
-      <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(작게)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(작게)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(작게)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.</p>
+      <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(작게)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(작게)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(작게)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.<br>· <b>"인"</b> · <b>"말"</b>이 바로 아래 (지문) 줄을 못 데려가던 문제를 고쳤어요. 강조색이나 (작게) 같은 서식이 걸려 있어도 함께 들어가요.</p>
 
       <p class="help-cat">화면</p>
-      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 슬라이더를 <b>− 값 +</b> 로 바꿨어요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서는 두 개씩 묶어 보여요.</p>
+      <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 슬라이더를 <b>− 값 +</b> 로 바꿨어요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서는 두 개씩 묶어 보여요.<br>· 여러 단계로 들어가는 창에 <b>뒤로</b>가 생겼어요. 잘못 눌러도 처음부터 다시 하지 않아도 돼요.<br>· 설정 묶음마다 맨 아래에 <b>닫기</b>가 생겼어요. 위로 올라가지 않아도 접을 수 있어요.</p>
     </div>
     <div class="notice-btns">
       <button class="sheet__cancel" id="notice-never" type="button">다시 보지 않기</button>
@@ -3974,8 +3951,8 @@
   var SHEETS = {
     insert: { title: '삽입', options: [
       { label: '사진', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7"/><circle cx="8.5" cy="10" r="1.6" fill="currentColor"/><path d="M4 17l4.5-4.5 3.5 3.5 3-3L20 16.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>', noFocus:true, run: function(){ photoAlignSheet(); } },
-      { label: '인용선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="2.4" height="16" rx="1.2" fill="currentColor"/><line x1="10" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', noFocus:true, run: function(){ openSheet('quote'); } },
-      { label: '구분선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', noFocus:true, run: function(){ openSheet('hr'); } }
+      { label: '인용선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="2.4" height="16" rx="1.2" fill="currentColor"/><line x1="10" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', noFocus:true, run: function(){ openSheet('quote', function(){ openSheet('insert'); }); } },
+      { label: '구분선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', noFocus:true, run: function(){ openSheet('hr', function(){ openSheet('insert'); }); } }
     ]},
     hl: { title: '형광펜', grid2:true, options: function(){
       var opts=[1,2,3,4,5,6].map(function(n){
@@ -4013,12 +3990,12 @@
         var isRight = q.classList.contains('right');
         var curSlot = parseInt(q.getAttribute('data-qslot')||'1',10) || 1;
         return [
+          { label: '슬롯 (색) 변경 · 현재 '+curSlot, preview: function(){ return swatchHtml(quoteSlotColor(curSlot)); },
+            run: function(){ openQuoteEditColorSheet(q); } },
           { label: (isRight?'왼쪽':'오른쪽')+'으로 방향 전환',
             preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10l-3-3M17 16H7l3 3"/></svg></span>',
             run: function(){ q.className='g-quote '+(isRight?'left':'right'); paintQuote(q, curSlot); cleanEditor(); render(); saveSel(); } },
-          { label: '슬롯 (색) 변경 · 현재 '+curSlot, preview: function(){ return swatchHtml(quoteSlotColor(curSlot)); },
-            run: function(){ openQuoteEditColorSheet(q); } },
-          { label: '인용선 삭제', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 12.5A1.6 1.6 0 0 0 8.6 21h6.8a1.6 1.6 0 0 0 1.6-1.5L18 7"/></svg></span>',
+          { label: '인용선 삭제', preview: removeSwatchHtml,
             run: function(){ removeQuote(q); cleanEditor(); render(); saveSel(); } }
         ];
       }
@@ -4043,7 +4020,9 @@
     ]}
   };
   var sheetOverlay = $('sheet-overlay'), sheetEl = $('sheet'),
-      sheetTitle = $('sheet-title'), sheetList = $('sheet-list'), sheetCancel = $('sheet-cancel');
+      sheetTitle = $('sheet-title'), sheetList = $('sheet-list'), sheetCancel = $('sheet-cancel'),
+      sheetBackBtn = $('sheet-back');
+  var _sheetBack = null;
   var _sheetSavedRange = null;
   var _sheetHideT = null;
   function openSheetDef(def){
@@ -4052,6 +4031,8 @@
     // 현재 에디터 선택을 보존 (시트 여는 동안 포커스 이동해도 복원)
     var sel = window.getSelection();
     _sheetSavedRange = (sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)) ? sel.getRangeAt(0).cloneRange() : (_savedRange ? _savedRange.cloneRange() : null);
+    _sheetBack = (typeof def.back==='function') ? def.back : null;   // 되돌아갈 상위 시트
+    if(sheetBackBtn) sheetBackBtn.hidden = !_sheetBack;
     sheetTitle.textContent = def.title;
     sheetList.classList.toggle('is-grid2', !!def.grid2);   // 색 슬롯 시트는 좁은 화면에서 2열
     sheetList.innerHTML = '';
@@ -4077,11 +4058,19 @@
     sheetOverlay.hidden = false;
     requestAnimationFrame(function(){ sheetOverlay.classList.add('is-open'); });
   }
-  function openSheet(key){ var def = SHEETS[key]; if(def) openSheetDef(def); }
+  function openSheet(key, back){
+    var def = SHEETS[key]; if(!def) return;
+    if(!back){ openSheetDef(def); return; }
+    var wrapped={}; for(var k in def){ if(Object.prototype.hasOwnProperty.call(def,k)) wrapped[k]=def[k]; }
+    wrapped.back=back;                          // 한 단계 위로 돌아갈 수 있게 감싸서 연다
+    openSheetDef(wrapped);
+  }
   // 인용선 색(슬롯) 선택 시트 — 왼쪽/오른쪽을 고른 다음에 뜬다
   // 이미 있는 인용선의 색(슬롯)만 교체
   function openQuoteEditColorSheet(q){
-    openSheetDef({ title:'인용선 색', noFocus:true, grid2:true, options:[1,2,3,4,5,6].map(function(n){
+    openSheetDef({ title:'인용선 색', noFocus:true, grid2:true,
+      back:function(){ openSheet('quote', function(){ openSheet('insert'); }); },
+      options:[1,2,3,4,5,6].map(function(n){
       return { label:'인용선 '+n, preview:function(){ return swatchHtml(quoteSlotColor(n)); },
         run:function(){ paintQuote(q, n); cleanEditor(); render(); saveSel(); } };
     })});
@@ -4091,7 +4080,7 @@
       return { label:'인용선 '+n, preview: swatchHtml(quoteSlotColor(n) || '#c8c8c8'),
                run:function(){ applyFormat('quote', null, side, false, n); } };
     });
-    openSheetDef({ title:'인용선 색', grid2:true, options: opts });
+    openSheetDef({ title:'인용선 색', grid2:true, back:function(){ openSheet('quote', function(){ openSheet('insert'); }); }, options: opts });
   }
   function closeSheet(){
     if(!sheetOverlay) return;
@@ -4196,6 +4185,7 @@
     bindTap(btn, function(e){ if(e){ e.preventDefault(); e.stopPropagation(); } openSheet(btn.getAttribute('data-sheet')); });
   });
   if(sheetCancel){ sheetCancel.addEventListener('click', closeSheet); }
+  if(sheetBackBtn){ sheetBackBtn.addEventListener('click', function(){ var b=_sheetBack; if(b){ b(); } else { closeSheet(); } }); }
   if(sheetOverlay){ sheetOverlay.addEventListener('click', function(e){ if(e.target===sheetOverlay){ closeSheet(); } }); }
   document.addEventListener('keydown', function(e){ if(e.key==='Escape' && _picking){ e.preventDefault(); endSizePick(null); return; } });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape' && sheetOverlay && !sheetOverlay.hidden){ closeSheet(); } });
