@@ -902,6 +902,9 @@
   #canvas.bub-plain .g-bub-name.send,#canvas.bub-plain .g-bub-name.char-name.right,
   .canvas-clone.bub-plain .g-bub.send,.canvas-clone.bub-plain .g-bub.char-bub.right,
   .canvas-clone.bub-plain .g-bub-name.send,.canvas-clone.bub-plain .g-bub-name.char-name.right{margin-right:0 !important;}
+  /* 배경이 사라진 만큼 프사와 글 사이가 확 좁아져 보인다(원래는 gap .45 + 들여쓰기 .4 + 안쪽 여백 .875 = 약 1.7em).
+     들여쓰기는 이름·글의 시작선을 맞추려고 뺐으므로, 대신 프사와 칸 사이 간격을 벌린다 */
+  #canvas.bub-plain .g-msg-group,.canvas-clone.bub-plain .g-msg-group{gap:.95em !important;}
   /* 오른쪽에 놓인 로그 말풍선은 글도 오른쪽 정렬 — 배경이 없으면 상자가 안 보여
      짧은 줄들이 왼쪽에 매달린 것처럼 보이고 오른쪽이 들쭉날쭉 비기 때문 */
   #canvas.bub-plain .g-bub.send,#canvas.bub-plain .g-bub.char-bub.right,
