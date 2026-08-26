@@ -902,9 +902,10 @@
   #canvas.bub-plain .g-bub-name.send,#canvas.bub-plain .g-bub-name.char-name.right,
   .canvas-clone.bub-plain .g-bub.send,.canvas-clone.bub-plain .g-bub.char-bub.right,
   .canvas-clone.bub-plain .g-bub-name.send,.canvas-clone.bub-plain .g-bub-name.char-name.right{margin-right:0 !important;}
-  /* 배경이 사라진 만큼 프사와 글 사이가 확 좁아져 보인다(원래는 gap .45 + 들여쓰기 .4 + 안쪽 여백 .875 = 약 1.7em).
-     들여쓰기는 이름·글의 시작선을 맞추려고 뺐으므로, 대신 프사와 칸 사이 간격을 벌린다 */
-  #canvas.bub-plain .g-msg-group,.canvas-clone.bub-plain .g-msg-group{gap:.95em !important;}
+  /* 프사와의 간격을 말풍선 있을 때와 똑같이 맞춘다.
+     원래: 프사→칸 .45em + 이름/말풍선 들여쓰기 .4em = .85em (상자 기준, 이름·말풍선 동일)
+     로그는 들여쓰기를 0으로 뺐으므로 그 몫을 gap 으로 옮겨 .85em 을 만든다 */
+  #canvas.bub-plain .g-msg-group,.canvas-clone.bub-plain .g-msg-group{gap:.85em !important;}
   /* 오른쪽에 놓인 로그 말풍선은 글도 오른쪽 정렬 — 배경이 없으면 상자가 안 보여
      짧은 줄들이 왼쪽에 매달린 것처럼 보이고 오른쪽이 들쭉날쭉 비기 때문 */
   #canvas.bub-plain .g-bub.send,#canvas.bub-plain .g-bub.char-bub.right,
