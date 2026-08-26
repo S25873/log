@@ -883,6 +883,16 @@
   #editor .g-bub-name.send{margin-left:auto;margin-right:8px;text-align:right;color:var(--bub-name-send,#8a8a8a);}
   #editor .g-bub-name:empty:before{content:"이름";color:var(--ink-3);opacity:.7;}
   /* 말풍선 모양: 심플(각지고 꼬리 없음) */
+  /* 투명: 말풍선 배경만 없앤다. 프사·이름·인물별 글자색은 그대로 유지 */
+  #editor.bub-plain .g-bub{background:transparent !important;border-radius:0;padding:0;}
+  #editor.bub-plain .g-bub>svg.g-tail{display:none;}
+  #canvas.bub-plain .g-bub,.canvas-clone.bub-plain .g-bub{
+    background:transparent !important;border-radius:0 !important;
+    padding:0 !important;max-width:100% !important;
+  }
+  #canvas.bub-plain .g-bub>svg.g-tail,.canvas-clone.bub-plain .g-bub>svg.g-tail{display:none !important;}
+  #canvas.bub-plain .g-bub::before,#canvas.bub-plain .g-bub::after,
+  .canvas-clone.bub-plain .g-bub::before,.canvas-clone.bub-plain .g-bub::after{display:none !important;content:none !important;}
   #editor.bub-simple .g-bub{border-radius:6px;}
   #editor.bub-simple .g-bub-img,#editor.bub-simple .g-bub.img-only .g-bub-img{border-radius:5px;}
   #editor.bub-simple .g-bub>svg.g-tail{display:none;}
@@ -1622,9 +1632,9 @@
         <div class="panel" data-panel="bubble" role="tabpanel">
           <div class="section">
             <p class="section__head">말풍선 삽입</p>
-            <p class="hint" style="margin-top:0;margin-bottom:14px">인물을 눌러 말풍선을 삽입해요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 서로 다른 말풍선으로 처리돼요.</p>
             <div class="char-list" id="char-insert-list"></div>
             <p class="hint" id="char-insert-empty" style="margin:0">아직 인물이 없어요. 아래 <b>인물</b>에서 먼저 추가하세요.</p>
+            <p class="hint" style="margin:12px 0 0">인물을 눌러 말풍선을 삽입해요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 서로 다른 말풍선으로 처리돼요.</p>
           </div>
 
           <details class="fold" id="fold-presets" style="margin-top:14px" open>
@@ -1738,6 +1748,7 @@
                   <button type="button" data-shape="imessage" aria-pressed="true" style="padding:7px 2px;line-height:1.35">아이메시지<br><span style="font-size:10px;opacity:.8">(꼬리 선택)</span></button>
                   <button type="button" data-shape="soft" aria-pressed="false" style="padding:7px 2px;line-height:1.35">심플<br><span style="font-size:10px;opacity:.8">(꼬리 선택)</span></button>
                   <button type="button" data-shape="simple" aria-pressed="false" style="padding:7px 2px;line-height:1.35">네모<br><span style="font-size:10px;opacity:.8">(꼬리 없음)</span></button>
+                  <button type="button" data-shape="plain" aria-pressed="false" style="padding:7px 2px;line-height:1.35">로그<br><span style="font-size:10px;opacity:.8">(투명, 꼬리 없음)</span></button>
                   <span class="seg__thumb"></span>
                 </div>
               </div>
@@ -2151,7 +2162,7 @@
     im.src=frameData;
   }
   var bgMode = 'solid';  // 'solid' | 'gradient' | 'photo'
-  var bubbleShape = 'imessage';  // 'imessage' | 'simple'
+  var bubbleShape = 'imessage';  // 'imessage' | 'soft' | 'simple' | 'plain'(배경 없음)
 
   /* 형광펜·강조색: 슬롯 1/2/3 (슬롯1은 기존 c-hl / c-em 을 그대로 사용) */
   var hlSlot = 1, emSlot = 1, quoteSlot = 1;
@@ -2455,10 +2466,13 @@
   function applyBubbleShape(){
     var simple = bubbleShape==='simple';
     var soft = bubbleShape==='soft';
+    var plain = bubbleShape==='plain';
     editor.classList.toggle('bub-simple', simple);
     canvas.classList.toggle('bub-simple', simple);
     editor.classList.toggle('bub-soft', soft);
     canvas.classList.toggle('bub-soft', soft);
+    editor.classList.toggle('bub-plain', plain);
+    canvas.classList.toggle('bub-plain', plain);
     editor.classList.remove('bub-imsg2','bub-round','bub-card'); canvas.classList.remove('bub-imsg2','bub-round','bub-card');
   }
   function syncShapeSeg(){
@@ -2467,7 +2481,7 @@
     });
     moveThumb($('bub-shape-seg'));
   }
-  function setBubbleShape(shape){ bubbleShape=shape; applyBubbleShape(); syncShapeSeg(); render(); }
+  function setBubbleShape(shape){ bubbleShape=shape; applyBubbleShape(); syncShapeSeg(); render(); updateFormatButtons(); }
   document.querySelectorAll('#bub-shape-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
       setBubbleShape(btn.getAttribute('data-shape'));
@@ -4415,8 +4429,11 @@
     // 사진만 있는 말풍선(캡션 없음)이면 꼬리 버튼 숨김 + 도구줄 5칸. 사진+캡션이면 꼬리 표시.
     var hasImg = !!(cbub && cbub.querySelector && cbub.querySelector('img'));
     var imgOnly = hasImg && cbub && (cbub.textContent||'').replace(/\u200b/g,'').trim()==='';
-    var cbTail = $('cb-tail'); if(cbTail){ cbTail.hidden = imgOnly; }
-    if(cbTools){ cbTools.style.gridTemplateColumns = 'repeat('+(imgOnly?5:6)+',1fr)'; }
+    // 네모·투명 모양은 꼬리 자체가 안 그려지므로 버튼도 숨긴다(눌러도 아무 일이 없어 헷갈림)
+    var noTailShape = (bubbleShape==='simple' || bubbleShape==='plain');
+    var hideTail = imgOnly || noTailShape;
+    var cbTail = $('cb-tail'); if(cbTail){ cbTail.hidden = hideTail; }
+    if(cbTools){ cbTools.style.gridTemplateColumns = 'repeat('+(hideTail?5:6)+',1fr)'; }
   }
   editor.addEventListener('keyup', updateFormatButtons);
   editor.addEventListener('mouseup', updateFormatButtons);
@@ -5545,7 +5562,7 @@
   function usePseudoTailNow(){
     /* 저장 시 아이메시지 모양이면 배경(단색/그라데이션/사진) 무관하게 pseudo 꼬리를 캔버스에 재현.
        재현은 destination-out(투명 지우기)이라 실제 배경이 비쳐 그라데이션·사진도 정확. 미리보기만 그라데이션·사진에서 SVG 폴백 */
-    return !canvas.classList.contains('bub-simple') && !canvas.classList.contains('bub-soft');
+    return !canvas.classList.contains('bub-simple') && !canvas.classList.contains('bub-soft') && !canvas.classList.contains('bub-plain');
   }
   function collectPseudoTails(canvasRect, scale){
     var out=[];
@@ -6375,7 +6392,7 @@
       loadFrameNat(render);
       if(typeof updateFrameUI==='function') updateFrameUI();
       requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); });
-      bubbleShape = ({imessage:1,simple:1,soft:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
+      bubbleShape = ({imessage:1,simple:1,soft:1,plain:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
       syncShapeSeg();
       applyBubbleShape();
       if(data.chrome){ chrome.topbar=!!data.chrome.topbar; chrome.src=(data.chrome.src==='custom')?'custom':'char'; chrome.charId=data.chrome.charId||null; chrome.name=data.chrome.name||''; chrome.photo=data.chrome.photo||null; chrome.inputbar=!!data.chrome.inputbar; }
@@ -6576,7 +6593,7 @@
     document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-bgmode')===bgMode?'true':'false'); });
     applyBgViews();
     photoOn = (bgMode==='photo') && !!photoData;
-    bubbleShape = ({imessage:1,simple:1,soft:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
+    bubbleShape = ({imessage:1,simple:1,soft:1,plain:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
     syncShapeSeg();
     applyBubbleShape();
     ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-hl5','c-hl6','c-em','c-em2','c-em3','c-em4','c-em5','c-em6','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-star','c-paren','c-quote','c-quote2','c-quote3','c-quote4','c-quote5','c-quote6','c-hr','c-brecv-name','c-bsend-name','c-bar-bg','c-bar-accent','c-bar-name','c-bar-avatar','c-bar-plus','c-bar-arrow'].forEach(function(cid){
