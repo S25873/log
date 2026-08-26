@@ -1632,9 +1632,9 @@
         <div class="panel" data-panel="bubble" role="tabpanel">
           <div class="section">
             <p class="section__head">말풍선 삽입</p>
+            <p class="hint" id="char-insert-desc" style="margin-top:0;margin-bottom:14px">인물을 눌러 말풍선을 삽입해요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 서로 다른 말풍선으로 처리돼요.</p>
             <div class="char-list" id="char-insert-list"></div>
             <p class="hint" id="char-insert-empty" style="margin:0">아직 인물이 없어요. 아래 <b>인물</b>에서 먼저 추가하세요.</p>
-            <p class="hint" style="margin:12px 0 0">인물을 눌러 말풍선을 삽입해요.<br>여러 문단 선택 시 중간에 빈 문단이 있다면 서로 다른 말풍선으로 처리돼요.</p>
           </div>
 
           <details class="fold" id="fold-presets" style="margin-top:14px" open>
@@ -7136,7 +7136,10 @@
       chip.addEventListener('click', function(){ openCharInsertSheet(c.id); });
       wrap.appendChild(chip);
     });
-    var empty=$('char-insert-empty'); if(empty) empty.style.display = characters.length ? 'none' : '';
+    // 인물이 없을 때만 안내를 띄운다. 인물이 생기면 설명도 접어서 칩이 제목 바로 아래로 온다
+    var hasChars = !!characters.length;
+    var empty=$('char-insert-empty'); if(empty) empty.style.display = hasChars ? 'none' : '';
+    var desc=$('char-insert-desc');  if(desc)  desc.style.display  = hasChars ? 'none' : '';
   }
   function setColorPair(base, val){ var c=$(base), t=$(base+'-txt'); if(c) c.value=val; if(t) t.value=val; }
   // 색이 바뀌면 통합 팔레트의 선택 표시를 갱신(대상이 그 색일 때만 표시됨)
