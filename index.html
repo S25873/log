@@ -891,6 +891,24 @@
     padding:0 !important;max-width:100% !important;
   }
   #canvas.bub-plain .g-bub>svg.g-tail,.canvas-clone.bub-plain .g-bub>svg.g-tail{display:none !important;}
+  /* 배경이 없으면 들여쓰기(.4em)와 이름 좌우 여백(.3em)이 그대로 드러나 이름과 글의 시작선이 어긋난다 → 둘 다 0 */
+  #canvas.bub-plain .g-bub,#canvas.bub-plain .g-bub-name,
+  .canvas-clone.bub-plain .g-bub,.canvas-clone.bub-plain .g-bub-name{padding-left:0 !important;padding-right:0 !important;}
+  #canvas.bub-plain .g-bub.recv,#canvas.bub-plain .g-bub.char-bub.left,
+  #canvas.bub-plain .g-bub-name.recv,#canvas.bub-plain .g-bub-name.char-name.left,
+  .canvas-clone.bub-plain .g-bub.recv,.canvas-clone.bub-plain .g-bub.char-bub.left,
+  .canvas-clone.bub-plain .g-bub-name.recv,.canvas-clone.bub-plain .g-bub-name.char-name.left{margin-left:0 !important;}
+  #canvas.bub-plain .g-bub.send,#canvas.bub-plain .g-bub.char-bub.right,
+  #canvas.bub-plain .g-bub-name.send,#canvas.bub-plain .g-bub-name.char-name.right,
+  .canvas-clone.bub-plain .g-bub.send,.canvas-clone.bub-plain .g-bub.char-bub.right,
+  .canvas-clone.bub-plain .g-bub-name.send,.canvas-clone.bub-plain .g-bub-name.char-name.right{margin-right:0 !important;}
+  /* 오른쪽에 놓인 로그 말풍선은 글도 오른쪽 정렬 — 배경이 없으면 상자가 안 보여
+     짧은 줄들이 왼쪽에 매달린 것처럼 보이고 오른쪽이 들쭉날쭉 비기 때문 */
+  #canvas.bub-plain .g-bub.send,#canvas.bub-plain .g-bub.char-bub.right,
+  .canvas-clone.bub-plain .g-bub.send,.canvas-clone.bub-plain .g-bub.char-bub.right{text-align:right !important;}
+  /* 배경이 없어진 만큼 이름과 글 사이도 좁힌다(원래는 .35em+.25em=.6em) */
+  #canvas.bub-plain .g-bub-name,.canvas-clone.bub-plain .g-bub-name{margin-bottom:.12em !important;}
+  #canvas.bub-plain .g-bub-name + .g-bub,.canvas-clone.bub-plain .g-bub-name + .g-bub{margin-top:0 !important;}
   #canvas.bub-plain .g-bub::before,#canvas.bub-plain .g-bub::after,
   .canvas-clone.bub-plain .g-bub::before,.canvas-clone.bub-plain .g-bub::after{display:none !important;content:none !important;}
   #editor.bub-simple .g-bub{border-radius:6px;}
