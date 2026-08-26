@@ -2110,7 +2110,7 @@
       <p class="help-cat">말풍선 간격</p>
       <p class="hint">· <b>말풍선 ↔ 말풍선 간격</b>: 서로 다른 말풍선끼리의 간격이에요. 빈 문단은 본문으로 인식되어서, 말풍선과 말풍선 사이에 빈 문단이 있다면 각 말풍선 기준 말풍선 ↔ 본문 간격이 적용돼요.<br>· <b>연속 말풍선 간격</b>: 같은 인물, 같은 방향, 중간에 빈 문단이 없는 말풍선들을 연속 말풍선으로 처리해요. 이때 연속 말풍선끼리의 간격이에요.<br>· <b>말풍선 ↔ 본문 간격</b>: 말풍선과 본문(글·빈 문단) 사이의 간격이에요. 말풍선과 말풍선 사이에 빈 문단을 만들거나, 말풍선과 글 사이에 띄어쓰기를 한다면 0으로 설정해야 내용-문단 간격의 수치만 적용돼요.</p>
       <p class="help-cat">말풍선 모양</p>
-      <p class="hint">· <b>아이메시지</b>: 메시지를 추천해요. 그라데이션, 사진 배경의 경우 미리보기에서 말풍선 꼬리가 이상하게 뜨지만 저장 시 정상적으로 자리 잡아요.<br>· <b>심플</b>: 메시지와 일반 대화 모두 추천해요.<br>· <b>네모</b>: 메시지와 일반 대화에 모두 호환되지만, 일반 대화를 추천해요.<br><br><b>TIP!</b><br>· 메시지: 프로필 사진 없는 대화.<br>· 일반 대화: 프로필 사진이 있는 대화.</p>
+      <p class="hint">· <b>아이메시지</b>: 메시지를 추천해요. 그라데이션, 사진 배경의 경우 미리보기에서 말풍선 꼬리가 이상하게 뜨지만 저장 시 정상적으로 자리 잡아요.<br>· <b>심플</b>: 메시지와 일반 대화 모두 추천해요.<br>· <b>네모</b>: 메시지와 일반 대화에 모두 호환되지만, 일반 대화를 추천해요.<br>· <b>로그</b>: 말풍선이 투명으로 처리돼요.<br><br><b>TIP!</b><br>· 메시지: 프로필 사진 없는 대화.<br>· 일반 대화: 프로필 사진이 있는 대화.</p>
       <p class="help-cat">프리셋</p>
       <p class="hint">· <b>프리셋 종류</b>: 인물, 삽입 방식, 텍스트 대치, 내 프리셋.<br>· <b>프리셋 순서</b>: 모든 프리셋은 저장된 타원 부분을 꾹 클릭한 뒤 드래그하여 순서를 변경할 수 있어요.</p>
     </div>
@@ -2790,9 +2790,11 @@
     markPhotoBubbles(root);
     [].forEach.call(root.querySelectorAll('.g-bub.char-bub'), function(b){
       var c=findChar(b.getAttribute('data-char')); if(!c) return;
-      if(b.classList.contains('img-only')){
+      // '로그' 모양은 배경 없이 글만 — 인물별 말풍선 색도 무시한다(글자색은 그대로 유지)
+      if(b.classList.contains('img-only') || bubbleShape==='plain'){
         b.style.setProperty('background','transparent','important');
-        b.style.removeProperty('color');
+        if(b.classList.contains('img-only')){ b.style.removeProperty('color'); }
+        else { b.style.setProperty('color', c.ink, 'important'); }
       } else {
         b.style.setProperty('background', c.bub, 'important');
         b.style.setProperty('color', c.ink, 'important');
@@ -2800,7 +2802,7 @@
       b.style.setProperty('--bub', c.bub);
       // 인물별 괄호 색: 이 말풍선 안의 (색깔) 회색 마크가 참조하는 변수만 덮어씀(값을 박지 않아 위치에 따라 자동 반영)
       if(c.subColor){ b.style.setProperty('--paren-color', c.subColor); } else { b.style.removeProperty('--paren-color'); }
-      var path=b.querySelector('svg.g-tail path'); if(path){ path.style.setProperty('fill', c.bub, 'important'); }
+      var path=b.querySelector('svg.g-tail path'); if(path){ path.style.setProperty('fill', (bubbleShape==='plain')?'transparent':c.bub, 'important'); }
     });
     [].forEach.call(root.querySelectorAll('.g-bub-name.char-name'), function(n){
       var c=findChar(n.getAttribute('data-char')); if(!c) return;
