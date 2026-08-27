@@ -31,6 +31,9 @@
   @font-face{font-family:'OngleipYoonwoo';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105@1.1/Yoonwoo.woff') format('woff');}
   @font-face{font-family:'OngleipKonkon';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2412-1@1.0/Ownglyph_corncorn-Rg.woff2') format('woff2');}
   @font-face{font-family:'ChosunIlboMyungjo';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');}
+  @font-face{font-family:'DreamHeumul';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2608201818@dreamheumulkr/dreamheumulkr/DreamHeumulKR.woff2') format('woff2');}
+  @font-face{font-family:'KyoboHand2025';font-weight:normal;font-display:swap;src:url('./KyoboHandwriting2025lyb.otf') format('opentype');}
+  @font-face{font-family:'KyoboHand2020';font-weight:normal;font-display:swap;src:url('./KyoboHandwriting2020pdy.otf') format('opentype');}
 
   /* ============================================================
      디자인 토큰 — 순수 모노톤
@@ -1228,7 +1231,7 @@
             <button class="mini" id="t-star-gray" type="button" title="*내용* 을 *색*의 색깔로">*색*</button>
             <button class="mini" id="t-paren-gray" type="button" title="괄호(포함)를 (색)의 색깔로">(색)</button>
             <button class="mini" id="t-paren" type="button" title="괄호(포함)를 이탤릭(기울임)으로">(휨)</button>
-            <button class="mini" id="t-paren-sub" type="button" title="괄호(포함)를 작은 글자 크기로">(작게)</button>
+            <button class="mini" id="t-paren-sub" type="button" title="괄호(포함)를 작은 글자 크기로">(크기)</button>
             <button class="mini" id="t-quote-add" type="button" title="기호가 없는 문단 앞뒤에 큰따옴표 넣기">&quot;넣&quot;</button>
             <button class="mini" id="t-quote-em" type="button" title="큰따옴표로 감싼 부분을 강조색으로">&quot;색&quot;</button>
             <button class="mini" id="t-quote-line" type="button" title="큰따옴표로 감싼 부분을 인용선으로">&quot;인&quot;</button>
@@ -1255,7 +1258,7 @@
             <button class="fbtn" type="button" data-fmt="strike" title="취소선" aria-label="취소선"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 5H9.5a3 3 0 0 0-2.6 4.4M14 12.5a3.8 3.8 0 0 1-.6 7.5H6.8M4 12h16"/></svg></button>
             <button class="fbtn" type="button" data-sheet="hl" title="형광펜(하이라이터)" aria-label="형광펜"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 12.4 15.3 5a2.5 2.5 0 0 1 3.5 0l1.3 1.3a2.5 2.5 0 0 1 0 3.5l-7.4 7.4z"/><path d="M7.9 12.4 5 15.3l3.6 3.6 2.9-2.9"/><path d="M5 15.3 3 19.4v.6h3.9l1.7-1.1"/><path class="fb-hl-bar" d="M3.4 22h17.2" stroke="#f9ee9a" stroke-width="2.6"/></svg></button>
             <button class="fbtn" type="button" data-sheet="em" title="글자색(강조)" aria-label="글자색(강조)"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.0 19.8 8.3 4.8l6.3 15"/><path d="M4.4 15.6h7.8"/><circle class="fb-em-dot" cx="20.4" cy="17.8" r="3.0" fill="#c25b57" stroke="none"/></svg></button>
-            <button class="fbtn" type="button" data-fmt="sub" data-sheet="sub" title="글자 크기" aria-label="글자 크기"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.0 19.8 8.3 4.8l6.3 15"/><path d="M4.4 15.6h7.8"/><path d="M20.4 6.0v12.4M18.5 7.9 20.4 6.0 22.3 7.9M18.5 16.5 20.4 18.4 22.3 16.5"/></svg></button>
+            <button class="fbtn" type="button" data-fmt="sub" data-sheet="sub" title="개별 크기" aria-label="개별 크기"><svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.0 19.8 8.3 4.8l6.3 15"/><path d="M4.4 15.6h7.8"/><path d="M20.4 6.0v12.4M18.5 7.9 20.4 6.0 22.3 7.9M18.5 16.5 20.4 18.4 22.3 16.5"/></svg></button>
             <button class="fbtn" type="button" data-sheet="insert" title="삽입 (사진 · 인용선 · 구분선)">
               <svg class="fb-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.2v13.6M5.2 12h13.6"/></svg>
             </button>
@@ -1294,10 +1297,10 @@
                 <div class="cchip"><label>(색)</label><div class="cchip__box"><input id="c-paren" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-paren-txt" type="text" value="#8a8a8a"></div></div>
               </div>
               <div class="field" style="margin-top:16px">
-                <span class="label">(작게) 글자 크기 <span class="val">27px</span></span>
-                <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="50" step="1" value="27"></div>
+                <span class="label">(크기) 글자 크기 <span class="val">27px</span></span>
+                <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="72" step="1" value="27"></div>
               </div>
-              <p class="hint" style="margin-top:10px">자동화 도구 *색* · (색) · (작게)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색을 써요.<br>(작게)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이전 것까지 함께 변해요.</p>
+              <p class="hint" style="margin-top:10px">자동화 도구 *색* · (색) · (크기)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색깔을 써요.<br>(크기)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이전 것까지 반영돼요.</p>
             </div>
           </details>
 
@@ -1309,7 +1312,7 @@
             <div class="fold__body">
               <div class="grid-2">
                 <div class="field">
-                  <span class="label">정렬</span>
+                  <span class="label">본문 정렬</span>
                   <div class="seg" id="align-seg">
                     <button type="button" data-align="justify" aria-pressed="true" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
                     <button type="button" data-align="left" aria-pressed="false" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
@@ -1331,13 +1334,16 @@
                   <option value="'MaruBuri',serif">마루 부리</option>
                   <option value="'BookkMyungjo',serif">부크크 명조</option>
                   <option value="'ChosunIlboMyungjo',serif">조선일보명조체</option>
+                  <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
                   <option class="optcat" disabled>【 손글씨 】</option>
                   <option value="'OngleipYoonwoo',sans-serif">온글잎 윤우체</option>
                   <option value="'OngleipKonkon',sans-serif">온글잎 콘콘체</option>
-                  <option class="optcat" disabled>【 장식 】</option>
+                  <option value="'KyoboHand2025',sans-serif">교보 손글씨 이유빈</option>
+                  <option value="'KyoboHand2020',sans-serif">교보 손글씨 박도연</option>
+                  <option class="optcat" disabled>【 픽셀 】</option>
                   <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
                   <option value="'PfStardust',sans-serif">PF스타더스트</option>
-                  <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
+                  <option value="'DreamHeumul',sans-serif">드림흐물체</option>
                   </select>
                 </div>
               </div>
@@ -1351,16 +1357,16 @@
                 </div>
                 <div class="field">
                   <span class="label">본문 글자 크기 <span class="val">32px</span></span>
-                  <div class="rangewrap"><input id="font-size" type="range" min="10" max="50" value="32"></div>
+                  <div class="rangewrap"><input id="font-size" type="range" min="6" max="72" value="32"></div>
                 </div>
               </div>
-              <!-- 작은 글자 크기: 서식 툴바 Aa 시트에서 직접 정하도록 바뀌어 화면에서는 뺐다.
+              <!-- 개별 크기: 서식 툴바 개별 크기 시트에서 직접 정하도록 바뀌어 화면에서는 뺐다.
                    값 자체는 여기(#subtext-size)에 그대로 보관 — 시트가 이 값을 읽고 쓰고,
                    저장(TEXT_IDS)·내 프리셋·전체 초기화가 전부 이 input 을 통해 돌아간다.
                    고정 크기가 없는 옛 로그의 작은 글자도 이 값을 따라간다. -->
               <div class="field" style="display:none">
-                <span class="label">글자 크기 <span class="val">26px</span></span>
-                <div class="rangewrap"><input id="subtext-size" type="range" min="6" max="50" step="1" value="26"></div>
+                <span class="label">개별 크기 <span class="val">26px</span></span>
+                <div class="rangewrap"><input id="subtext-size" type="range" min="6" max="72" step="1" value="26"></div>
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
@@ -1369,7 +1375,7 @@
                 </div>
                 <div class="field">
                   <span class="label">행간 <span class="val">1.7</span></span>
-                  <div class="rangewrap"><input id="line-height" type="range" min="10" max="20" step="1" value="17"></div>
+                  <div class="rangewrap"><input id="line-height" type="range" min="10" max="20" step="1" value="16"></div>
                 </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
@@ -1379,7 +1385,7 @@
                 </div>
                 <div class="field">
                   <span class="label">문단 간격 <span class="val" id="para-gap-val">20px</span></span>
-                  <div class="rangewrap"><input id="para-gap" type="range" min="0" max="48" step="1" value="20"></div>
+                  <div class="rangewrap"><input id="para-gap" type="range" min="0" max="72" step="1" value="20"></div>
                 </div>
               </div>
               <label class="switch" style="margin-top:16px">
@@ -1389,7 +1395,7 @@
                 </span>
                 <input id="size-helper" type="checkbox" style="margin-left:auto">
               </label>
-              <p class="hint" style="margin-top:8px">크기 변경: 제목 · 소제목 · 하단 · (작게)<br>간격 변경: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요. 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 저장돼요.</p>
+              <p class="hint" style="margin-top:8px">크기 변경: 제목 · 소제목 · 하단 · (크기)<br>간격 변경: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요. 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 저장돼요.</p>
 
               <p class="section__head" style="margin-top:18px">(＋로 넣는) 사진</p>
               <div class="grid-2" style="margin-top:2px">
@@ -1420,7 +1426,18 @@
                 <span class="label">소제목</span>
                 <div id="subtitle-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
                      aria-label="소제목 입력" data-placeholder="소제목 (비워도 됨)"></div>
-              </div>              <div class="field" style="margin-top:16px">
+              </div>              <div class="grid-2" style="margin-top:16px">
+                <div class="field">
+                  <span class="label">제목 · 소제목 정렬</span>
+                  <div class="seg" id="title-align-seg">
+                    <button type="button" data-talign="justify" aria-pressed="false" aria-label="양쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                    <button type="button" data-talign="left" aria-pressed="true" aria-label="왼쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="6.83" x2="9" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="2.5" y1="12" x2="9" y2="12"/></svg></span></button>
+                    <button type="button" data-talign="center" aria-pressed="false" aria-label="가운데 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="4.75" y1="6.83" x2="11.25" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="4.75" y1="12" x2="11.25" y2="12"/></svg></span></button>
+                    <button type="button" data-talign="right" aria-pressed="false" aria-label="오른쪽 정렬"><span class="align-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="7" y1="6.83" x2="13.5" y2="6.83"/><line x1="2.5" y1="9.17" x2="13.5" y2="9.17"/><line x1="7" y1="12" x2="13.5" y2="12"/></svg></span></button>
+                    <span class="seg__thumb"></span>
+                  </div>
+                </div>
+                <div class="field">
                 <label class="label" for="title-font">제목 · 소제목 글꼴</label>
                 <select id="title-font">
                   <option value="" selected>본문과 동일</option>
@@ -1434,29 +1451,33 @@
                   <option value="'MaruBuri',serif">마루 부리</option>
                   <option value="'BookkMyungjo',serif">부크크 명조</option>
                   <option value="'ChosunIlboMyungjo',serif">조선일보명조체</option>
+                  <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
                   <option class="optcat" disabled>【 손글씨 】</option>
                   <option value="'OngleipYoonwoo',sans-serif">온글잎 윤우체</option>
                   <option value="'OngleipKonkon',sans-serif">온글잎 콘콘체</option>
-                  <option class="optcat" disabled>【 장식 】</option>
+                  <option value="'KyoboHand2025',sans-serif">교보 손글씨 이유빈</option>
+                  <option value="'KyoboHand2020',sans-serif">교보 손글씨 박도연</option>
+                  <option class="optcat" disabled>【 픽셀 】</option>
                   <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
                   <option value="'PfStardust',sans-serif">PF스타더스트</option>
-                  <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
+                  <option value="'DreamHeumul',sans-serif">드림흐물체</option>
                 </select>
+                </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <span class="label">제목 글자 크기 <span class="val" id="title-size-val">52px</span></span>
-                  <div class="rangewrap"><input id="title-size" type="range" min="10" max="80" step="2" value="52"></div>
+                  <div class="rangewrap"><input id="title-size" type="range" min="8" max="100" step="2" value="52"></div>
                 </div>
                 <div class="field">
                   <span class="label">소제목 글자 크기 <span class="val" id="subtitle-size-val">38px</span></span>
-                  <div class="rangewrap"><input id="subtitle-size" type="range" min="8" max="72" step="2" value="38"></div>
+                  <div class="rangewrap"><input id="subtitle-size" type="range" min="8" max="100" step="2" value="38"></div>
                 </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <span class="label">제목 ↔ 소제목 간격 <span class="val" id="title-gap-val">9px</span></span>
-                  <div class="rangewrap"><input id="title-gap" type="range" min="0" max="24" step="1" value="9"></div>
+                  <div class="rangewrap"><input id="title-gap" type="range" min="0" max="48" step="1" value="9"></div>
                 </div>
                 <div class="field">
                   <span class="label">제목 · 소제목 ↔ 본문 간격 <span class="val" id="titleblk-gap-val">26px</span></span>
@@ -1466,7 +1487,7 @@
                           <label class="switch" style="margin-top:16px">
                 <span class="switch__text" style="flex:1">
                   <span class="switch__title">제목과 본문 사이 구분선 추가</span>
-                  <span class="switch__sub">구분선 기준 양쪽의 간격은 제목 · 소제목 ↔ 본문 간격을 사용해요</span>
+                  <span class="switch__sub">구분선의 간격은 제목 · 소제목 ↔ 본문 간격을 사용해요</span>
                 </span>
                 <input id="title-rule" type="checkbox" style="margin-left:auto">
               </label>
@@ -1479,7 +1500,7 @@
                   <button type="button" data-rule="double" aria-pressed="false">두 줄</button>
                   <span class="seg__thumb"></span>
                 </div>
-                <p class="hint" style="margin-top:10px">구분선 색깔은 디자인-글자 · 보조 탭에 있어요</p>
+                <p class="hint" style="margin-top:10px">구분선 색깔은 디자인-글자 · 보조 탭에 있어요.</p>
               </div>
 </div>
           </details>
@@ -1553,20 +1574,23 @@
                 <option value="'MaruBuri',serif">마루 부리</option>
                 <option value="'BookkMyungjo',serif">부크크 명조</option>
                 <option value="'ChosunIlboMyungjo',serif">조선일보명조체</option>
+                  <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
                 <option class="optcat" disabled>【 손글씨 】</option>
                 <option value="'OngleipYoonwoo',sans-serif">온글잎 윤우체</option>
                 <option value="'OngleipKonkon',sans-serif">온글잎 콘콘체</option>
-                <option class="optcat" disabled>【 장식 】</option>
+                  <option value="'KyoboHand2025',sans-serif">교보 손글씨 이유빈</option>
+                  <option value="'KyoboHand2020',sans-serif">교보 손글씨 박도연</option>
+                <option class="optcat" disabled>【 픽셀 】</option>
                 <option value="'Mona12','Mona12 Text KR',sans-serif">Mona12</option>
                 <option value="'PfStardust',sans-serif">PF스타더스트</option>
-                <option value="'OgRenaissanceSecret',serif">OG 르네상스 비밀</option>
+                  <option value="'DreamHeumul',sans-serif">드림흐물체</option>
                 </select>
                 </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
               <div class="field">
                 <span class="label">하단 글자 크기 <span class="val" id="name-size-val">26px</span></span>
-                <div class="rangewrap"><input id="name-size" type="range" min="6" max="50" step="1" value="26"></div>
+                <div class="rangewrap"><input id="name-size" type="range" min="6" max="72" step="1" value="26"></div>
               </div>
               <div class="field">
                 <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">26px</span></span>
@@ -1575,7 +1599,7 @@
                           <label class="switch" style="margin-top:16px">
                 <span class="switch__text" style="flex:1">
                   <span class="switch__title">본문과 하단 사이 구분선 추가</span>
-                  <span class="switch__sub">구분선 기준 양쪽의 간격은 하단 ↔ 본문 간격을 사용해요</span>
+                  <span class="switch__sub">구분선의 간격은 하단 ↔ 본문 간격을 사용해요</span>
                 </span>
                 <input id="name-rule" type="checkbox" style="margin-left:auto">
               </label>
@@ -1588,7 +1612,7 @@
                   <button type="button" data-rule="double" aria-pressed="false">두 줄</button>
                   <span class="seg__thumb"></span>
                 </div>
-                <p class="hint" style="margin-top:10px">구분선 색깔은 디자인-글자 · 보조 탭에 있어요</p>
+                <p class="hint" style="margin-top:10px">구분선 색깔은 디자인-글자 · 보조 탭에 있어요.</p>
               </div>
           </details>
         </div>
@@ -1603,8 +1627,8 @@
             <div class="fold__body">
               <div class="cgrid cgrid--2">
                 <div class="cchip"><label>본문 글자</label><div class="cchip__box"><input id="c-fg" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-fg-txt" type="text" value="#2b2b2b"></div></div>
-                <div class="cchip"><label>제목</label><div class="cchip__box"><input id="c-title" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-title-txt" type="text" value="#2b2b2b"></div></div>
-                <div class="cchip"><label>소제목</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#2b2b2b"></div></div>
+                <div class="cchip"><label>제목 글자</label><div class="cchip__box"><input id="c-title" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-title-txt" type="text" value="#2b2b2b"></div></div>
+                <div class="cchip"><label>소제목 글자</label><div class="cchip__box"><input id="c-subtitle" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-subtitle-txt" type="text" value="#2b2b2b"></div></div>
                 <div class="cchip"><label>하단 글자</label><div class="cchip__box"><input id="c-name" type="color" value="#6c6c6c"><input class="cchip__hex" id="c-name-txt" type="text" value="#6c6c6c"></div></div>
                 <div class="cchip"><label>제목 · 하단 구분선</label><div class="cchip__box"><input id="c-title-hr" type="color" value="#c8c8c8"><input class="cchip__hex" id="c-title-hr-txt" type="text" value="#c8c8c8"></div></div>
                 <div class="cchip"><label>본문 구분선</label><div class="cchip__box"><input id="c-hr" type="color" value="#c8c8c8"><input class="cchip__hex" id="c-hr-txt" type="text" value="#c8c8c8"></div></div>
@@ -1619,22 +1643,22 @@
 
           <details class="fold" id="fold-emph">
             <summary>
-              강조
+              강조색
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
               <div class="cgrid cgrid--2">
-                <div class="cchip"><label>강조 1</label><div class="cchip__box"><input id="c-em" type="color" value="#c25b57"><input class="cchip__hex" id="c-em-txt" type="text" value="#c25b57"></div></div>
-                <div class="cchip"><label>강조 2</label><div class="cchip__box"><input id="c-em2" type="color" value="#5d74a6"><input class="cchip__hex" id="c-em2-txt" type="text" value="#5d74a6"></div></div>
-                <div class="cchip"><label>강조 3</label><div class="cchip__box"><input id="c-em3" type="color" value="#5e9b72"><input class="cchip__hex" id="c-em3-txt" type="text" value="#5e9b72"></div></div>
-                <div class="cchip"><label>강조 4</label><div class="cchip__box"><input id="c-em4" type="color" value="#9a5e8e"><input class="cchip__hex" id="c-em4-txt" type="text" value="#9a5e8e"></div></div>
-                <div class="cchip"><label>강조 5</label><div class="cchip__box"><input id="c-em5" type="color" value="#a9756a"><input class="cchip__hex" id="c-em5-txt" type="text" value="#a9756a"></div></div>
-                <div class="cchip"><label>강조 6</label><div class="cchip__box"><input id="c-em6" type="color" value="#6b7280"><input class="cchip__hex" id="c-em6-txt" type="text" value="#6b7280"></div></div>
+                <div class="cchip"><label>강조색 1</label><div class="cchip__box"><input id="c-em" type="color" value="#c25b57"><input class="cchip__hex" id="c-em-txt" type="text" value="#c25b57"></div></div>
+                <div class="cchip"><label>강조색 2</label><div class="cchip__box"><input id="c-em2" type="color" value="#5d74a6"><input class="cchip__hex" id="c-em2-txt" type="text" value="#5d74a6"></div></div>
+                <div class="cchip"><label>강조색 3</label><div class="cchip__box"><input id="c-em3" type="color" value="#5e9b72"><input class="cchip__hex" id="c-em3-txt" type="text" value="#5e9b72"></div></div>
+                <div class="cchip"><label>강조색 4</label><div class="cchip__box"><input id="c-em4" type="color" value="#9a5e8e"><input class="cchip__hex" id="c-em4-txt" type="text" value="#9a5e8e"></div></div>
+                <div class="cchip"><label>강조색 5</label><div class="cchip__box"><input id="c-em5" type="color" value="#a9756a"><input class="cchip__hex" id="c-em5-txt" type="text" value="#a9756a"></div></div>
+                <div class="cchip"><label>강조색 6</label><div class="cchip__box"><input id="c-em6" type="color" value="#6b7280"><input class="cchip__hex" id="c-em6-txt" type="text" value="#6b7280"></div></div>
               </div>
               <div class="section">
                 <p class="section__head">프리셋</p>
                 <div class="field" style="margin-bottom:14px">
-                  <span class="label">적용할 색 <span class="val" id="em-slot-val">강조 1</span></span>
+                  <span class="label">적용할 색 <span class="val" id="em-slot-val">강조색 1</span></span>
                   <div class="seg" id="em-slot-seg">
                     <button type="button" data-slot="1" aria-pressed="true">1</button>
                     <button type="button" data-slot="2" aria-pressed="false">2</button>
@@ -1744,7 +1768,7 @@
 
               <div class="char-editor" id="char-editor" hidden>
                 <div class="field" style="margin-top:14px">
-                  <span class="label">사진 <span class="val" style="font-weight:400;color:var(--ink-3)">미리보기를 눌러 선택/제거</span></span>
+                  <span class="label">사진 <span class="val" style="font-weight:400;color:var(--ink-3)">미리보기를 눌러 선택 · 제거</span></span>
                   <div class="char-photo-row">
                     <div class="char-avatar" id="char-photo-preview" title="눌러서 사진 선택/제거">없음</div>
                     <input id="char-photo-file" type="file" accept="image/*" hidden>
@@ -1760,20 +1784,20 @@
                   <input class="txt-input" id="char-name" type="text" placeholder="캐릭터 이름" maxlength="24">
                 </div>
                 <div class="cgrid cgrid--2" style="margin-top:14px">
-                  <div class="cchip"><label>글자</label><div class="cchip__box"><input id="char-ink" type="color" value="#ffffff"><input class="cchip__hex" id="char-ink-txt" type="text" value="#ffffff"></div></div>
                   <div class="cchip"><label>이름</label><div class="cchip__box"><input id="char-namecolor" type="color" value="#8a8a8a"><input class="cchip__hex" id="char-namecolor-txt" type="text" value="#8a8a8a"></div></div>
-                </div>
-                <div class="cgrid cgrid--2" style="margin-top:14px">
-                  <div class="cchip"><label>(색)</label><div class="cchip__box"><input id="char-subcolor" type="color" value="#8a8a8a"><input class="cchip__hex" id="char-subcolor-txt" type="text" value="#8a8a8a"></div></div>
                   <div class="cchip"><label>말풍선</label><div class="cchip__box"><input id="char-bub" type="color" value="#248bf5"><input class="cchip__hex" id="char-bub-txt" type="text" value="#248bf5"></div></div>
                 </div>
+                <div class="cgrid cgrid--2" style="margin-top:14px">
+                  <div class="cchip"><label>글자</label><div class="cchip__box"><input id="char-ink" type="color" value="#ffffff"><input class="cchip__hex" id="char-ink-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>(색)</label><div class="cchip__box"><input id="char-subcolor" type="color" value="#8a8a8a"><input class="cchip__hex" id="char-subcolor-txt" type="text" value="#8a8a8a"></div></div>
+                </div>
                 <div class="field" style="margin-top:14px">
-                  <span class="label">적용할 색 <span class="val" id="char-slot-val">글자</span></span>
+                  <span class="label">적용할 색 <span class="val" id="char-slot-val">이름</span></span>
                   <div class="seg" id="char-slot-seg">
-                    <button type="button" data-cslot="ink" aria-pressed="true">글자</button>
-                    <button type="button" data-cslot="name" aria-pressed="false">이름</button>
-                    <button type="button" data-cslot="sub" aria-pressed="false">(색)</button>
+                    <button type="button" data-cslot="name" aria-pressed="true">이름</button>
                     <button type="button" data-cslot="bub" aria-pressed="false">말풍선</button>
+                    <button type="button" data-cslot="ink" aria-pressed="false">글자</button>
+                    <button type="button" data-cslot="sub" aria-pressed="false">(색)</button>
                     <span class="seg__thumb"></span>
                   </div>
                 </div>
@@ -1786,9 +1810,13 @@
               </div>
 
               <p class="section__head" style="margin-top:24px">삽입 방식</p>
-              <p class="hint" style="margin:0 0 12px">말풍선 삽입을 위해 인물을 눌렀을 때 뜨는 방식이에요.<br>각 캐릭터마다 삽입 방식을 다르게 저장할 수 있어요.<br>어떤 옵션을 선택하더라도 삽입 후 방향·프사 등을 조정할 수 있어요.</p>
+              <p class="hint" style="margin:0 0 12px">말풍선 삽입을 위해 인물을 눌렀을 때 뜨는 방식이에요.<br>각 캐릭터마다 삽입 방식을 다르게 저장할 수 있어요.<br>어떤 옵션을 선택하더라도 삽입 후 방향 · 프사 등을 조정할 수 있어요.</p>
               <div class="mychips" id="bubpreset-list"></div>
               <div class="repform" id="bubpreset-form" hidden>
+                <div class="field">
+                  <span class="label">이름</span>
+                  <input class="txt-input" id="bubpreset-name" type="text" placeholder="프리셋 이름" maxlength="20" autocomplete="off">
+                </div>
                 <div class="field">
                   <span class="label">종류</span>
                   <div class="bpseg" id="bp-type-seg">
@@ -1804,10 +1832,6 @@
                   </div>
                 </div>
                 <div class="field">
-                  <span class="label">이름</span>
-                  <input class="txt-input" id="bubpreset-name" type="text" placeholder="프리셋 이름" maxlength="20" autocomplete="off">
-                </div>
-                <div class="field">
                   <span class="label">표시 항목</span>
                   <div class="bpchecks">
                     <label class="pchk"><input type="checkbox" id="bp-av"><span>프사</span></label>
@@ -1817,7 +1841,9 @@
                 </div>
                 <div class="field">
                   <span class="label">적용 대상</span>
-                  <label class="pchk pchk--block" id="bp-perchar-wrap"><input type="checkbox" id="bp-perchar"><span>캐릭터마다 다르게 적용</span></label>
+                  <div class="bpchecks">
+                    <label class="pchk" id="bp-perchar-wrap"><input type="checkbox" id="bp-perchar"><span>캐릭터마다 다르게 적용</span></label>
+                  </div>
                   <div class="bpchars" id="bp-char-select" hidden></div>
                 </div>
                 <div class="repform__btns">
@@ -1850,17 +1876,17 @@
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <span class="label">말풍선 ↔ 말풍선 간격 <span class="val" id="msg-gap-val">18px</span></span>
-                  <div class="rangewrap"><input id="msg-gap" type="range" min="0" max="48" step="1" value="18"></div>
+                  <div class="rangewrap"><input id="msg-gap" type="range" min="0" max="72" step="1" value="18"></div>
                 </div>
                 <div class="field">
                   <span class="label">연속 말풍선 간격 <span class="val" id="stack-gap-val">5px</span></span>
-                  <div class="rangewrap"><input id="stack-gap" type="range" min="0" max="24" step="1" value="5"></div>
+                  <div class="rangewrap"><input id="stack-gap" type="range" min="0" max="48" step="1" value="5"></div>
                 </div>
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
                   <span class="label">말풍선 ↔ 본문 간격 <span class="val" id="bub-body-gap-val">18px</span></span>
-                  <div class="rangewrap"><input id="bub-body-gap" type="range" min="0" max="48" step="1" value="18"></div>
+                  <div class="rangewrap"><input id="bub-body-gap" type="range" min="0" max="72" step="1" value="18"></div>
                 </div>
                 <div class="field">
                   <span class="label">말풍선 사진 크기 <span class="val" id="photo-size-val">60%</span></span>
@@ -1880,7 +1906,7 @@
               <label class="switch" style="margin-top:0">
                 <span class="switch__text" style="flex:1">
                   <span class="switch__title">아이메시지 상단바</span>
-                  <span class="switch__sub">위쪽에 프로필 헤더를 표시해요</span>
+                  <span class="switch__sub">상단에 프로필 헤더를 표시해요</span>
                 </span>
                 <input id="topbar-on" type="checkbox" style="margin-left:auto">
               </label>
@@ -1909,7 +1935,7 @@
               <label class="switch" style="margin-top:14px">
                 <span class="switch__text" style="flex:1">
                   <span class="switch__title">아이메시지 하단바</span>
-                  <span class="switch__sub">아래쪽에 메시지 입력창을 표시해요</span>
+                  <span class="switch__sub">하단에 메시지 입력창을 표시해요</span>
                 </span>
                 <input id="inputbar-on" type="checkbox" style="margin-left:auto">
               </label>
@@ -1917,7 +1943,7 @@
               <div class="cgrid cgrid--2" style="margin-top:16px">
                 <div class="cchip"><label>바 배경</label><div class="cchip__box"><input id="c-bar-bg" type="color" value="#f5f5f7"><input class="cchip__hex" id="c-bar-bg-txt" type="text" value="#f5f5f7"></div></div>
                 <div class="cchip"><label>이름 글자</label><div class="cchip__box"><input id="c-bar-name" type="color" value="#000000"><input class="cchip__hex" id="c-bar-name-txt" type="text" value="#000000"></div></div>
-                <div class="cchip"><label>아바타</label><div class="cchip__box"><input id="c-bar-avatar" type="color" value="#c7c7cc"><input class="cchip__hex" id="c-bar-avatar-txt" type="text" value="#c7c7cc"></div></div>
+                <div class="cchip"><label>프로필 배경</label><div class="cchip__box"><input id="c-bar-avatar" type="color" value="#c7c7cc"><input class="cchip__hex" id="c-bar-avatar-txt" type="text" value="#c7c7cc"></div></div>
                 <div class="cchip"><label>＋</label><div class="cchip__box"><input id="c-bar-plus" type="color" value="#8e8e93"><input class="cchip__hex" id="c-bar-plus-txt" type="text" value="#8e8e93"></div></div>
                 <div class="cchip"><label>뒤로 · 정보 · 전송 동그라미</label><div class="cchip__box"><input id="c-bar-accent" type="color" value="#0b93f6"><input class="cchip__hex" id="c-bar-accent-txt" type="text" value="#0b93f6"></div></div>
                 <div class="cchip"><label>전송 화살표</label><div class="cchip__box"><input id="c-bar-arrow" type="color" value="#ffffff"><input class="cchip__hex" id="c-bar-arrow-txt" type="text" value="#ffffff"></div></div>
@@ -1975,7 +2001,7 @@
                 </div>
                 <div class="field" style="margin-top:14px">
                   <span class="label">방향 <span class="val">↘</span></span>
-                  <div class="rangewrap"><input id="grad-angle" type="range" min="0" max="315" step="45" value="135"></div>
+                  <div class="rangewrap"><input id="grad-angle" type="range" min="0" max="315" step="45" value="135" data-wrap></div>
                 </div>
                 <div class="presets presets--bg" id="bg-presets-grad" style="margin-top:14px"></div>
               </div>
@@ -2025,7 +2051,7 @@
                 </div>
                 <div class="grid-2" style="margin-top:14px">
                   <div class="field">
-                    <span class="label">두께 <span class="val" id="frame-size-val">20%</span></span>
+                    <span class="label">사진 두께 <span class="val" id="frame-size-val">20%</span></span>
                     <div class="rangewrap"><input id="frame-size" type="range" min="5" max="50" step="5" value="20"></div>
                   </div>
                   <div class="field">
@@ -2054,7 +2080,7 @@
             </summary>
             <div class="fold__body">
               <div class="field">
-                <span class="label">비율 조정</span>
+                <span class="label">저장 비율</span>
                 <div class="seg" id="size-seg">
                   <button type="button" data-mode="width" aria-pressed="true">자동 비율</button>
                   <button type="button" data-mode="ratio" aria-pressed="false">고정 비율</button>
@@ -2091,7 +2117,7 @@
         <div class="panel" data-panel="help" role="tabpanel">
           <div class="section">
             <p class="section__head">텍스트 대치</p>
-            <p class="hint" style="margin:0 0 12px">특정 글자를 다른 글자로 변환·삭제해요.<br>변환은 한 프리셋당 하나만 1:1로 지원해요.<br>삭제는 한 프리셋당 여러 개를 지원하며 쉼표로 구분해요.<br>저장한 프리셋을 클릭하면 본문 · 제목 · 소제목 · 하단에 한꺼번에 적용돼요.<br>예: ... → ⋯ / 바보 → 사랑해 / 케이크, 푸딩 → 삭제</p>
+            <p class="hint" style="margin:0 0 12px">특정 글자를 다른 글자로 변환 · 삭제해요.<br>변환은 한 프리셋당 하나만 1:1로 지원해요.<br>삭제는 한 프리셋당 여러 개를 지원하며 쉼표로 구분해요.<br>저장한 프리셋을 클릭하면 본문 · 제목 · 소제목 · 하단에 한꺼번에 적용돼요.<br>예: ... → ⋯ / 바보 → 사랑해 / 케이크, 푸딩 → 삭제</p>
             <div class="mychips" id="replace-presets"></div>
             <div class="repform" id="replace-form" hidden>
               <input class="txt-input" id="replace-find" type="text" placeholder="무엇을 바꿀지 (여러 개 삭제는 ,로 구분)" maxlength="120" autocomplete="off">
@@ -2168,7 +2194,7 @@
     <div class="sheet__title">로그 이미지 발췌기 업데이트 중!</div>
     <div class="help-body">
       <p class="help-cat">크기 도우미</p>
-      <p class="hint">· 내용 탭에 <b>크기 도우미</b>가 생겼어요. 버튼을 키면 본문 글자 크기 하나만 정해도 제목 · 소제목 · 하단 · (작게) 크기와 문단 · 제목 · 하단 간격이 알아서 맞춰져요.<br>· 켠 상태에서 값을 직접 고쳐도 되지만, 본문 글자 크기를 바꾸면 직접 고친 값까지 새로 계산돼요.<br>· 끄면 켜기 전 값으로 돌아가요. 직접 고친 값도 함께 사라지니 남기고 싶다면 프리셋에 저장해 주세요.</p>
+      <p class="hint">· 내용 탭에 <b>크기 도우미</b>가 생겼어요. 버튼을 키면 본문 글자 크기 하나만 정해도 제목 · 소제목 · 하단 · (크기) 크기와 문단 · 제목 · 하단 간격이 알아서 맞춰져요.<br>· 켠 상태에서 값을 직접 고쳐도 되지만, 본문 글자 크기를 바꾸면 직접 고친 값까지 새로 계산돼요.<br>· 끄면 켜기 전 값으로 돌아가요. 직접 고친 값도 함께 사라지니 남기고 싶다면 프리셋에 저장해 주세요.</p>
 
       <p class="help-cat">글자 크기</p>
       <p class="hint">· 작은 글자 전용이던 <b>Aa</b> 도구가 새로운 도구가 됐어요. 이제 본문보다 작게 · 크게 모두 대응해요.<br>· 드래그한 부분에만 적용돼요. 크기는 각각 적용 당시 값으로 유지되며, 크기를 변경해도 이전 것까지 바뀌지 않아요.<br>· <b>크기 불러오기</b>로 다른 글자의 크기를 가져올 수 있어요.<br>· 크기를 지정한 글자는 드래그하지 않고 <b>커서만 둬도</b> 그 부분 전체에 적용돼요. 이때는 <b>본문 글자 크기로 되돌리기</b>도 함께 떠요.<br>· 내용 탭에 있던 &#39;작은 글자 크기&#39; 슬라이더는 삭제 후 이 도구에 합쳐졌어요.</p>
@@ -2180,7 +2206,7 @@
       <p class="hint">· <b>텍스트 대치</b>가 본문뿐 아니라 제목 · 소제목 · 하단에도 함께 적용돼요.<br>· <b>뒤로가기 · 앞으로가기</b>도 네 칸을 함께 다뤄요.</p>
 
       <p class="help-cat">자동화 도구</p>
-      <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(작게)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(작게)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(작게)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.<br>· <b>"인"</b> · <b>"말"</b>이 바로 아래 (지문) 줄을 못 데려가던 문제를 고쳤어요. 강조색이나 (작게) 같은 서식이 걸려 있어도 함께 들어가요.</p>
+      <p class="hint">· 미니 도구 <b>(I)</b>는 <b>(휨)</b>, <b>(Aa)</b>는 <b>(크기)</b>로 이름이 바뀌었어요.<br>· <b>*색*</b> · <b>(색)</b>의 색깔과 <b>(크기)</b>의 크기를 내용 탭 맨 위 <b>자동화 도구</b>에서 한곳에 모아 정할 수 있어요.<br>· <b>(크기)</b>의 크기는 값을 바꾸면 이미 적용한 것도 함께 변해요.<br>· <b>"인"</b> · <b>"말"</b>이 바로 아래 (지문) 줄을 못 데려가던 문제를 고쳤어요. 강조색이나 (크기) 같은 서식이 걸려 있어도 함께 들어가요.</p>
 
       <p class="help-cat">화면</p>
       <p class="hint">· 서식 도구 아이콘을 새로 그렸어요.<br>· 슬라이더를 <b>− 값 +</b> 로 바꿨어요.<br>· 제목 · 소제목 · 하단 입력칸이 줄바꿈한 만큼 아래로 늘어나요.<br>· 형광펜 · 강조색 · 인용선 색을 고르는 창이 좁은 화면에서는 두 개씩 묶어 보여요.<br>· 여러 단계로 들어가는 창에 <b>뒤로</b>가 생겼어요. 잘못 눌러도 처음부터 다시 하지 않아도 돼요.<br>· 설정 묶음마다 맨 아래에 <b>닫기</b>가 생겼어요. 위로 올라가지 않아도 접을 수 있어요.</p>
@@ -2198,15 +2224,17 @@
     <div class="sheet__title">도움말</div>
     <div class="help-body">
       <p class="help-cat">자동화 도구</p>
-      <p class="hint">· <b>*색*</b>: *지문* 영역을 * 포함 *색*의 색깔로 변경해요.<br>· <b>(색)</b>: (지문) 영역을 ( ) 포함 (색)의 색깔로 변경해요. 말풍선 안의 (지문)은 각 인물별로 지정된 (색)을 사용해요.<br>· <b>(휨)</b>: (지문) 영역을 ( ) 포함 이탤릭으로 변경해요.<br>· <b>(작게)</b>: (지문) 영역을 ( ) 포함 작은 글자 크기로 변경해요. 크기만 반영하기 때문에 색깔은 그대로 유지돼요. 크기는 내용-자동화 도구에서 지정하며, 값을 바꾸면 이미 적용한 것도 함께 변해요.<br>· <b>&quot;넣&quot;</b>: 문단 앞뒤에 &quot; &quot;를 넣어요. 문단이 별표·괄호·따옴표로 시작하거나 끝나면 건너뛰어요.<br>· <b>&quot;색&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 강조색으로 변경해요. 강조 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 강조와 똑같이 조정돼요.<br>· <b>&quot;인&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 인용선으로 변경해요. 바로 아래 줄에 (지문)이나 *(지문)*이 있으면 하나의 인용선에 같이 들어가요. 인용선 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 인용선과 똑같이 조정돼요.<br>· <b>&quot;말&quot;</b>: &quot;지문&quot; 영역을 &quot; &quot; 포함 말풍선으로 변경해요. 바로 아래 줄에 (지문)이나 *(지문)*이 있으면 하나의 말풍선에 같이 들어가요.<br><br><b>TIP!</b><br>· *색*과 (색)에 사용되는 색깔은 내용-자동화 도구에서 변경돼요.<br>· 말풍선 안의 (색)에 사용되는 색깔은 말풍선-인물에서 인물별로 변경돼요.<br>· 프리셋-텍스트 대치에서 특정 글자를 다른 글자로 변환·삭제할 수 있어요.</p>
+      <p class="hint">· <b>*색*</b>: *영역*을 *색*의 색깔로 변경해요.<br><br>· <b>(색)</b>: (영역)을 (색)의 색깔로 변경해요. 말풍선 안의 (영역)은 각 인물별로 지정된 (색)을 사용해요.<br>· <b>(휨)</b>: (영역)을 이탤릭으로 변경해요.<br>· <b>(크기)</b>: (영역)의 글자 크기를 변환해요. 어떤 크기로 변환할지는 내용-자동화 도구에서 설정하며, 값을 바꾸면 이미 적용한 것도 함께 반영돼요.<br><br>· <b>&quot;넣&quot;</b>: 문단 앞뒤에 &quot; &quot;를 넣어요. 문단이 별표·괄호·따옴표로 시작하거나 끝나면 건너뛰어요.<br>· <b>&quot;색&quot;</b>: &quot;영역&quot;을 강조색으로 변경해요. 강조색 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 강조색과 똑같이 조정돼요.<br>· <b>&quot;인&quot;</b>: &quot;영역&quot;을 인용선으로 변경해요. 바로 아래 줄에 (영역)·*(영역)*이 있으면 하나의 인용선에 같이 들어가요. 인용선 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 인용선과 똑같이 조정돼요.<br>· <b>&quot;말&quot;</b>: &quot;영역&quot;을 말풍선으로 변경해요. 바로 아래 줄에 (영역)·*(영역)*이 있으면 하나의 말풍선에 같이 들어가요.<br><br><b>TIP!</b><br>· *색*과 (색)에 사용되는 색깔은 내용-자동화 도구에서 설정해요.<br>· 말풍선 안의 (색)에 사용되는 색깔은 말풍선-인물에서 인물별로 변경돼요.<br>· 프리셋-텍스트 대치에서 특정 글자를 다른 글자로 변환 · 삭제할 수 있어요.</p>
       <p class="help-cat">서식</p>
-      <p class="hint">· <b>글자 크기</b>: 드래그한 부분만 크기를 따로 정할 수 있어요. 본문보다 작게도, 크게도 만들 수 있어요. 정한 크기는 다음에도 남아 있고, 적용된 글자는 그때의 크기를 그대로 유지해요. 크기를 바꾸고 싶다면 그 부분에 커서를 두고 크기 값 적용을 다시 눌러 주세요.<br>· <b>글자 크기 불러오기</b>: 글자 크기에서 불러오기를 누른 뒤 입력이나 미리보기의 글자를 누르면 그 글자의 크기를 그대로 가져와요. 크기를 따로 준 적 없는 일반 본문·제목을 눌러도 돼요.<br>· <b>강조·형광펜·인용선</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조·형광펜·인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.</p>
+      <p class="hint">· <b>서식 종류</b>: 볼드, 이탤릭, 밑줄, 취소선, 형광펜, 강조색, 개별 크기, 삽입.<br><br>· <b>강조색 · 형광펜 · 인용선</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br><br>· <b>개별 크기</b>: 드래그한 부분만 크기를 따로 적용해요. 본문보다 작게도, 크게도 만들 수 있어요. 나중에 값을 변경해도 이전 것은 적용 당시 크기를 그대로 유지해요. 이전 것까지 바꾸고 싶다면 해당 영역을 다시 적용해 주세요.<br>· <b>글자 크기 불러오기</b>: 입력이나 미리보기의 글자를 누르면 해당 글자의 크기를 그대로 가져와요. 일반 본문 · 제목 · 하단을 눌러도 돼요.<br><br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조색 · 형광펜 · 인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· 개별 글자를 되돌리거나 값을 변경하고 싶을 경우, 해당 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.</p>
       <p class="help-cat">말풍선</p>
-      <p class="hint">· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 이름</b>: 말풍선 이름은 입력에서 조정 가능한 텍스트가 아니에요. 이름을 바꾸고 싶다면 인물에서 변경해 주세요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 앞·맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일은 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.</p>
+      <p class="hint">· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 이름</b>: 말풍선 이름은 입력에서 조정 가능한 텍스트가 아니에요. 이름을 바꾸고 싶다면 말풍선-인물에서 변경해 주세요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 앞·맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일은 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.</p>
       <p class="help-cat">말풍선 간격</p>
       <p class="hint">· <b>말풍선 ↔ 말풍선 간격</b>: 서로 다른 말풍선끼리의 간격이에요. 빈 문단은 본문으로 인식되어서, 말풍선과 말풍선 사이에 빈 문단이 있다면 각 말풍선 기준 말풍선 ↔ 본문 간격이 적용돼요.<br>· <b>연속 말풍선 간격</b>: 같은 인물, 같은 방향, 중간에 빈 문단이 없는 말풍선들을 연속 말풍선으로 처리해요. 이때 연속 말풍선끼리의 간격이에요.<br>· <b>말풍선 ↔ 본문 간격</b>: 말풍선과 본문(글·빈 문단) 사이의 간격이에요. 말풍선과 말풍선 사이에 빈 문단을 만들거나, 말풍선과 글 사이에 띄어쓰기를 한다면 0으로 설정해야 내용-문단 간격의 수치만 적용돼요.</p>
       <p class="help-cat">말풍선 모양</p>
       <p class="hint">· <b>아이메시지</b>: 메시지를 추천해요. 그라데이션, 사진 배경의 경우 미리보기에서 말풍선 꼬리가 이상하게 뜨지만 저장 시 정상적으로 자리 잡아요.<br>· <b>심플</b>: 메시지와 일반 대화 모두 추천해요.<br>· <b>네모</b>: 메시지와 일반 대화에 모두 호환되지만, 일반 대화를 추천해요.<br>· <b>로그</b>: 말풍선이 투명으로 처리돼요.<br><br><b>TIP!</b><br>· 메시지: 프로필 사진 없는 대화.<br>· 일반 대화: 프로필 사진이 있는 대화.</p>
+      <p class="help-cat">고정 비율</p>
+      <p class="hint">· 고정 비율은 가로 크기에 따른 여백 제한이 있어요. 일정 여백을 넘어가면 본문이 캔버스 밖으로 나가 잘리기 때문이에요.<br>· 추천 가로 크기는 현재 상태와 여백을 고려했을 때 본문이 완벽한 중심에 있도록, 즉 온 사방이 같은 여백을 갖도록 하는 크기예요. 추천 가로 크기는 글자 설정 · 본문 길이 · 여백 등에 영향을 받아요.</p>
       <p class="help-cat">프리셋</p>
       <p class="hint">· <b>프리셋 종류</b>: 인물, 삽입 방식, 텍스트 대치, 내 프리셋.<br>· <b>프리셋 순서</b>: 모든 프리셋은 저장된 타원 부분을 꾹 클릭한 뒤 드래그하여 순서를 변경할 수 있어요.</p>
     </div>
@@ -2242,6 +2270,7 @@
   var editor  = $('editor');
   var nameEd  = $('name-ed');
   var currentAlign = 'justify';
+  var titleAlign = 'left';
   var sizeMode = 'width';
   var ratio = {w:4, h:5};
   var bgValue = '#ffffff';
@@ -4079,12 +4108,12 @@
     } },
     em: { title: '강조색', grid2:true, options: function(){
       var opts=[1,2,3,4,5,6].map(function(n){
-        return { label: '강조 '+n, preview: function(){ return swatchHtml(emColorOf(n)); }, run: function(){ applyFormat('emph', null, null, false, n); } };
+        return { label: '강조색 '+n, preview: function(){ return swatchHtml(emColorOf(n)); }, run: function(){ applyFormat('emph', null, null, false, n); } };
       });
-      if(hasMarkAtSel('em')) opts.push({ label: '강조 지우기', full:true, preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } });
+      if(hasMarkAtSel('em')) opts.push({ label: '강조색 지우기', full:true, preview: removeSwatchHtml, run: function(){ applyFormat('emph', null, null, false, '__remove__'); } });
       return opts;
     } },
-    sub: { title: '글자 크기', options: function(){
+    sub: { title: '개별 크기', options: function(){
       var opts=[{ custom: buildSubSizeRow }];
       opts.push({ label:'글자 크기 불러오기', noFocus:true,
         preview:'<span class="s-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5a2.1 2.1 0 0 1 3 3l-7.6 7.6-3.6.6.6-3.6z"/><path d="M4 20h6"/></svg></span>',
@@ -4122,7 +4151,8 @@
       { label: '파선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 4"/></svg></span>', run: function(){ applyHr('dashed'); } },
       { label: '점선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.5 4"/></svg></span>', run: function(){ applyHr('dotted'); } },
       { label: '두 줄', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="3" y1="14" x2="21" y2="14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('double'); } },
-      { label: '짧은 중앙선', full:true, preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="9" y1="12" x2="15" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('short'); } }
+      { label: '짧은 중앙선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="9" y1="12" x2="15" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('short'); } },
+      { label: '점 세 개', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/></svg></span>', run: function(){ applyHr('dots'); } }
     ]},
     'bub-recv': { title: '왼쪽 말풍선 (상대)', options: [
       { label: '연속 (꼬리 없음)', preview: '<span class="pk-ic pk-recv"></span>', run: function(){ applyFormat('bub-recv', false, null, false); } },
@@ -4774,6 +4804,13 @@
       currentAlign = btn.getAttribute('data-align'); moveThumb($('align-seg')); render();
     });
   });
+  document.querySelectorAll('#title-align-seg button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#title-align-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      titleAlign = btn.getAttribute('data-talign'); moveThumb($('title-align-seg')); render();
+    });
+  });
   function applySizeModeUI(){
     var isW = sizeMode==='width';
     var wr=$('width-row'), rw=$('ratiow-row'), rs=$('ratio-sel-row');
@@ -4819,7 +4856,7 @@
       document.querySelectorAll('#em-slot-seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
       btn.setAttribute('aria-pressed','true');
       emSlot = parseInt(btn.getAttribute('data-slot'),10) || 1;
-      var lbl=$('em-slot-val'); if(lbl){ lbl.textContent = '강조 '+emSlot; }
+      var lbl=$('em-slot-val'); if(lbl){ lbl.textContent = '강조색 '+emSlot; }
       moveThumb($('em-slot-seg'));
       markDot(emWrap, emPresets, emColorOf(emSlot));
     });
@@ -5052,6 +5089,8 @@
     }
     el.style.textAlign = currentAlign;
     el.setAttribute('data-align', currentAlign);   // 인용선·하단 막대를 글자 옆에 붙이는 데 씀
+    // 제목·소제목 별도 정렬
+    [].forEach.call(el.querySelectorAll('.g-title-main,.g-title-sub'), function(t){ t.style.textAlign = titleAlign; });
     el.style.wordBreak = (mode==='word') ? 'keep-all' : 'break-all';
     var inner = el.querySelector('.g-inner');
     if(inner){
@@ -5258,14 +5297,22 @@
       wrap.insertBefore(span, sl);        // 숫자를 두 버튼 사이로
       wrap.appendChild(plus);
 
+      var isWrap = sl.hasAttribute('data-wrap');
       function syncDisabled(){
+        if(isWrap){ minus.disabled=false; plus.disabled=false; return; }
         var v=parseFloat(sl.value);
         minus.disabled = (v<=parseFloat(sl.min));
         plus.disabled  = (v>=parseFloat(sl.max));
       }
       function bump(dir){
         var st=parseFloat(sl.step)||1;
-        var nv=nearestSliderValue(sl, (parseFloat(sl.value)||0) + dir*st);
+        var mn=parseFloat(sl.min), mx=parseFloat(sl.max);
+        var nv=(parseFloat(sl.value)||0) + dir*st;
+        if(isWrap){
+          if(nv>mx) nv=mn; else if(nv<mn) nv=mx;
+        } else {
+          nv=nearestSliderValue(sl, nv);
+        }
         if(String(nv)===String(sl.value)){ syncDisabled(); return false; }
         sl.value=nv;
         sl.dispatchEvent(new Event('input', {bubbles:true}));   // 연타 중에는 input 만(=화면 갱신)
@@ -6313,7 +6360,7 @@
   }
   function openQuoteEmSheet(){
     openSheetDef({ title:'따옴표 → 강조색', noFocus:true, grid2:true, options:[1,2,3,4,5,6].map(function(n){
-      return { label:'강조 '+n, preview:function(){ return swatchHtml(emColorOf(n)); }, run:function(){ quoteToEm(n); } };
+      return { label:'강조색 '+n, preview:function(){ return swatchHtml(emColorOf(n)); }, run:function(){ quoteToEm(n); } };
     })});
   }
   // ===== 따옴표 넣기 (미니 도구 '"넣"') =====
@@ -6578,7 +6625,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:editor.innerHTML, nameHtml:nameEd?nameEd.innerHTML:'',
         titleHtml:($('title-ed')?$('title-ed').innerHTML:''), subtitleHtml:($('subtitle-ed')?$('subtitle-ed').innerHTML:''),
-        bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome,
+        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
@@ -6646,6 +6693,8 @@
       updateEditorHl(); updateEditorBub();
       if(data.align){ currentAlign=data.align;
         document.querySelectorAll('#align-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-align')===currentAlign?'true':'false'); }); }
+      if(data.titleAlign){ titleAlign=data.titleAlign;
+        document.querySelectorAll('#title-align-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-talign')===titleAlign?'true':'false'); }); }
       sizeMode = data.sizeMode || 'width';
       document.querySelectorAll('#size-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-mode')===sizeMode?'true':'false'); });
       applySizeModeUI();
@@ -6840,7 +6889,7 @@
   var PRESET_KEY = 'logmaker-presets-v1';
   function captureSettings(){
     var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape };
+    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape };
   }
   function applySettings(s){
     if(!s) return;
@@ -6856,6 +6905,8 @@
     updateEditorHl(); updateEditorBub();
     if(s.align){ currentAlign=s.align;
       document.querySelectorAll('#align-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-align')===currentAlign?'true':'false'); }); }
+    if(s.titleAlign){ titleAlign=s.titleAlign;
+      document.querySelectorAll('#title-align-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-talign')===titleAlign?'true':'false'); }); }
     sizeMode = s.sizeMode || 'width';
     document.querySelectorAll('#size-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-mode')===sizeMode?'true':'false'); });
     applySizeModeUI();
@@ -7453,7 +7504,7 @@
                          '#4f7796','#5b72a4','#6e6faa','#8765a4','#ad5882','#bd6288'];
     var BUB_KEEP = ['#248bf5','#e5e5ea','#ffffff','#1c1c1e'];      // 아이메시지 파랑·회색 / 흰 / 검정
     var INK_KEEP = ['#2b2b2b','#6c6c6c','#8a8a8a','#ffffff'];      // 본문색 / 하단색 / 회색 / 흰색 (말풍선과 같은 4칸)
-    var _charSlot='ink';
+    var _charSlot='name';
     function charSlotInput(k){ return $(k==='name'?'char-namecolor':(k==='sub'?'char-subcolor':(k==='bub'?'char-bub':'char-ink'))); }
     function charSlotLabel(k){ return k==='name'?'이름':(k==='sub'?'(색)':(k==='bub'?'말풍선':'글자')); }
     function charSlotColors(k){ return (k==='bub'?BUB_KEEP:INK_KEEP).concat(SHARED_COLORS); }
