@@ -5475,8 +5475,9 @@
     var warn = $('ratio-warn');
     // 매번 원래대로 되돌린 뒤 다시 판단(이전 계산이 남아 있으면 안 됨)
     inner.style.marginTop=''; inner.style.marginBottom='';
-    canvas.style.removeProperty('padding-top');
-    canvas.style.removeProperty('padding-bottom');
+    /* padding 은 건드리지 않는다 — styleCanvas 가 매 렌더마다 shorthand(el.style.padding)로
+       네 방향을 통째로 다시 지정하므로 이전 override 는 이미 지워져 있다.
+       (여기서 removeProperty 를 하면 위아래 여백이 0 이 되어 넘침 판정이 아예 안 됐다) */
     if(!(sizeMode==='ratio' && ratio)){ if(warn) warn.hidden = true; return; }
 
     inner.style.marginTop='auto'; inner.style.marginBottom='auto';   // 세로 가운데
