@@ -5472,39 +5472,47 @@
   function centerRatioInner(){
     var inner = canvas.querySelector('.g-inner');
     if(!inner) return;
-    var _w0 = $('ratio-warn'); if(_w0) _w0.hidden = true;
-    if(!(sizeMode==='ratio' && ratio)){                    // 고정 비율이 아니면 원래대로
-      inner.style.marginTop=''; inner.style.marginBottom=''; return;
-    }
-    inner.style.marginTop='auto'; inner.style.marginBottom='auto';
+    var warn = $('ratio-warn');
+    // 매번 원래대로 되돌린 뒤 다시 판단(이전 계산이 남아 있으면 안 됨)
+    inner.style.marginTop=''; inner.style.marginBottom='';
+    canvas.style.removeProperty('padding-top');
+    canvas.style.removeProperty('padding-bottom');
+    if(!(sizeMode==='ratio' && ratio)){ if(warn) warn.hidden = true; return; }
+
+    inner.style.marginTop='auto'; inner.style.marginBottom='auto';   // 세로 가운데
     var ch = canvas.clientHeight, ih = inner.offsetHeight;
     if(!ch || !ih){                                        // 아직 레이아웃 전이면 다음 프레임에 다시
       if(!_ratioRetry){ _ratioRetry=1; requestAnimationFrame(function(){ _ratioRetry=0; centerRatioInner(); }); }
       return;
     }
     var cs = getComputedStyle(canvas);
-    var avail = ch - parseFloat(cs.paddingTop||0) - parseFloat(cs.paddingBottom||0);
-    var over = ih - avail;
-    var warn = $('ratio-warn');
-    if(over > 0){
-      // 줄어든 여백도 슬라이더 단위(10px)에 맞춰 떨어지게 내림 처리
-      var padNow = Math.round(parseFloat(cs.paddingTop)||0);
-      var padStep = parseFloat(($('pad')||{}).step) || 10;
-      var realPad = Math.max(0, Math.floor((padNow - over/2) / padStep) * padStep);
-      var cut = padNow - realPad;                            // 위아래 각각 줄어드는 양
-      inner.style.marginTop = (-cut)+'px';
-      inner.style.marginBottom = (-cut)+'px';
-      if(warn){
-        var padSet = Math.round(parseFloat($('pad').value)||0);
-        _ratioWarnBase = '고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
-          + '여백이 기준보다 '+Math.round(over)+'px 초과되어 '+realPad+'px로 설정되었어요.<br>'
-          + '현재 여백을 온전히 사용하고 싶다면 가로 크기를 조정해 주세요.';
-        warn.innerHTML = _ratioWarnBase;
-        warn.hidden = false;
-        scheduleRatioRec(padSet);                            // 추천 폭은 무거워서 잠시 뒤에 붙인다
-      }
-    } else if(warn){ warn.hidden = true; }
+    var padNow = Math.round(parseFloat(cs.paddingTop)||0);
+    var over = ih - (ch - padNow*2);
+    if(over <= 0){ if(warn) warn.hidden = true; return; }   // 여백 안에 다 들어감
+
+    /* 여백을 파고드는 대신 '위아래 여백 자체를 줄인다'(슬라이더 단위로 내림).
+       마이너스 마진으로 끌어당기면 미리보기에서 위가 잘려 보여서 실제 결과와 달라진다 */
+    var padStep = parseFloat(($('pad')||{}).step) || 10;
+    var realPad = Math.max(0, Math.floor((padNow - over/2) / padStep) * padStep);
+    canvas.style.setProperty('padding-top', realPad+'px', 'important');
+    canvas.style.setProperty('padding-bottom', realPad+'px', 'important');
+
+    var rest = ih - (ch - realPad*2);                       // 여백을 다 줄이고도 남는 넘침
+    if(warn){
+      var padSet = Math.round(parseFloat($('pad').value)||0);
+      _ratioWarnBase = (rest > 0)
+        ? ('고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
+           + '글이 '+Math.round(rest)+'px 넘쳐서 아래쪽이 잘려요.<br>'
+           + '가로 크기를 키우거나 여백 · 글자 크기를 줄여 주세요.')
+        : ('고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
+           + '여백이 기준보다 '+Math.round(over)+'px 초과되어 '+realPad+'px로 설정되었어요.<br>'
+           + '현재 여백을 온전히 사용하고 싶다면 가로 크기를 조정해 주세요.');
+      warn.innerHTML = _ratioWarnBase;
+      warn.hidden = false;
+      scheduleRatioRec(padSet);                            // 추천 폭은 무거워서 잠시 뒤에 붙인다
+    }
   }
+
   var _renderRAF=0;
   function renderSoon(){ if(_renderRAF) return; _renderRAF=requestAnimationFrame(function(){ _renderRAF=0; render(); }); }
   var _fr, _lastFitW=0;
