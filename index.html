@@ -5077,6 +5077,10 @@
       el.style.height = (w*ratio.h/ratio.w)+'px';
       el.style.display='flex'; el.style.flexDirection='column'; el.style.justifyContent='';
       if(inner){ inner.style.marginTop='auto'; inner.style.marginBottom='auto'; }
+      /* ★위에서 el.style.padding 을 통째로 다시 지정하므로 줄여 둔 위아래 여백이 날아간다.
+         저장 직전에도 styleCanvas 가 한 번 더 불리는데 그때 되살아나서
+         '미리보기는 줄어든 여백, 저장은 원래 여백'으로 갈렸다 → 여기서 곧바로 다시 맞춘다 */
+      if(el===canvas && typeof centerRatioInner==='function') centerRatioInner();
     } else {
       el.style.height=''; el.style.display=''; el.style.justifyContent='';
       if(inner){ inner.style.marginTop=''; inner.style.marginBottom=''; }
@@ -5449,7 +5453,8 @@
       canvas.style.width = w+'px';
       canvas.style.height = (w*ratio.h/ratio.w)+'px';
       var availH = (w*ratio.h/ratio.w) - pad*2;
-      if(inner.offsetHeight <= availH){ found = w; break; }
+      var hh = Math.max(inner.scrollHeight||0, inner.offsetHeight||0);
+      if(hh <= availH){ found = w; break; }
     }
     if(prevW) canvas.style.width=prevW; else canvas.style.removeProperty('width');
     if(prevH) canvas.style.height=prevH; else canvas.style.removeProperty('height');
@@ -5473,41 +5478,39 @@
     var inner = canvas.querySelector('.g-inner');
     if(!inner) return;
     var warn = $('ratio-warn');
-    // 매번 원래대로 되돌린 뒤 다시 판단(이전 계산이 남아 있으면 안 됨)
     inner.style.marginTop=''; inner.style.marginBottom='';
-    /* padding 은 건드리지 않는다 — styleCanvas 가 매 렌더마다 shorthand(el.style.padding)로
-       네 방향을 통째로 다시 지정하므로 이전 override 는 이미 지워져 있다.
-       (여기서 removeProperty 를 하면 위아래 여백이 0 이 되어 넘침 판정이 아예 안 됐다) */
     if(!(sizeMode==='ratio' && ratio)){ if(warn) warn.hidden = true; return; }
 
+    /* ★여백은 항상 슬라이더 값에서 다시 시작한다.
+       예전엔 줄여 놓은 padding 을 computed 로 읽어 그 값을 '원래 여백'으로 착각했다.
+       (게다가 important 로 넣어 두면 styleCanvas 의 shorthand 로도 안 지워진다) */
+    var padSet = Math.round(parseFloat($('pad').value)||0);
+    canvas.style.paddingTop = padSet+'px';
+    canvas.style.paddingBottom = padSet+'px';
+
     inner.style.marginTop='auto'; inner.style.marginBottom='auto';   // 세로 가운데
-    var ch = canvas.clientHeight, ih = inner.offsetHeight;
+    /* ★높이는 scrollHeight 로 잰다.
+       .g-inner 는 세로 flex 아이템이라 offsetHeight 가 남은 공간에 맞춰 줄어든 값으로 나올 수 있고,
+       그러면 '넘쳤는데 안 넘친 것처럼' 계산돼 경고가 아예 안 떴다 */
+    var ch = canvas.clientHeight;
+    var ih = Math.max(inner.scrollHeight||0, inner.offsetHeight||0);
     if(!ch || !ih){                                        // 아직 레이아웃 전이면 다음 프레임에 다시
       if(!_ratioRetry){ _ratioRetry=1; requestAnimationFrame(function(){ _ratioRetry=0; centerRatioInner(); }); }
       return;
     }
-    var cs = getComputedStyle(canvas);
-    var padNow = Math.round(parseFloat(cs.paddingTop)||0);
-    var over = ih - (ch - padNow*2);
+    var over = ih - (ch - padSet*2);
     if(over <= 0){ if(warn) warn.hidden = true; return; }   // 여백 안에 다 들어감
 
-    /* 여백을 파고드는 대신 '위아래 여백 자체를 줄인다'(슬라이더 단위로 내림).
-       마이너스 마진으로 끌어당기면 미리보기에서 위가 잘려 보여서 실제 결과와 달라진다 */
+    // 넘친 만큼 위아래 여백을 함께 줄인다(슬라이더 단위로 내림)
     var padStep = parseFloat(($('pad')||{}).step) || 10;
-    var realPad = Math.max(0, Math.floor((padNow - over/2) / padStep) * padStep);
-    canvas.style.setProperty('padding-top', realPad+'px', 'important');
-    canvas.style.setProperty('padding-bottom', realPad+'px', 'important');
+    var realPad = Math.max(0, Math.floor((padSet - over/2) / padStep) * padStep);
+    canvas.style.paddingTop = realPad+'px';
+    canvas.style.paddingBottom = realPad+'px';
 
-    var rest = ih - (ch - realPad*2);                       // 여백을 다 줄이고도 남는 넘침
     if(warn){
-      var padSet = Math.round(parseFloat($('pad').value)||0);
-      _ratioWarnBase = (rest > 0)
-        ? ('고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
-           + '글이 '+Math.round(rest)+'px 넘쳐서 아래쪽이 잘려요.<br>'
-           + '가로 크기를 키우거나 여백 · 글자 크기를 줄여 주세요.')
-        : ('고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
-           + '여백이 기준보다 '+Math.round(over)+'px 초과되어 '+realPad+'px로 설정되었어요.<br>'
-           + '현재 여백을 온전히 사용하고 싶다면 가로 크기를 조정해 주세요.');
+      _ratioWarnBase = '고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
+        + '여백이 기준보다 '+Math.round(over)+'px 초과되어 '+realPad+'px로 설정되었어요.<br>'
+        + '현재 여백을 온전히 사용하고 싶다면 가로 크기를 조정해 주세요.';
       warn.innerHTML = _ratioWarnBase;
       warn.hidden = false;
       scheduleRatioRec(padSet);                            // 추천 폭은 무거워서 잠시 뒤에 붙인다
