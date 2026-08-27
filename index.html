@@ -886,6 +886,8 @@
   /* 투명: 말풍선 배경만 없앤다. 프사·이름·인물별 글자색은 그대로 유지 */
   #editor.bub-plain .g-bub{background:transparent !important;border-radius:0;padding:0;}
   #editor.bub-plain .g-bub>svg.g-tail{display:none;}
+  /* 편집창의 아이메시지 꼬리는 ::before/::after 로 그려서 위 svg 규칙만으로는 안 없어진다 */
+  #editor.bub-plain .g-bub::before,#editor.bub-plain .g-bub::after{content:none !important;display:none !important;}
   #canvas.bub-plain .g-bub,.canvas-clone.bub-plain .g-bub{
     background:transparent !important;border-radius:0 !important;
     padding:0 !important;max-width:100% !important;
@@ -1257,8 +1259,8 @@
                 <div class="cchip"><label>(색)</label><div class="cchip__box"><input id="c-paren" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-paren-txt" type="text" value="#8a8a8a"></div></div>
               </div>
               <div class="field" style="margin-top:16px">
-                <span class="label">(작게) 글자 크기 <span class="val">26px</span></span>
-                <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="50" step="1" value="26"></div>
+                <span class="label">(작게) 글자 크기 <span class="val">27px</span></span>
+                <div class="rangewrap"><input id="parensub-size" type="range" min="6" max="50" step="1" value="27"></div>
               </div>
               <p class="hint" style="margin-top:10px">자동화 도구 *색* · (색) · (작게)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색을 써요.<br>(작게)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이전 것까지 함께 변해요.</p>
             </div>
@@ -2009,6 +2011,8 @@
                   <div class="rangewrap"><input id="ratio-w" type="range" min="600" max="2000" step="20" value="1080"></div>
                 </div>
               </div>
+              <!-- 고정 비율에서 글이 여백 안쪽을 넘칠 때만 보인다(centerRatioInner 가 채움) -->
+              <p class="hint" id="ratio-warn" hidden style="margin-top:10px;color:var(--danger,#d9534f)"></p>
             </div>
           </details>
         </div>
@@ -2680,7 +2684,7 @@
      · data-slot 을 쓰는 이유: mergeAdjacentMarks 가 같은 slot 끼리만 합쳐 → 크기 다른 이웃이 안 섞임 */
   function subSizeNow(){ var e=$('subtext-size'); var v=e?parseFloat(e.value):26; return isNaN(v)?26:v; }
   /* 미니 도구 (작게) 는 서식 툴바 Aa 와 별개의 값을 쓴다 — 디자인 탭 '자동화 도구'의 슬라이더 */
-  function parenSubSizeNow(){ var e=$('parensub-size'); var v=e?parseFloat(e.value):26; return isNaN(v)?26:v; }
+  function parenSubSizeNow(){ var e=$('parensub-size'); var v=e?parseFloat(e.value):27; return isNaN(v)?27:v; }
   function setSubSizeNow(v){
     var e=$('subtext-size'); if(!e) return;
     e.value = nearestSliderValue(e, v);
@@ -5331,12 +5335,44 @@
     setVal('ratio-w', $('ratio-w').value+'px');
     setVal('opacity', $('opacity').value+'%');
     setVal('bright', $('bright').value+'%');
+    centerRatioInner();
     var meta = $('preview-meta');
     if(meta){
       var w = baseW();
       meta.textContent = (sizeMode==='ratio') ? (w+' × '+Math.round(w*ratio.h/ratio.w)+' px') : (w+' px');
     }
     scheduleSave();
+  }
+  /* 고정 비율에서 글이 '여백 안쪽'보다 길면 margin:auto 가 안 먹는다(남는 공간이 음수면 auto=0).
+     그래서 글이 위 여백에 붙고 아래로만 흘러 위아래 여백이 달라 보인다.
+     넘칠 때는 넘친 만큼을 위아래로 반씩 나눠 캔버스 정중앙에 오게 한다. */
+  function centerRatioInner(){
+    var inner = canvas.querySelector('.g-inner');
+    if(!inner) return;
+    var _w0 = $('ratio-warn'); if(_w0) _w0.hidden = true;
+    if(!(sizeMode==='ratio' && ratio)){                    // 고정 비율이 아니면 원래대로
+      inner.style.marginTop=''; inner.style.marginBottom=''; return;
+    }
+    inner.style.marginTop='auto'; inner.style.marginBottom='auto';
+    var ch = canvas.clientHeight, ih = inner.offsetHeight;
+    if(!ch || !ih) return;                                 // 레이아웃 값이 없으면 건드리지 않음
+    var cs = getComputedStyle(canvas);
+    var avail = ch - parseFloat(cs.paddingTop||0) - parseFloat(cs.paddingBottom||0);
+    var over = ih - avail;
+    var warn = $('ratio-warn');
+    if(over > 0){
+      var half = Math.round(over/2);
+      inner.style.marginTop = (-half)+'px';
+      inner.style.marginBottom = (-(over-half))+'px';
+      if(warn){
+        var padNow = Math.round(parseFloat(cs.paddingTop)||0);
+        var realPad = Math.max(0, padNow - half);           // 실제로 남는 위아래 여백
+        warn.innerHTML = '고정 비율은 글자 영역 때문에 여백 제한이 있어요.<br>'
+          + '여백이 기준보다 '+Math.round(over)+'px 초과되어 '+realPad+'px로 설정되었어요.<br>'
+          + '여백을 온전히 사용하고 싶다면 고정 폭을 조정해 주세요.';
+        warn.hidden = false;
+      }
+    } else if(warn){ warn.hidden = true; }
   }
   var _renderRAF=0;
   function renderSoon(){ if(_renderRAF) return; _renderRAF=requestAnimationFrame(function(){ _renderRAF=0; render(); }); }
@@ -6270,7 +6306,7 @@
     'title-size':    1.60,            // 제목 52
     'subtitle-size': 1.20,            // 소제목 38 (본문 대비 20% — 12.5%는 위계가 애매했음)
     'name-size':     0.80,            // 하단 26 (0.7=22 는 흐린 회색이라 더 작아 보여서 올림)
-    'parensub-size': 0.80,            // 미니 (작게) 26 — 이미 적용한 글자까지 같이 변해 효과가 눈에 보인다
+    'parensub-size': 0.85,            // 미니 (작게) 27 — 이미 적용한 글자까지 같이 변해 효과가 눈에 보인다
     /* 글자가 커지면 간격도 같이 벌어져야 답답해 보이지 않는다 */
     'para-gap':      0.63,            // 문단 간격 20
     'title-gap':     0.28,            // 제목 ↔ 소제목 9
