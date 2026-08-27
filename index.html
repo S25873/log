@@ -5456,7 +5456,19 @@
     inner.style.marginTop=prevMT; inner.style.marginBottom=prevMB;
     return found;
   }
-  var _ratioRetry = 0;
+  var _ratioRetry = 0, _ratioWarnBase = '', _ratioRecT = 0;
+  /* 추천 가로 크기는 폭을 바꿔가며 여러 번 재야 해서 무겁다.
+     매 렌더마다 돌리면 미리보기가 밀리므로, 입력이 멎은 뒤에 한 번만 계산해 덧붙인다 */
+  function scheduleRatioRec(padSet){
+    clearTimeout(_ratioRecT);
+    _ratioRecT = setTimeout(function(){
+      var warn = $('ratio-warn'); if(!warn || warn.hidden) return;
+      var rec = recommendRatioWidth();
+      warn.innerHTML = _ratioWarnBase + (rec
+        ? '<br>현재 여백 '+padSet+'px을 사용할 때 추천하는 가로 크기는 '+rec+'px예요.'
+        : '<br>가로 크기만으로는 어려워요. 여백이나 글자 크기를 줄여 주세요.');
+    }, 260);
+  }
   function centerRatioInner(){
     var inner = canvas.querySelector('.g-inner');
     if(!inner) return;
@@ -5475,22 +5487,21 @@
     var over = ih - avail;
     var warn = $('ratio-warn');
     if(over > 0){
-      var half = Math.round(over/2);
-      inner.style.marginTop = (-half)+'px';
-      inner.style.marginBottom = (-(over-half))+'px';
+      // 줄어든 여백도 슬라이더 단위(10px)에 맞춰 떨어지게 내림 처리
+      var padNow = Math.round(parseFloat(cs.paddingTop)||0);
+      var padStep = parseFloat(($('pad')||{}).step) || 10;
+      var realPad = Math.max(0, Math.floor((padNow - over/2) / padStep) * padStep);
+      var cut = padNow - realPad;                            // 위아래 각각 줄어드는 양
+      inner.style.marginTop = (-cut)+'px';
+      inner.style.marginBottom = (-cut)+'px';
       if(warn){
-        var padNow = Math.round(parseFloat(cs.paddingTop)||0);
-        var realPad = Math.max(0, padNow - half);           // 실제로 남는 위아래 여백
-        var msg = '고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
+        var padSet = Math.round(parseFloat($('pad').value)||0);
+        _ratioWarnBase = '고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
           + '여백이 기준보다 '+Math.round(over)+'px 초과되어 '+realPad+'px로 설정되었어요.<br>'
           + '현재 여백을 온전히 사용하고 싶다면 가로 크기를 조정해 주세요.';
-        var rec = recommendRatioWidth();
-        var padSet = Math.round(parseFloat($('pad').value)||0);   // 사용자가 정해 둔 여백 값
-        msg += rec
-          ? '<br>현재 여백 '+padSet+'px을 사용할 때 추천하는 가로 크기는 '+rec+'px예요.'
-          : '<br>가로 크기만으로는 어려워요. 여백이나 글자 크기를 줄여 주세요.';
-        warn.innerHTML = msg;
+        warn.innerHTML = _ratioWarnBase;
         warn.hidden = false;
+        scheduleRatioRec(padSet);                            // 추천 폭은 무거워서 잠시 뒤에 붙인다
       }
     } else if(warn){ warn.hidden = true; }
   }
