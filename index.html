@@ -4841,9 +4841,9 @@
   if(_foldImsgBar){ _foldImsgBar.addEventListener('toggle', function(){ if(_foldImsgBar.open){ requestAnimationFrame(moveAllThumbs); } }); }
 
   var ratios = [
-    {w:1,h:1,label:'1:1',rw:1080}, {w:4,h:5,label:'4:5',rw:1080},
-    {w:3,h:4,label:'3:4',rw:1200}, {w:2,h:3,label:'2:3',rw:1080},
-    {w:9,h:16,label:'9:16',rw:1080}, {w:16,h:9,label:'16:9',rw:1280}
+    {w:1,h:1,label:'1:1'}, {w:4,h:5,label:'4:5'},
+    {w:3,h:4,label:'3:4'}, {w:2,h:3,label:'2:3'},
+    {w:9,h:16,label:'9:16'}, {w:16,h:9,label:'16:9'}
   ];
   var rSeg = $('ratio-seg');
   ratios.forEach(function(p, idx){
@@ -4852,7 +4852,7 @@
     b.addEventListener('click', function(){
       [].forEach.call(rSeg.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed','false'); });
       b.setAttribute('aria-pressed','true');
-      ratio={w:p.w,h:p.h}; if(p.rw){ $('ratio-w').value=p.rw; } moveThumb(rSeg); render();
+      ratio={w:p.w,h:p.h}; moveThumb(rSeg); render();
     });
     rSeg.appendChild(b);
   });
@@ -5469,8 +5469,7 @@
       var warn = $('ratio-warn'); if(!warn || warn.hidden) return;
       var rec = recommendRatioWidth();
       warn.innerHTML = _ratioWarnBase + (rec
-        ? '<br>현재 여백 '+padSet+'px에 대한 추천 가로 크기는 '+rec+'px예요.<br>'
-          + '추천 가로 크기는 글자 설정 · 본문 길이 등에 영향을 받아요.'
+        ? '<br>현재 설정 · 여백에 대한 추천 가로 크기는 '+rec+'px예요.'
         : '<br>가로 크기만으로는 어려워요. 여백이나 글자 크기를 줄여 주세요.');
     }, 260);
   }
@@ -5517,14 +5516,12 @@
 
     if(warn){
       if(found){
-        _ratioWarnBase = '고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
-          + '현재 여백 '+padSet+'px로 설정할 경우 본문이 캔버스 밖으로 잘리게 돼요.<br>'
-          + '현재 가로 크기에서 본문이 잘리지 않는 최대 여백 '+maxPad+'px로 대체 설정했어요.<br>'
-          + '현재 여백 '+padSet+'px를 온전히 사용하고 싶다면 가로 크기를 조정해 주세요.';
+        _ratioWarnBase = '현재 여백 '+padSet+'px로 설정할 경우 본문이 캔버스 밖으로 잘려요.<br>'
+          + '현재 가로 크기에서 본문이 온전한 최대 여백 '+maxPad+'px로 대체했어요.<br>'
+          + '현재 여백 '+padSet+'px을 사용하고 싶다면 가로 · 글자 등을 조정해 주세요.';
       } else {
-        _ratioWarnBase = '고정 비율은 가로 크기에 따른 여백 제한이 있어요.<br>'
-          + '현재 여백 '+padSet+'px로 설정할 경우 본문이 캔버스 밖으로 잘리게 돼요.<br>'
-          + '최소 여백 '+minPad+'px로도 본문이 잘리게 돼요.<br>'
+        _ratioWarnBase = '현재 여백 '+padSet+'px로 설정할 경우 본문이 캔버스 밖으로 잘려요.<br>'
+          + '최소 여백 '+minPad+'px로도 본문이 잘려요.<br>'
           + '가로 크기를 키우거나 글자 크기를 줄여 주세요.';
       }
       warn.innerHTML = _ratioWarnBase;
