@@ -7650,6 +7650,8 @@
   stepperize();
   // 웹폰트가 늦게 붙으면 글 높이가 바뀌므로 다 로드된 뒤 다시 잰다(새로고침해야 뜨던 문제)
   if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ centerRatioInner(); }); }
+  // 폰트 변경 시 새 웹폰트가 로드되면 재측정(폴백 폰트로 잘못 측정하는 문제 방지)
+  if(document.fonts){ document.fonts.addEventListener('loadingdone', function(){ centerRatioInner(); }); }
 
   /* 아코디언마다 맨 아래에 닫기 버튼을 하나씩 붙인다.
      (open=false 로 두면 브라우저가 toggle 이벤트를 알아서 쏘므로 저장·thumb 갱신은 그대로 동작) */
