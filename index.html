@@ -840,6 +840,10 @@
   #editor .g-hr.is-sel::after{content:"\00d7";position:absolute;top:-9px;right:-8px;z-index:2;width:19px;height:19px;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;font-weight:400;color:var(--ink-2);background:var(--surface);border:1px solid var(--line-strong);border-radius:50%;box-shadow:var(--shadow-2);transition:color .14s var(--ease),background .14s,border-color .14s;}
   #editor .g-hr.is-sel:hover::after{color:#fff;background:var(--danger);border-color:var(--danger);}
   #editor .g-hr.line:before{content:"";display:block;width:100%;height:1px;background:var(--line-strong);}
+  #editor .g-hr.dashed:before,#editor .g-hr.dotted:before,#editor .g-hr.double:before{content:"";display:block;width:100%;border-top:2px solid var(--hr-color,rgba(140,140,140,.5));}
+  #editor .g-hr.dashed:before{border-top-style:dashed;}
+  #editor .g-hr.dotted:before{border-top-style:dotted;border-top-width:3px;}
+  #editor .g-hr.double:before{border-top-style:double;border-top-width:5px;}
   #editor .g-hr.dots{letter-spacing:.4em;color:var(--ink-3);height:auto;}
   #editor .g-hr.short:before{content:"";display:block;width:40px;height:1px;background:var(--ink-3);}
   #editor .g-img{display:block;margin:6px 0;text-align:center;position:relative;cursor:pointer;border-radius:10px;}
@@ -1058,9 +1062,19 @@
      왼쪽·양쪽 정렬은 어차피 글 시작 = 블록 시작이라 손대지 않는다(양쪽 정렬은 폭을 줄이면 깨짐) */
   #canvas[data-align="center"] .g-quote,.canvas-clone[data-align="center"] .g-quote{width:fit-content !important;max-width:100% !important;margin-left:auto !important;margin-right:auto !important;}
   #canvas[data-align="right"] .g-quote,.canvas-clone[data-align="right"] .g-quote{width:fit-content !important;max-width:100% !important;margin-left:auto !important;margin-right:0 !important;}
-  #canvas .g-hr,.canvas-clone .g-hr{display:flex !important;align-items:center !important;justify-content:center !important;margin:.7em 0 !important;height:1em !important;line-height:1 !important;color:transparent !important;overflow:visible !important;}
+  /* 위아래 간격은 '문단 간격'을 그대로 써서 글 전체 리듬과 맞춘다 */
+  #canvas .g-hr,.canvas-clone .g-hr{display:flex !important;align-items:center !important;justify-content:center !important;margin:var(--para-gap,.7em) 0 !important;height:0 !important;line-height:0 !important;color:transparent !important;overflow:visible !important;}
   #canvas .g-hr.line:before,.canvas-clone .g-hr.line:before{content:"" !important;display:block !important;width:100% !important;height:.05em !important;background:var(--hr-color,rgba(140,140,140,.5)) !important;}
-  #canvas .g-hr.dots,.canvas-clone .g-hr.dots{letter-spacing:.4em !important;font-size:.9em !important;height:auto !important;color:var(--hr-color,rgba(140,140,140,.55)) !important;}
+  /* 옛 로그의 '점 세 개'는 그대로 보이게 남겨 둔다(새로 만들 수는 없음) */
+  #canvas .g-hr.dots,.canvas-clone .g-hr.dots{letter-spacing:.4em !important;font-size:.9em !important;height:auto !important;line-height:1 !important;color:var(--hr-color,rgba(140,140,140,.55)) !important;}
+  #canvas .g-hr.dashed:before,#canvas .g-hr.dotted:before,#canvas .g-hr.double:before,
+  .canvas-clone .g-hr.dashed:before,.canvas-clone .g-hr.dotted:before,.canvas-clone .g-hr.double:before{
+    content:"" !important;display:block !important;width:100% !important;height:0 !important;
+    border-top:.05em solid var(--hr-color,rgba(140,140,140,.5)) !important;
+  }
+  #canvas .g-hr.dashed:before,.canvas-clone .g-hr.dashed:before{border-top-style:dashed !important;}
+  #canvas .g-hr.dotted:before,.canvas-clone .g-hr.dotted:before{border-top-style:dotted !important;border-top-width:.08em !important;}
+  #canvas .g-hr.double:before,.canvas-clone .g-hr.double:before{border-top-style:double !important;border-top-width:.14em !important;}
   #canvas .g-hr.short:before,.canvas-clone .g-hr.short:before{content:"" !important;display:block !important;width:12% !important;height:.05em !important;background:var(--hr-color,rgba(140,140,140,.6)) !important;}
   #canvas .g-img,.canvas-clone .g-img{display:block !important;margin:.5em 0 !important;text-align:center !important;}
   #canvas .g-img.al-left,.canvas-clone .g-img.al-left{text-align:left !important;}
@@ -1557,7 +1571,7 @@
               <div class="field">
                 <span class="label">하단 ↔ 본문 간격 <span class="val" id="name-gap-val">26px</span></span>
                 <div class="rangewrap"><input id="name-gap" type="range" min="0" max="72" step="1" value="26"></div>
-              </div>
+              </div></div>
                           <label class="switch" style="margin-top:16px">
                 <span class="switch__text" style="flex:1">
                   <span class="switch__title">본문과 하단 사이 구분선 추가</span>
@@ -1576,7 +1590,6 @@
                 </div>
                 <p class="hint" style="margin-top:10px">구분선 색깔은 디자인-글자 · 보조 탭에 있어요.</p>
               </div>
-</div>
           </details>
         </div>
 
@@ -3437,7 +3450,7 @@
     editor.focus(); restoreSel();
     var sel = window.getSelection();
     var hr = document.createElement('div'); hr.className='g-hr '+(kind||'line'); hr.setAttribute('contenteditable','false');
-    if(kind==='dots'){ hr.textContent='•  •  •'; } else { hr.textContent='\u200b'; }
+    hr.textContent='\u200b';
     if(sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)){
       var range=sel.getRangeAt(0); range.collapse(false); range.insertNode(hr);
     } else {
@@ -4103,10 +4116,13 @@
       }
       return opts;
     } },
-    hr: { title: '구분선', options: [
-      { label: '가로 구분선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('line'); } },
-      { label: '점 세 개', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="17" cy="12" r="1.5" fill="currentColor"/></svg></span>', run: function(){ applyHr('dots'); } },
-      { label: '짧은 중앙선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="9" y1="12" x2="15" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('short'); } }
+    // 제목·하단 구분선과 같은 이름·같은 모양으로 통일(점 세 개는 뺌)
+    hr: { title: '구분선', grid2:true, options: [
+      { label: '실선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('line'); } },
+      { label: '파선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 4"/></svg></span>', run: function(){ applyHr('dashed'); } },
+      { label: '점선', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.5 4"/></svg></span>', run: function(){ applyHr('dotted'); } },
+      { label: '두 줄', preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="3" y1="14" x2="21" y2="14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('double'); } },
+      { label: '짧은 중앙선', full:true, preview: '<span class="s-preview"><svg viewBox="0 0 24 24" fill="none"><line x1="9" y1="12" x2="15" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>', run: function(){ applyHr('short'); } }
     ]},
     'bub-recv': { title: '왼쪽 말풍선 (상대)', options: [
       { label: '연속 (꼬리 없음)', preview: '<span class="pk-ic pk-recv"></span>', run: function(){ applyFormat('bub-recv', false, null, false); } },
@@ -5077,7 +5093,11 @@
       if(ch.classList.contains('g-title-blk')) return 'g-title-blk';
       if(ch.classList.contains('g-title-main')) return 'g-title-main';
       if(ch.classList.contains('g-title-sub')) return 'g-title-sub';
-      if(ch.classList.contains('g-hr')){ var k=ch.classList.contains('dots')?'dots':(ch.classList.contains('short')?'short':'line'); return 'g-hr '+k; }
+      if(ch.classList.contains('g-hr')){
+        var k='line';
+        ['dashed','dotted','double','short','dots'].forEach(function(x){ if(ch.classList.contains(x)) k=x; });
+        return 'g-hr '+k;
+      }
       if(ch.classList.contains('g-img')) return 'g-img';
       if(ch.classList.contains('g-quote')){ var s=ch.classList.contains('right')?'right':'left'; return 'g-quote '+s; }
       return '';
