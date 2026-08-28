@@ -518,6 +518,15 @@
     transform:translateY(100%);transition:transform .26s var(--ease);
   }
   .sheet-overlay.is-open .sheet{transform:translateY(0);}
+  /* 액션 다이얼로그 (칩 클릭 시 선택지) */
+  .act-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s;}
+  .act-overlay.is-open{opacity:1;pointer-events:auto;}
+  .act-box{background:var(--surface-1);border-radius:14px;padding:20px;width:280px;max-width:90vw;text-align:center;}
+  .act-box__title{font-size:14px;font-weight:700;margin:0 0 4px;}
+  .act-box__sub{font-size:12px;color:var(--ink-3);margin:0 0 16px;}
+  .act-box__btn{display:block;width:100%;height:42px;border:1px solid var(--line);border-radius:8px;background:none;font-size:13px;cursor:pointer;margin-top:8px;color:var(--ink-1);}
+  .act-box__btn:first-of-type{margin-top:0;}
+  .act-box__btn--cancel{color:var(--ink-3);border:none;margin-top:4px;}
   .help-sheet{max-width:520px;}
   .help-body{max-height:min(64vh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 4px 4px;margin-bottom:10px;}
   .help-body .hint{font-size:11.5px;line-height:1.55;margin:0 0 2px;}   /* 각 탭 안내(.hint)와 완전 동일하게 */
@@ -924,6 +933,9 @@
   #canvas.bub-plain .g-bub-name + .g-bub,.canvas-clone.bub-plain .g-bub-name + .g-bub{margin-top:0 !important;}
   #canvas.bub-plain .g-bub::before,#canvas.bub-plain .g-bub::after,
   .canvas-clone.bub-plain .g-bub::before,.canvas-clone.bub-plain .g-bub::after{display:none !important;content:none !important;}
+  /* 로그 모드의 사진 모서리 둥글기는 네모와 동일하게 */
+  #editor.bub-plain .g-bub-img,#editor.bub-plain .g-bub.img-only .g-bub-img{border-radius:5px;}
+  #canvas.bub-plain .g-bub-img,.canvas-clone.bub-plain .g-bub-img,#canvas.bub-plain .g-bub.img-only .g-bub-img,.canvas-clone.bub-plain .g-bub.img-only .g-bub-img{border-radius:.32em !important;}
   #editor.bub-simple .g-bub{border-radius:6px;}
   #editor.bub-simple .g-bub-img,#editor.bub-simple .g-bub.img-only .g-bub-img{border-radius:5px;}
   #editor.bub-simple .g-bub>svg.g-tail{display:none;}
@@ -1057,7 +1069,7 @@
   #canvas .g-name-rule + .g-name,.canvas-clone .g-name-rule + .g-name{margin-top:var(--name-gap,1.6em) !important;}
   #canvas .g-title-main,.canvas-clone .g-title-main{display:block !important;font-size:var(--title-size,1.6em) !important;font-weight:700 !important;font-family:var(--title-font,inherit) !important;color:var(--title-color,inherit) !important;line-height:1.25 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-title-sub,.canvas-clone .g-title-sub{display:block !important;font-size:var(--subtitle-size,1.15em) !important;font-weight:400 !important;font-family:var(--title-font,inherit) !important;color:var(--subtitle-color,inherit) !important;margin-top:var(--title-gap,.25em) !important;line-height:1.3 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
-  #canvas .g-quote,.canvas-clone .g-quote{display:block !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
+  #canvas .g-quote,.canvas-clone .g-quote{display:block !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;margin-top:var(--quote-gap,10px) !important;margin-bottom:var(--quote-gap,10px) !important;}
   #canvas .g-quote.left,.canvas-clone .g-quote.left{border-left:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-left:.6em !important;}
   #canvas .g-quote.right,.canvas-clone .g-quote.right{border-right:.16em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-right:.6em !important;text-align:right !important;}
   /* 가운데·오른쪽 정렬에서는 인용선 막대가 캔버스 끝이 아니라 '글자 옆'에 붙게.
@@ -1304,9 +1316,34 @@
             </div>
           </details>
 
+          <details class="fold" id="fold-format">
+            <summary>
+              서식
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <p class="section__head">인용선</p>
+              <div class="field" style="margin-top:2px">
+                <span class="label">인용선 여백 <span class="val" id="quote-gap-val">5px</span></span>
+                <div class="rangewrap"><input id="quote-gap" type="range" min="0" max="48" step="1" value="5"></div>
+              </div>
+              <p class="section__head" style="margin-top:18px">(＋로 넣는) 사진</p>
+              <div class="grid-2" style="margin-top:2px">
+                <div class="field">
+                  <span class="label">사진 크기 <span class="val" id="logimg-size-val">100%</span></span>
+                  <div class="rangewrap"><input id="logimg-size" type="range" min="20" max="100" step="5" value="100"></div>
+                </div>
+                <div class="field">
+                  <span class="label">모서리 둥글기 <span class="val" id="logimg-radius-val">10px</span></span>
+                  <div class="rangewrap"><input id="logimg-radius" type="range" min="0" max="30" step="5" value="10"></div>
+                </div>
+              </div>
+            </div>
+          </details>
+
           <details class="fold" id="fold-body">
             <summary>
-              본문 · 사진
+              본문
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
@@ -1397,17 +1434,6 @@
               </label>
               <p class="hint" style="margin-top:8px">크기 변경: 제목 · 소제목 · 하단 · (크기)<br>간격 변경: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요. 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 저장돼요.</p>
 
-              <p class="section__head" style="margin-top:18px">(＋로 넣는) 사진</p>
-              <div class="grid-2" style="margin-top:2px">
-                <div class="field">
-                  <span class="label">사진 크기 <span class="val" id="logimg-size-val">100%</span></span>
-                  <div class="rangewrap"><input id="logimg-size" type="range" min="20" max="100" step="5" value="100"></div>
-                </div>
-                <div class="field">
-                  <span class="label">모서리 둥글기 <span class="val" id="logimg-radius-val">10px</span></span>
-                  <div class="rangewrap"><input id="logimg-radius" type="range" min="0" max="30" step="5" value="10"></div>
-                </div>
-              </div>
             </div>
           </details>
 
@@ -1885,7 +1911,7 @@
               </div>
               <div class="grid-2" style="margin-top:16px">
                 <div class="field">
-                  <span class="label">말풍선 ↔ 본문 간격 <span class="val" id="bub-body-gap-val">18px</span></span>
+                  <span class="label">말풍선 여백 <span class="val" id="bub-body-gap-val">18px</span></span>
                   <div class="rangewrap"><input id="bub-body-gap" type="range" min="0" max="72" step="1" value="18"></div>
                 </div>
                 <div class="field">
@@ -2132,6 +2158,13 @@
           </div>
 
           <div class="section" style="margin-top:20px">
+            <p class="section__head">이어서 편집하기</p>
+            <p class="hint" style="margin:0 0 12px">현재 편집 중인 모든 것을 내용 포함 저장해요.<br>나중에 불러오면 저장 당시 그대로 이어서 편집할 수 있어요.</p>
+            <div class="mychips" id="snapshot-list"></div>
+            <button class="btn btn--ghost" id="snapshot-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 상태 저장</button>
+          </div>
+
+          <div class="section" style="margin-top:20px">
             <p class="section__head">내 프리셋</p>
             <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 사진 배경은 프리셋에 저장되지 않아요.</p>
             <div class="mychips" id="my-presets"></div>
@@ -2146,6 +2179,7 @@
               <button class="btn btn--ghost" id="reset-chars" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">인물 초기화</button>
               <button class="btn btn--ghost" id="reset-bubpreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">삽입 방식 초기화</button>
               <button class="btn btn--ghost" id="reset-replace" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">텍스트 대치 초기화</button>
+              <button class="btn btn--ghost" id="reset-snapshot" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">이어서 편집하기 초기화</button>
               <button class="btn btn--ghost" id="reset-mypreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">내 프리셋 초기화</button>
             </div>
           </div>
@@ -2197,16 +2231,25 @@
       <p class="hint">· 고정 비율 시스템을 대폭 최적화했어요.<br>· 고정 비율 사용 시 본문이 잘리지 않도록 여백을 보정하는 기능이 추가됐어요.<br>· 비율을 전환해도 가로 크기가 리셋되지 않고 유지돼요.</p>
 
       <p class="help-cat">제목 · 소제목</p>
-      <p class="hint">· 제목 · 소제목에 <b>별도 정렬</b>이 생겼어요. 본문과 독립적으로 양쪽 · 왼쪽 · 가운데 · 오른쪽을 정할 수 있어요.</p>
+      <p class="hint">· 제목 · 소제목에 <b>별도 정렬</b>이 생겼어요.</p>
 
       <p class="help-cat">구분선</p>
       <p class="hint">· 제목 · 소제목 · 하단과 본문을 연결할 때 구분선을 넣을 수 있어요.<br>· 본문의 구분선 모양이 추가됐어요.</p>
+
+      <p class="help-cat">인용선 · 말풍선</p>
+      <p class="hint">· 인용선 위아래 간격 오류가 수정됐어요.<br>· <b>인용선 여백</b>이 추가됐어요. 인용선 위아래 간격을 조절할 수 있어요.<br>· <b>말풍선 ↔ 본문 간격</b>이 삭제되고, <b>말풍선 여백</b>이 새로 생겼어요. 말풍선 위아래 간격을 조절할 수 있어요.</p>
+
+      <p class="help-cat">서식 아코디언</p>
+      <p class="hint">· 내용 탭에 <b>서식</b> 아코디언이 새로 생겼어요.<br>· 인용선 여백과 (＋로 넣는) 사진 설정이 여기로 이동했어요.</p>
+
+      <p class="help-cat">이어서 편집하기</p>
+      <p class="hint">· 편의성 탭에 <b>이어서 편집하기</b>가 추가됐어요.<br>· 현재 편집 중인 모든 것을 내용 포함 저장하고 나중에 불러올 수 있어요.<br>· 프리셋처럼 여러 개를 저장할 수 있어요.</p>
 
       <p class="help-cat">글꼴</p>
       <p class="hint">· 손글씨에 <b>교보 손글씨 이유빈</b> · <b>교보 손글씨 박도연</b>이 추가됐어요.<br>· 픽셀에 <b>드림흐물체</b>가 추가됐어요.<br>· 장식 카테고리가 <b>픽셀</b>로 이름이 바뀌었어요.</p>
 
       <p class="help-cat">기타</p>
-      <p class="hint">· 여러 슬라이더의 최소값과 최대값이 확장됐어요.<br>· 도움말이 전면 개편됐어요. 발췌기 사용 시 헷갈리는 게 있다면 참고해 주세요.<br>· 웹폰트 전환 시 고정 비율 측정이 어긋나던 문제가 수정됐어요.</p>
+      <p class="hint">· 내 프리셋 · 이어서 편집하기 칩을 클릭하면 <b>불러오기</b>와 <b>현재 상태로 업데이트</b> 중 선택할 수 있어요.<br>· 여러 슬라이더의 최소값과 최대값이 확장됐어요.<br>· 도움말이 전면 개편됐어요. 발췌기 사용 시 헷갈리는 게 있다면 참고해 주세요.<br>· 웹폰트 전환 시 고정 비율 측정이 어긋나던 문제가 수정됐어요.</p>
     </div>
     <div class="notice-btns">
       <button class="sheet__cancel" id="notice-never" type="button">다시 보지 않기</button>
@@ -2223,17 +2266,17 @@
       <p class="help-cat">자동화 도구</p>
       <p class="hint">· <b>*색*</b>: *영역*을 *색*의 색깔로 변경해요.<br><br>· <b>(색)</b>: (영역)을 (색)의 색깔로 변경해요. 말풍선 안의 (영역)은 각 인물별로 지정된 (색)을 사용해요.<br>· <b>(휨)</b>: (영역)을 이탤릭으로 변경해요.<br>· <b>(크기)</b>: (영역)의 글자 크기를 변환해요. 어떤 크기로 변환할지는 내용-자동화 도구에서 설정하며, 값을 바꾸면 이미 적용한 것도 함께 반영돼요.<br><br>· <b>&quot;넣&quot;</b>: 문단 앞뒤에 &quot; &quot;를 넣어요. 문단이 별표·괄호·따옴표로 시작하거나 끝나면 건너뛰어요.<br>· <b>&quot;색&quot;</b>: &quot;영역&quot;을 강조색으로 변경해요. 강조색 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 강조색과 똑같이 조정돼요.<br>· <b>&quot;인&quot;</b>: &quot;영역&quot;을 인용선으로 변경해요. 바로 아래 줄에 (영역)·*(영역)*이 있으면 하나의 인용선에 같이 들어가요. 인용선 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 인용선과 똑같이 조정돼요.<br>· <b>&quot;말&quot;</b>: &quot;영역&quot;을 말풍선으로 변경해요. 바로 아래 줄에 (영역)·*(영역)*이 있으면 하나의 말풍선에 같이 들어가요.<br><br><b>TIP!</b><br>· *색*과 (색)에 사용되는 색깔은 내용-자동화 도구에서 설정해요.<br>· 말풍선 안의 (색)에 사용되는 색깔은 말풍선-인물에서 인물별로 변경돼요.<br>· 프리셋-텍스트 대치에서 특정 글자를 다른 글자로 변환 · 삭제할 수 있어요.</p>
       <p class="help-cat">서식</p>
-      <p class="hint">· <b>서식 종류</b>: 볼드, 이탤릭, 밑줄, 취소선, 형광펜, 강조색, 개별 크기, 삽입.<br><br>· <b>강조색 · 형광펜 · 인용선</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br><br>· <b>개별 크기</b>: 드래그한 부분만 크기를 따로 적용해요. 본문보다 작게도, 크게도 만들 수 있어요. 나중에 값을 변경해도 이전 것은 적용 당시 크기를 그대로 유지해요. 이전 것까지 바꾸고 싶다면 해당 영역을 다시 적용해 주세요.<br>· <b>글자 크기 불러오기</b>: 입력이나 미리보기의 글자를 누르면 해당 글자의 크기를 그대로 가져와요. 일반 본문 · 제목 · 하단을 눌러도 돼요.<br><br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조색 · 형광펜 · 인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· 개별 글자를 되돌리거나 값을 변경하고 싶을 경우, 해당 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.</p>
+      <p class="hint">· <b>서식 종류</b>: 볼드, 이탤릭, 밑줄, 취소선, 형광펜, 강조색, 개별 크기, 삽입.<br><br>· <b>강조색 · 형광펜 · 인용선</b>: 칠해진 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br><br>· <b>개별 크기</b>: 드래그한 부분만 크기를 따로 적용해요. 본문보다 작게도, 크게도 만들 수 있어요. 나중에 값을 변경해도 이전 것은 적용 당시 크기를 그대로 유지해요. 이전 것까지 바꾸고 싶다면 해당 영역을 다시 적용해 주세요.<br>· <b>글자 크기 불러오기</b>: 입력이나 미리보기의 글자를 누르면 해당 글자의 크기를 그대로 가져와요. 일반 본문 · 제목 · 하단을 눌러도 돼요.<br><br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조색 · 형광펜 · 인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· 개별 글자를 되돌리거나 값을 변경하고 싶을 경우, 해당 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· 인용선 여백은 인용선의 위아래를 항상 감싸고 있는 여백이에요. 인용선 앞뒤로 빈 문단이 있다면 문단 간격+인용선 여백 값이 돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.</p>
       <p class="help-cat">말풍선</p>
       <p class="hint">· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 이름</b>: 말풍선 이름은 입력에서 조정 가능한 텍스트가 아니에요. 이름을 바꾸고 싶다면 말풍선-인물에서 변경해 주세요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 앞·맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일은 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.</p>
       <p class="help-cat">말풍선 간격</p>
-      <p class="hint">· <b>말풍선 ↔ 말풍선 간격</b>: 서로 다른 말풍선끼리의 간격이에요. 빈 문단은 본문으로 인식되어서, 말풍선과 말풍선 사이에 빈 문단이 있다면 각 말풍선 기준 말풍선 ↔ 본문 간격이 적용돼요.<br>· <b>연속 말풍선 간격</b>: 같은 인물, 같은 방향, 중간에 빈 문단이 없는 말풍선들을 연속 말풍선으로 처리해요. 이때 연속 말풍선끼리의 간격이에요.<br>· <b>말풍선 ↔ 본문 간격</b>: 말풍선과 본문(글·빈 문단) 사이의 간격이에요. 말풍선과 말풍선 사이에 빈 문단을 만들거나, 말풍선과 글 사이에 띄어쓰기를 한다면 0으로 설정해야 내용-문단 간격의 수치만 적용돼요.</p>
+      <p class="hint">· <b>말풍선 ↔ 말풍선 간격</b>: 서로 다른 말풍선끼리의 간격이에요. 빈 문단은 본문으로 인식되어서, 말풍선과 말풍선 사이에 빈 문단이 있다면 각 말풍선 기준 말풍선 여백이 적용돼요.<br>· <b>연속 말풍선 간격</b>: 같은 인물, 같은 방향, 중간에 빈 문단이 없는 말풍선들을 연속 말풍선으로 처리해요. 이때 연속 말풍선끼리의 간격이에요.<br><br><b>TIP!</b><br>· 말풍선 여백은 말풍선의 위아래를 감싸고 있는 여백이에요. 말풍선 앞뒤로 빈 문단 · 일반 글이 있다면 적용돼요. 말풍선 앞뒤로 빈 문단이 있다면 문단 간격+말풍선 여백 값이 돼요.</p>
       <p class="help-cat">말풍선 모양</p>
       <p class="hint">· <b>아이메시지</b>: 메시지를 추천해요. 그라데이션, 사진 배경의 경우 미리보기에서 말풍선 꼬리가 이상하게 뜨지만 저장 시 정상적으로 자리 잡아요.<br>· <b>심플</b>: 메시지와 일반 대화 모두 추천해요.<br>· <b>네모</b>: 메시지와 일반 대화에 모두 호환되지만, 일반 대화를 추천해요.<br>· <b>로그</b>: 말풍선이 투명으로 처리돼요.<br><br><b>TIP!</b><br>· 메시지: 프로필 사진 없는 대화.<br>· 일반 대화: 프로필 사진이 있는 대화.</p>
       <p class="help-cat">고정 비율</p>
       <p class="hint">· 고정 비율은 가로 크기에 따른 여백 제한이 있어요. 일정 여백을 넘어가면 본문이 캔버스 밖으로 나가 잘리기 때문이에요.<br>· 추천 가로 크기는 현재 상태와 여백을 고려했을 때 본문이 완벽한 중심에 있도록, 즉 온 사방이 같은 여백을 갖도록 하는 크기예요. 추천 가로 크기는 글자 설정 · 본문 길이 · 여백 등에 영향을 받아요.</p>
       <p class="help-cat">프리셋</p>
-      <p class="hint">· <b>프리셋 종류</b>: 인물, 삽입 방식, 텍스트 대치, 내 프리셋.<br>· <b>프리셋 순서</b>: 모든 프리셋은 저장된 타원 부분을 꾹 클릭한 뒤 드래그하여 순서를 변경할 수 있어요.</p>
+      <p class="hint">· <b>프리셋 종류</b>: 인물, 삽입 방식, 텍스트 대치, 이어서 편집하기, 내 프리셋.<br>· <b>프리셋 순서</b>: 모든 프리셋은 저장된 타원 부분을 꾹 클릭한 뒤 드래그하여 순서를 변경할 수 있어요.</p>
     </div>
     <button class="sheet__cancel" id="help-close" type="button">닫기</button>
   </div>
@@ -4992,6 +5035,8 @@
     var mg=$('msg-gap'), bbg=$('bub-body-gap'), pg=$('para-gap'), sg=$('stack-gap');
     if(mg){ el.style.setProperty('--msg-gap', parseFloat(mg.value)+'px'); }
     if(bbg){ el.style.setProperty('--bub-body-gap', parseFloat(bbg.value)+'px'); }
+    var qg=$('quote-gap');
+    if(qg){ el.style.setProperty('--quote-gap', parseFloat(qg.value)+'px'); }
     if(pg){ el.style.setProperty('--para-gap', parseFloat(pg.value)+'px'); }
     if(sg){ el.style.setProperty('--stack-gap', parseFloat(sg.value)+'px'); }
     var subsz=$('subtext-size'); if(subsz){ var _ss=parseFloat(subsz.value); if(isNaN(_ss)) _ss=26; el.style.setProperty('--sub-size', _ss+'px'); }
@@ -5694,6 +5739,8 @@
     var mg=$('msg-gap'), bbg=$('bub-body-gap'), pg=$('para-gap'), sg=$('stack-gap');
     if(mg){ var mgv=$('msg-gap-val'); if(mgv) mgv.textContent=parseFloat(mg.value)+'px'; }
     if(bbg){ var bbgv=$('bub-body-gap-val'); if(bbgv) bbgv.textContent=parseFloat(bbg.value)+'px'; }
+    var qg=$('quote-gap');
+    if(qg){ var qgv=$('quote-gap-val'); if(qgv) qgv.textContent=parseFloat(qg.value)+'px'; }
     if(pg){ var pgv=$('para-gap-val'); if(pgv) pgv.textContent=parseFloat(pg.value)+'px'; }
     if(sg){ var sgv=$('stack-gap-val'); if(sgv) sgv.textContent=parseFloat(sg.value)+'px'; }
     var barg=$('bar-body-gap');
@@ -5703,7 +5750,7 @@
     var lisz=$('logimg-size'); if(lisz){ var liszv=$('logimg-size-val'); if(liszv) liszv.textContent=parseFloat(lisz.value)+'%'; }
     var lirad=$('logimg-radius'); if(lirad){ var liradv=$('logimg-radius-val'); if(liradv) liradv.textContent=parseFloat(lirad.value)+'px'; }
   }
-  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-gap','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -6566,7 +6613,7 @@
     'para-gap':      0.63,            // 문단 간격 20
     'title-gap':     0.28,            // 제목 ↔ 소제목 9
     'titleblk-gap':  0.81,            // 제목 ↔ 본문 26
-    'name-gap':      0.81             // 하단 ↔ 본문 26 (제목 쪽과 같은 값 — 상태창·페이지 수를 넣으면 본문에 이어지는 정보라 멀면 동떨어져 보임)
+    'name-gap':      0.81              // 하단 ↔ 본문 26
     /* 서식 툴바 ↕A(subtext-size)는 뺐다: '앞으로 적용할 값'이라 켜도 화면이 안 바뀌어 오히려 헷갈림.
        말풍선 쪽 간격(msg-gap·stack-gap·bub-body-gap·bar-body-gap)도 뺐다: 대화 UI의 리듬이라
        본문 글자 크기와 직접 관계가 약하고, 말풍선 모양·프사 유무에 더 좌우된다 */
@@ -6614,7 +6661,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-gap','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt','c-title-hr','c-title-hr-txt',
@@ -6755,6 +6802,105 @@
     try{ localStorage.removeItem(PRESET_KEY); }catch(e){}
     renderMyPresets();
   });
+  if($('reset-snapshot')) $('reset-snapshot').addEventListener('click', function(){
+    if(!confirm('저장된 스냅샷을 모두 삭제할까요?')) return;
+    try{ localStorage.removeItem(SNAPSHOT_KEY); }catch(e){}
+    renderSnapshots();
+  });
+
+  /* ============================================================
+     액션 다이얼로그 (칩 클릭 시 선택지)
+     ============================================================ */
+  var _actOverlay=null;
+  function showActionDialog(title, sub, actions){
+    if(_actOverlay) _actOverlay.remove();
+    var ov=document.createElement('div'); ov.className='act-overlay';
+    var box=document.createElement('div'); box.className='act-box';
+    var h=document.createElement('p'); h.className='act-box__title'; h.textContent=title;
+    box.appendChild(h);
+    if(sub){ var s=document.createElement('p'); s.className='act-box__sub'; s.textContent=sub; box.appendChild(s); }
+    actions.forEach(function(a){
+      var btn=document.createElement('button'); btn.type='button'; btn.className='act-box__btn'; btn.textContent=a.label;
+      btn.addEventListener('click', function(){ ov.classList.remove('is-open'); setTimeout(function(){ ov.remove(); },150); a.fn(); });
+      box.appendChild(btn);
+    });
+    var cancel=document.createElement('button'); cancel.type='button'; cancel.className='act-box__btn act-box__btn--cancel'; cancel.textContent='취소';
+    cancel.addEventListener('click', function(){ ov.classList.remove('is-open'); setTimeout(function(){ ov.remove(); },150); });
+    box.appendChild(cancel);
+    ov.appendChild(box);
+    ov.addEventListener('click', function(e){ if(e.target===ov){ ov.classList.remove('is-open'); setTimeout(function(){ ov.remove(); },150); } });
+    document.body.appendChild(ov);
+    _actOverlay=ov;
+    requestAnimationFrame(function(){ ov.classList.add('is-open'); });
+  }
+
+  /* ============================================================
+     이어서 편집하기 (다중 스냅샷)
+     saveState()와 같은 데이터를 이름별로 여러 개 저장/복원
+     ============================================================ */
+  var SNAPSHOT_KEY = 'logmaker-snapshot-v1';
+  function loadSnapshots(){ try{ var r=localStorage.getItem(SNAPSHOT_KEY); if(!r) return []; var p=JSON.parse(r); return Array.isArray(p)?p:[]; }catch(e){ return []; } }
+  function saveSnapshots(arr){ try{ localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(arr)); }catch(e){ alert('저장 공간이 부족해요. 사용하지 않는 스냅샷을 삭제해 주세요.'); } }
+  function renderSnapshots(){
+    var list=$('snapshot-list'); if(!list) return;
+    var snaps=loadSnapshots();
+    list.innerHTML='';
+    snaps.forEach(function(s, idx){
+      var chip=document.createElement('div'); chip.className='mychip';
+      var lbl=document.createElement('span'); lbl.className='mychip__name';
+      lbl.textContent=s.name+(s.time?' ('+s.time+')':'');
+      lbl.addEventListener('click', function(){
+        showActionDialog('「'+s.name+'」', s.time||'', [
+          { label:'불러오기', fn:function(){
+            try{
+              var d=Object.assign({}, s.data);
+              localStorage.setItem(STORE_KEY, JSON.stringify(d));
+              location.reload();
+            }catch(e){ alert('불러오기에 실패했어요.'); }
+          }},
+          { label:'현재 상태로 업데이트', fn:function(){
+            try{
+              flushSave();
+              var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
+              var data=JSON.parse(raw);
+              var now=new Date();
+              var time=now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+              var arr=loadSnapshots();
+              if(arr[idx]){ arr[idx].data=data; arr[idx].time=time; }
+              saveSnapshots(arr);
+              renderSnapshots();
+            }catch(e){ alert('업데이트에 실패했어요.'); }
+          }}
+        ]);
+      });
+      var del=document.createElement('button'); del.className='mychip__del'; del.type='button';
+      del.textContent='✕'; del.title='삭제';
+      del.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(!confirm('「'+s.name+'」을(를) 삭제할까요?')) return;
+        var arr=loadSnapshots(); arr.splice(idx,1); saveSnapshots(arr); renderSnapshots();
+      });
+      chip.appendChild(lbl); chip.appendChild(del);
+      list.appendChild(chip);
+    });
+  }
+  if($('snapshot-save')) $('snapshot-save').addEventListener('click', function(){
+    var name=prompt('스냅샷 이름을 입력해 주세요.');
+    if(!name || !name.trim()) return;
+    name=name.trim();
+    try{
+      flushSave();
+      var raw=localStorage.getItem(STORE_KEY); if(!raw){ alert('저장할 상태가 없어요.'); return; }
+      var data=JSON.parse(raw);
+      var now=new Date();
+      var time=now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+      var snaps=loadSnapshots();
+      snaps.push({ name:name, time:time, data:data });
+      saveSnapshots(snaps);
+      renderSnapshots();
+    }catch(e){ alert('저장에 실패했어요.'); }
+  });
+  renderSnapshots();
 
   /* ============================================================
      되돌리기 / 다시 실행 (에디터 히스토리)
@@ -6947,8 +7093,24 @@
       var chip=document.createElement('div'); chip.className='mychip reorderable'; chip.title='클릭하면 이 설정을 적용합니다';
       var label=document.createElement('span'); label.textContent=p.name; chip.appendChild(label);
       var x=document.createElement('span'); x.className='mychip__x'; x.textContent='×'; x.title='삭제'; chip.appendChild(x);
-      label.addEventListener('click', function(){ applySettings(p.data); });
-      chip.addEventListener('click', function(e){ if(e.target===chip){ applySettings(p.data); } });
+      label.addEventListener('click', function(){
+        showActionDialog('「'+p.name+'」', '프리셋', [
+          { label:'불러오기', fn:function(){ applySettings(p.data); } },
+          { label:'현재 상태로 업데이트', fn:function(){
+            var cur=loadMyPresets();
+            if(cur[idx]){ cur[idx].data=captureSettings(); saveMyPresets(cur); renderMyPresets(); }
+          }}
+        ]);
+      });
+      chip.addEventListener('click', function(e){ if(e.target===chip){
+        showActionDialog('「'+p.name+'」', '프리셋', [
+          { label:'불러오기', fn:function(){ applySettings(p.data); } },
+          { label:'현재 상태로 업데이트', fn:function(){
+            var cur=loadMyPresets();
+            if(cur[idx]){ cur[idx].data=captureSettings(); saveMyPresets(cur); renderMyPresets(); }
+          }}
+        ]);
+      } });
       x.addEventListener('click', function(e){ e.stopPropagation(); if(!confirm('"'+p.name+'" 프리셋을 삭제할까요?')) return; var cur=loadMyPresets(); cur.splice(idx,1); saveMyPresets(cur); renderMyPresets(); });
       wrap.appendChild(chip);
     });
