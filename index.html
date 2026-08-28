@@ -5506,9 +5506,9 @@
           repT=setInterval(function(){
             ticks++;
             if(!bump(dir)){ stopRepeat(true); return; }
-            if(ticks===10){ clearInterval(repT); repT=setInterval(function(){ if(!bump(dir)) stopRepeat(true); }, 55); }
-          }, 110);
-        }, 400);
+            if(ticks===8){ clearInterval(repT); repT=setInterval(function(){ if(!bump(dir)) stopRepeat(true); }, 35); }
+          }, 70);
+        }, 300);
       }
       function press(b, dir){
         function down(e){
