@@ -518,15 +518,6 @@
     transform:translateY(100%);transition:transform .26s var(--ease);
   }
   .sheet-overlay.is-open .sheet{transform:translateY(0);}
-  /* 액션 다이얼로그 (칩 클릭 시 선택지) */
-  .act-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s;}
-  .act-overlay.is-open{opacity:1;pointer-events:auto;}
-  .act-box{background:var(--surface-1);border-radius:14px;padding:20px;width:280px;max-width:90vw;text-align:center;}
-  .act-box__title{font-size:14px;font-weight:700;margin:0 0 4px;}
-  .act-box__sub{font-size:12px;color:var(--ink-3);margin:0 0 16px;}
-  .act-box__btn{display:block;width:100%;height:42px;border:1px solid var(--line);border-radius:8px;background:none;font-size:13px;cursor:pointer;margin-top:8px;color:var(--ink-1);}
-  .act-box__btn:first-of-type{margin-top:0;}
-  .act-box__btn--cancel{color:var(--ink-3);border:none;margin-top:4px;}
   .help-sheet{max-width:520px;}
   .help-body{max-height:min(64vh,560px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 4px 4px;margin-bottom:10px;}
   .help-body .hint{font-size:11.5px;line-height:1.55;margin:0 0 2px;}   /* 각 탭 안내(.hint)와 완전 동일하게 */
@@ -6809,32 +6800,6 @@
   });
 
   /* ============================================================
-     액션 다이얼로그 (칩 클릭 시 선택지)
-     ============================================================ */
-  var _actOverlay=null;
-  function showActionDialog(title, sub, actions){
-    if(_actOverlay) _actOverlay.remove();
-    var ov=document.createElement('div'); ov.className='act-overlay';
-    var box=document.createElement('div'); box.className='act-box';
-    var h=document.createElement('p'); h.className='act-box__title'; h.textContent=title;
-    box.appendChild(h);
-    if(sub){ var s=document.createElement('p'); s.className='act-box__sub'; s.textContent=sub; box.appendChild(s); }
-    actions.forEach(function(a){
-      var btn=document.createElement('button'); btn.type='button'; btn.className='act-box__btn'; btn.textContent=a.label;
-      btn.addEventListener('click', function(){ ov.classList.remove('is-open'); setTimeout(function(){ ov.remove(); },150); a.fn(); });
-      box.appendChild(btn);
-    });
-    var cancel=document.createElement('button'); cancel.type='button'; cancel.className='act-box__btn act-box__btn--cancel'; cancel.textContent='취소';
-    cancel.addEventListener('click', function(){ ov.classList.remove('is-open'); setTimeout(function(){ ov.remove(); },150); });
-    box.appendChild(cancel);
-    ov.appendChild(box);
-    ov.addEventListener('click', function(e){ if(e.target===ov){ ov.classList.remove('is-open'); setTimeout(function(){ ov.remove(); },150); } });
-    document.body.appendChild(ov);
-    _actOverlay=ov;
-    requestAnimationFrame(function(){ ov.classList.add('is-open'); });
-  }
-
-  /* ============================================================
      이어서 편집하기 (다중 스냅샷)
      saveState()와 같은 데이터를 이름별로 여러 개 저장/복원
      ============================================================ */
@@ -6850,15 +6815,15 @@
       var lbl=document.createElement('span'); lbl.className='mychip__name';
       lbl.textContent=s.name+(s.time?' ('+s.time+')':'');
       lbl.addEventListener('click', function(){
-        showActionDialog('「'+s.name+'」', s.time||'', [
-          { label:'불러오기', fn:function(){
+        openSheetDef({ title:'「'+s.name+'」', noFocus:true, options:[
+          { label:'불러오기', run:function(){
+            if(!confirm('현재 작업은 사라져요. 불러올까요?')) return;
             try{
-              var d=Object.assign({}, s.data);
-              localStorage.setItem(STORE_KEY, JSON.stringify(d));
+              localStorage.setItem(STORE_KEY, JSON.stringify(Object.assign({}, s.data)));
               location.reload();
             }catch(e){ alert('불러오기에 실패했어요.'); }
           }},
-          { label:'현재 상태로 업데이트', fn:function(){
+          { label:'현재 상태로 업데이트', run:function(){
             try{
               flushSave();
               var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
@@ -6871,7 +6836,7 @@
               renderSnapshots();
             }catch(e){ alert('업데이트에 실패했어요.'); }
           }}
-        ]);
+        ]});
       });
       var del=document.createElement('button'); del.className='mychip__del'; del.type='button';
       del.textContent='✕'; del.title='삭제';
@@ -7094,22 +7059,22 @@
       var label=document.createElement('span'); label.textContent=p.name; chip.appendChild(label);
       var x=document.createElement('span'); x.className='mychip__x'; x.textContent='×'; x.title='삭제'; chip.appendChild(x);
       label.addEventListener('click', function(){
-        showActionDialog('「'+p.name+'」', '프리셋', [
-          { label:'불러오기', fn:function(){ applySettings(p.data); } },
-          { label:'현재 상태로 업데이트', fn:function(){
+        openSheetDef({ title:'「'+p.name+'」', noFocus:true, options:[
+          { label:'불러오기', run:function(){ applySettings(p.data); } },
+          { label:'현재 상태로 업데이트', run:function(){
             var cur=loadMyPresets();
             if(cur[idx]){ cur[idx].data=captureSettings(); saveMyPresets(cur); renderMyPresets(); }
           }}
-        ]);
+        ]});
       });
       chip.addEventListener('click', function(e){ if(e.target===chip){
-        showActionDialog('「'+p.name+'」', '프리셋', [
-          { label:'불러오기', fn:function(){ applySettings(p.data); } },
-          { label:'현재 상태로 업데이트', fn:function(){
+        openSheetDef({ title:'「'+p.name+'」', noFocus:true, options:[
+          { label:'불러오기', run:function(){ applySettings(p.data); } },
+          { label:'현재 상태로 업데이트', run:function(){
             var cur=loadMyPresets();
             if(cur[idx]){ cur[idx].data=captureSettings(); saveMyPresets(cur); renderMyPresets(); }
           }}
-        ]);
+        ]});
       } });
       x.addEventListener('click', function(e){ e.stopPropagation(); if(!confirm('"'+p.name+'" 프리셋을 삭제할까요?')) return; var cur=loadMyPresets(); cur.splice(idx,1); saveMyPresets(cur); renderMyPresets(); });
       wrap.appendChild(chip);
