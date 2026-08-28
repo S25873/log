@@ -6385,7 +6385,6 @@
             var names=[]; if(clearTargets.body) names.push('본문'); if(clearTargets.title) names.push('제목');
             if(clearTargets.subtitle) names.push('소제목'); if(clearTargets.name) names.push('하단');
             if(!names.length){ alert('비울 항목을 하나 이상 골라 주세요.'); return; }
-            if(!confirm(names.join(' · ')+'을(를) 비울까요?')) return;
             runClear();
           } }
       ])
