@@ -2768,6 +2768,13 @@
     [].forEach.call((root||canvas).querySelectorAll('.g-script-name'), function(n){
       if(fv) n.style.fontFamily=fv; else n.style.removeProperty('font-family');
     });
+    // 대본 오른쪽: text-align을 인라인으로 강제 (CSS 순서 문제 우회)
+    [].forEach.call((root||canvas).querySelectorAll('.g-msg-col.right .g-bub, .g-msg-col.right'), function(el){
+      el.style.setProperty('text-align','right','important');
+    });
+    [].forEach.call((root||canvas).querySelectorAll('.g-msg-col.left .g-bub, .g-msg-col.left'), function(el){
+      el.style.setProperty('text-align','left','important');
+    });
   }
   document.querySelectorAll('#bub-shape-seg button').forEach(function(btn){
     btn.addEventListener('click', function(){
