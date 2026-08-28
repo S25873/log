@@ -6815,7 +6815,7 @@
       var lbl=document.createElement('span'); lbl.className='mychip__name';
       lbl.textContent=s.name+(s.time?' ('+s.time+')':'');
       lbl.addEventListener('click', function(){
-        openSheetDef({ title:'「'+s.name+'」', noFocus:true, options:[
+        openSheetDef({ title:s.name, noFocus:true, options:[
           { label:'불러오기', run:function(){
             if(!confirm('현재 작업은 사라져요. 불러올까요?')) return;
             try{
@@ -7061,7 +7061,7 @@
       var label=document.createElement('span'); label.textContent=p.name; chip.appendChild(label);
       var x=document.createElement('span'); x.className='mychip__x'; x.textContent='×'; x.title='삭제'; chip.appendChild(x);
       label.addEventListener('click', function(){
-        openSheetDef({ title:'「'+p.name+'」', noFocus:true, options:[
+        openSheetDef({ title:p.name, noFocus:true, options:[
           { label:'불러오기', run:function(){ applySettings(p.data); } },
           { label:'현재 상태로 업데이트', run:function(){
             var cur=loadMyPresets();
@@ -7070,7 +7070,7 @@
         ]});
       });
       chip.addEventListener('click', function(e){ if(e.target===chip){
-        openSheetDef({ title:'「'+p.name+'」', noFocus:true, options:[
+        openSheetDef({ title:p.name, noFocus:true, options:[
           { label:'불러오기', run:function(){ applySettings(p.data); } },
           { label:'현재 상태로 업데이트', run:function(){
             var cur=loadMyPresets();
