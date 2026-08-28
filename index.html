@@ -2153,6 +2153,10 @@
             <p class="hint" style="margin:0 0 12px">현재 편집 중인 모든 것을 내용 포함 저장해요.<br>나중에 불러오면 저장 당시 그대로 이어서 편집할 수 있어요.</p>
             <div class="mychips" id="snapshot-list"></div>
             <button class="btn btn--ghost" id="snapshot-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 상태 저장</button>
+            <div class="grid-2" style="margin-top:8px">
+              <button class="btn btn--ghost" id="snapshot-export" type="button" style="height:40px;font-size:12px">내보내기</button>
+              <button class="btn btn--ghost" id="snapshot-import" type="button" style="height:40px;font-size:12px">가져오기</button>
+            </div>
           </div>
 
           <div class="section" style="margin-top:20px">
@@ -2160,6 +2164,10 @@
             <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 사진 배경은 프리셋에 저장되지 않아요.</p>
             <div class="mychips" id="my-presets"></div>
             <button class="btn btn--ghost" id="preset-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 설정 저장</button>
+            <div class="grid-2" style="margin-top:8px">
+              <button class="btn btn--ghost" id="preset-export" type="button" style="height:40px;font-size:12px">내보내기</button>
+              <button class="btn btn--ghost" id="preset-import" type="button" style="height:40px;font-size:12px">가져오기</button>
+            </div>
           </div>
 
           <div class="section" style="margin-top:20px">
@@ -6868,6 +6876,61 @@
     }catch(e){ alert('저장에 실패했어요.'); }
   });
   renderSnapshots();
+
+  /* 내보내기/가져오기 공통 헬퍼 */
+  function exportJSON(filename, data){
+    try{
+      var blob = new Blob([JSON.stringify(data)], {type:'application/json'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 100);
+    }catch(e){ alert('내보내기에 실패했어요.'); }
+  }
+  function importJSON(accept, callback){
+    var inp = document.createElement('input'); inp.type='file'; inp.accept=accept;
+    inp.addEventListener('change', function(){
+      var f = inp.files && inp.files[0]; if(!f) return;
+      var reader = new FileReader();
+      reader.onload = function(){ try{ callback(JSON.parse(reader.result)); }catch(e){ alert('파일을 읽을 수 없어요.'); } };
+      reader.onerror = function(){ alert('파일을 읽을 수 없어요.'); };
+      reader.readAsText(f);
+    });
+    inp.click();
+  }
+  /* 이어서 편집하기 내보내기/가져오기 */
+  if($('snapshot-export')) $('snapshot-export').addEventListener('click', function(){
+    var snaps = loadSnapshots();
+    if(!snaps.length){ alert('내보낼 스냅샷이 없어요.'); return; }
+    exportJSON('logmaker-snapshot.json', { type:'snapshot', items:snaps });
+  });
+  if($('snapshot-import')) $('snapshot-import').addEventListener('click', function(){
+    importJSON('.json', function(obj){
+      if(!obj || obj.type!=='snapshot' || !Array.isArray(obj.items)){ alert('올바른 스냅샷 파일이 아니에요.'); return; }
+      var cur = loadSnapshots();
+      obj.items.forEach(function(s){ if(s.name && s.data) cur.push(s); });
+      saveSnapshots(cur);
+      renderSnapshots();
+      alert(obj.items.length+'개의 스냅샷을 가져왔어요.');
+    });
+  });
+  /* 내 프리셋 내보내기/가져오기 */
+  if($('preset-export')) $('preset-export').addEventListener('click', function(){
+    var list = loadMyPresets();
+    if(!list.length){ alert('내보낼 프리셋이 없어요.'); return; }
+    exportJSON('logmaker-preset.json', { type:'preset', items:list });
+  });
+  if($('preset-import')) $('preset-import').addEventListener('click', function(){
+    importJSON('.json', function(obj){
+      if(!obj || obj.type!=='preset' || !Array.isArray(obj.items)){ alert('올바른 프리셋 파일이 아니에요.'); return; }
+      var cur = loadMyPresets();
+      obj.items.forEach(function(p){ if(p.name && p.data) cur.push(p); });
+      saveMyPresets(cur);
+      renderMyPresets();
+      alert(obj.items.length+'개의 프리셋을 가져왔어요.');
+    });
+  });
 
   /* ============================================================
      되돌리기 / 다시 실행 (에디터 히스토리)
