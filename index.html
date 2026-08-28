@@ -7019,8 +7019,7 @@
           }},
         ]});
       });
-      var del=document.createElement('button'); del.className='mychip__del'; del.type='button';
-      del.textContent='✕'; del.title='삭제';
+      var del=document.createElement('span'); del.className='mychip__x'; del.textContent='×'; del.title='삭제';
       del.addEventListener('click', function(e){
         e.stopPropagation();
         if(!confirm('「'+s.name+'」을(를) 삭제할까요?')) return;
