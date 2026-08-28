@@ -931,47 +931,6 @@
   /* 로그 모드의 사진 모서리 둥글기는 네모와 동일하게 */
   #editor.bub-plain .g-bub-img,#editor.bub-plain .g-bub.img-only .g-bub-img{border-radius:5px;}
   #canvas.bub-plain .g-bub-img,.canvas-clone.bub-plain .g-bub-img,#canvas.bub-plain .g-bub.img-only .g-bub-img,.canvas-clone.bub-plain .g-bub.img-only .g-bub-img{border-radius:.32em !important;}
-  /* ===== 대본 모드 ===== */
-  /* 편집창 */
-  #editor.bub-script .g-avatar{display:none;}
-  #editor.bub-script .g-bub{background:transparent !important;margin:0;padding:0;}
-  #editor.bub-script .g-bub>svg.g-tail{display:none;}
-  /* 캔버스: g-script-name이 avatar 자리에 들어감 */
-  #canvas.bub-script .g-script-name,.canvas-clone.bub-script .g-script-name{
-    font-weight:700 !important;font-size:1em !important;white-space:nowrap !important;
-    flex-shrink:0 !important;align-self:baseline !important;min-width:0 !important;}
-  #canvas.bub-script .g-msg-col,.canvas-clone.bub-script .g-msg-col{
-    align-self:baseline !important;}
-  #canvas.bub-script .g-bub,.canvas-clone.bub-script .g-bub{
-    background:transparent !important;margin:0 !important;padding:0 !important;
-    max-width:none !important;border-radius:0 !important;text-align:inherit !important;}
-  #canvas.bub-script .g-bub::before,#canvas.bub-script .g-bub::after,
-  .canvas-clone.bub-script .g-bub::before,.canvas-clone.bub-script .g-bub::after{display:none !important;content:none !important;}
-  #canvas.bub-script .g-bub>svg.g-tail,.canvas-clone.bub-script .g-bub>svg.g-tail{display:none !important;}
-  #canvas.bub-script .g-avatar,.canvas-clone.bub-script .g-avatar{display:none !important;}
-  #canvas.bub-script .g-bub-name,.canvas-clone.bub-script .g-bub-name{display:none !important;}
-  /* 대본: 좌우 정렬 */
-  #canvas.bub-script .g-msg-group,.canvas-clone.bub-script .g-msg-group{
-    flex-direction:row !important;gap:var(--script-gap,.8em) !important;}
-  #canvas.bub-script .g-msg-group.send,.canvas-clone.bub-script .g-msg-group.send,
-  #canvas.bub-script .g-msg-group.right,.canvas-clone.bub-script .g-msg-group.right{
-    flex-direction:row-reverse !important;}
-  #canvas.bub-script .g-bub.char-bub.left,.canvas-clone.bub-script .g-bub.char-bub.left{
-    margin-left:0 !important;margin-right:0 !important;text-align:left !important;}
-  #canvas.bub-script .g-bub.char-bub.right,.canvas-clone.bub-script .g-bub.char-bub.right,
-  #canvas.bub-script .g-bub.send,.canvas-clone.bub-script .g-bub.send{
-    margin-left:0 !important;margin-right:0 !important;text-align:right !important;}
-  #canvas.bub-script .g-msg-col.send,.canvas-clone.bub-script .g-msg-col.send,
-  #canvas.bub-script .g-msg-col.right,.canvas-clone.bub-script .g-msg-col.right{
-    text-align:right !important;}
-  /* 대본: 여백 제거 */
-  #canvas.bub-script .g-bub,#canvas.bub-script .g-bub-name,#canvas.bub-script .g-msg-col,
-  .canvas-clone.bub-script .g-bub,.canvas-clone.bub-script .g-bub-name,.canvas-clone.bub-script .g-msg-col{
-    padding-left:0 !important;padding-right:0 !important;}
-  /* 대본: 간격 맞추기 */
-  #canvas.bub-script.script-align .g-script-name,.canvas-clone.bub-script.script-align .g-script-name{
-    display:inline-block !important;width:var(--script-name-w,5em) !important;}
-  #editor.bub-script.script-align .g-msg-group{/* 편집창에도 반영 */}
   #editor.bub-simple .g-bub{border-radius:6px;}
   #editor.bub-simple .g-bub-img,#editor.bub-simple .g-bub.img-only .g-bub-img{border-radius:5px;}
   #editor.bub-simple .g-bub>svg.g-tail{display:none;}
@@ -1179,6 +1138,41 @@
 
   /* 저장 중(exp-notail)엔 pseudo 꼬리를 숨김 — html2canvas가 마스크를 못 그리므로 대신 캔버스에 직접 그림 */
   #canvas.exp-notail .g-bub.tail::before,#canvas.exp-notail .g-bub.tail::after,.canvas-clone.exp-notail .g-bub.tail::before,.canvas-clone.exp-notail .g-bub.tail::after{display:none !important;}
+  /* ===== 대본 모드 (기본 g-bub CSS 뒤에 위치해야 !important 순서로 이김) ===== */
+  /* 편집창 */
+  #editor.bub-script .g-avatar{display:none;}
+  #editor.bub-script .g-bub{background:transparent !important;margin:0;padding:0;}
+  #editor.bub-script .g-bub>svg.g-tail{display:none;}
+  /* 캔버스: g-script-name이 avatar 자리에 들어감 */
+  #canvas.bub-script .g-script-name,.canvas-clone.bub-script .g-script-name{
+    font-weight:700 !important;font-size:1em !important;white-space:nowrap !important;
+    flex-shrink:0 !important;align-self:baseline !important;min-width:0 !important;}
+  #canvas.bub-script .g-msg-col,.canvas-clone.bub-script .g-msg-col{
+    align-self:baseline !important;}
+  #canvas.bub-script .g-bub,.canvas-clone.bub-script .g-bub{
+    background:transparent !important;margin:0 !important;padding:0 !important;
+    max-width:none !important;border-radius:0 !important;text-align:inherit !important;}
+  #canvas.bub-script .g-bub::before,#canvas.bub-script .g-bub::after,
+  .canvas-clone.bub-script .g-bub::before,.canvas-clone.bub-script .g-bub::after{display:none !important;content:none !important;}
+  #canvas.bub-script .g-bub>svg.g-tail,.canvas-clone.bub-script .g-bub>svg.g-tail{display:none !important;}
+  #canvas.bub-script .g-avatar,.canvas-clone.bub-script .g-avatar{display:none !important;}
+  #canvas.bub-script .g-bub-name,.canvas-clone.bub-script .g-bub-name{display:none !important;}
+  /* 대본: 좌우 정렬 */
+  #canvas.bub-script .g-msg-group,.canvas-clone.bub-script .g-msg-group{
+    flex-direction:row !important;gap:var(--script-gap,.8em) !important;}
+  #canvas.bub-script .g-msg-group.send,.canvas-clone.bub-script .g-msg-group.send,
+  #canvas.bub-script .g-msg-group.right,.canvas-clone.bub-script .g-msg-group.right{
+    flex-direction:row-reverse !important;}
+  #canvas.bub-script .g-msg-col.right,.canvas-clone.bub-script .g-msg-col.right{
+    text-align:right !important;}
+  /* 대본: 여백 제거 */
+  #canvas.bub-script .g-bub,#canvas.bub-script .g-bub-name,#canvas.bub-script .g-msg-col,
+  .canvas-clone.bub-script .g-bub,.canvas-clone.bub-script .g-bub-name,.canvas-clone.bub-script .g-msg-col{
+    padding-left:0 !important;padding-right:0 !important;margin-left:0 !important;margin-right:0 !important;}
+  /* 대본: 간격 맞추기 */
+  #canvas.bub-script.script-align .g-script-name,.canvas-clone.bub-script.script-align .g-script-name{
+    display:inline-block !important;width:var(--script-name-w,5em) !important;}
+  #editor.bub-script.script-align .g-msg-group{/* 편집창에도 반영 */}
 
   #canvas .g-bub mark.em,.canvas-clone .g-bub mark.em{color:var(--em) !important;}
 
@@ -2767,13 +2761,6 @@
     var fv=sf.value;
     [].forEach.call((root||canvas).querySelectorAll('.g-script-name'), function(n){
       if(fv) n.style.fontFamily=fv; else n.style.removeProperty('font-family');
-    });
-    // 대본 오른쪽: text-align을 인라인으로 강제 (CSS 순서 문제 우회)
-    [].forEach.call((root||canvas).querySelectorAll('.g-msg-col.right .g-bub, .g-msg-col.right'), function(el){
-      el.style.setProperty('text-align','right','important');
-    });
-    [].forEach.call((root||canvas).querySelectorAll('.g-msg-col.left .g-bub, .g-msg-col.left'), function(el){
-      el.style.setProperty('text-align','left','important');
     });
   }
   document.querySelectorAll('#bub-shape-seg button').forEach(function(btn){
