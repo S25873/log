@@ -3069,6 +3069,11 @@
       normalizeSide(g, -1);
       normalizeSide(g, 1);
     });
+    // 인용선도 같은 방식으로 위아래 빈 줄을 para-gap 하나로 정규화
+    [].forEach.call(inner.querySelectorAll('.g-quote'), function(g){
+      normalizeSide(g, -1);
+      normalizeSide(g, 1);
+    });
     // 그룹 바로 옆(빈 줄 없이)에 다른 그룹이 붙어 있을 때만 'bub'(말풍선끼리) 간격.
     // 사이에 빈 요소(<br>·para-gap·공백)가 하나라도 있으면 '본문과의 간격'(body)으로 통일 →
     // 위/아래가 방향과 무관하게 같은 규칙을 타서 대칭이 보장된다.
