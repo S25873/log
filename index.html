@@ -6819,9 +6819,11 @@
           { label:'불러오기', run:function(){
             if(!confirm('현재 작업은 사라져요. 불러올까요?')) return;
             try{
+              _restoring=true;
+              if(_saveT){ clearTimeout(_saveT); _saveT=null; }
               localStorage.setItem(STORE_KEY, JSON.stringify(Object.assign({}, s.data)));
               location.reload();
-            }catch(e){ alert('불러오기에 실패했어요.'); }
+            }catch(e){ _restoring=false; alert('불러오기에 실패했어요.'); }
           }},
           { label:'현재 상태로 업데이트', run:function(){
             try{
