@@ -4241,7 +4241,34 @@
     inp.value=subSizeNow()+'px';
     function setV(v){ setSubSizeNow(v); inp.value=subSizeNow()+'px'; }   // 평소엔 단위까지 붙여 보여 준다
     [].forEach.call(row.querySelectorAll('.sheet__num-b'), function(b){
-      b.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); setV(subSizeNow()+parseFloat(b.getAttribute('data-d'))); });
+      var repT=null, ticks=0;
+      function doStep(){ setV(subSizeNow()+parseFloat(b.getAttribute('data-d'))); }
+      function stopRep(){ if(repT){ clearTimeout(repT); clearInterval(repT); repT=null; } ticks=0; }
+      function startRep(){
+        stopRep();
+        repT=setTimeout(function(){
+          repT=setInterval(function(){
+            ticks++; doStep();
+            if(ticks===8){ clearInterval(repT); repT=setInterval(doStep, 35); }
+          }, 70);
+        }, 300);
+      }
+      function down(e){ e.preventDefault(); e.stopPropagation(); doStep(); startRep(); }
+      function up(e){ if(e) e.stopPropagation(); stopRep(); }
+      if(window.PointerEvent){
+        b.addEventListener('pointerdown', down);
+        b.addEventListener('pointerup', up);
+        b.addEventListener('pointercancel', up);
+        b.addEventListener('pointerleave', up);
+      } else {
+        b.addEventListener('touchstart', down, {passive:false});
+        b.addEventListener('touchend', up);
+        b.addEventListener('touchcancel', up);
+        b.addEventListener('mousedown', down);
+        b.addEventListener('mouseup', up);
+        b.addEventListener('mouseleave', up);
+      }
+      b.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); });
     });
     inp.addEventListener('focus', function(){ inp.value=String(subSizeNow()); setTimeout(function(){ try{ inp.select(); }catch(e){} }, 0); });   // 고칠 땐 숫자만 남겨 바로 덮어쓰게
     inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
