@@ -944,7 +944,7 @@
     align-self:baseline !important;}
   #canvas.bub-script .g-bub,.canvas-clone.bub-script .g-bub{
     background:transparent !important;margin:0 !important;padding:0 !important;
-    max-width:none !important;border-radius:0 !important;}
+    max-width:none !important;border-radius:0 !important;text-align:inherit !important;}
   #canvas.bub-script .g-bub::before,#canvas.bub-script .g-bub::after,
   .canvas-clone.bub-script .g-bub::before,.canvas-clone.bub-script .g-bub::after{display:none !important;content:none !important;}
   #canvas.bub-script .g-bub>svg.g-tail,.canvas-clone.bub-script .g-bub>svg.g-tail{display:none !important;}
@@ -2746,18 +2746,19 @@
   /* 간격 맞추기: 가장 긴 이름의 너비를 측정해 CSS 변수로 세팅 */
   function applyScriptAlign(){
     var on = bubbleShape==='script' && $('script-align') && $('script-align').checked;
-    canvas.classList.toggle('script-align', on);
-    if(!on){ canvas.style.removeProperty('--script-name-w'); return; }
+    if(!on){ canvas.classList.remove('script-align'); canvas.style.removeProperty('--script-name-w'); return; }
+    // 측정 전 클래스 제거 → 자연 너비로 측정
+    canvas.classList.remove('script-align');
+    canvas.style.removeProperty('--script-name-w');
     var names = canvas.querySelectorAll('.g-script-name');
     var maxW = 0;
     [].forEach.call(names, function(n){
-      // 자연 너비 측정
-      var prev = n.style.width; n.style.width='auto';
       var w = n.offsetWidth;
-      n.style.width = prev || '';
       if(w > maxW) maxW = w;
     });
+    // 측정 후 클래스 복원 + 변수 세팅
     if(maxW > 0) canvas.style.setProperty('--script-name-w', maxW+'px');
+    canvas.classList.add('script-align');
   }
   if($('script-align')) $('script-align').addEventListener('change', function(){ applyScriptAlign(); render(); scheduleSave(); });
   function applyScriptFont(root){
