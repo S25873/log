@@ -1071,8 +1071,8 @@
   #canvas .g-title-main,.canvas-clone .g-title-main{display:block !important;font-size:var(--title-size,1.6em) !important;font-weight:700 !important;font-family:var(--title-font,inherit) !important;color:var(--title-color,inherit) !important;line-height:1.25 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-title-sub,.canvas-clone .g-title-sub{display:block !important;font-size:var(--subtitle-size,1.15em) !important;font-weight:400 !important;font-family:var(--title-font,inherit) !important;color:var(--subtitle-color,inherit) !important;margin-top:var(--title-gap,.25em) !important;line-height:1.3 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-quote,.canvas-clone .g-quote{display:block !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;margin-top:var(--quote-gap,10px) !important;margin-bottom:var(--quote-gap,10px) !important;}
-  #canvas .g-quote.left,.canvas-clone .g-quote.left{border-left:.12em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-left:.6em !important;}
-  #canvas .g-quote.right,.canvas-clone .g-quote.right{border-right:.12em solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-right:.6em !important;text-align:right !important;}
+  #canvas .g-quote.left,.canvas-clone .g-quote.left{border-left:var(--quote-thick,5px) solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-left:.6em !important;}
+  #canvas .g-quote.right,.canvas-clone .g-quote.right{border-right:var(--quote-thick,5px) solid var(--quote-color,rgba(140,140,140,.55)) !important;padding-right:.6em !important;text-align:right !important;}
   /* 가운데·오른쪽 정렬에서는 인용선 막대가 캔버스 끝이 아니라 '글자 옆'에 붙게.
      블록 폭을 글 길이만큼만 잡고(fit-content) 그 덩어리를 통째로 정렬한다.
      왼쪽·양쪽 정렬은 어차피 글 시작 = 블록 시작이라 손대지 않는다(양쪽 정렬은 폭을 줄이면 깨짐) */
@@ -1109,8 +1109,8 @@
   #canvas .g-name.s-bar.right.al-justify,.canvas-clone .g-name.s-bar.right.al-justify{width:fit-content !important;max-width:100% !important;margin-right:auto !important;margin-left:0 !important;}
   #canvas .g-name.s-bold,.canvas-clone .g-name.s-bold{font-weight:700 !important;}
   #canvas .g-name.s-bar,.canvas-clone .g-name.s-bar{font-weight:400 !important;color:var(--name-color,rgba(90,90,90,.85)) !important;}
-  #canvas .g-name.s-bar.left,.canvas-clone .g-name.s-bar.left{border-left:.12em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-left:.55em !important;}
-  #canvas .g-name.s-bar.right,.canvas-clone .g-name.s-bar.right{border-right:.12em solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-right:.55em !important;}
+  #canvas .g-name.s-bar.left,.canvas-clone .g-name.s-bar.left{border-left:var(--quote-thick,5px) solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-left:.55em !important;}
+  #canvas .g-name.s-bar.right,.canvas-clone .g-name.s-bar.right{border-right:var(--quote-thick,5px) solid var(--bar-color,rgba(140,140,140,.4)) !important;padding-right:.55em !important;}
   #canvas .g-bub,.canvas-clone .g-bub{display:block !important;position:relative !important;max-width:75% !important;width:fit-content !important;margin:var(--stack-gap,.15em) 0 !important;padding:.5em .875em !important;border-radius:1.15em !important;text-align:left !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;word-break:normal !important;line-height:1.25 !important;}
   #canvas .g-bub.cont + .g-bub,.canvas-clone .g-bub.cont + .g-bub,#canvas .g-bub + .g-bub.cont,.canvas-clone .g-bub + .g-bub.cont{margin-top:var(--stack-gap,.15em) !important;}
   #canvas .g-bub:first-child,.canvas-clone .g-bub:first-child{margin-top:0 !important;}
@@ -1350,9 +1350,15 @@
               </div>
               <p class="hint" style="margin-top:10px">자동화 도구 *색* · (색) · (크기)에 쓰이는 값이에요.<br>말풍선 안의 (색)은 말풍선-인물에서 인물별로 지정한 색깔을 써요.<br>(크기)로 만든 글자는 이 값을 계속 따라가요. 나중에 값을 바꾸면 이전 것까지 반영돼요.</p>
               <p class="section__head" style="margin-top:18px">인용선</p>
-              <div class="field" style="margin-top:2px">
-                <span class="label">인용선 여백 <span class="val" id="quote-gap-val">5px</span></span>
-                <div class="rangewrap"><input id="quote-gap" type="range" min="0" max="48" step="1" value="5"></div>
+              <div class="grid-2" style="margin-top:2px">
+                <div class="field">
+                  <span class="label">인용선 두께 <span class="val" id="quote-thick-val">5px</span></span>
+                  <div class="rangewrap"><input id="quote-thick" type="range" min="1" max="20" step="1" value="5"></div>
+                </div>
+                <div class="field">
+                  <span class="label">인용선 여백 <span class="val" id="quote-gap-val">5px</span></span>
+                  <div class="rangewrap"><input id="quote-gap" type="range" min="0" max="48" step="1" value="5"></div>
+                </div>
               </div>
               <p class="section__head" style="margin-top:18px">(＋로 넣는) 사진</p>
               <div class="grid-2" style="margin-top:2px">
@@ -5252,6 +5258,8 @@
     if(bbg){ el.style.setProperty('--bub-body-gap', parseFloat(bbg.value)+'px'); }
     var qg=$('quote-gap');
     if(qg){ el.style.setProperty('--quote-gap', parseFloat(qg.value)+'px'); }
+    var qt=$('quote-thick');
+    if(qt){ el.style.setProperty('--quote-thick', parseFloat(qt.value)+'px'); }
     if(pg){ el.style.setProperty('--para-gap', parseFloat(pg.value)+'px'); }
     if(sg){ el.style.setProperty('--stack-gap', parseFloat(sg.value)+'px'); }
     var subsz=$('subtext-size'); if(subsz){ var _ss=parseFloat(subsz.value); if(isNaN(_ss)) _ss=26; el.style.setProperty('--sub-size', _ss+'px'); }
@@ -5957,6 +5965,8 @@
     if(bbg){ var bbgv=$('bub-body-gap-val'); if(bbgv) bbgv.textContent=parseFloat(bbg.value)+'px'; }
     var qg=$('quote-gap');
     if(qg){ var qgv=$('quote-gap-val'); if(qgv) qgv.textContent=parseFloat(qg.value)+'px'; }
+    var qt=$('quote-thick');
+    if(qt){ var qtv=$('quote-thick-val'); if(qtv) qtv.textContent=parseFloat(qt.value)+'px'; }
     if(pg){ var pgv=$('para-gap-val'); if(pgv) pgv.textContent=parseFloat(pg.value)+'px'; }
     if(sg){ var sgv=$('stack-gap-val'); if(sgv) sgv.textContent=parseFloat(sg.value)+'px'; }
     var barg=$('bar-body-gap');
@@ -5966,7 +5976,7 @@
     var lisz=$('logimg-size'); if(lisz){ var liszv=$('logimg-size-val'); if(liszv) liszv.textContent=parseFloat(lisz.value)+'%'; }
     var lirad=$('logimg-radius'); if(lirad){ var liradv=$('logimg-radius-val'); if(liradv) liradv.textContent=parseFloat(lirad.value)+'px'; }
   }
-  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-gap','script-font','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','script-font','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -6876,7 +6886,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt','c-title-hr','c-title-hr-txt',
