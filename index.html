@@ -6347,9 +6347,25 @@
         if(hlLayer && prevLayerDisplay!==null){ hlLayer.style.display=prevLayerDisplay; }
       }
 
+      // bold 웨이트가 없는 폰트의 b/strong에 text-stroke 보정 (html2canvas faux bold 미지원 대응)
+      var BOLD_FONTS = ['pretendard','paperozi','paperlogy','presentation','freesentation','bookkmyungjo','maruburi','kopubdotum','kopubbatang','nanum myeongjo','nanummyeongjo'];
+      var boldStrokeBackup=[];
+      [].forEach.call(canvas.querySelectorAll('b,strong,.g-script-name'), function(el){
+        var ff = window.getComputedStyle(el).fontFamily.toLowerCase();
+        var hasBold = BOLD_FONTS.some(function(f){ return ff.indexOf(f)!==-1; });
+        if(!hasBold){
+          boldStrokeBackup.push([el, el.style.getPropertyValue('-webkit-text-stroke')]);
+          el.style.setProperty('-webkit-text-stroke','0.5px currentColor');
+        }
+      });
+      function restoreBoldStroke(){ boldStrokeBackup.forEach(function(p){ if(p[1]) p[0].style.setProperty('-webkit-text-stroke',p[1]); else p[0].style.removeProperty('-webkit-text-stroke'); }); }
+
       html2canvas(canvas, { scale:2, backgroundColor:null, useCORS:true, logging:false, width:w, height:h, scrollX:0, scrollY:0, x:0, y:0, windowWidth:w, windowHeight:h })
       .then(function(textCanvas){
-        restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg();
+        // DEBUG: script name bold check
+        var _dbgNames=canvas.querySelectorAll('.g-script-name');
+        [].forEach.call(_dbgNames, function(n){ console.log('g-script-name font-weight:', window.getComputedStyle(n).fontWeight, 'inline:', n.style.fontWeight, 'text:', n.textContent); });
+        restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke();
         prepareBackground(function(bakedPhotoImg){
           var out=document.createElement('canvas'); out.width=outW; out.height=outH;
           var ctx=out.getContext('2d');
@@ -6362,7 +6378,7 @@
           ctx.drawImage(textCanvas, 0, 0, outW, outH);
           drawBakedAvatars(ctx, avBakes, function(){ deliverImage(out, type, cleanup, mode); });
         });
-      }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); cleanup(); });
+      }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); cleanup(); });
     }
 
     function prepareBackground(cb){
