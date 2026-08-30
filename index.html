@@ -1163,6 +1163,7 @@
   #canvas.bub-script .g-bub>svg.g-tail,.canvas-clone.bub-script .g-bub>svg.g-tail{display:none !important;}
   #canvas.bub-script .g-avatar,.canvas-clone.bub-script .g-avatar{display:none !important;}
   #canvas.bub-script .g-bub-name,.canvas-clone.bub-script .g-bub-name{display:none !important;}
+  #canvas.bub-script .g-bub-name.g-script-name,.canvas-clone.bub-script .g-bub-name.g-script-name{display:block !important;}
   /* 대본: 좌우 정렬 */
   #canvas.bub-script .g-msg-group,.canvas-clone.bub-script .g-msg-group{
     flex-direction:row !important;gap:var(--script-gap,.8em) !important;}
@@ -3194,8 +3195,9 @@
       if(bubbleShape==='script'){
         // 대본 모드: avatar 대신 이름 텍스트를 왼쪽에
         var c=findChar(g.cid);
-        var scriptName=document.createElement('span'); scriptName.className='g-script-name '+g.side;
+        var scriptName=document.createElement('span'); scriptName.className='g-script-name g-bub-name '+g.side;
         scriptName.style.setProperty('font-weight','700','important');
+        scriptName.style.setProperty('display','block','important');
         var bold=document.createElement('b'); bold.textContent=(c&&c.name)?c.name:'';
         scriptName.appendChild(bold);
         if(c&&c.nameColor) scriptName.style.setProperty('color', c.nameColor, 'important');
