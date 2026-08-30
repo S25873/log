@@ -3194,6 +3194,7 @@
         // 대본 모드: avatar 대신 이름 텍스트를 왼쪽에
         var c=findChar(g.cid);
         var scriptName=document.createElement('span'); scriptName.className='g-script-name '+g.side;
+        scriptName.style.fontWeight='700';
         scriptName.textContent=(c&&c.name)?c.name:'';
         if(c&&c.nameColor) scriptName.style.setProperty('color', c.nameColor, 'important');
         group.appendChild(scriptName);
