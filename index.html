@@ -3196,7 +3196,8 @@
         var c=findChar(g.cid);
         var scriptName=document.createElement('span'); scriptName.className='g-script-name '+g.side;
         scriptName.style.setProperty('font-weight','700','important');
-        scriptName.textContent=(c&&c.name)?c.name:'';
+        var bold=document.createElement('b'); bold.textContent=(c&&c.name)?c.name:'';
+        scriptName.appendChild(bold);
         if(c&&c.nameColor) scriptName.style.setProperty('color', c.nameColor, 'important');
         group.appendChild(scriptName);
         var colName=col.querySelector('.g-bub-name'); if(colName) colName.style.display='none';
