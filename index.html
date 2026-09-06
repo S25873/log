@@ -1052,20 +1052,20 @@
   #canvas .g-title-rule,.canvas-clone .g-title-rule{
     display:block !important;border:0 !important;
     margin:var(--titleblk-gap,.8em) 0 0 !important;
-    border-top:.05em solid var(--title-hr-color,var(--hr-color,rgba(140,140,140,.5))) !important;
+    border-top:var(--title-hr-thick,1px) solid var(--title-hr-color,var(--hr-color,rgba(140,140,140,.5))) !important;
   }
   #canvas .g-title-rule.dashed,.canvas-clone .g-title-rule.dashed{border-top-style:dashed !important;}
-  #canvas .g-title-rule.dotted,.canvas-clone .g-title-rule.dotted{border-top-style:dotted !important;border-top-width:.08em !important;}
-  #canvas .g-title-rule.double,.canvas-clone .g-title-rule.double{border-top-style:double !important;border-top-width:.14em !important;}
+  #canvas .g-title-rule.dotted,.canvas-clone .g-title-rule.dotted{border-top-style:dotted !important;}
+  #canvas .g-title-rule.double,.canvas-clone .g-title-rule.double{border-top-style:double !important;border-top-width:calc(var(--title-hr-thick,1px) * 3) !important;}
   /* 하단 구분선 — 본문과 하단 사이. 위 여백은 '하단 ↔ 본문' 값을 그대로 써서 위아래가 같아진다 */
   #canvas .g-name-rule,.canvas-clone .g-name-rule{
     display:block !important;border:0 !important;
     margin:var(--name-gap,1.6em) 0 0 !important;
-    border-top:.05em solid var(--title-hr-color,var(--hr-color,rgba(140,140,140,.5))) !important;
+    border-top:var(--title-hr-thick,1px) solid var(--title-hr-color,var(--hr-color,rgba(140,140,140,.5))) !important;
   }
   #canvas .g-name-rule.dashed,.canvas-clone .g-name-rule.dashed{border-top-style:dashed !important;}
-  #canvas .g-name-rule.dotted,.canvas-clone .g-name-rule.dotted{border-top-style:dotted !important;border-top-width:.08em !important;}
-  #canvas .g-name-rule.double,.canvas-clone .g-name-rule.double{border-top-style:double !important;border-top-width:.14em !important;}
+  #canvas .g-name-rule.dotted,.canvas-clone .g-name-rule.dotted{border-top-style:dotted !important;}
+  #canvas .g-name-rule.double,.canvas-clone .g-name-rule.double{border-top-style:double !important;border-top-width:calc(var(--title-hr-thick,1px) * 3) !important;}
   /* 구분선이 있으면 하단 글자는 선 바로 아래에 같은 간격으로 */
   #canvas .g-name-rule + .g-name,.canvas-clone .g-name-rule + .g-name{margin-top:var(--name-gap,1.6em) !important;}
   #canvas .g-title-main,.canvas-clone .g-title-main{display:block !important;font-size:var(--title-size,1.6em) !important;font-weight:700 !important;font-family:var(--title-font,inherit) !important;color:var(--title-color,inherit) !important;line-height:1.25 !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
@@ -1080,18 +1080,18 @@
   #canvas[data-align="right"] .g-quote,.canvas-clone[data-align="right"] .g-quote{width:fit-content !important;max-width:100% !important;margin-left:auto !important;margin-right:0 !important;}
   /* 위아래 간격은 '문단 간격'을 그대로 써서 글 전체 리듬과 맞춘다 */
   #canvas .g-hr,.canvas-clone .g-hr{display:flex !important;align-items:center !important;justify-content:center !important;margin:var(--para-gap,.7em) 0 !important;height:0 !important;line-height:0 !important;color:transparent !important;overflow:visible !important;}
-  #canvas .g-hr.line:before,.canvas-clone .g-hr.line:before{content:"" !important;display:block !important;width:100% !important;height:.05em !important;background:var(--hr-color,rgba(140,140,140,.5)) !important;}
+  #canvas .g-hr.line:before,.canvas-clone .g-hr.line:before{content:"" !important;display:block !important;width:100% !important;height:var(--hr-thick,1px) !important;background:var(--hr-color,rgba(140,140,140,.5)) !important;}
   /* 옛 로그의 '점 세 개'는 그대로 보이게 남겨 둔다(새로 만들 수는 없음) */
   #canvas .g-hr.dots,.canvas-clone .g-hr.dots{letter-spacing:.4em !important;font-size:.9em !important;height:auto !important;line-height:1 !important;color:var(--hr-color,rgba(140,140,140,.55)) !important;}
   #canvas .g-hr.dashed:before,#canvas .g-hr.dotted:before,#canvas .g-hr.double:before,
   .canvas-clone .g-hr.dashed:before,.canvas-clone .g-hr.dotted:before,.canvas-clone .g-hr.double:before{
     content:"" !important;display:block !important;width:100% !important;height:0 !important;
-    border-top:.05em solid var(--hr-color,rgba(140,140,140,.5)) !important;
+    border-top:var(--hr-thick,1px) solid var(--hr-color,rgba(140,140,140,.5)) !important;
   }
   #canvas .g-hr.dashed:before,.canvas-clone .g-hr.dashed:before{border-top-style:dashed !important;}
-  #canvas .g-hr.dotted:before,.canvas-clone .g-hr.dotted:before{border-top-style:dotted !important;border-top-width:.08em !important;}
-  #canvas .g-hr.double:before,.canvas-clone .g-hr.double:before{border-top-style:double !important;border-top-width:.14em !important;}
-  #canvas .g-hr.short:before,.canvas-clone .g-hr.short:before{content:"" !important;display:block !important;width:12% !important;height:.05em !important;background:var(--hr-color,rgba(140,140,140,.6)) !important;}
+  #canvas .g-hr.dotted:before,.canvas-clone .g-hr.dotted:before{border-top-style:dotted !important;}
+  #canvas .g-hr.double:before,.canvas-clone .g-hr.double:before{border-top-style:double !important;border-top-width:calc(var(--hr-thick,1px) * 3) !important;}
+  #canvas .g-hr.short:before,.canvas-clone .g-hr.short:before{content:"" !important;display:block !important;width:12% !important;height:var(--hr-thick,1px) !important;background:var(--hr-color,rgba(140,140,140,.6)) !important;}
   #canvas .g-img,.canvas-clone .g-img{display:block !important;margin:.5em 0 !important;text-align:center !important;}
   #canvas .g-img.al-left,.canvas-clone .g-img.al-left{text-align:left !important;}
   #canvas .g-img.al-right,.canvas-clone .g-img.al-right{text-align:right !important;}
@@ -1359,6 +1359,17 @@
                 <div class="field">
                   <span class="label">인용선 여백 <span class="val" id="quote-gap-val">5px</span></span>
                   <div class="rangewrap"><input id="quote-gap" type="range" min="0" max="48" step="1" value="5"></div>
+                </div>
+              </div>
+              <p class="section__head" style="margin-top:18px">구분선</p>
+              <div class="grid-2" style="margin-top:2px">
+                <div class="field">
+                  <span class="label">본문 구분선 두께 <span class="val" id="hr-thick-val">1px</span></span>
+                  <div class="rangewrap"><input id="hr-thick" type="range" min="1" max="20" step="1" value="1"></div>
+                </div>
+                <div class="field">
+                  <span class="label">제목 · 하단 구분선 두께 <span class="val" id="title-hr-thick-val">1px</span></span>
+                  <div class="rangewrap"><input id="title-hr-thick" type="range" min="1" max="20" step="1" value="1"></div>
                 </div>
               </div>
               <p class="section__head" style="margin-top:18px">(＋로 넣는) 사진</p>
@@ -5265,6 +5276,10 @@
     if(qg){ el.style.setProperty('--quote-gap', parseFloat(qg.value)+'px'); }
     var qt=$('quote-thick');
     if(qt){ el.style.setProperty('--quote-thick', parseFloat(qt.value)+'px'); }
+    var ht=$('hr-thick');
+    if(ht){ el.style.setProperty('--hr-thick', parseFloat(ht.value)+'px'); }
+    var tht=$('title-hr-thick');
+    if(tht){ el.style.setProperty('--title-hr-thick', parseFloat(tht.value)+'px'); }
     if(pg){ el.style.setProperty('--para-gap', parseFloat(pg.value)+'px'); }
     if(sg){ el.style.setProperty('--stack-gap', parseFloat(sg.value)+'px'); }
     var subsz=$('subtext-size'); if(subsz){ var _ss=parseFloat(subsz.value); if(isNaN(_ss)) _ss=26; el.style.setProperty('--sub-size', _ss+'px'); }
@@ -5972,6 +5987,10 @@
     if(qg){ var qgv=$('quote-gap-val'); if(qgv) qgv.textContent=parseFloat(qg.value)+'px'; }
     var qt=$('quote-thick');
     if(qt){ var qtv=$('quote-thick-val'); if(qtv) qtv.textContent=parseFloat(qt.value)+'px'; }
+    var ht=$('hr-thick');
+    if(ht){ var htv=$('hr-thick-val'); if(htv) htv.textContent=parseFloat(ht.value)+'px'; }
+    var tht=$('title-hr-thick');
+    if(tht){ var thtv=$('title-hr-thick-val'); if(thtv) thtv.textContent=parseFloat(tht.value)+'px'; }
     if(pg){ var pgv=$('para-gap-val'); if(pgv) pgv.textContent=parseFloat(pg.value)+'px'; }
     if(sg){ var sgv=$('stack-gap-val'); if(sgv) sgv.textContent=parseFloat(sg.value)+'px'; }
     var barg=$('bar-body-gap');
@@ -5981,7 +6000,7 @@
     var lisz=$('logimg-size'); if(lisz){ var liszv=$('logimg-size-val'); if(liszv) liszv.textContent=parseFloat(lisz.value)+'%'; }
     var lirad=$('logimg-radius'); if(lirad){ var liradv=$('logimg-radius-val'); if(liradv) liradv.textContent=parseFloat(lirad.value)+'px'; }
   }
-  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','script-font','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','script-font','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -6908,7 +6927,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt','c-title-hr','c-title-hr-txt',
