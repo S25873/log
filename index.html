@@ -1987,6 +1987,13 @@
                   </span>
                   <input id="script-align" type="checkbox" style="margin-left:auto">
                 </label>
+                <label class="switch" id="script-justify-wrap" style="margin-top:6px;display:none">
+                  <span class="switch__text" style="flex:1">
+                    <span class="switch__title">이름 균등 배분</span>
+                    <span class="switch__sub">짧은 이름의 글자를 양쪽 끝에 맞춰 고르게 벌려요</span>
+                  </span>
+                  <input id="script-justify" type="checkbox" style="margin-left:auto">
+                </label>
               </div>
 
               <div class="grid-2" style="margin-top:16px">
@@ -2819,21 +2826,46 @@
   /* 간격 맞추기: 가장 긴 이름의 너비를 측정해 CSS 변수로 세팅 */
   function applyScriptAlign(){
     var on = bubbleShape==='script' && $('script-align') && $('script-align').checked;
+    var justifyOn = on && $('script-justify') && $('script-justify').checked;
+    // 균등 배분 체크박스 표시/숨김
+    var jw=$('script-justify-wrap'); if(jw) jw.style.display = on ? '' : 'none';
+    // 기존 justify 스타일 제거
+    var allNames = canvas.querySelectorAll('.g-script-name');
+    [].forEach.call(allNames, function(n){
+      n.style.removeProperty('letter-spacing'); n.style.removeProperty('margin-right');
+    });
     if(!on){ canvas.classList.remove('script-align'); canvas.style.removeProperty('--script-name-w'); return; }
     // 측정 전 클래스 제거 → 자연 너비로 측정
     canvas.classList.remove('script-align');
     canvas.style.removeProperty('--script-name-w');
     var names = canvas.querySelectorAll('.g-script-name');
     var maxW = 0;
+    var naturalWidths = [];
     [].forEach.call(names, function(n){
       var w = n.offsetWidth;
+      naturalWidths.push(w);
       if(w > maxW) maxW = w;
     });
     // 측정 후 클래스 복원 + 변수 세팅
     if(maxW > 0) canvas.style.setProperty('--script-name-w', maxW+'px');
     canvas.classList.add('script-align');
+    // 균등 배분 적용
+    if(justifyOn && maxW > 0){
+      [].forEach.call(names, function(n, i){
+        var charCount = n.textContent.trim().length;
+        if(charCount <= 1) return;
+        var nw = naturalWidths[i];
+        if(nw >= maxW) return; // 가장 긴 이름은 건너뜀
+        var gap = (maxW - nw) / (charCount - 1);
+        if(gap > 0){
+          n.style.letterSpacing = gap + 'px';
+          n.style.marginRight = -gap + 'px';
+        }
+      });
+    }
   }
   if($('script-align')) $('script-align').addEventListener('change', function(){ applyScriptAlign(); render(); scheduleSave(); });
+  if($('script-justify')) $('script-justify').addEventListener('change', function(){ applyScriptAlign(); render(); scheduleSave(); });
   function applyScriptFont(root){
     if(bubbleShape!=='script') return;
     var sf=$('script-font'); if(!sf) return;
@@ -6940,7 +6972,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:editor.innerHTML, nameHtml:nameEd?nameEd.innerHTML:'',
         titleHtml:($('title-ed')?$('title-ed').innerHTML:''), subtitleHtml:($('subtitle-ed')?$('subtitle-ed').innerHTML:''),
-        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome,
+        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
@@ -7032,6 +7064,7 @@
       syncShapeSeg();
       applyBubbleShape();
       if($('script-align')) $('script-align').checked = !!data.scriptAlign;
+      if($('script-justify')) $('script-justify').checked = !!data.scriptJustify;
       updateScriptOptions();
       if(data.chrome){ chrome.topbar=!!data.chrome.topbar; chrome.src=(data.chrome.src==='custom')?'custom':'char'; chrome.charId=data.chrome.charId||null; chrome.name=data.chrome.name||''; chrome.photo=data.chrome.photo||null; chrome.inputbar=!!data.chrome.inputbar; }
       if(typeof syncChromeUI==='function') syncChromeUI();
