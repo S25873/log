@@ -6374,10 +6374,12 @@
       });
       function restoreAvatars(){ avHidden.forEach(function(p){ if(p[1]) p[0].style.visibility=p[1]; else p[0].style.removeProperty('visibility'); }); }
       var hrRects=[];
+      var _hrThick = parseFloat(canvas.style.getPropertyValue('--hr-thick')) || 1;
       [].forEach.call(canvas.querySelectorAll('.g-hr.line, .g-hr.short'), function(hr){
-        var r=hr.getBoundingClientRect(); if(r.width<=0||r.height<=0) return;
-        var isShort=hr.classList.contains('short'), lineH=2, fullW=r.width, lineW=isShort?(fullW*0.12):fullW;
-        var cx=(r.left-canvasRect.left)+fullW/2, cy=(r.top-canvasRect.top)+r.height/2;
+        var r=hr.getBoundingClientRect(); if(r.width<=0) return;
+        var isShort=hr.classList.contains('short'), lineH=_hrThick, fullW=r.width, lineW=isShort?(fullW*0.12):fullW;
+        var cy=(r.top-canvasRect.top) + (r.height > 0 ? r.height/2 : 0);
+        var cx=(r.left-canvasRect.left)+fullW/2;
         hrRects.push({ x:cx-lineW/2, y:cy-lineH/2, w:lineW, h:lineH, color:$('c-hr').value||'#d1d1d1' });
       });
       var hrBackup=[];
@@ -6411,12 +6413,25 @@
       });
       function restoreBoldStroke(){ boldStrokeBackup.forEach(function(p){ if(p[1]) p[0].style.setProperty('-webkit-text-stroke',p[1]); else p[0].style.removeProperty('-webkit-text-stroke'); }); }
 
+      // html2canvas가 CSS 변수(var())를 못 읽을 수 있으므로 실제 px 값으로 풀어준다
+      var _titleHrThick = parseFloat(canvas.style.getPropertyValue('--title-hr-thick')) || 1;
+      var _resolveStyle = document.createElement('style');
+      _resolveStyle.textContent =
+        '#canvas .g-hr.dashed:before,#canvas .g-hr.dotted:before{border-top-width:'+_hrThick+'px !important;}' +
+        '#canvas .g-hr.double:before{border-top-width:'+(_hrThick*3)+'px !important;}' +
+        '#canvas .g-title-rule{border-top-width:'+_titleHrThick+'px !important;}' +
+        '#canvas .g-title-rule.double{border-top-width:'+(_titleHrThick*3)+'px !important;}' +
+        '#canvas .g-name-rule{border-top-width:'+_titleHrThick+'px !important;}' +
+        '#canvas .g-name-rule.double{border-top-width:'+(_titleHrThick*3)+'px !important;}';
+      document.head.appendChild(_resolveStyle);
+      function removeResolveStyle(){ if(_resolveStyle.parentNode) _resolveStyle.remove(); }
+
       html2canvas(canvas, { scale:2, backgroundColor:null, useCORS:true, logging:false, width:w, height:h, scrollX:0, scrollY:0, x:0, y:0, windowWidth:w, windowHeight:h })
       .then(function(textCanvas){
         // DEBUG: script name bold check
         var _dbgNames=canvas.querySelectorAll('.g-script-name');
         [].forEach.call(_dbgNames, function(n){ console.log('g-script-name font-weight:', window.getComputedStyle(n).fontWeight, 'inline:', n.style.fontWeight, 'text:', n.textContent); });
-        restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke();
+        restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); removeResolveStyle();
         prepareBackground(function(bakedPhotoImg){
           var out=document.createElement('canvas'); out.width=outW; out.height=outH;
           var ctx=out.getContext('2d');
@@ -6429,7 +6444,7 @@
           ctx.drawImage(textCanvas, 0, 0, outW, outH);
           drawBakedAvatars(ctx, avBakes, function(){ deliverImage(out, type, cleanup, mode); });
         });
-      }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); cleanup(); });
+      }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); removeResolveStyle(); cleanup(); });
     }
 
     function prepareBackground(cb){
