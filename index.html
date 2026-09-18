@@ -3010,25 +3010,20 @@
     if(tb) tb.className = 'share-badge ' + (p && p.title != null ? 'is-split' : 'is-shared');
     if(nb) nb.className = 'share-badge ' + (p && p.name != null ? 'is-split' : 'is-shared');
   }
-  // 뱃지 클릭 → 공유로 되돌리기
+  // 뱃지 클릭 → 현재 내용을 모든 페이지에 적용 (공유로 전환)
   if($('title-badge')) $('title-badge').addEventListener('click', function(){
     if(!pages[pageIdx] || pages[pageIdx].title == null) return;
-    if(!confirm('이 페이지의 제목·소제목을 공유로 되돌릴까요?')) return;
-    pages[pageIdx].title = null;
-    pages[pageIdx].subtitle = null;
-    _switching = true;
-    if($('title-ed')) $('title-ed').innerHTML = sharedTitle;
-    if($('subtitle-ed')) $('subtitle-ed').innerHTML = sharedSubtitle;
-    _switching = false;
+    if(!confirm('이 페이지의 제목·소제목을 모든 페이지에 적용할까요?')) return;
+    sharedTitle = $('title-ed') ? $('title-ed').innerHTML : '';
+    sharedSubtitle = $('subtitle-ed') ? $('subtitle-ed').innerHTML : '';
+    pages.forEach(function(p){ p.title = null; p.subtitle = null; });
     updateShareBadges(); render(); scheduleSave();
   });
   if($('name-badge')) $('name-badge').addEventListener('click', function(){
     if(!pages[pageIdx] || pages[pageIdx].name == null) return;
-    if(!confirm('이 페이지의 하단을 공유로 되돌릴까요?')) return;
-    pages[pageIdx].name = null;
-    _switching = true;
-    if(nameEd) nameEd.innerHTML = sharedName;
-    _switching = false;
+    if(!confirm('이 페이지의 하단을 모든 페이지에 적용할까요?')) return;
+    sharedName = nameEd ? nameEd.innerHTML : '';
+    pages.forEach(function(p){ p.name = null; });
     updateShareBadges(); render(); scheduleSave();
   });
   // 제목·소제목 편집 → 자동 분리
