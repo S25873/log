@@ -1013,23 +1013,26 @@
   /* 제목 · 소제목 · 하단: 줄이 늘면 아래로 늘어난다(가로는 안 늘고 그냥 넘어감).
      예전엔 max-height 120px 라 네 줄쯤에서 안쪽 스크롤로 바뀌었는데, 그 위는 안 보여서 상한을 없앰 */
 
-  /* 페이지 탭 (undo/redo 옆 인라인) */
-  #page-bar{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding-left:6px;border-left:1px solid var(--line);overflow-x:auto;flex-shrink:1;min-width:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  /* 페이지 탭 (preview__bar 안) */
+  #page-bar{display:inline-flex;align-items:center;gap:3px;overflow-x:auto;flex-shrink:1;min-width:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   #page-bar::-webkit-scrollbar{display:none;}
   #page-bar:empty{display:none;}
   .page-tab{
-    border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font-size:11px;font-weight:700;
-    min-width:22px;height:22px;padding:0 5px;border-radius:99px;cursor:pointer;flex:none;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink-3);font-size:10.5px;font-weight:700;
+    min-width:20px;height:20px;padding:0 6px;border-radius:5px;cursor:pointer;flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
     transition:background .14s,color .14s,border-color .14s;line-height:1;
+    box-sizing:border-box;vertical-align:middle;text-indent:0;
   }
-  .page-tab:hover{border-color:var(--ink);color:var(--ink);}
-  .page-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .page-tab:hover{background:var(--surface-2);}
+  .page-tab.active{background:var(--ink-3);color:var(--surface);border-color:var(--ink-3);}
   .page-tab-add{
-    border:1px dashed var(--line);background:transparent;color:var(--ink-3);font-size:12px;font-weight:600;
-    width:22px;height:22px;border-radius:99px;cursor:pointer;flex:none;display:inline-flex;align-items:center;justify-content:center;
-    transition:border-color .14s,color .14s;line-height:1;
+    border:1px dashed var(--line);background:transparent;color:var(--ink-3);font-size:11px;font-weight:600;
+    width:20px;height:20px;border-radius:5px;cursor:pointer;flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:border-color .14s,color .14s,background .14s;line-height:1;
   }
-  .page-tab-add:hover{border-color:var(--ink);color:var(--ink);}
+  .page-tab-add:hover{background:var(--surface-2);}
   #name-ed,#title-ed,#subtitle-ed{
     width:100%;min-height:38px;height:auto;overflow:hidden;
     background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm);
@@ -1295,7 +1298,6 @@
           <div class="hist-row">
             <button class="histbtn" id="t-undo" type="button" title="뒤로가기 (Ctrl+Z)" aria-label="뒤로가기" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-1"/></svg></button>
             <button class="histbtn" id="t-redo" type="button" title="앞으로가기 (Ctrl+Shift+Z)" aria-label="앞으로가기" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h1"/></svg></button>
-            <span id="page-bar"></span>
           </div>
           <div class="mini-row">
             <button class="mini" id="t-star-gray" type="button" title="*내용* 을 *색*의 색깔로">*색*</button>
@@ -2322,6 +2324,7 @@
     <section class="previewcol">
       <div class="preview__bar">
         <span class="preview__label">Preview</span>
+        <span id="page-bar"></span>
         <span class="preview__meta" id="preview-meta">1200 px</span>
       </div>
       <div class="preview__scroll">
@@ -2901,7 +2904,9 @@
     _histClear();
     scheduleSave();
   }
+  var PAGE_LIMIT = 4;
   function addPage(){
+    if(pages.length >= PAGE_LIMIT){ alert('페이지는 최대 ' + PAGE_LIMIT + '개까지 만들 수 있어요.'); return; }
     _switching = true;
     flushPage();
     var newPage = { id: 'p' + (_nextPageId++), body: '' };
