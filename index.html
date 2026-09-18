@@ -374,6 +374,8 @@
   }
   .seg .align-ic{display:flex;height:100%;align-items:center;justify-content:center;color:inherit;}   /* 글자 기준선에 걸려 위로 쏠리던 것 → 버튼 높이 전체 기준 중앙 정렬 */
   .seg .align-ic svg{width:15px;height:15px;display:block;}
+  .seg--wrap{flex-wrap:wrap;height:auto;}
+  .seg--wrap .seg__divider{width:100%;height:0;border:none;border-top:1px solid var(--line);margin:2px 0;flex-shrink:0;pointer-events:none;}
 
   /* 미니 버튼 */
   .mini-row{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
@@ -2213,7 +2215,7 @@
 
               <div class="field" id="ratio-sel-row" style="display:none;margin-top:18px">
                 <span class="label">비율</span>
-                <div class="seg" id="ratio-seg"></div>
+                <div class="seg seg--wrap" id="ratio-seg"></div>
               </div>
 
               <div class="grid-2" style="margin-top:18px">
@@ -5102,6 +5104,12 @@
     var pad = 3;
     thumb.style.width = aRect.width + 'px';
     thumb.style.transform = 'translateX(' + (aRect.left - segRect.left - pad) + 'px)';
+    // wrap seg: thumb의 세로 위치를 활성 버튼 줄에 맞춤
+    if(seg.classList.contains('seg--wrap')){
+      thumb.style.top = (aRect.top - segRect.top) + 'px';
+      thumb.style.bottom = 'auto';
+      thumb.style.height = aRect.height + 'px';
+    }
   }
   function moveAllThumbs(){ [].forEach.call(document.querySelectorAll('.seg'), moveThumb); }
   // 세그가 '숨김→보임'으로 바뀌는 순간(아코디언 열기·탭 전환 등) 폭이 0이라 막대 위치를 못 잡던 문제:
@@ -5194,11 +5202,20 @@
   var ratios = [
     {w:1,h:1,label:'1:1'}, {w:4,h:5,label:'4:5'},
     {w:3,h:4,label:'3:4'}, {w:2,h:3,label:'2:3'},
-    {w:9,h:16,label:'9:16'}, {w:16,h:9,label:'16:9'}
+    {w:9,h:16,label:'9:16'},
+    {w:2,h:1,label:'2:1'}, {w:5,h:4,label:'5:4'}, {w:4,h:3,label:'4:3'},
+    {w:3,h:2,label:'3:2'}, {w:16,h:9,label:'16:9'}
   ];
   var rSeg = $('ratio-seg');
+  var _ratioSplitAt = 5; // 세로형 5개 뒤에 구분선
   ratios.forEach(function(p, idx){
+    if(idx === _ratioSplitAt){
+      var divider = document.createElement('span');
+      divider.className = 'seg__divider';
+      rSeg.appendChild(divider);
+    }
     var b=document.createElement('button'); b.type='button'; b.textContent=p.label;
+    b.style.height='32px';
     b.setAttribute('aria-pressed', idx===1 ? 'true' : 'false');
     b.addEventListener('click', function(){
       [].forEach.call(rSeg.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed','false'); });
@@ -5207,7 +5224,6 @@
     });
     rSeg.appendChild(b);
   });
-  // ratio-seg thumb 요소 추가 (동적 생성 후)
   var rThumb=document.createElement('span'); rThumb.className='seg__thumb'; rSeg.appendChild(rThumb);
 
   function baseW(){
@@ -7061,7 +7077,8 @@
       document.querySelectorAll('#size-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-mode')===sizeMode?'true':'false'); });
       applySizeModeUI();
       if(data.ratio){ ratio=data.ratio;
-        [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); }); }
+        [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); });
+        moveThumb(rSeg); }
       clearBgOn();
       photoData = (typeof data.photoData==='string') ? data.photoData : null;
       bgMode = data.bgMode || (data.photoOn && photoData ? 'photo' : (String(data.bgValue).indexOf('gradient')!==-1 ? 'gradient' : 'solid'));
@@ -7405,7 +7422,8 @@
     document.querySelectorAll('#size-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-mode')===sizeMode?'true':'false'); });
     applySizeModeUI();
     if(s.ratio){ ratio=s.ratio;
-      [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); }); }
+      [].forEach.call(rSeg.querySelectorAll('button'), function(x, idx){ x.setAttribute('aria-pressed', (ratios[idx] && ratios[idx].w===ratio.w && ratios[idx].h===ratio.h)?'true':'false'); });
+      moveThumb(rSeg); }
     bgMode = s.bgMode || (String(bgValue).indexOf('gradient')!==-1 ? 'gradient' : 'solid');
     document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-bgmode')===bgMode?'true':'false'); });
     applyBgViews();
