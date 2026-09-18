@@ -2875,9 +2875,13 @@
     if(pages[pageIdx].subtitle != null) pages[pageIdx].subtitle = $('subtitle-ed') ? $('subtitle-ed').innerHTML : '';
     if(pages[pageIdx].name != null) pages[pageIdx].name = nameEd ? nameEd.innerHTML : '';
   }
+  var _lastTabState = '';
   function renderPageTabs(){
     var bar = $('page-bar');
     if(!bar) return;
+    var state = pages.length + '|' + pageIdx + '|' + gridCols + '|' + alignPages + '|' + sizeMode;
+    if(state === _lastTabState) return;
+    _lastTabState = state;
     bar.innerHTML = '';
     // 탭 버튼 생성
     pages.forEach(function(p, i){
