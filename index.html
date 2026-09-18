@@ -6084,7 +6084,7 @@
     centerRatioInner();
     if(bubbleShape==='script') applyScriptAlign();
     // 그리드 열 간격 슬라이더 표시/숨김
-    var _ggr=$('grid-gap-row'); if(_ggr) _ggr.style.display = (gridCols > 0 && pages.length > 1) ? '' : 'none';
+    var _ggr=$('grid-gap-row'); if(_ggr) _ggr.style.display = (pages.length > 1) ? '' : 'none';
     var _ggv=$('grid-gap-val'), _ggs=$('grid-gap'); if(_ggv && _ggs) _ggv.textContent = _ggs.value+'px';
     // 글꼴 적용·이미지 배치가 끝난 뒤 값이 달라질 수 있어 레이아웃이 잡힌 다음 한 번 더 잰다
     requestAnimationFrame(centerRatioInner);
