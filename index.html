@@ -1017,6 +1017,16 @@
   #page-bar{display:inline-flex;align-items:center;gap:3px;overflow-x:auto;flex-shrink:1;min-width:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   #page-bar::-webkit-scrollbar{display:none;}
   #page-bar:empty{display:none;}
+  /* 그리드 열 레이아웃 */
+  #canvas .g-grid,.canvas-clone .g-grid{column-gap:var(--pad,40px) !important;row-gap:calc(var(--pad,40px) * 0.4) !important;}
+  #canvas .g-grid-col,.canvas-clone .g-grid-col{min-width:0 !important;}
+  .share-badge{
+    font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;cursor:pointer;
+    display:none;margin-left:6px;vertical-align:middle;transition:background .14s,color .14s;
+  }
+  .share-badge.is-shared{display:none;}
+  .share-badge.is-split{display:inline-block;background:var(--accent-soft,rgba(0,122,255,.12));color:var(--accent,#007aff);}
+  .share-badge.is-split:hover{background:var(--accent);color:#fff;}
   .page-tab{
     border:1px solid var(--line);background:var(--surface);color:var(--ink-3);font-size:10.5px;font-weight:700;
     min-width:20px;height:20px;padding:0 6px;border-radius:5px;cursor:pointer;flex:none;
@@ -1514,7 +1524,7 @@
             </summary>
             <div class="fold__body">
               <div class="field">
-                <span class="label">제목</span>
+                <span class="label">제목<span class="share-badge" id="title-badge" title="이 페이지만 따로 쓰는 중 · 눌러서 공유로 되돌리기">이 페이지만</span></span>
                 <div id="title-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
                      aria-label="제목 입력" data-placeholder="제목 (비워도 됨)"></div>
               </div>
@@ -1610,7 +1620,7 @@
             </summary>
             <div class="fold__body">
               <div class="field">
-                <span class="label">하단</span>
+                <span class="label">하단<span class="share-badge" id="name-badge" title="이 페이지만 따로 쓰는 중 · 눌러서 공유로 되돌리기">이 페이지만</span></span>
                 <div id="name-ed" contenteditable="true" role="textbox" spellcheck="false" translate="no"
                      aria-label="하단 입력" data-placeholder="캐릭터 이름 · 상태창 · 페이지 수 등 (비워도 됨)"></div>
               </div>
@@ -2354,34 +2364,31 @@
 <div class="sheet-overlay" id="notice-overlay" hidden>
   <div class="sheet help-sheet" role="dialog" aria-modal="true" aria-label="업데이트 안내">
     <div class="sheet__grip"></div>
-    <div class="sheet__title">로그 이미지 발췌기 업데이트 중!</div>
+    <div class="sheet__title">업데이트 안내</div>
     <div class="help-body">
-      <p class="help-cat">서식 아코디언</p>
-      <p class="hint">· 내용 탭에 <b>서식</b> 아코디언이 새로 생겼어요.<br>· 인용선 여백과 (＋로 넣는) 사진 설정이 여기로 이동했어요.</p>
+      <p class="help-cat">UI 개선 예정</p>
+      <p class="hint">· 기능을 추가하느라 UI가 많이 더러워요.<br>· 곧 개선할 테니 양해 부탁드려요...</p>
 
-      <p class="help-cat">인용선 · 말풍선</p>
-      <p class="hint">· 인용선 위아래 간격 오류가 수정됐어요.<br>· <b>인용선 여백</b>이 추가됐어요. 인용선 위아래 간격을 조절할 수 있어요.<br>· <b>말풍선 ↔ 본문 간격</b>이 삭제되고, <b>말풍선 여백</b>이 새로 생겼어요. 말풍선 위아래 간격을 조절할 수 있어요.</p>
+      <p class="help-cat">멀티페이지</p>
+      <p class="hint">· <b>페이지</b> 기능이 추가됐어요. 프리뷰 바에서 ＋를 눌러 최대 4개까지 만들 수 있어요.<br>· 제목 · 소제목 · 하단은 기본적으로 모든 페이지가 공유해요. 편집하는 순간 해당 페이지만 분리되고, 뱃지를 눌러 되돌릴 수 있어요.<br>· 페이지 삭제는 탭을 길게 누르면 돼요.</p>
 
-      <p class="help-cat">제목 · 소제목</p>
-      <p class="hint">· 제목 · 소제목에 <b>별도 정렬</b>이 생겼어요.</p>
+      <p class="help-cat">그리드 모드</p>
+      <p class="hint">· 페이지 2개 이상일 때 <b>그리드</b> 버튼이 나타나요.<br>· 누를 때마다 단일 → 2열 → 3열 → 4열로 순환해요.<br>· 제목과 하단은 전체 너비로 한 번만, 본문만 열로 나뉘어요.<br>· 2열 + 4페이지 = 자동으로 2×2 배치.</p>
+
+      <p class="help-cat">시작점 정렬</p>
+      <p class="hint">· 고정 비율 + 단일 모드에서 <b>정렬</b> 버튼이 나타나요.<br>· 켜면 가장 긴 페이지 기준으로 모든 페이지의 콘텐츠 시작 위치가 통일돼요.</p>
+
+      <p class="help-cat">전체 내보내기</p>
+      <p class="hint">· 단일 모드에서 페이지가 2개 이상이면 저장 시 전체 / 현재 페이지를 선택할 수 있어요.<br>· 전체 저장 시 로그_1.png, 로그_2.png 식으로 순차 다운로드돼요.</p>
 
       <p class="help-cat">구분선</p>
-      <p class="hint">· 제목 · 소제목 · 하단과 본문을 연결할 때 구분선을 넣을 수 있어요.<br>· 본문의 구분선 모양이 추가됐어요.</p>
+      <p class="hint">· 본문 구분선과 제목 · 하단 구분선의 <b>두께</b>를 각각 조절할 수 있어요.<br>· 내용 탭 → 자동화 도구 · 인용선 · 구분선 · 사진에서 설정해요.</p>
 
-      <p class="help-cat">대본</p>
-      <p class="hint">· 말풍선 모양에 <b>대본</b>이 추가됐어요. 이름이 왼쪽에 고정되고 내용이 오른쪽에 이어지는 대본 형식이에요.<br>· 좌우 방향을 지정할 수 있어요. 오른쪽이면 이름이 오른쪽에, 내용이 왼쪽에 배치돼요.<br>· <b>간격 맞추기</b>를 켜면 가장 긴 이름에 맞춰 모든 내용의 시작점이 통일돼요.<br>· 대본 전용 <b>이름 글꼴</b>을 따로 설정할 수 있어요.</p>
+      <p class="help-cat">대본 이름 균등 배분</p>
+      <p class="hint">· 대본 모드에서 간격 맞추기를 켜면 <b>이름 균등 배분</b> 옵션이 나타나요.<br>· 짧은 이름의 글자를 가장 긴 이름 너비에 맞춰 양쪽 끝으로 벌려요.</p>
 
       <p class="help-cat">고정 비율</p>
-      <p class="hint">· 고정 비율 시스템을 대폭 최적화했어요.<br>· 고정 비율 사용 시 본문이 잘리지 않도록 여백을 보정하는 기능이 추가됐어요.<br>· 비율을 전환해도 가로 크기가 리셋되지 않고 유지돼요.</p>
-
-      <p class="help-cat">이어서 편집하기</p>
-      <p class="hint">· 편의성 탭에 <b>이어서 편집하기</b>가 추가됐어요.<br>· 현재 편집 중인 모든 것을 내용 포함 저장하고 나중에 불러올 수 있어요.<br>· 프리셋처럼 여러 개를 저장할 수 있어요.</p>
-
-      <p class="help-cat">글꼴</p>
-      <p class="hint">· 손글씨에 <b>교보 손글씨 이유빈</b> · <b>교보 손글씨 박도연</b>이 추가됐어요.<br>· 픽셀에 <b>드림흐물체</b>가 추가됐어요.<br>· 장식 카테고리가 <b>픽셀</b>로 이름이 바뀌었어요.</p>
-
-      <p class="help-cat">기타</p>
-      <p class="hint">· 내 프리셋 · 이어서 편집하기 칩을 클릭하면 <b>불러오기</b>와 <b>현재 상태로 덮어쓰기</b> 중 선택할 수 있어요.<br>· 프리셋의 <b>내보내기 · 가져오기</b> 기능이 추가됐어요. 다른 기기에서 설정을 공유할 수 있어요.<br>· 여러 슬라이더의 최소값과 최대값이 확장됐어요.<br>· 도움말이 전면 개편됐어요. 발췌기 사용 시 헷갈리는 게 있다면 참고해 주세요.<br>· 웹폰트 전환 시 고정 비율 측정이 어긋나던 문제가 수정됐어요.</p>
+      <p class="hint">· 비율 선택이 세로형 · 가로형 <b>두 줄</b>로 나뉘었어요.<br>· 가로형에 2:1 · 5:4 · 4:3 · 3:2가 새로 추가됐어요.</p>
     </div>
     <div class="notice-btns">
       <button class="sheet__cancel" id="notice-never" type="button">다시 보지 않기</button>
@@ -2523,10 +2530,15 @@
   var bubbleShape = 'imessage';  // 'imessage' | 'soft' | 'simple' | 'plain'(배경 없음)
 
   /* ── 멀티페이지 ── */
-  var pages = [{ id:'p1', body:'' }];
+  var pages = [{ id:'p1', body:'', title:null, subtitle:null, name:null }];
   var pageIdx = 0;
   var _nextPageId = 2;
   var _switching = false;
+  var sharedTitle = '';
+  var sharedSubtitle = '';
+  var sharedName = '';
+  var gridCols = 0; // 0=단일(현재 페이지만), 2=2열, 3=3열, 4=4열
+  var alignPages = false; // 고정 비율에서 페이지 간 시작점 정렬
 
   /* 형광펜·강조색: 슬롯 1/2/3 (슬롯1은 기존 c-hl / c-em 을 그대로 사용) */
   var hlSlot = 1, emSlot = 1, quoteSlot = 1;
@@ -2852,7 +2864,12 @@
   /* ── 멀티페이지: 탭 렌더·전환·추가·삭제 ── */
   function flushPage(){
     // 현재 에디터 내용을 pages 배열에 저장
-    if(pages[pageIdx]) pages[pageIdx].body = editor.innerHTML;
+    if(!pages[pageIdx]) return;
+    pages[pageIdx].body = editor.innerHTML;
+    // 제목·소제목·하단: 분리 상태면 현재 에디터 값 저장
+    if(pages[pageIdx].title != null) pages[pageIdx].title = $('title-ed') ? $('title-ed').innerHTML : '';
+    if(pages[pageIdx].subtitle != null) pages[pageIdx].subtitle = $('subtitle-ed') ? $('subtitle-ed').innerHTML : '';
+    if(pages[pageIdx].name != null) pages[pageIdx].name = nameEd ? nameEd.innerHTML : '';
   }
   function renderPageTabs(){
     var bar = $('page-bar');
@@ -2887,18 +2904,63 @@
     addBtn.textContent = '＋';
     addBtn.addEventListener('click', function(){ addPage(); });
     bar.appendChild(addBtn);
+    // 그리드 토글 (2페이지 이상일 때)
+    if(pages.length > 1){
+      var sep = document.createElement('span');
+      sep.style.cssText = 'width:1px;height:14px;background:var(--line);margin:0 4px;flex:none;';
+      bar.appendChild(sep);
+      var gt = document.createElement('button');
+      gt.className = 'page-tab' + (gridCols > 0 ? ' active' : '');
+      gt.type = 'button';
+      gt.textContent = gridCols > 0 ? gridCols + '열' : '단일';
+      gt.title = '레이아웃 전환';
+      gt.addEventListener('click', function(){
+        var opts = [0];
+        if(pages.length >= 2) opts.push(2);
+        if(pages.length >= 3) opts.push(3);
+        if(pages.length >= 4) opts.push(4);
+        var idx = opts.indexOf(gridCols);
+        gridCols = opts[(idx + 1) % opts.length];
+        render(); scheduleSave();
+      });
+      bar.appendChild(gt);
+
+      // 정렬 토글 (단일 모드 + 고정 비율일 때)
+      if(gridCols === 0 && sizeMode === 'ratio'){
+        var al = document.createElement('button');
+        al.className = 'page-tab' + (alignPages ? ' active' : '');
+        al.type = 'button';
+        al.textContent = '정렬';
+        al.title = '페이지 시작점 정렬';
+        al.addEventListener('click', function(){
+          alignPages = !alignPages;
+          pages.forEach(function(p){ delete p._contentH; });
+          render(); scheduleSave();
+        });
+        bar.appendChild(al);
+      }
+    }
   }
   function switchPage(newIdx){
     if(newIdx === pageIdx) return;
     if(newIdx < 0 || newIdx >= pages.length) return;
     _switching = true;
     flushPage();
+    // 공유 상태인 에디터의 현재 값을 shared에 반영
+    if(pages[pageIdx].title == null && $('title-ed')) sharedTitle = $('title-ed').innerHTML;
+    if(pages[pageIdx].subtitle == null && $('subtitle-ed')) sharedSubtitle = $('subtitle-ed').innerHTML;
+    if(pages[pageIdx].name == null && nameEd) sharedName = nameEd.innerHTML;
     pageIdx = newIdx;
     editor.innerHTML = pages[pageIdx].body || '';
+    // 제목·소제목·하단: 분리면 페이지 값, 아니면 공유 값 (빈 값도 안전)
+    if($('title-ed')) $('title-ed').innerHTML = (pages[pageIdx].title != null ? pages[pageIdx].title : sharedTitle) || '';
+    if($('subtitle-ed')) $('subtitle-ed').innerHTML = (pages[pageIdx].subtitle != null ? pages[pageIdx].subtitle : sharedSubtitle) || '';
+    if(nameEd) nameEd.innerHTML = (pages[pageIdx].name != null ? pages[pageIdx].name : sharedName) || '';
     syncTails(editor);
     clearHrSel();
     [].forEach.call(editor.querySelectorAll('img'), reRenderOnDecode);
     renderPageTabs();
+    updateShareBadges();
     _switching = false;
     render();
     _histClear();
@@ -2909,7 +2971,7 @@
     if(pages.length >= PAGE_LIMIT){ alert('페이지는 최대 ' + PAGE_LIMIT + '개까지 만들 수 있어요.'); return; }
     _switching = true;
     flushPage();
-    var newPage = { id: 'p' + (_nextPageId++), body: '' };
+    var newPage = { id: 'p' + (_nextPageId++), body: '', title: null, subtitle: null, name: null };
     pages.push(newPage);
     pageIdx = pages.length - 1;
     editor.innerHTML = '';
@@ -2938,6 +3000,58 @@
     _histClear();
     scheduleSave();
   }
+
+  /* ── 제목·하단 공유/분리 ── */
+  function updateShareBadges(){
+    var p = pages[pageIdx];
+    var tb = $('title-badge'), nb = $('name-badge');
+    if(tb) tb.className = 'share-badge ' + (p && p.title != null ? 'is-split' : 'is-shared');
+    if(nb) nb.className = 'share-badge ' + (p && p.name != null ? 'is-split' : 'is-shared');
+  }
+  // 뱃지 클릭 → 공유로 되돌리기
+  if($('title-badge')) $('title-badge').addEventListener('click', function(){
+    if(!pages[pageIdx] || pages[pageIdx].title == null) return;
+    if(!confirm('이 페이지의 제목·소제목을 공유로 되돌릴까요?')) return;
+    pages[pageIdx].title = null;
+    pages[pageIdx].subtitle = null;
+    _switching = true;
+    if($('title-ed')) $('title-ed').innerHTML = sharedTitle;
+    if($('subtitle-ed')) $('subtitle-ed').innerHTML = sharedSubtitle;
+    _switching = false;
+    updateShareBadges(); render(); scheduleSave();
+  });
+  if($('name-badge')) $('name-badge').addEventListener('click', function(){
+    if(!pages[pageIdx] || pages[pageIdx].name == null) return;
+    if(!confirm('이 페이지의 하단을 공유로 되돌릴까요?')) return;
+    pages[pageIdx].name = null;
+    _switching = true;
+    if(nameEd) nameEd.innerHTML = sharedName;
+    _switching = false;
+    updateShareBadges(); render(); scheduleSave();
+  });
+  // 제목·소제목 편집 → 자동 분리
+  function _onTitleInput(){
+    if(_switching) return;
+    var p = pages[pageIdx]; if(!p) return;
+    if(pages.length <= 1) return; // 페이지 1개면 분리 불필요
+    if(p.title == null){
+      p.title = $('title-ed') ? $('title-ed').innerHTML : '';
+      p.subtitle = $('subtitle-ed') ? $('subtitle-ed').innerHTML : '';
+      updateShareBadges();
+    }
+  }
+  function _onNameInput(){
+    if(_switching) return;
+    var p = pages[pageIdx]; if(!p) return;
+    if(pages.length <= 1) return;
+    if(p.name == null){
+      p.name = nameEd ? nameEd.innerHTML : '';
+      updateShareBadges();
+    }
+  }
+  if($('title-ed')) $('title-ed').addEventListener('input', _onTitleInput);
+  if($('subtitle-ed')) $('subtitle-ed').addEventListener('input', _onTitleInput);
+  if(nameEd) nameEd.addEventListener('input', _onNameInput);
 
   /* 대본 모드 전용 옵션 표시/숨김 */
   function updateScriptOptions(){
@@ -4785,9 +4899,9 @@
      (기존 사용자는 저장된 값이 없으므로 이번에 한 번 보게 된다)
      ============================================================ */
   (function(){
-    var NOTICE_ID   = '2026-08-28a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
-    var NOTICE_FROM = '2026-08-28T00:00:00';         // 이 기간에는 볼 때마다 뜬다
-    var NOTICE_TO   = '2026-08-30T00:00:00';         // (끝나는 날 자정 = 29일까지)
+    var NOTICE_ID   = '2026-09-18a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
+    var NOTICE_FROM = '2026-09-18T00:00:00';         // 이 기간에는 볼 때마다 뜬다
+    var NOTICE_TO   = '2026-09-20T00:00:00';         // (끝나는 날 자정 = 19일까지)
     var NOTICE_KEY  = 'logmaker-notice-v2';
     var ov=$('notice-overlay'), okBtn=$('notice-close'), neverBtn=$('notice-never'), t=null;
     if(!ov) return;
@@ -5683,9 +5797,9 @@
     walk(root);
   }
 
-  function buildHtml(){
+  function processBodyRaw(rawHtml){
     var tmp = document.createElement('div');
-    for(var i=0;i<editor.childNodes.length;i++){ tmp.appendChild(editor.childNodes[i].cloneNode(true)); }
+    tmp.innerHTML = (typeof rawHtml === 'string') ? rawHtml : '';
     sanitize(tmp);
     var tw = document.createTreeWalker(tmp, NodeFilter.SHOW_TEXT, null, false), zs=[];
     while(tw.nextNode()){ if(tw.currentNode.nodeValue.indexOf('\u200b')!==-1){ zs.push(tw.currentNode); } }
@@ -5693,29 +5807,68 @@
     [].forEach.call(tmp.querySelectorAll('.g-bub'), function(b){ if(b.textContent.trim()==='' && !b.querySelector('img')){ if(b.parentNode) b.parentNode.removeChild(b); } });
     [].forEach.call(tmp.querySelectorAll('.g-bub-name'), function(n){ if(n.textContent.replace(/\u200b/g,'').trim()===''){ if(n.parentNode) n.parentNode.removeChild(n); } });
     syncTails(tmp);
-    var html = tmp.innerHTML;
-    // 제목/소제목 (별도 입력창) → 맨 앞
-    var tEmpty = titleIsEmpty(), sEmpty = subtitleIsEmpty();
-    if(!tEmpty || !sEmpty){
-      var titleBlk = '<div class="g-title-blk">';
-      if(!tEmpty){ titleBlk += '<div class="g-title-main">'+ edToHtml($('title-ed')) +'</div>'; }
-      if(!sEmpty){ titleBlk += '<div class="g-title-sub">'+ edToHtml($('subtitle-ed')) +'</div>'; }
-      if($('title-rule') && $('title-rule').checked){ titleBlk += '<div class="g-title-rule '+titleRuleStyle+'"></div>'; }
-      titleBlk += '</div>';
-      html = titleBlk + html;
-    }
-    if(!nameIsEmpty()){
-      if($('name-rule') && $('name-rule').checked){ html += '<div class="g-name-rule '+nameRuleStyle+'"></div>'; }
-      var opt = $('name-pos').value || 'plain-left';
-      var parts = opt.split('-'), style=parts[0]||'plain', align=parts[1]||'left';
-      // barl/barr = 인용선(막대 좌/우). 옛 저장값 'bar-*' 는 좌로 취급
-      var isBar = (style==='barl' || style==='barr' || style==='bar');
-      var side  = (style==='barr') ? 'right' : 'left';
-      var cls   = isBar ? ('s-bar '+side) : ('s-'+style);
-      var nameColor = $('c-name').value || '#737373', barColor = $('c-bar').value || '#d1d1d1';
-      html += '<span class="g-name '+cls+' al-'+align+'" style="--name-color:'+nameColor+';--bar-color:'+barColor+';">'+ nameHtml() +'</span>';
-    }
+    return tmp.innerHTML;
+  }
+
+  function buildTitleBlock(titleSrc, subtitleSrc){
+    var tHtml = (typeof titleSrc === 'string') ? titleSrc : '';
+    var sHtml = (typeof subtitleSrc === 'string') ? subtitleSrc : '';
+    var tEmpty = tHtml.replace(/<br>/g,'').replace(/\u00a0/g,' ').trim() === '';
+    var sEmpty = sHtml.replace(/<br>/g,'').replace(/\u00a0/g,' ').trim() === '';
+    if(tEmpty && sEmpty) return '';
+    var blk = '<div class="g-title-blk">';
+    if(!tEmpty) blk += '<div class="g-title-main">'+ tHtml +'</div>';
+    if(!sEmpty) blk += '<div class="g-title-sub">'+ sHtml +'</div>';
+    if($('title-rule') && $('title-rule').checked) blk += '<div class="g-title-rule '+titleRuleStyle+'"></div>';
+    blk += '</div>';
+    return blk;
+  }
+
+  function buildNameBlock(nameSrc){
+    var nHtml = (typeof nameSrc === 'string') ? nameSrc : '';
+    var nEmpty = nHtml.replace(/<br>/g,'').replace(/\u00a0/g,' ').trim() === '';
+    if(nEmpty) return '';
+    var out = '';
+    if($('name-rule') && $('name-rule').checked) out += '<div class="g-name-rule '+nameRuleStyle+'"></div>';
+    var opt = $('name-pos').value || 'plain-left';
+    var parts = opt.split('-'), style=parts[0]||'plain', align=parts[1]||'left';
+    var isBar = (style==='barl' || style==='barr' || style==='bar');
+    var side  = (style==='barr') ? 'right' : 'left';
+    var cls   = isBar ? ('s-bar '+side) : ('s-'+style);
+    var nameColor = $('c-name').value || '#737373', barColor = $('c-bar').value || '#d1d1d1';
+    out += '<span class="g-name '+cls+' al-'+align+'" style="--name-color:'+nameColor+';--bar-color:'+barColor+';">'+ nHtml +'</span>';
+    return out;
+  }
+
+  function buildHtml(){
+    var html = processBodyRaw(editor.innerHTML);
+    // 제목/소제목 → 맨 앞
+    var titleBlk = buildTitleBlock(edToHtml($('title-ed')), edToHtml($('subtitle-ed')));
+    if(titleBlk) html = titleBlk + html;
+    // 하단 → 맨 뒤
+    html += buildNameBlock(nameHtml());
     return html;
+  }
+
+  function buildGridHtml(){
+    flushPage();
+    // 공유 상태 반영
+    if(pages[pageIdx] && pages[pageIdx].title == null && $('title-ed')) sharedTitle = $('title-ed').innerHTML;
+    if(pages[pageIdx] && pages[pageIdx].subtitle == null && $('subtitle-ed')) sharedSubtitle = $('subtitle-ed').innerHTML;
+    if(pages[pageIdx] && pages[pageIdx].name == null && nameEd) sharedName = nameEd.innerHTML;
+    // 제목 블록 (한 번만, 전체 너비)
+    var titleBlk = buildTitleBlock(edToHtml($('title-ed')), edToHtml($('subtitle-ed')));
+    // 각 열 (본문만)
+    var cols = '';
+    for(var i = 0; i < pages.length; i++){
+      var body = processBodyRaw((pages[i] && pages[i].body) || '');
+      cols += '<div class="g-grid-col">' + body + '</div>';
+    }
+    var gc = gridCols || pages.length;
+    var gridHtml = '<div class="g-grid" style="display:grid;grid-template-columns:repeat('+gc+',1fr)">' + cols + '</div>';
+    // 하단 블록 (한 번만, 전체 너비)
+    var nameBlk = buildNameBlock(nameHtml());
+    return titleBlk + gridHtml + nameBlk;
   }
 
   /* ============================================================
@@ -5911,7 +6064,7 @@
     updateEmptyBubbles();
     styleCharBubbles(editor);
     syncSubFixedEm();
-    canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
+    canvas.innerHTML = '<div class="g-inner">' + (gridCols > 0 && pages.length > 1 ? buildGridHtml() : buildHtml()) + '</div>';
     renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); applyScriptFont(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('subtext-size')) setVal('subtext-size', $('subtext-size').value+'px');
@@ -5995,15 +6148,37 @@
     canvas.style.padding = padSet+'px';
 
     inner.style.marginTop='auto'; inner.style.marginBottom='auto';
-    /* ★높이는 scrollHeight 로 잰다.
-       .g-inner 는 세로 flex 아이템이라 offsetHeight 가 남은 공간에 맞춰 줄어든 값으로 나올 수 있고,
-       그러면 '넘쳤는데 안 넘친 것처럼' 계산돼 경고가 아예 안 떴다 */
     var ch = canvas.clientHeight;
     var ih = Math.max(inner.scrollHeight||0, inner.offsetHeight||0);
     if(!ch || !ih){
       if(!_ratioRetry){ _ratioRetry=1; requestAnimationFrame(function(){ _ratioRetry=0; centerRatioInner(); }); }
       return;
     }
+
+    // ── 멀티페이지 시작점 정렬: 현재 페이지 높이 기록 ──
+    if(pages[pageIdx]) pages[pageIdx]._contentH = ih;
+
+    // 그리드가 아니고 페이지 2개 이상이고 정렬이 켜져 있으면, 가장 긴 페이지 기준으로 정렬
+    var alignH = ih;
+    if(alignPages && gridCols === 0 && pages.length > 1){
+      var allMeasured = true;
+      pages.forEach(function(p){
+        if(p._contentH > 0 && p._contentH > alignH) alignH = p._contentH;
+        if(!p._contentH) allMeasured = false;
+      });
+      // 모든 페이지가 측정됐으면 가장 긴 높이 기준으로 margin-top 고정
+      if(allMeasured){
+        var availH = ch - padSet*2;
+        if(alignH <= availH){
+          var alignedTop = (availH - alignH) / 2;
+          inner.style.marginTop = alignedTop + 'px';
+          inner.style.marginBottom = '0';
+          if(warn) warn.hidden = true;
+          return;
+        }
+      }
+    }
+
     var over = ih - (ch - padSet*2);
     if(over <= 0){ if(warn) warn.hidden = true; return; }
 
@@ -6398,7 +6573,12 @@
     return Promise.reject(new Error('clipboard unsupported'));
   }
   function deliverImage(cnv, type, done, mode){
-    var isJpg=(type==='image/jpeg'), filename=isJpg?'로그.jpg':'로그.png', quality=isJpg?0.97:undefined;
+    var isJpg=(type==='image/jpeg');
+    var filename = isJpg?'로그.jpg':'로그.png';
+    if(mode==='save-all'){
+      filename = isJpg ? '로그_' + (pageIdx+1) + '.jpg' : '로그_' + (pageIdx+1) + '.png';
+    }
+    var quality=isJpg?0.97:undefined;
     if(mode==='copy'){
       canvasToBlob(cnv, 'image/png').then(function(blob){
         copyBlobToClipboard(blob).then(function(){ _copyOk=true; done(); }).catch(function(){ _copyOk=false; done(); });
@@ -6422,6 +6602,11 @@
   var _busy=false;
   function doSave(type, mode){
     if(_busy) return;
+    // 멀티페이지 단일 모드: 전체 저장 여부 묻기
+    if(pages.length > 1 && gridCols === 0 && mode !== 'copy'){
+      var choice = confirm('전체 페이지를 저장할까요?\n\n확인 → 전체 ' + pages.length + '장\n취소 → 현재 페이지만');
+      if(choice){ doSaveAll(type); return; }
+    }
     _busy=true; mode=mode||'save';
     var allBtns = document.querySelectorAll('#save-png,#save-jpg,#copy-img');
     [].forEach.call(allBtns, function(b){ b.disabled=true; });
@@ -6439,6 +6624,62 @@
     fontsReady.then(function(){ requestAnimationFrame(function(){ requestAnimationFrame(function(){
       try{ runSave(type, finish, mode); }catch(e){ finish(); }
     }); }); });
+  }
+
+  function doSaveAll(type){
+    if(_busy) return;
+    _busy = true;
+    var allBtns = document.querySelectorAll('#save-png,#save-jpg,#copy-img');
+    [].forEach.call(allBtns, function(b){ b.disabled=true; });
+    var actBtn = (type==='image/jpeg' ? $('save-jpg') : $('save-png'));
+    var origTxt = actBtn ? actBtn.textContent : '';
+    var origIdx = pageIdx;
+    var idx = 0;
+    var isJpg = (type==='image/jpeg'), ext = isJpg ? '.jpg' : '.png', quality = isJpg ? 0.97 : undefined;
+
+    function finishAll(){
+      _busy = false;
+      [].forEach.call(allBtns, function(b){ b.disabled=false; });
+      if(actBtn) actBtn.textContent = origTxt;
+      // 원래 페이지로 복원
+      _switching = true;
+      pageIdx = origIdx;
+      editor.innerHTML = pages[pageIdx].body || '';
+      if($('title-ed')) $('title-ed').innerHTML = (pages[pageIdx].title != null ? pages[pageIdx].title : sharedTitle) || '';
+      if($('subtitle-ed')) $('subtitle-ed').innerHTML = (pages[pageIdx].subtitle != null ? pages[pageIdx].subtitle : sharedSubtitle) || '';
+      if(nameEd) nameEd.innerHTML = (pages[pageIdx].name != null ? pages[pageIdx].name : sharedName) || '';
+      syncTails(editor); clearHrSel();
+      renderPageTabs();
+      _switching = false;
+      render();
+    }
+
+    function saveNextPage(){
+      if(idx >= pages.length){ finishAll(); return; }
+      if(actBtn) actBtn.textContent = '저장 중… (' + (idx+1) + '/' + pages.length + ')';
+      // 페이지 전환 (조용히)
+      _switching = true;
+      flushPage();
+      pageIdx = idx;
+      editor.innerHTML = pages[pageIdx].body || '';
+      if($('title-ed')) $('title-ed').innerHTML = (pages[pageIdx].title != null ? pages[pageIdx].title : sharedTitle) || '';
+      if($('subtitle-ed')) $('subtitle-ed').innerHTML = (pages[pageIdx].subtitle != null ? pages[pageIdx].subtitle : sharedSubtitle) || '';
+      if(nameEd) nameEd.innerHTML = (pages[pageIdx].name != null ? pages[pageIdx].name : sharedName) || '';
+      syncTails(editor); clearHrSel();
+      _switching = false;
+      render();
+      // 렌더 후 캡처
+      var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      fontsReady.then(function(){ requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        try{
+          runSave(type, function(){
+            idx++;
+            setTimeout(saveNextPage, 300); // 브라우저 다운로드 간격
+          }, 'save-all');
+        }catch(e){ idx++; setTimeout(saveNextPage, 100); }
+      }); }); });
+    }
+    saveNextPage();
   }
 
   function runSave(type, finish, mode){
@@ -7119,12 +7360,16 @@
     if(_restoring) return;
     try{
       flushPage(); // 현재 에디터 내용을 pages에 반영
+      // 공유 상태인 에디터 값을 shared에 반영
+      if(pages[pageIdx] && pages[pageIdx].title == null && $('title-ed')) sharedTitle = $('title-ed').innerHTML;
+      if(pages[pageIdx] && pages[pageIdx].subtitle == null && $('subtitle-ed')) sharedSubtitle = $('subtitle-ed').innerHTML;
+      if(pages[pageIdx] && pages[pageIdx].name == null && nameEd) sharedName = nameEd.innerHTML;
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
-      var data={ vals:vals, editorHtml:pages[0].body||'', nameHtml:nameEd?nameEd.innerHTML:'',
-        titleHtml:($('title-ed')?$('title-ed').innerHTML:''), subtitleHtml:($('subtitle-ed')?$('subtitle-ed').innerHTML:''),
+      var data={ vals:vals, editorHtml:pages[0].body||'', nameHtml:sharedName,
+        titleHtml:sharedTitle, subtitleHtml:sharedSubtitle,
         bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null,
-        multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId }
+        multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages }
       };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
@@ -7174,18 +7419,31 @@
         pageIdx = data.multiPage.pageIdx || 0;
         if(pageIdx >= pages.length) pageIdx = 0;
         _nextPageId = data.multiPage.nextId || (pages.length + 1);
+        sharedTitle = data.multiPage.sharedTitle || '';
+        sharedSubtitle = data.multiPage.sharedSubtitle || '';
+        sharedName = data.multiPage.sharedName || '';
+        gridCols = parseInt(data.multiPage.gridCols) || 0;
+        alignPages = !!data.multiPage.alignPages;
       } else {
         // 기존 v1 데이터 → 단일 페이지로 마이그레이션
-        pages = [{ id:'p1', body: (typeof data.editorHtml==='string' ? data.editorHtml : '') }];
+        pages = [{ id:'p1', body: (typeof data.editorHtml==='string' ? data.editorHtml : ''), title:null, subtitle:null, name:null }];
         pageIdx = 0;
         _nextPageId = 2;
+        sharedTitle = (typeof data.titleHtml==='string') ? data.titleHtml : '';
+        sharedSubtitle = (typeof data.subtitleHtml==='string') ? data.subtitleHtml : '';
+        sharedName = (typeof data.nameHtml==='string') ? data.nameHtml : '';
       }
       editor.innerHTML = pages[pageIdx].body || '';
       syncTails(editor); clearHrSel();
       [].forEach.call(editor.querySelectorAll('img'), reRenderOnDecode);
       renderPageTabs();
 
-      if(nameEd && typeof data.nameHtml==='string'){ nameEd.innerHTML=data.nameHtml; }
+      // 제목·소제목·하단: 분리면 페이지 값, 아니면 공유 값
+      var _p = pages[pageIdx];
+      if($('title-ed')) $('title-ed').innerHTML = (_p && _p.title != null ? _p.title : sharedTitle) || '';
+      if($('subtitle-ed')) $('subtitle-ed').innerHTML = (_p && _p.subtitle != null ? _p.subtitle : sharedSubtitle) || '';
+      if(nameEd) nameEd.innerHTML = (_p && _p.name != null ? _p.name : sharedName) || '';
+      updateShareBadges();
       if($('title-rule')){ $('title-rule').checked = !!data.titleRule; }
       titleRuleStyle = ({solid:1,dashed:1,dotted:1,double:1})[data.titleRuleStyle] ? data.titleRuleStyle : 'solid';
       if($('name-rule')){ $('name-rule').checked = !!data.nameRule; }
