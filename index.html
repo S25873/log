@@ -6611,13 +6611,22 @@
     }
     return Promise.reject(new Error('clipboard unsupported'));
   }
+  var _collectBlobs = [];
   function deliverImage(cnv, type, done, mode){
     var isJpg=(type==='image/jpeg');
     var filename = isJpg?'로그.jpg':'로그.png';
-    if(mode==='save-all'){
+    if(mode==='save-all' || mode==='save-all-collect'){
       filename = isJpg ? '로그_' + (pageIdx+1) + '.jpg' : '로그_' + (pageIdx+1) + '.png';
     }
     var quality=isJpg?0.97:undefined;
+    if(mode==='save-all-collect'){
+      // blob만 모으고 다운로드하지 않음
+      canvasToBlob(cnv, type, quality).then(function(blob){
+        _collectBlobs.push(blob);
+        done();
+      }).catch(function(){ _collectBlobs.push(null); done(); });
+      return;
+    }
     if(mode==='copy'){
       canvasToBlob(cnv, 'image/png').then(function(blob){
         copyBlobToClipboard(blob).then(function(){ _copyOk=true; done(); }).catch(function(){ _copyOk=false; done(); });
@@ -6673,8 +6682,10 @@
     var actBtn = (type==='image/jpeg' ? $('save-jpg') : $('save-png'));
     var origTxt = actBtn ? actBtn.textContent : '';
     var origIdx = pageIdx;
-    var idx = 0;
     var isJpg = (type==='image/jpeg'), ext = isJpg ? '.jpg' : '.png', quality = isJpg ? 0.97 : undefined;
+    var blobs = [];
+    var idx = 0;
+    _collectBlobs = [];
 
     function finishAll(){
       _busy = false;
@@ -6693,9 +6704,44 @@
       render();
     }
 
-    function saveNextPage(){
-      if(idx >= pages.length){ finishAll(); return; }
-      if(actBtn) actBtn.textContent = '저장 중… (' + (idx+1) + '/' + pages.length + ')';
+    function deliverAll(){
+      if(actBtn) actBtn.textContent = '저장 중…';
+      // iOS: navigator.share로 한 번에 공유
+      var files = [];
+      try{
+        blobs.forEach(function(b, i){
+          files.push(new File([b], '로그_'+(i+1)+ext, {type:type}));
+        });
+      }catch(e){ files = []; }
+      var canShare = _isIOS && files.length && navigator.share && navigator.canShare && navigator.canShare({files:files});
+      if(canShare){
+        navigator.share({files:files}).then(function(){ finishAll(); }).catch(function(err){
+          if(err && (err.name==='AbortError'||err.name==='NotAllowedError')){ finishAll(); return; }
+          // 공유 실패 시 개별 다운로드 폴백
+          blobs.forEach(function(b, i){ downloadBlob(b, '로그_'+(i+1)+ext); });
+          finishAll();
+        });
+        return;
+      }
+      // 일반 브라우저: 순차 다운로드
+      var dlIdx = 0;
+      function dlNext(){
+        if(dlIdx >= blobs.length){ finishAll(); return; }
+        downloadBlob(blobs[dlIdx], '로그_'+(dlIdx+1)+ext);
+        dlIdx++;
+        setTimeout(dlNext, 300);
+      }
+      dlNext();
+    }
+
+    function captureNext(){
+      if(idx >= pages.length){
+        blobs = _collectBlobs.filter(function(b){ return !!b; });
+        _collectBlobs = [];
+        deliverAll();
+        return;
+      }
+      if(actBtn) actBtn.textContent = '캡처 중… (' + (idx+1) + '/' + pages.length + ')';
       // 페이지 전환 (조용히)
       _switching = true;
       flushPage();
@@ -6707,18 +6753,17 @@
       syncTails(editor); clearHrSel();
       _switching = false;
       render();
-      // 렌더 후 캡처
       var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
       fontsReady.then(function(){ requestAnimationFrame(function(){ requestAnimationFrame(function(){
         try{
           runSave(type, function(){
             idx++;
-            setTimeout(saveNextPage, 300); // 브라우저 다운로드 간격
-          }, 'save-all');
-        }catch(e){ idx++; setTimeout(saveNextPage, 100); }
+            setTimeout(captureNext, 100);
+          }, 'save-all-collect');
+        }catch(e){ idx++; setTimeout(captureNext, 100); }
       }); }); });
     }
-    saveNextPage();
+    captureNext();
   }
 
   function runSave(type, finish, mode){
