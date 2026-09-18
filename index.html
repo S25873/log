@@ -1018,7 +1018,7 @@
   #page-bar::-webkit-scrollbar{display:none;}
   #page-bar:empty{display:none;}
   /* 그리드 열 레이아웃 */
-  #canvas .g-grid,.canvas-clone .g-grid{column-gap:var(--pad,40px) !important;row-gap:calc(var(--pad,40px) * 0.4) !important;}
+  #canvas .g-grid,.canvas-clone .g-grid{column-gap:var(--grid-gap,var(--pad,40px)) !important;row-gap:calc(var(--grid-gap,var(--pad,40px)) * 0.4) !important;}
   #canvas .g-grid-col,.canvas-clone .g-grid-col{min-width:0 !important;}
   .share-badge{
     font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;cursor:pointer;
@@ -2262,6 +2262,10 @@
                   <span class="label">가로 크기 <span class="val">1080px</span></span>
                   <div class="rangewrap"><input id="ratio-w" type="range" min="600" max="2000" step="20" value="1080"></div>
                 </div>
+              </div>
+              <div class="field" id="grid-gap-row" style="display:none;margin-top:18px">
+                <span class="label">그리드 열과 열 사이 여백 <span class="val" id="grid-gap-val">120px</span></span>
+                <div class="rangewrap"><input id="grid-gap" type="range" min="0" max="300" step="10" value="120"></div>
               </div>
               <!-- 고정 비율에서 글이 여백 안쪽을 넘칠 때만 보인다(centerRatioInner 가 채움) -->
               <p class="hint" id="ratio-warn" hidden style="margin-top:10px;color:var(--danger,#d9534f)"></p>
@@ -5557,6 +5561,8 @@
     if(ht){ el.style.setProperty('--hr-thick', parseFloat(ht.value)+'px'); }
     var tht=$('title-hr-thick');
     if(tht){ el.style.setProperty('--title-hr-thick', parseFloat(tht.value)+'px'); }
+    var gg=$('grid-gap');
+    if(gg){ el.style.setProperty('--grid-gap', parseFloat(gg.value)+'px'); }
     if(pg){ el.style.setProperty('--para-gap', parseFloat(pg.value)+'px'); }
     if(sg){ el.style.setProperty('--stack-gap', parseFloat(sg.value)+'px'); }
     var subsz=$('subtext-size'); if(subsz){ var _ss=parseFloat(subsz.value); if(isNaN(_ss)) _ss=26; el.style.setProperty('--sub-size', _ss+'px'); }
@@ -6077,8 +6083,12 @@
     setVal('bright', $('bright').value+'%');
     centerRatioInner();
     if(bubbleShape==='script') applyScriptAlign();
+    // 그리드 열 간격 슬라이더 표시/숨김
+    var _ggr=$('grid-gap-row'); if(_ggr) _ggr.style.display = (gridCols > 0 && pages.length > 1) ? '' : 'none';
+    var _ggv=$('grid-gap-val'), _ggs=$('grid-gap'); if(_ggv && _ggs) _ggv.textContent = _ggs.value+'px';
     // 글꼴 적용·이미지 배치가 끝난 뒤 값이 달라질 수 있어 레이아웃이 잡힌 다음 한 번 더 잰다
     requestAnimationFrame(centerRatioInner);
+    renderPageTabs();
     var meta = $('preview-meta');
     if(meta){
       var w = baseW();
@@ -6380,7 +6390,7 @@
     var lisz=$('logimg-size'); if(lisz){ var liszv=$('logimg-size-val'); if(liszv) liszv.textContent=parseFloat(lisz.value)+'%'; }
     var lirad=$('logimg-radius'); if(lirad){ var liradv=$('logimg-radius-val'); if(liradv) liradv.textContent=parseFloat(lirad.value)+'px'; }
   }
-  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','script-font','title-font','name-font'].forEach(function(id){
+  ['title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','title-font','name-font'].forEach(function(id){
     var e=$(id); if(e){ e.addEventListener('input', function(){ updateTitleSizeLabels(); render(); }); e.addEventListener('change', function(){ updateTitleSizeLabels(); render(); }); }
   });
 
@@ -7433,7 +7443,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt','c-title-hr','c-title-hr-txt',
