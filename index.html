@@ -2921,7 +2921,7 @@
         if(pages.length >= 4) opts.push(4);
         var idx = opts.indexOf(gridCols);
         gridCols = opts[(idx + 1) % opts.length];
-        render(); scheduleSave();
+        renderPageTabs(); render(); scheduleSave();
       });
       bar.appendChild(gt);
 
@@ -2934,8 +2934,9 @@
         al.title = '페이지 시작점 정렬';
         al.addEventListener('click', function(){
           alignPages = !alignPages;
-          pages.forEach(function(p){ delete p._contentH; });
-          render(); scheduleSave();
+          if(alignPages) measureAllPages();
+          else pages.forEach(function(p){ delete p._contentH; });
+          renderPageTabs(); render(); scheduleSave();
         });
         bar.appendChild(al);
       }
@@ -2962,6 +2963,7 @@
     renderPageTabs();
     updateShareBadges();
     _switching = false;
+    if(alignPages) measureAllPages();
     render();
     _histClear();
     scheduleSave();
@@ -6133,6 +6135,48 @@
   /* 고정 비율에서 본문이 '여백 안쪽'보다 길면 사방 여백을 잘리지 않는 최대값으로 내린다.
      ★좌우까지 함께 줄여야 '여백 10 차이로 숫자가 크게 바뀌는' 혼란이 없어진다.
      슬라이더는 사용자 의도(padSet)를 보존하고, 캔버스에만 보정값(maxPad)을 적용한다. */
+  /* 모든 페이지의 콘텐츠 높이를 한 번에 측정 (정렬 켤 때 호출) */
+  function measureAllPages(){
+    if(sizeMode !== 'ratio' || !ratio || pages.length <= 1) return;
+    var origIdx = pageIdx;
+    var origBody = editor.innerHTML;
+    var origTitle = $('title-ed') ? $('title-ed').innerHTML : '';
+    var origSub = $('subtitle-ed') ? $('subtitle-ed').innerHTML : '';
+    var origName = nameEd ? nameEd.innerHTML : '';
+    _switching = true;
+    pages.forEach(function(p, i){
+      // 에디터에 해당 페이지 내용 세팅
+      editor.innerHTML = p.body || '';
+      if($('title-ed')) $('title-ed').innerHTML = (p.title != null ? p.title : sharedTitle) || '';
+      if($('subtitle-ed')) $('subtitle-ed').innerHTML = (p.subtitle != null ? p.subtitle : sharedSubtitle) || '';
+      if(nameEd) nameEd.innerHTML = (p.name != null ? p.name : sharedName) || '';
+      syncTails(editor);
+      // 캔버스에 렌더
+      pageIdx = i;
+      canvas.innerHTML = '<div class="g-inner">' + buildHtml() + '</div>';
+      renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas);
+      groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas);
+      tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas);
+      applyScriptFont(canvas);
+      // 높이 측정
+      var padSet = Math.round(parseFloat($('pad').value)||0);
+      canvas.style.padding = padSet + 'px';
+      var inner = canvas.querySelector('.g-inner');
+      if(inner){
+        inner.style.marginTop = 'auto'; inner.style.marginBottom = 'auto';
+        p._contentH = Math.max(inner.scrollHeight||0, inner.offsetHeight||0);
+      }
+    });
+    // 원래 페이지 복원
+    pageIdx = origIdx;
+    editor.innerHTML = origBody;
+    if($('title-ed')) $('title-ed').innerHTML = origTitle;
+    if($('subtitle-ed')) $('subtitle-ed').innerHTML = origSub;
+    if(nameEd) nameEd.innerHTML = origName;
+    syncTails(editor); clearHrSel();
+    _switching = false;
+  }
+
   function centerRatioInner(){
     var inner = canvas.querySelector('.g-inner');
     if(!inner) return;
