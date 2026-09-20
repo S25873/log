@@ -6834,8 +6834,8 @@
         var fs=parseFloat(cs.fontSize) || 16;
         var thick=Math.max(fs*0.05, 0.5);
         var ulOffset=fs*0.12;
-        // descent ≈ 0.2em (대부분의 한글/영문 폰트 기준)
-        var descent=fs*0.2;
+        // descent ≈ 0.15em (한글/영문 폰트 기준, 미리보기와 간격 일치 보정)
+        var descent=fs*0.15;
         var rects=mk.getClientRects();
         for(var i=0;i<rects.length;i++){
           var r=rects[i]; if(r.width<=0||r.height<=0) continue;
