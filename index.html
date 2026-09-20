@@ -6826,6 +6826,30 @@
         for(var i=0;i<rects.length;i++){ var r=rects[i]; if(r.width<=0||r.height<=0) continue;
           hlRects.push({ x:r.left-canvasRect.left, y:r.top-canvasRect.top, w:r.width, h:r.height, color:color }); }
       });
+      // 밑줄(mark.ul): html2canvas가 text-decoration을 정확히 못 그리므로 위치를 모아 직접 그린다
+      var ulRects=[], ulMarks=canvas.querySelectorAll('mark.ul');
+      [].forEach.call(ulMarks, function(mk){
+        var cs=window.getComputedStyle(mk);
+        var color=cs.color || '#000';
+        var fs=parseFloat(cs.fontSize) || 16;
+        var thick=Math.max(fs*0.05, 0.5);
+        var ulOffset=fs*0.12;
+        // descent ≈ 0.2em (대부분의 한글/영문 폰트 기준)
+        var descent=fs*0.2;
+        var rects=mk.getClientRects();
+        for(var i=0;i<rects.length;i++){
+          var r=rects[i]; if(r.width<=0||r.height<=0) continue;
+          // baseline ≈ r.bottom - descent. 밑줄 Y = baseline + offset
+          var ulY=(r.bottom - canvasRect.top) - descent + ulOffset;
+          ulRects.push({ x:r.left-canvasRect.left, y:ulY, w:r.width, h:thick, color:color });
+        }
+      });
+      var ulBackup=[];
+      [].forEach.call(ulMarks, function(mk){
+        ulBackup.push([mk, mk.getAttribute('style')]);
+        mk.style.setProperty('text-decoration','none','important');
+      });
+      function restoreUl(){ ulBackup.forEach(function(pair){ if(pair[1]===null) pair[0].removeAttribute('style'); else pair[0].setAttribute('style', pair[1]); }); }
       var markBackup=[];
       [].forEach.call(marks, function(mk){
         markBackup.push([mk, mk.getAttribute('style')]);
@@ -6904,7 +6928,7 @@
         // DEBUG: script name bold check
         var _dbgNames=canvas.querySelectorAll('.g-script-name');
         [].forEach.call(_dbgNames, function(n){ console.log('g-script-name font-weight:', window.getComputedStyle(n).fontWeight, 'inline:', n.style.fontWeight, 'text:', n.textContent); });
-        restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); removeResolveStyle();
+        restoreMarks(); restoreUl(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); removeResolveStyle();
         prepareBackground(function(bakedPhotoImg){
           var out=document.createElement('canvas'); out.width=outW; out.height=outH;
           var ctx=out.getContext('2d');
@@ -6915,9 +6939,11 @@
           tailRects.forEach(function(t){ ctx.save(); ctx.fillStyle=t.color; traceTailPath(ctx, t.x*2, t.y*2, t.w*2, t.h*2, t.flip); ctx.fill(); ctx.restore(); });
           pseudoTails.forEach(function(d){ paintPseudoTail(ctx, d); });
           ctx.drawImage(textCanvas, 0, 0, outW, outH);
+          // 밑줄을 텍스트 위에 직접 그린다 (html2canvas text-decoration 렌더링 불일치 보정)
+          ulRects.forEach(function(rc){ ctx.fillStyle=rc.color; ctx.fillRect(rc.x*2, rc.y*2, rc.w*2, rc.h*2); });
           drawBakedAvatars(ctx, avBakes, function(){ deliverImage(out, type, cleanup, mode); });
         });
-      }).catch(function(){ restoreMarks(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); removeResolveStyle(); cleanup(); });
+      }).catch(function(){ restoreMarks(); restoreUl(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); removeResolveStyle(); cleanup(); });
     }
 
     function prepareBackground(cb){
