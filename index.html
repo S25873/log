@@ -2187,7 +2187,7 @@
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
-              <p class="hint" style="margin:0 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>시범 기능이기에 고정 비율에서는 적용되지 않아요.</p>
+              <p class="hint" style="margin:0 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>고정 비율에서도 적용할 수 있어요.</p>
               <div class="field">
                 <span class="label">위치</span>
                 <div class="seg" id="frame-pos-seg">
@@ -5590,8 +5590,8 @@
     el.style.fontSize = fs+'px';
     el.style.letterSpacing = ls+'px';
     el.style.lineHeight = String((parseFloat($('line-height').value)/10).toFixed(2));
-    // ── 테두리 꾸밈(가장자리 사진 띠). 고정 비율에선 적용하지 않음.
-    var frameOn = (framePos!=='none' && frameData && sizeMode!=='ratio');
+    // ── 테두리 꾸밈(가장자리 사진 띠)
+    var frameOn = (framePos!=='none' && !!frameData);
     var fThick = 0;
     if(frameOn){
       var fp = parseFloat($('frame-size') ? $('frame-size').value : 20); if(isNaN(fp)) fp=20;
@@ -6167,9 +6167,16 @@
       groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas);
       tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas);
       applyScriptFont(canvas);
-      // 높이 측정
+      // 높이 측정 (꾸밈 두께 반영)
       var padSet = Math.round(parseFloat($('pad').value)||0);
-      canvas.style.padding = padSet + 'px';
+      var _mfOn = (framePos!=='none' && !!frameData);
+      var _mfPct = _mfOn ? (parseFloat($('frame-size') ? $('frame-size').value : 20)||20) : 0;
+      var _mfT = _mfOn ? Math.round(canvas.clientWidth * _mfPct/100) : 0;
+      var mPadT = padSet + (_mfOn && (framePos==='top'||framePos==='all') ? _mfT : 0);
+      var mPadR = padSet + (_mfOn && (framePos==='right'||framePos==='all') ? _mfT : 0);
+      var mPadB = padSet + (_mfOn && (framePos==='bottom'||framePos==='all') ? _mfT : 0);
+      var mPadL = padSet + (_mfOn && (framePos==='left'||framePos==='all') ? _mfT : 0);
+      canvas.style.padding = mPadT+'px '+mPadR+'px '+mPadB+'px '+mPadL+'px';
       var inner = canvas.querySelector('.g-inner');
       if(inner){
         inner.style.marginTop = 'auto'; inner.style.marginBottom = 'auto';
@@ -6197,8 +6204,17 @@
     var padStep = parseFloat(($('pad')||{}).step) || 10;
     var minPad = parseFloat(($('pad')||{}).min) || 40;
 
-    // 사방 여백을 사용자 설정값으로 초기화
-    canvas.style.padding = padSet+'px';
+    // 꾸밈 테두리 두께 계산 (frameOn이면 해당 변에 fThick만큼 추가)
+    var _fOn = (framePos!=='none' && !!frameData);
+    var _fPct = _fOn ? (parseFloat($('frame-size') ? $('frame-size').value : 20)||20) : 0;
+    var _fThick = _fOn ? Math.round(canvas.clientWidth * _fPct/100) : 0;
+    var padT = padSet + (_fOn && (framePos==='top'||framePos==='all') ? _fThick : 0);
+    var padR = padSet + (_fOn && (framePos==='right'||framePos==='all') ? _fThick : 0);
+    var padB = padSet + (_fOn && (framePos==='bottom'||framePos==='all') ? _fThick : 0);
+    var padL = padSet + (_fOn && (framePos==='left'||framePos==='all') ? _fThick : 0);
+
+    // 사방 여백을 사용자 설정값 + 꾸밈 두께로 초기화
+    canvas.style.padding = padT+'px '+padR+'px '+padB+'px '+padL+'px';
 
     inner.style.marginTop='auto'; inner.style.marginBottom='auto';
     var ch = canvas.clientHeight;
@@ -6221,7 +6237,7 @@
       });
       // 모든 페이지가 측정됐으면 가장 긴 높이 기준으로 margin-top 고정
       if(allMeasured){
-        var availH = ch - padSet*2;
+        var availH = ch - padT - padB;
         if(alignH <= availH){
           var alignedTop = (availH - alignH) / 2;
           inner.style.marginTop = alignedTop + 'px';
@@ -6232,19 +6248,27 @@
       }
     }
 
-    var over = ih - (ch - padSet*2);
+    var over = ih - (ch - padT - padB);
     if(over <= 0){ if(warn) warn.hidden = true; return; }
 
     // 사방 여백을 padStep 단위로 내려가며 잘리지 않는 최대값 탐색
     var maxPad = 0, found = false;
     for(var tryPad = padSet - padStep; tryPad >= minPad; tryPad -= padStep){
-      canvas.style.padding = tryPad+'px';
-      if(Math.max(inner.scrollHeight||0, inner.offsetHeight||0) <= ch - tryPad*2){
+      var tT = tryPad + (_fOn && (framePos==='top'||framePos==='all') ? _fThick : 0);
+      var tR = tryPad + (_fOn && (framePos==='right'||framePos==='all') ? _fThick : 0);
+      var tB = tryPad + (_fOn && (framePos==='bottom'||framePos==='all') ? _fThick : 0);
+      var tL = tryPad + (_fOn && (framePos==='left'||framePos==='all') ? _fThick : 0);
+      canvas.style.padding = tT+'px '+tR+'px '+tB+'px '+tL+'px';
+      if(Math.max(inner.scrollHeight||0, inner.offsetHeight||0) <= ch - tT - tB){
         maxPad = tryPad; found = true; break;
       }
     }
     if(!found) maxPad = minPad;
-    canvas.style.padding = maxPad+'px';
+    var fT = maxPad + (_fOn && (framePos==='top'||framePos==='all') ? _fThick : 0);
+    var fR = maxPad + (_fOn && (framePos==='right'||framePos==='all') ? _fThick : 0);
+    var fB = maxPad + (_fOn && (framePos==='bottom'||framePos==='all') ? _fThick : 0);
+    var fL = maxPad + (_fOn && (framePos==='left'||framePos==='all') ? _fThick : 0);
+    canvas.style.padding = fT+'px '+fR+'px '+fB+'px '+fL+'px';
 
     if(warn){
       if(found){
