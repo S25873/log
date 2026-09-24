@@ -3447,6 +3447,15 @@
   // 캔버스: 같은 인물 묶음을 [아바타][말풍선 열]로 감싼다. 이름은 새 그룹의 시작점.
   function groupAvatars(root){
     var inner = root.querySelector('.g-inner'); if(!inner) return;
+    // 그리드 모드: 각 열을 개별적으로 처리
+    var gridCols = inner.querySelectorAll('.g-grid-col');
+    if(gridCols.length > 0){
+      [].forEach.call(gridCols, function(col){ _groupAvatarsInner(col); });
+      return;
+    }
+    _groupAvatarsInner(inner);
+  }
+  function _groupAvatarsInner(inner){
     var kids = [].slice.call(inner.childNodes);
     function elInfo(nd){
       if(!(nd && nd.nodeType===1 && nd.classList)) return null;
@@ -3650,6 +3659,11 @@
   //   말풍선 내부(.g-bub 안)의 <br>은 .g-inner 직속이 아니라 절대 대상이 되지 않음(안전).
   function wrapParaGaps(root){
     var inner = root.querySelector('.g-inner'); if(!inner) return;
+    var gridCols = inner.querySelectorAll('.g-grid-col');
+    if(gridCols.length > 0){ [].forEach.call(gridCols, function(col){ _wrapParaGapsInner(col); }); return; }
+    _wrapParaGapsInner(inner);
+  }
+  function _wrapParaGapsInner(inner){
     var kids = [].slice.call(inner.childNodes), i=0;
     while(i<kids.length){
       var nd=kids[i];
