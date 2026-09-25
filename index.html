@@ -1017,7 +1017,7 @@
   #page-bar{display:inline-flex;align-items:center;gap:3px;overflow-x:auto;flex-shrink:1;min-width:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   #page-bar::-webkit-scrollbar{display:none;}
   #page-bar:empty{display:none;}
-  /* 그리드 열 레이아웃 */
+  /* 열 나누기 레이아웃 */
   #canvas .g-grid,.canvas-clone .g-grid{column-gap:var(--grid-gap,var(--pad,40px)) !important;row-gap:var(--grid-gap,var(--pad,40px)) !important;}
   #canvas .g-grid-col,.canvas-clone .g-grid-col{min-width:0 !important;}
   .share-badge{
@@ -2264,7 +2264,7 @@
                 </div>
               </div>
               <div class="field" id="grid-gap-row" style="display:none;margin-top:18px">
-                <span class="label">그리드 열과 열 사이 여백 <span class="val" id="grid-gap-val">120px</span></span>
+                <span class="label">열과 열 사이 여백 <span class="val" id="grid-gap-val">120px</span></span>
                 <div class="rangewrap"><input id="grid-gap" type="range" min="0" max="300" step="10" value="120"></div>
               </div>
               <!-- 고정 비율에서 글이 여백 안쪽을 넘칠 때만 보인다(centerRatioInner 가 채움) -->
@@ -2376,11 +2376,11 @@
       <p class="help-cat">멀티페이지</p>
       <p class="hint">· <b>페이지</b> 기능이 추가됐어요. 프리뷰 바에서 ＋를 눌러 최대 4개까지 만들 수 있어요.<br>· 제목 · 소제목 · 하단은 기본적으로 모든 페이지가 공유해요. 편집하는 순간 해당 페이지만 분리되고, 뱃지를 눌러 되돌릴 수 있어요.<br>· 페이지 삭제는 탭을 길게 누르면 돼요.</p>
 
-      <p class="help-cat">그리드 모드</p>
-      <p class="hint">· 페이지 2개 이상일 때 <b>그리드</b> 버튼이 나타나요.<br>· 누를 때마다 단일 → 2열 → 3열 → 4열로 순환해요.<br>· 제목과 하단은 전체 너비로 한 번만, 본문만 열로 나뉘어요.<br>· 2열 + 4페이지 = 자동으로 2×2 배치.</p>
+      <p class="help-cat">열 나누기</p>
+      <p class="hint">· 페이지 2개 이상일 때 <b>열 나누기</b> 버튼이 나타나요.<br>· 누를 때마다 단일 → 2열 → 3열 → 4열로 순환해요.<br>· 제목과 하단은 전체 너비로 한 번만, 본문만 열로 나뉘어요.<br>· 2열 + 4페이지 = 자동으로 2×2 배치.</p>
 
-      <p class="help-cat">시작점 정렬</p>
-      <p class="hint">· 고정 비율 + 단일 모드에서 <b>정렬</b> 버튼이 나타나요.<br>· 켜면 가장 긴 페이지 기준으로 모든 페이지의 콘텐츠 시작 위치가 통일돼요.</p>
+      <p class="help-cat">시작점 맞추기</p>
+      <p class="hint">· 고정 비율 + 단일 모드에서 <b>시작점 맞추기</b> 버튼이 나타나요.<br>· 켜면 가장 긴 페이지 기준으로 모든 페이지의 콘텐츠 시작 위치가 통일돼요.</p>
 
       <p class="help-cat">전체 내보내기</p>
       <p class="hint">· 단일 모드에서 페이지가 2개 이상이면 저장 시 전체 / 현재 페이지를 선택할 수 있어요.<br>· 전체 저장 시 로그_1.png, 로그_2.png 식으로 순차 다운로드돼요.</p>
@@ -2475,6 +2475,32 @@
 <text x="306" y="78" font-size="5" fill="#5090d0">문단 간격</text>
 <rect x="232" y="82" width="70" height="13" rx="2" fill="#f0f0f0"/><text x="267" y="91" font-size="7" fill="#555" text-anchor="middle">본문 텍스트</text>
 </svg>
+      <p class="help-cat">멀티페이지</p>
+      <p class="hint">· <b>＋</b>를 눌러 최대 4개까지 페이지를 만들 수 있어요.<br>· 페이지는 후술될 기능을 사용하거나 각각 편집하여 따로 저장할 수 있어요.<br>· 제목 · 소제목 · 하단의 내용은 첫 번째 페이지를 기준으로 공유돼요. 페이지별 내용을 따로 편집하는 순간 해당 페이지만 분리되고, 뱃지(이 페이지만)를 눌러 다시 페이지들에 공유할 수 있어요.<br>· 페이지 삭제는 탭을 길게 누르면 돼요.<br><br>· <b>열 나누기</b>: 페이지가 2개 이상일 때 <b>열 나누기</b> 버튼이 나타나요. 누를 때마다 열 나누기(1열) → 2열 → 3열 → 4열로 순환해요. 최대 열은 페이지 수에 비례해요.<br>· <b>시작점 맞추기</b>: 고정 비율 + 단일 모드 조건일 때 <b>시작점 맞추기</b> 버튼이 나타나요. 내용이 가장 긴 페이지 기준으로 모든 페이지의 시작 위치가 통일돼요.<br>
+<svg viewBox="0 0 360 105" width="100%" style="display:block;margin:8px auto 2px;max-width:500px" fill="none" xmlns="http://www.w3.org/2000/svg">
+<text x="90" y="10" font-size="8" fill="#888" text-anchor="middle">시작점 맞추기 OFF</text>
+<text x="270" y="10" font-size="8" fill="#888" text-anchor="middle">시작점 맞추기 ON</text>
+<rect x="45" y="18" width="40" height="80" rx="2" stroke="#ccc" stroke-width=".8"/>
+<rect x="95" y="18" width="40" height="80" rx="2" stroke="#ccc" stroke-width=".8"/>
+<rect x="50" y="43" width="30" height="30" rx="1.5" fill="#f0f0f0"/>
+<text x="65" y="61" font-size="6" fill="#777" text-anchor="middle">짧은 글</text>
+<rect x="100" y="28" width="30" height="60" rx="1.5" fill="#f0f0f0"/>
+<text x="115" y="61" font-size="6" fill="#777" text-anchor="middle">긴 글</text>
+<line x1="43" y1="43" x2="88" y2="43" stroke="#e06050" stroke-dasharray="2 2"/>
+<line x1="93" y1="28" x2="138" y2="28" stroke="#e06050" stroke-dasharray="2 2"/>
+<text x="143" y="38" font-size="5.5" fill="#e06050">시작 위치가</text>
+<text x="143" y="46" font-size="5.5" fill="#e06050">서로 다름</text>
+<rect x="225" y="18" width="40" height="80" rx="2" stroke="#ccc" stroke-width=".8"/>
+<rect x="275" y="18" width="40" height="80" rx="2" stroke="#ccc" stroke-width=".8"/>
+<rect x="230" y="28" width="30" height="30" rx="1.5" fill="#f0f0f0"/>
+<text x="245" y="46" font-size="6" fill="#777" text-anchor="middle">짧은 글</text>
+<rect x="280" y="28" width="30" height="60" rx="1.5" fill="#f0f0f0"/>
+<text x="295" y="61" font-size="6" fill="#777" text-anchor="middle">긴 글</text>
+<line x1="223" y1="28" x2="318" y2="28" stroke="#5090d0" stroke-dasharray="2 2"/>
+<text x="323" y="31" font-size="5.5" fill="#5090d0">시작 위치</text>
+<text x="323" y="39" font-size="5.5" fill="#5090d0">통일</text>
+</svg>
+</p>
       <p class="help-cat">고정 비율</p>
       <p class="hint">· 고정 비율은 가로 크기에 따른 여백 제한이 있어요. 일정 여백을 넘어가면 본문이 캔버스 밖으로 나가 잘리기 때문이에요.<br>· 추천 가로 크기는 현재 상태와 여백을 고려했을 때 본문이 완벽한 중심에 있도록, 즉 온 사방이 같은 여백을 갖도록 하는 크기예요. 추천 가로 크기는 글자 설정 · 본문 길이 · 여백 등에 영향을 받아요.</p>
       <p class="help-cat">프리셋</p>
@@ -2542,7 +2568,7 @@
   var sharedSubtitle = '';
   var sharedName = '';
   var gridCols = 0; // 0=단일(현재 페이지만), 2=2열, 3=3열, 4=4열
-  var alignPages = false; // 고정 비율에서 페이지 간 시작점 정렬
+  var alignPages = false; // 고정 비율에서 페이지 간 시작점 맞추기
 
   /* 형광펜·강조색: 슬롯 1/2/3 (슬롯1은 기존 c-hl / c-em 을 그대로 사용) */
   var hlSlot = 1, emSlot = 1, quoteSlot = 1;
@@ -2912,7 +2938,7 @@
     addBtn.textContent = '＋';
     addBtn.addEventListener('click', function(){ addPage(); });
     bar.appendChild(addBtn);
-    // 그리드 토글 (2페이지 이상일 때)
+    // 열 나누기 토글 (2페이지 이상일 때)
     if(pages.length > 1){
       var sep = document.createElement('span');
       sep.style.cssText = 'width:1px;height:14px;background:var(--line);margin:0 4px;flex:none;';
@@ -2920,7 +2946,7 @@
       var gt = document.createElement('button');
       gt.className = 'page-tab' + (gridCols > 0 ? ' active' : '');
       gt.type = 'button';
-      gt.textContent = gridCols > 0 ? gridCols + '열' : '단일';
+      gt.textContent = gridCols > 0 ? gridCols + '열' : '열 나누기';
       gt.title = '레이아웃 전환';
       gt.addEventListener('click', function(){
         var opts = [0];
@@ -2933,13 +2959,13 @@
       });
       bar.appendChild(gt);
 
-      // 정렬 토글 (단일 모드 + 고정 비율일 때)
+      // 시작점 맞추기 토글 (단일 모드 + 고정 비율일 때)
       if(gridCols === 0 && sizeMode === 'ratio'){
         var al = document.createElement('button');
         al.className = 'page-tab' + (alignPages ? ' active' : '');
         al.type = 'button';
-        al.textContent = '정렬';
-        al.title = '페이지 시작점 정렬';
+        al.textContent = '시작점 맞추기';
+        al.title = '페이지 시작점 맞추기';
         al.addEventListener('click', function(){
           alignPages = !alignPages;
           if(alignPages) measureAllPages();
@@ -3447,7 +3473,7 @@
   // 캔버스: 같은 인물 묶음을 [아바타][말풍선 열]로 감싼다. 이름은 새 그룹의 시작점.
   function groupAvatars(root){
     var inner = root.querySelector('.g-inner'); if(!inner) return;
-    // 그리드 모드: 각 열을 개별적으로 처리
+    // 열 나누기 모드: 각 열을 개별적으로 처리
     var gridCols = inner.querySelectorAll('.g-grid-col');
     if(gridCols.length > 0){
       [].forEach.call(gridCols, function(col){ _groupAvatarsInner(col); });
@@ -6101,7 +6127,7 @@
     setVal('bright', $('bright').value+'%');
     centerRatioInner();
     if(bubbleShape==='script') applyScriptAlign();
-    // 그리드 열 간격 슬라이더 표시/숨김
+    // 열 나누기 열 간격 슬라이더 표시/숨김
     var _ggr=$('grid-gap-row'); if(_ggr) _ggr.style.display = (pages.length > 1) ? '' : 'none';
     var _ggv=$('grid-gap-val'), _ggs=$('grid-gap'); if(_ggv && _ggs) _ggv.textContent = _ggs.value+'px';
     // 글꼴 적용·이미지 배치가 끝난 뒤 값이 달라질 수 있어 레이아웃이 잡힌 다음 한 번 더 잰다
@@ -6158,7 +6184,7 @@
   /* 고정 비율에서 본문이 '여백 안쪽'보다 길면 사방 여백을 잘리지 않는 최대값으로 내린다.
      ★좌우까지 함께 줄여야 '여백 10 차이로 숫자가 크게 바뀌는' 혼란이 없어진다.
      슬라이더는 사용자 의도(padSet)를 보존하고, 캔버스에만 보정값(maxPad)을 적용한다. */
-  /* 모든 페이지의 콘텐츠 높이를 한 번에 측정 (정렬 켤 때 호출) */
+  /* 모든 페이지의 콘텐츠 높이를 한 번에 측정 (시작점 맞추기 켤 때 호출) */
   function measureAllPages(){
     if(sizeMode !== 'ratio' || !ratio || pages.length <= 1) return;
     var origIdx = pageIdx;
@@ -6238,10 +6264,10 @@
       return;
     }
 
-    // ── 멀티페이지 시작점 정렬: 현재 페이지 높이 기록 ──
+    // ── 멀티페이지 시작점 맞추기: 현재 페이지 높이 기록 ──
     if(pages[pageIdx]) pages[pageIdx]._contentH = ih;
 
-    // 그리드가 아니고 페이지 2개 이상이고 정렬이 켜져 있으면, 가장 긴 페이지 기준으로 정렬
+    // 열 나누기가 아니고 페이지 2개 이상이고 시작점 맞추기가 켜져 있으면, 가장 긴 페이지 기준으로 맞춤
     var alignH = ih;
     if(alignPages && gridCols === 0 && pages.length > 1){
       var allMeasured = true;
