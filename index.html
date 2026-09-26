@@ -759,7 +759,7 @@
   .dot.on{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink);border-color:transparent;}
 
   /* 사진 저장소 (꾸밈 테두리) */
-  .frame-lib{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+  .frame-lib{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px;}
   .frame-lib__thumb{
     position:relative;aspect-ratio:1;border-radius:var(--radius-sm);border:2px solid var(--line);
     background:var(--surface-2) center/cover no-repeat;cursor:pointer;overflow:hidden;
@@ -2230,7 +2230,7 @@
                   <button class="mini" id="frame-pick" type="button">🖼 사진 선택</button>
                 </div>
                 <span class="label" style="display:block;margin-top:14px">사진 저장소</span>
-                <p class="hint" style="margin:0 0 6px">자주 쓰는 사진을 저장해 두고 원터치로 불러와요. (최대 6장)</p>
+                <p class="hint" style="margin:0 0 6px">자주 쓰는 사진을 저장해 두고 원터치로 불러와요. (최대 10장)</p>
                 <div class="frame-lib" id="frame-lib"></div>
                 <button class="btn btn--ghost" id="frame-lib-add" type="button" style="height:34px;font-size:12px;width:100%;margin-top:6px">＋ 사진 추가</button>
                 <!-- 상태 저장용 hidden inputs -->
@@ -6517,44 +6517,72 @@
     });
   }
 
-  // ── 사진 저장소 ──
-  var FRAMELIB_KEY = 'logmaker-frame-lib-v1';
-  var FRAMELIB_MAX = 6;
-  var FRAMELIB_DIM = 800; // 저장 시 최대 픽셀(장변)
-  function loadFrameLib(){ try{ var r=localStorage.getItem(FRAMELIB_KEY); return r?JSON.parse(r):[]; }catch(e){ return []; } }
-  function saveFrameLib(list){ try{ localStorage.setItem(FRAMELIB_KEY, JSON.stringify(list)); }catch(e){ alert('저장 공간이 부족해요. 기존 사진을 삭제한 뒤 다시 시도해 주세요.'); } }
-  function compressImage(dataUrl, maxDim, cb){
-    var img=new Image();
-    img.onload=function(){
-      var w=img.naturalWidth, h=img.naturalHeight;
-      if(w<=maxDim && h<=maxDim){ cb(dataUrl); return; }
-      var scale=maxDim/Math.max(w,h); var nw=Math.round(w*scale), nh=Math.round(h*scale);
-      var cv=document.createElement('canvas'); cv.width=nw; cv.height=nh;
-      var cx=cv.getContext('2d'); cx.drawImage(img,0,0,nw,nh);
-      cb(cv.toDataURL('image/jpeg',0.85));
-    };
-    img.onerror=function(){ cb(dataUrl); };
-    img.src=dataUrl;
+  // ── 사진 저장소 (IndexedDB) ──
+  var FRAMELIB_MAX = 10;
+  var _flDB = null;
+  function openFrameLibDB(cb){
+    if(_flDB){ cb(_flDB); return; }
+    var req = indexedDB.open('logmaker-frame-lib', 1);
+    req.onupgradeneeded = function(e){ e.target.result.createObjectStore('images', {keyPath:'id', autoIncrement:true}); };
+    req.onsuccess = function(e){ _flDB = e.target.result; cb(_flDB); };
+    req.onerror = function(){ cb(null); };
+  }
+  function loadFrameLib(cb){
+    openFrameLibDB(function(db){
+      if(!db){ cb([]); return; }
+      var tx = db.transaction('images','readonly');
+      var store = tx.objectStore('images');
+      var req = store.getAll();
+      req.onsuccess = function(){ cb(req.result || []); };
+      req.onerror = function(){ cb([]); };
+    });
+  }
+  function addFrameLibItem(dataUrl, cb){
+    openFrameLibDB(function(db){
+      if(!db){ if(cb) cb(); return; }
+      var tx = db.transaction('images','readwrite');
+      tx.objectStore('images').add({src:dataUrl});
+      tx.oncomplete = function(){ if(cb) cb(); };
+      tx.onerror = function(){ alert('저장에 실패했어요.'); if(cb) cb(); };
+    });
+  }
+  function deleteFrameLibItem(id, cb){
+    openFrameLibDB(function(db){
+      if(!db){ if(cb) cb(); return; }
+      var tx = db.transaction('images','readwrite');
+      tx.objectStore('images').delete(id);
+      tx.oncomplete = function(){ if(cb) cb(); };
+    });
+  }
+  function clearFrameLib(cb){
+    openFrameLibDB(function(db){
+      if(!db){ if(cb) cb(); return; }
+      var tx = db.transaction('images','readwrite');
+      tx.objectStore('images').clear();
+      tx.oncomplete = function(){ if(cb) cb(); };
+    });
   }
   function renderFrameLib(){
     var wrap=$('frame-lib'); if(!wrap) return;
-    var list=loadFrameLib(); wrap.innerHTML='';
-    list.forEach(function(src, idx){
-      var th=document.createElement('div'); th.className='frame-lib__thumb';
-      th.style.backgroundImage='url("'+src+'")';
-      if(frameData===src) th.classList.add('on');
-      th.addEventListener('click', function(){
-        frameData=src; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState();
+    loadFrameLib(function(list){
+      wrap.innerHTML='';
+      list.forEach(function(item){
+        var th=document.createElement('div'); th.className='frame-lib__thumb';
+        th.style.backgroundImage='url("'+item.src+'")';
+        if(frameData===item.src) th.classList.add('on');
+        th.addEventListener('click', function(){
+          frameData=item.src; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState();
+        });
+        var x=document.createElement('span'); x.className='frame-lib__x'; x.textContent='×';
+        x.addEventListener('click', function(e){
+          e.stopPropagation();
+          deleteFrameLibItem(item.id, renderFrameLib);
+        });
+        th.appendChild(x); wrap.appendChild(th);
       });
-      var x=document.createElement('span'); x.className='frame-lib__x'; x.textContent='×';
-      x.addEventListener('click', function(e){
-        e.stopPropagation();
-        var cur=loadFrameLib(); cur.splice(idx,1); saveFrameLib(cur); renderFrameLib();
-      });
-      th.appendChild(x); wrap.appendChild(th);
+      var addBtn=$('frame-lib-add');
+      if(addBtn) addBtn.style.display = list.length>=FRAMELIB_MAX ? 'none' : '';
     });
-    var addBtn=$('frame-lib-add');
-    if(addBtn) addBtn.style.display = list.length>=FRAMELIB_MAX ? 'none' : '';
   }
   if($('frame-lib-add')){
     $('frame-lib-add').addEventListener('click', function(){ $('frame-lib-file').click(); });
@@ -6562,10 +6590,9 @@
       var file=e.target.files && e.target.files[0]; if(!file) return;
       var rd=new FileReader();
       rd.onload=function(ev){
-        var list=loadFrameLib();
-        if(list.length>=FRAMELIB_MAX){ alert('최대 '+FRAMELIB_MAX+'장까지 저장할 수 있어요.'); return; }
-        compressImage(ev.target.result, FRAMELIB_DIM, function(compressed){
-          list.push(compressed); saveFrameLib(list); renderFrameLib();
+        loadFrameLib(function(list){
+          if(list.length>=FRAMELIB_MAX){ alert('최대 '+FRAMELIB_MAX+'장까지 저장할 수 있어요.'); return; }
+          addFrameLibItem(ev.target.result, renderFrameLib);
         });
       };
       rd.readAsDataURL(file); e.target.value='';
@@ -8061,8 +8088,7 @@
   });
   if($('reset-framelib')) $('reset-framelib').addEventListener('click', function(){
     if(!confirm('사진 저장소를 비울까요?')) return;
-    try{ localStorage.removeItem(FRAMELIB_KEY); }catch(e){}
-    renderFrameLib();
+    clearFrameLib(renderFrameLib);
   });
   if($('reset-snapshot')) $('reset-snapshot').addEventListener('click', function(){
     if(!confirm('저장된 스냅샷을 모두 삭제할까요?')) return;
