@@ -6537,11 +6537,11 @@
       req.onerror = function(){ cb([]); };
     });
   }
-  function addFrameLibItem(dataUrl, cb){
+  function addFrameLibItem(dataUrl, zoom, px, py, cb){
     openFrameLibDB(function(db){
       if(!db){ if(cb) cb(); return; }
       var tx = db.transaction('images','readwrite');
-      tx.objectStore('images').add({src:dataUrl});
+      tx.objectStore('images').add({src:dataUrl, zoom:zoom, px:px, py:py});
       tx.oncomplete = function(){ if(cb) cb(); };
       tx.onerror = function(){ alert('저장에 실패했어요.'); if(cb) cb(); };
     });
@@ -6571,7 +6571,11 @@
         th.style.backgroundImage='url("'+item.src+'")';
         if(frameData===item.src) th.classList.add('on');
         th.addEventListener('click', function(){
-          frameData=item.src; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState();
+          frameData=item.src;
+          if(item.zoom!=null && $('frame-zoom')) $('frame-zoom').value = item.zoom;
+          if(item.px!=null && $('frame-x')) $('frame-x').value = item.px;
+          if(item.py!=null && $('frame-y')) $('frame-y').value = item.py;
+          loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState();
         });
         var x=document.createElement('span'); x.className='frame-lib__x'; x.textContent='×';
         x.addEventListener('click', function(e){
@@ -6592,7 +6596,10 @@
       rd.onload=function(ev){
         loadFrameLib(function(list){
           if(list.length>=FRAMELIB_MAX){ alert('최대 '+FRAMELIB_MAX+'장까지 저장할 수 있어요.'); return; }
-          addFrameLibItem(ev.target.result, renderFrameLib);
+          var _z = $('frame-zoom') ? parseFloat($('frame-zoom').value)||100 : 100;
+          var _px = $('frame-x') ? parseFloat($('frame-x').value)||50 : 50;
+          var _py = $('frame-y') ? parseFloat($('frame-y').value)||50 : 50;
+          addFrameLibItem(ev.target.result, _z, _px, _py, renderFrameLib);
         });
       };
       rd.readAsDataURL(file); e.target.value='';
