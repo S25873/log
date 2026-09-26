@@ -6528,6 +6528,7 @@
     }
 
     // ── 경량 CSS 갱신: render() 호출 없이 .g-frame 스타일만 직접 변경 ──
+    var _patchCount = 0;
     function patchFrames(){
       var frames = canvas.querySelectorAll('.g-frame');
       if(!frames.length || frameNatW<=0 || frameNatH<=0) return;
@@ -6538,6 +6539,7 @@
       var W = canvas.clientWidth, H = canvas.clientHeight;
       var fThick = Math.round(W * fp / 100);
       var isAll = (framePos==='all');
+      _patchCount++;
       [].forEach.call(frames, function(f){
         var sd = f.getAttribute('data-side');
         if(sd==='left'||sd==='right'){ f.style.width=fThick+'px'; }
@@ -6548,6 +6550,22 @@
         var bw = frameNatW*sc, bh = frameNatH*sc;
         var bx = -(bw-boxW)*px, by = -(bh-boxH)*py;
         if(isAll){ bx -= (sd==='right') ? (W-fThick) : 0; by -= (sd==='bottom') ? (H-fThick) : 0; }
+        // 디버그: 첫 3회 patchFrames 호출의 값 표시
+        if(_patchCount <= 3){
+          var _oldBs = f.style.getPropertyValue('background-size');
+          var _newBs = bw+'px '+bh+'px';
+          _showDbg(
+            'patchFrames #'+_patchCount+' ['+sd+']\n'+
+            '  old bg-size: '+_oldBs+'\n'+
+            '  new bg-size: '+_newBs+'\n'+
+            '  W='+W+' H='+H+' fThick='+fThick+'\n'+
+            '  boxW='+boxW+' boxH='+boxH+'\n'+
+            '  natW='+frameNatW+' natH='+frameNatH+'\n'+
+            '  sc='+sc+' zoom='+zoom+'\n'+
+            '  px='+px+' py='+py+'\n'+
+            '  fp='+fp+' framePos='+framePos
+          );
+        }
         f.style.setProperty('background-size', bw+'px '+bh+'px','important');
         f.style.setProperty('background-position', bx+'px '+by+'px','important');
       });
