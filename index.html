@@ -7966,7 +7966,10 @@
   function flushSave(){ if(_saveT){ clearTimeout(_saveT); _saveT=null; } saveState(); }
   window.addEventListener('pagehide', flushSave);
   window.addEventListener('beforeunload', flushSave);
-  document.addEventListener('visibilitychange', function(){ if(document.hidden) flushSave(); });
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ flushSave(); }
+    else { updateFrameInteractive(); fitStage(); }
+  });
   function safeRestoreValue(id, val){
     var e=$(id); if(!e) return;
     if(e.type==='range'){
