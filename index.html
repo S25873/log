@@ -2317,7 +2317,7 @@
 
           <div class="section" style="margin-top:20px">
             <p class="section__head">내 프리셋</p>
-            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 사진 배경과 꾸밈 테두리 사진은 프리셋에 저장되지 않아요.</p>
+            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>사진 배경과 꾸밈 사진은 프리셋에 저장되지 않아요.<br>인물은 모든 프리셋이 공유하되, 프리셋마다 자물쇠 상태가 따로 저장돼요.</p>
             <div class="mychips" id="my-presets"></div>
             <button class="btn btn--ghost" id="preset-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 설정 저장</button>
             <div class="grid-2" style="margin-top:8px">
@@ -8391,7 +8391,10 @@
   var PRESET_KEY = 'logmaker-presets-v1';
   function captureSettings(){
     var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape };
+    // 인물 자물쇠 상태 (charId → hidden)
+    var charHidden={};
+    characters.forEach(function(c){ if(c.id) charHidden[c.id]=!!c.hidden; });
+    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, charHidden:charHidden };
   }
   function applySettings(s){
     if(!s) return;
@@ -8422,6 +8425,12 @@
     bubbleShape = ({imessage:1,simple:1,soft:1,plain:1,script:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
     syncShapeSeg();
     applyBubbleShape();
+    // 인물 자물쇠 상태 복원
+    if(s.charHidden){
+      var changed=false;
+      characters.forEach(function(c){ if(c.id && s.charHidden[c.id]!=null){ var h=!!s.charHidden[c.id]; if(c.hidden!==h){ c.hidden=h; changed=true; } } });
+      if(changed){ saveChars(); renderCharList(); renderCharInsert(); if(typeof renderTopbarCharList==='function') renderTopbarCharList(); }
+    }
     ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-hl5','c-hl6','c-em','c-em2','c-em3','c-em4','c-em5','c-em6','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-star','c-paren','c-quote','c-quote2','c-quote3','c-quote4','c-quote5','c-quote6','c-hr','c-brecv-name','c-bsend-name','c-bar-bg','c-bar-accent','c-bar-name','c-bar-avatar','c-bar-plus','c-bar-arrow'].forEach(function(cid){
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
     });
