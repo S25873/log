@@ -7730,9 +7730,9 @@
     if(!txt) return;
     if(_EDGE_SKIP.indexOf(txt.charAt(0))>-1) return;                // 앞이 * ( )
     if(_EDGE_SKIP.indexOf(txt.charAt(txt.length-1))>-1) return;     // 뒤가 * ( )
-    parent.insertBefore(document.createTextNode('"'), seg[0]);      // 서식 '바깥'에 붙음
+    parent.insertBefore(document.createTextNode('“'), seg[0]);      // 서식 '바깥'에 붙음 — 휜 여는 따옴표
     var last=seg[seg.length-1];
-    parent.insertBefore(document.createTextNode('"'), last.nextSibling);
+    parent.insertBefore(document.createTextNode('”'), last.nextSibling);   // 휜 닫는 따옴표
     _wrapCount++;
   }
   function wrapPlainLines(host){
