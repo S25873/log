@@ -1068,6 +1068,10 @@
   #canvas .g-inner,.canvas-clone .g-inner{position:relative;z-index:1;}
   #canvas .g-bg-layer,.canvas-clone .g-bg-layer{position:absolute;inset:0;background-size:cover;background-position:center;pointer-events:none;z-index:0;}
   #canvas .g-frame,.canvas-clone .g-frame{position:absolute;background-size:cover;background-position:center;pointer-events:none;z-index:2;}
+  #canvas.frame-interactive .g-frame{pointer-events:auto;cursor:grab;touch-action:none;}
+  #canvas.frame-interactive .g-frame.frame-dragging{cursor:grabbing;}
+  #canvas.frame-interactive .g-frame.frame-resize-h{cursor:ew-resize;}
+  #canvas.frame-interactive .g-frame.frame-resize-v{cursor:ns-resize;}
   #canvas mark.hl,.canvas-clone mark.hl{color:inherit !important;text-decoration:none !important;display:inline !important;
     background:var(--hl-solid,#eaeaea) !important;padding:0 !important;
     -webkit-box-decoration-break:clone;box-decoration-break:clone;}
@@ -1262,6 +1266,17 @@
       gap:6px;box-shadow:0 -8px 24px -16px rgba(0,0,0,.2);
     }
     .cgrid--3{grid-template-columns:repeat(2,minmax(0,1fr));}
+    /* 프레임 편집 시 프리뷰 전체 화면 */
+    .workspace.frame-fullpreview{
+      grid-template-rows:1fr 0fr;
+    }
+    .workspace.frame-fullpreview .editcol{
+      overflow:hidden;pointer-events:none;opacity:0;
+      transition:opacity .3s cubic-bezier(.22,1,.36,1);
+    }
+    .workspace.frame-fullpreview .previewcol{
+      transition:none;
+    }
   }
   @media (max-width:440px){
     .tab{padding:0 10px;font-size:13px;}
@@ -2128,7 +2143,7 @@
         <div class="panel" data-panel="layout" role="tabpanel">
           <details class="fold" id="fold-bg">
             <summary>
-              배경
+              배경 · 꾸밈
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
@@ -2178,16 +2193,8 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </details>
-
-          <details class="fold" id="fold-frame">
-            <summary>
-              꾸밈
-              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </summary>
-            <div class="fold__body">
-              <p class="hint" style="margin:0 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>고정 비율에서도 적용할 수 있어요.</p>
+              <p class="section__head" style="margin-top:22px">꾸밈</p>
+              <p class="hint" style="margin:-10px 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br><b>PC:</b> 프리뷰 속 사진을 드래그하면 위치를, 테두리를 드래그하면 두께를, 마우스 휠로 확대를 조절할 수 있어요.<br><b>모바일:</b> 프리뷰 속 사진을 터치하면 조정 모드로 전환되며, 사진 밖을 터치하면 편집창이 돌아와요. 드래그로 위치를, 테두리 드래그로 두께를, 두 손가락 핀치로 확대를 조절할 수 있어요.</p>
               <div class="field">
                 <span class="label">위치</span>
                 <div class="seg" id="frame-pos-seg">
@@ -2205,26 +2212,11 @@
                 <div class="mini-row" style="justify-content:flex-start;margin-top:12px">
                   <button class="mini" id="frame-pick" type="button">🖼 사진 선택</button>
                 </div>
-                <div class="grid-2" style="margin-top:14px">
-                  <div class="field">
-                    <span class="label">사진 두께 <span class="val" id="frame-size-val">20%</span></span>
-                    <div class="rangewrap"><input id="frame-size" type="range" min="5" max="50" step="5" value="20"></div>
-                  </div>
-                  <div class="field">
-                    <span class="label">사진 확대 <span class="val" id="frame-zoom-val">100%</span></span>
-                    <div class="rangewrap"><input id="frame-zoom" type="range" min="100" max="200" step="5" value="100"></div>
-                  </div>
-                </div>
-                <div class="grid-2" style="margin-top:14px">
-                  <div class="field">
-                    <span class="label">사진 좌우 <span class="val" id="frame-x-val">50%</span></span>
-                    <div class="rangewrap"><input id="frame-x" type="range" min="0" max="100" step="5" value="50"></div>
-                  </div>
-                  <div class="field">
-                    <span class="label">사진 상하 <span class="val" id="frame-y-val">50%</span></span>
-                    <div class="rangewrap"><input id="frame-y" type="range" min="0" max="100" step="5" value="50"></div>
-                  </div>
-                </div>
+                <!-- 상태 저장용 hidden inputs -->
+                <input id="frame-size" type="hidden" value="20">
+                <input id="frame-zoom" type="hidden" value="100">
+                <input id="frame-x" type="hidden" value="50">
+                <input id="frame-y" type="hidden" value="50">
               </div>
             </div>
           </details>
@@ -5470,7 +5462,7 @@
   var _foldSize=$('fold-size');
   if(_foldSize){ _foldSize.addEventListener('toggle', function(){ if(_foldSize.open){ requestAnimationFrame(moveAllThumbs); } }); }
   var _foldBg=$('fold-bg');
-  if(_foldBg){ _foldBg.addEventListener('toggle', function(){ if(_foldBg.open){ requestAnimationFrame(moveAllThumbs); } }); }
+  if(_foldBg){ _foldBg.addEventListener('toggle', function(){ updateFrameInteractive(); if(_foldBg.open){ requestAnimationFrame(function(){ moveAllThumbs(); moveThumb($('frame-pos-seg')); }); } }); }
   var _foldBubDesign=$('fold-bubdesign');
   if(_foldBubDesign){ _foldBubDesign.addEventListener('toggle', function(){ if(_foldBubDesign.open){ requestAnimationFrame(moveAllThumbs); } }); }
   var _foldImsgBar=$('fold-imsgbar');
@@ -5651,23 +5643,22 @@
       var W = el.clientWidth, H = el.clientHeight;
       var sides = isAll ? ['left','right','top','bottom'] : [framePos];
       sides.forEach(function(sd){
-        var f=document.createElement('div'); f.className='g-frame';
+        var f=document.createElement('div'); f.className='g-frame'; f.setAttribute('data-side',sd);
         f.style.setProperty('background-image','url("'+frameData+'")','important');
         if(sd==='left'||sd==='right'){
           f.style.top='0'; f.style.bottom='0'; f.style.width=fThick+'px'; f.style[sd]='0';
         } else {
           f.style.left='0'; f.style.right='0'; f.style.height=fThick+'px'; f.style[sd]='0';
         }
-        // 확대·좌우·위아래 슬라이더 반영 (원본 크기를 알아야 정확 — 모르면 cover/center로 폴백)
         var zoom = (parseFloat($('frame-zoom') ? $('frame-zoom').value : 100)||100)/100;
         var px = (parseFloat($('frame-x') ? $('frame-x').value : 50)||0)/100;
         var py = (parseFloat($('frame-y') ? $('frame-y').value : 50)||0)/100;
         var boxW = isAll ? W : (sd==='left'||sd==='right' ? fThick : W);
         var boxH = isAll ? H : (sd==='top'||sd==='bottom' ? fThick : H);
         if(frameNatW>0 && frameNatH>0){
-          var sc = Math.max(boxW/frameNatW, boxH/frameNatH) * zoom;   // 최소 '꽉 채움' 보장 → 빈 공간 안 생김
+          var sc = Math.max(boxW/frameNatW, boxH/frameNatH) * zoom;
           var bw = frameNatW*sc, bh = frameNatH*sc;
-          var bx = -(bw-boxW)*px, by = -(bh-boxH)*py;                 // 남는 만큼만 이동(끝에서 더 안 밀림)
+          var bx = -(bw-boxW)*px, by = -(bh-boxH)*py;
           if(isAll){ bx -= (sd==='right') ? (W-fThick) : 0; by -= (sd==='bottom') ? (H-fThick) : 0; }
           f.style.setProperty('background-size', bw+'px '+bh+'px','important');
           f.style.setProperty('background-position', bx+'px '+by+'px','important');
@@ -6473,13 +6464,14 @@
     var pick=$('photo-pick'); if(pick){ pick.textContent = photoData ? '🖼 사진 변경' : '🖼 사진 선택'; }
   }
   // ── 테두리 꾸밈 UI
+  function updateFrameInteractive(){
+    var on = !!($('fold-bg') && $('fold-bg').open && framePos!=='none' && frameData);
+    canvas.classList.toggle('frame-interactive', on);
+  }
   function updateFrameUI(){
     var opts=$('frame-opts'); if(opts) opts.hidden = (framePos==='none');
     var pick=$('frame-pick'); if(pick) pick.textContent = frameData ? '🖼 사진 변경' : '🖼 사진 선택';
-    var v=$('frame-size-val'); if(v && $('frame-size')) v.textContent = $('frame-size').value+'%';
-    [['frame-zoom','frame-zoom-val'],['frame-x','frame-x-val'],['frame-y','frame-y-val']].forEach(function(pair){
-      var el=$(pair[0]), lb=$(pair[1]); if(el && lb) lb.textContent = el.value+'%';
-    });
+    updateFrameInteractive();
   }
   if($('frame-pos-seg')){
     document.querySelectorAll('#frame-pos-seg button').forEach(function(btn){
@@ -6499,14 +6491,257 @@
       rd.onload=function(ev){ frameData=ev.target.result; loadFrameNat(render); updateFrameUI(); render(); saveState(); };
       rd.readAsDataURL(file); e.target.value='';
     });
-    ['frame-size','frame-zoom','frame-x','frame-y'].forEach(function(id){
-      var el=$(id); if(!el) return;
-      el.addEventListener('input', function(){ updateFrameUI(); render(); });
-      el.addEventListener('change', saveState);
-    });
   }
-  var _foldFrame=$('fold-frame');
-  if(_foldFrame){ _foldFrame.addEventListener('toggle', function(){ if(_foldFrame.open){ requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); }); } }); }
+  // fold-frame 삭제됨 → fold-bg에서 꾸밈 seg thumb 업데이트
+  // (fold-bg toggle은 아래 _foldBg 핸들러에서 처리)
+
+  // ── 꾸밈 프레임 드래그 인터랙션 ──
+  // render() 없이 .g-frame CSS만 직접 갱신 → 60fps 부드러운 드래그
+  (function(){
+    var EDGE_PX = 12;
+    var dragMode = null;       // null | 'move' | 'resize' | 'pinch'
+    var dragTarget = null;
+    var startX, startY;
+    var startVal;              // {x, y, zoom, size}
+    var startDist = 0;
+    var rafId = 0;
+    var editcolPushed = false;
+
+    function ptr(e){ var t=e.touches; return t ? {x:t[0].clientX, y:t[0].clientY} : {x:e.clientX, y:e.clientY}; }
+    function pinchDist(e){ var t=e.touches; if(!t||t.length<2) return 0; var dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY; return Math.sqrt(dx*dx+dy*dy); }
+
+    function isInnerEdge(e, f){
+      var rect = f.getBoundingClientRect();
+      var sd = f.getAttribute('data-side');
+      var cx = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
+      var cy = e.clientY !== undefined ? e.clientY : (e.touches ? e.touches[0].clientY : 0);
+      if(sd==='left')   return (cx >= rect.right - EDGE_PX);
+      if(sd==='right')  return (cx <= rect.left + EDGE_PX);
+      if(sd==='top')    return (cy >= rect.bottom - EDGE_PX);
+      if(sd==='bottom') return (cy <= rect.top + EDGE_PX);
+      return false;
+    }
+    function getResizeAxis(f){
+      var sd = f.getAttribute('data-side');
+      return (sd==='left'||sd==='right') ? 'h' : 'v';
+    }
+
+    // ── 경량 CSS 갱신: render() 호출 없이 .g-frame 스타일만 직접 변경 ──
+    function patchFrames(){
+      var frames = canvas.querySelectorAll('.g-frame');
+      if(!frames.length || frameNatW<=0 || frameNatH<=0) return;
+      var zoom = (parseFloat($('frame-zoom') ? $('frame-zoom').value : 100)||100)/100;
+      var px = (parseFloat($('frame-x') ? $('frame-x').value : 50)||0)/100;
+      var py = (parseFloat($('frame-y') ? $('frame-y').value : 50)||0)/100;
+      var fp = parseFloat($('frame-size') ? $('frame-size').value : 20); if(isNaN(fp)) fp=20;
+      var W = canvas.clientWidth, H = canvas.clientHeight;
+      var fThick = Math.round(W * fp / 100);
+      var isAll = (framePos==='all');
+      [].forEach.call(frames, function(f){
+        var sd = f.getAttribute('data-side');
+        if(sd==='left'||sd==='right'){ f.style.width=fThick+'px'; }
+        else { f.style.height=fThick+'px'; }
+        var boxW = isAll ? W : (sd==='left'||sd==='right' ? fThick : W);
+        var boxH = isAll ? H : (sd==='top'||sd==='bottom' ? fThick : H);
+        var sc = Math.max(boxW/frameNatW, boxH/frameNatH) * zoom;
+        var bw = frameNatW*sc, bh = frameNatH*sc;
+        var bx = -(bw-boxW)*px, by = -(bh-boxH)*py;
+        if(isAll){ bx -= (sd==='right') ? (W-fThick) : 0; by -= (sd==='bottom') ? (H-fThick) : 0; }
+        f.style.setProperty('background-size', bw+'px '+bh+'px','important');
+        f.style.setProperty('background-position', bx+'px '+by+'px','important');
+      });
+    }
+
+    function schedPatch(){
+      if(rafId) return;
+      rafId = requestAnimationFrame(function(){ rafId=0; patchFrames(); });
+    }
+
+    // ── 모바일 프리뷰 전체화면 ──
+    function pushEditcol(){
+      if(editcolPushed) return;
+      if(window.innerWidth > 900) return;
+      var ws = document.querySelector('.workspace');
+      if(!ws) return;
+      editcolPushed = true;
+      ws.classList.add('frame-fullpreview');
+      // 다른 곳 터치하면 복귀하는 리스너 등록
+      setTimeout(function(){
+        document.addEventListener('touchstart', outsideTouchRestore, {passive:true});
+        document.addEventListener('mousedown', outsideTouchRestore, {passive:true});
+      }, 50);
+    }
+    function outsideTouchRestore(e){
+      // 프레임 영역 터치면 유지
+      if(e.target.closest && e.target.closest('.g-frame')) return;
+      restoreEditcol();
+    }
+    function restoreEditcol(){
+      if(!editcolPushed) return;
+      editcolPushed = false;
+      var ws = document.querySelector('.workspace');
+      if(ws) ws.classList.remove('frame-fullpreview');
+      document.removeEventListener('touchstart', outsideTouchRestore);
+      document.removeEventListener('mousedown', outsideTouchRestore);
+    }
+
+    // 커서 변경 (데스크톱)
+    canvas.addEventListener('mousemove', function(e){
+      if(dragMode) return;
+      if(!canvas.classList.contains('frame-interactive')) return;
+      var f = e.target.closest('.g-frame');
+      [].forEach.call(canvas.querySelectorAll('.g-frame'), function(el){
+        el.classList.remove('frame-resize-h','frame-resize-v');
+      });
+      if(!f) return;
+      if(isInnerEdge(e, f)){
+        f.classList.add(getResizeAxis(f)==='h' ? 'frame-resize-h' : 'frame-resize-v');
+      }
+    });
+
+    function readVals(){
+      return {
+        x: parseFloat($('frame-x') ? $('frame-x').value : 50),
+        y: parseFloat($('frame-y') ? $('frame-y').value : 50),
+        zoom: parseFloat($('frame-zoom') ? $('frame-zoom').value : 100),
+        size: parseFloat($('frame-size') ? $('frame-size').value : 20)
+      };
+    }
+
+    function onDown(e){
+      if(!canvas.classList.contains('frame-interactive')) return;
+      var f = e.target.closest('.g-frame');
+      if(!f) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      // 핀치 (최소 거리 50px 이상)
+      if(e.touches && e.touches.length >= 2){
+        var _initDist = pinchDist(e);
+        if(_initDist >= 50){
+          dragMode = 'pinch'; dragTarget = f;
+          startDist = _initDist;
+          startVal = readVals();
+          document.addEventListener('touchmove', onMove, {passive:false});
+          document.addEventListener('touchend', onUp);
+          pushEditcol();
+          return;
+        }
+      }
+
+      var p = ptr(e);
+      startX = p.x; startY = p.y;
+      startVal = readVals();
+      dragTarget = f;
+
+      if(isInnerEdge(e, f)){
+        dragMode = 'resize';
+        f.classList.add(getResizeAxis(f)==='h' ? 'frame-resize-h' : 'frame-resize-v');
+      } else {
+        dragMode = 'move';
+        f.classList.add('frame-dragging');
+      }
+      if(e.touches) pushEditcol();
+
+      document.addEventListener('mousemove', onMove, {passive:false});
+      document.addEventListener('mouseup', onUp);
+      document.addEventListener('touchmove', onMove, {passive:false});
+      document.addEventListener('touchend', onUp);
+    }
+
+    function onMove(e){
+      if(!dragMode) return;
+      e.preventDefault();
+
+      // 손가락 2개로 전환 → pinch (최소 거리 50px 이상이어야 의도적 핀치로 인정)
+      if(e.touches && e.touches.length >= 2 && dragMode !== 'pinch'){
+        var _pd = pinchDist(e);
+        if(_pd >= 50){
+          dragMode = 'pinch';
+          startDist = _pd;
+          startVal.zoom = parseFloat($('frame-zoom') ? $('frame-zoom').value : 100);
+        }
+        return;
+      }
+
+      if(dragMode==='pinch'){
+        if(!e.touches || e.touches.length < 2) return;
+        var d = pinchDist(e);
+        if(startDist > 0){
+          var nz = Math.max(100, Math.min(300, startVal.zoom * (d / startDist)));
+          if($('frame-zoom')) $('frame-zoom').value = nz;
+          schedPatch();
+        }
+        return;
+      }
+
+      var p = ptr(e);
+      var dx = p.x - startX, dy = p.y - startY;
+      var cRect = canvas.getBoundingClientRect();
+
+      if(dragMode==='move'){
+        var senX = 100 / (cRect.width  * 0.8);
+        var senY = 100 / (cRect.height * 0.8);
+        if($('frame-x')) $('frame-x').value = Math.max(0, Math.min(100, startVal.x - dx * senX));
+        if($('frame-y')) $('frame-y').value = Math.max(0, Math.min(100, startVal.y - dy * senY));
+        schedPatch();
+      } else if(dragMode==='resize'){
+        var sd = dragTarget.getAttribute('data-side');
+        var delta;
+        if(sd==='left') delta = dx;
+        else if(sd==='right') delta = -dx;
+        else if(sd==='top') delta = dy;
+        else delta = -dy;
+        var refSize = (sd==='left'||sd==='right') ? cRect.width : cRect.height;
+        var senS = 50 / (refSize * 0.5);
+        if($('frame-size')) $('frame-size').value = Math.max(5, Math.min(50, startVal.size + delta * senS));
+        schedPatch();
+      }
+    }
+
+    function onUp(e){
+      if(dragMode==='pinch' && e.touches && e.touches.length === 1){
+        dragMode = 'move';
+        var t = e.touches[0];
+        startX = t.clientX; startY = t.clientY;
+        startVal.x = parseFloat($('frame-x') ? $('frame-x').value : 50);
+        startVal.y = parseFloat($('frame-y') ? $('frame-y').value : 50);
+        return;
+      }
+      var wasResize = (dragMode === 'resize');
+      if(dragTarget){
+        dragTarget.classList.remove('frame-dragging','frame-resize-h','frame-resize-v');
+      }
+      dragMode = null; dragTarget = null;
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onUp);
+      // editcol은 복귀하지 않음 — 다른 곳 터치 시 outsideTouchRestore가 처리
+      patchFrames();
+      saveState();
+      // resize(두께 변경)만 render 필요 — padding 업데이트로 텍스트 재배치
+      // move/pinch(위치·확대)는 CSS만 바뀌므로 render 불필요 → 점프 방지
+      if(wasResize) render();
+    }
+
+    // 마우스 휠 → 줌
+    canvas.addEventListener('wheel', function(e){
+      if(!canvas.classList.contains('frame-interactive')) return;
+      var f = e.target.closest('.g-frame');
+      if(!f) return;
+      e.preventDefault();
+      var el = $('frame-zoom'); if(!el) return;
+      var cur = parseFloat(el.value) || 100;
+      el.value = Math.max(100, Math.min(300, cur + (e.deltaY < 0 ? 5 : -5)));
+      patchFrames();   // 즉시 CSS만 갱신
+      saveState();
+    }, {passive:false});
+
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('touchstart', onDown, {passive:false});
+  })();
+
   $('photo-pick').addEventListener('click', function(){ $('photo-file').click(); });
   $('photo-file').addEventListener('change', function(e){
     var file=e.target.files && e.target.files[0]; if(!file) return;
