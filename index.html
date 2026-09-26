@@ -2296,7 +2296,7 @@
 
           <div class="section" style="margin-top:20px">
             <p class="section__head">내 프리셋</p>
-            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 사진 배경은 프리셋에 저장되지 않아요.</p>
+            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>꾸밈 테두리 사진도 함께 저장되지만, 사진 배경은 저장되지 않아요.</p>
             <div class="mychips" id="my-presets"></div>
             <button class="btn btn--ghost" id="preset-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 설정 저장</button>
             <div class="grid-2" style="margin-top:8px">
@@ -8251,7 +8251,7 @@
   var PRESET_KEY = 'logmaker-presets-v1';
   function captureSettings(){
     var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape };
+    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, framePos:framePos, frameData:frameData };
   }
   function applySettings(s){
     if(!s) return;
@@ -8297,10 +8297,25 @@
         var q =chip('quote',n);if(q  && typeof recolorQuoteSlot==='function') recolorQuoteSlot(n, q.value);
       }
     })();
-    render();
+    // 꾸밈 테두리 사진 복원
+    framePos = ({none:1,left:1,right:1,top:1,bottom:1,all:1})[s.framePos] ? s.framePos : 'none';
+    frameData = (typeof s.frameData==='string') ? s.frameData : null;
+    document.querySelectorAll('#frame-pos-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-fpos')===framePos?'true':'false'); });
+    var fpSeg=$('frame-pos-seg'); if(fpSeg && typeof moveThumb==='function') moveThumb(fpSeg);
+    loadFrameNat(function(){ updateFrameUI(); render(); });
   }
   function loadMyPresets(){ try{ var raw=localStorage.getItem(PRESET_KEY); return raw?JSON.parse(raw):[]; }catch(e){ return []; } }
-  function saveMyPresets(list){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); }catch(e){} }
+  function saveMyPresets(list){
+    try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); }
+    catch(e){
+      // 용량 초과 시 꾸밈 사진을 빼고 재시도
+      try{
+        var slim=list.map(function(p){ var d=Object.assign({},p.data); d.frameData=null; return {name:p.name,data:d}; });
+        localStorage.setItem(PRESET_KEY, JSON.stringify(slim));
+        alert('저장 공간이 부족해 꾸밈 테두리 사진 없이 저장되었어요.');
+      }catch(e2){}
+    }
+  }
   function renderMyPresets(){
     var wrap=$('my-presets'), list=loadMyPresets(); wrap.innerHTML='';
     if(!list.length){ return; }
