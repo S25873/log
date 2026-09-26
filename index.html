@@ -1405,6 +1405,7 @@
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
+              <p class="section__head">자동화 도구</p>
               <div class="cgrid cgrid--2">
                 <div class="cchip"><label>*색*</label><div class="cchip__box"><input id="c-star" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-star-txt" type="text" value="#8a8a8a"></div></div>
                 <div class="cchip"><label>(색)</label><div class="cchip__box"><input id="c-paren" type="color" value="#8a8a8a"><input class="cchip__hex" id="c-paren-txt" type="text" value="#8a8a8a"></div></div>
@@ -2159,7 +2160,7 @@
         <div class="panel" data-panel="layout" role="tabpanel">
           <details class="fold" id="fold-bg">
             <summary>
-              배경 · 꾸밈
+              배경
               <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             <div class="fold__body">
@@ -2209,8 +2210,16 @@
                   </div>
                 </div>
               </div>
-              <p class="section__head" style="margin-top:22px">꾸밈</p>
-              <p class="hint" style="margin:-10px 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>간혹 창을 너무 오래 띄우면 사진 편집이 안 되는 경우가 있어요.<br>꾸밈 위치(왼쪽 등)을 다른 것으로 설정했다가 복귀하면 고쳐져요.</p>
+            </div>
+          </details>
+
+          <details class="fold" id="fold-frame">
+            <summary>
+              꾸밈 테두리
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <p class="hint" style="margin:-4px 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>간혹 창을 너무 오래 띄우면 사진 편집이 안 되는 경우가 있어요.<br>꾸밈 위치(왼쪽 등)을 다른 것으로 설정했다가 복귀하면 고쳐져요.</p>
               <div class="field">
                 <span class="label">위치</span>
                 <div class="seg" id="frame-pos-seg">
@@ -2389,31 +2398,19 @@
 <div class="sheet-overlay" id="notice-overlay" hidden>
   <div class="sheet help-sheet" role="dialog" aria-modal="true" aria-label="업데이트 안내">
     <div class="sheet__grip"></div>
-    <div class="sheet__title">업데이트 안내</div>
+    <div class="sheet__title">업데이트!</div>
     <div class="help-body">
-      <p class="help-cat">UI 개선 예정</p>
-      <p class="hint">· 기능을 추가하느라 UI가 많이 더러워요.<br>· 곧 개선할 테니 양해 부탁드려요...</p>
+      <p class="help-cat">꾸밈 테두리</p>
+      <p class="hint">· 프리뷰에서 직접 사진의 <b>위치 · 확대 · 두께</b>를 조절할 수 있도록 바뀌었어요.<br>· 사진 저장소에서 불러온 사진의 <b>확대 · 위치가 자동 저장</b>돼요. 다음에 불러올 때 그대로 복원돼요.<br>· <b>여백 맞추기</b> 토글이 추가됐어요. 켜면 사진 두께가 크기 · 비율의 여백 값과 자동으로 통일돼요.</p>
 
-      <p class="help-cat">멀티페이지</p>
-      <p class="hint">· <b>페이지</b> 기능이 추가됐어요. 프리뷰 바에서 ＋를 눌러 최대 4개까지 만들 수 있어요.<br>· 제목 · 소제목 · 하단은 기본적으로 모든 페이지가 공유해요. 편집하는 순간 해당 페이지만 분리되고, 뱃지를 눌러 되돌릴 수 있어요.<br>· 페이지 삭제는 탭을 길게 누르면 돼요.</p>
+      <p class="help-cat">프리셋</p>
+      <p class="hint">· 프리셋마다 인물의 <b>자물쇠 상태</b>가 따로 저장돼요.</p>
 
-      <p class="help-cat">열 나누기</p>
-      <p class="hint">· 페이지 2개 이상일 때 <b>열 나누기</b> 버튼이 나타나요.<br>· 누를 때마다 단일 → 2열 → 3열 → 4열로 순환해요.<br>· 제목과 하단은 전체 너비로 한 번만, 본문만 열로 나뉘어요.<br>· 2열 + 4페이지 = 자동으로 2×2 배치.</p>
+      <p class="help-cat">따옴표 넣기</p>
+      <p class="hint">· "넣" 도구가 이제 휜 따옴표(“ ”)를 넣어요. 휜 따옴표는 양 끝의 모양이 다르고, 곧은 따옴표는 전부 같아서 곧은 따옴표 → 휜 따옴표를 대치하는 게 어려워 내린 판단이에요.</p>
 
-      <p class="help-cat">시작점 맞추기</p>
-      <p class="hint">· 고정 비율 + 단일 모드에서 <b>시작점 맞추기</b> 버튼이 나타나요.<br>· 켜면 가장 긴 페이지 기준으로 모든 페이지의 콘텐츠 시작 위치가 통일돼요.</p>
-
-      <p class="help-cat">전체 내보내기</p>
-      <p class="hint">· 단일 모드에서 페이지가 2개 이상이면 저장 시 전체 / 현재 페이지를 선택할 수 있어요.<br>· 전체 저장 시 로그_1.png, 로그_2.png 식으로 순차 다운로드돼요.</p>
-
-      <p class="help-cat">구분선</p>
-      <p class="hint">· 본문 구분선과 제목 · 하단 구분선의 <b>두께</b>를 각각 조절할 수 있어요.<br>· 내용 탭 → 자동화 도구 · 인용선 · 구분선 · 사진에서 설정해요.</p>
-
-      <p class="help-cat">대본 이름 균등 배분</p>
-      <p class="hint">· 대본 모드에서 간격 맞추기를 켜면 <b>이름 균등 배분</b> 옵션이 나타나요.<br>· 짧은 이름의 글자를 가장 긴 이름 너비에 맞춰 양쪽 끝으로 벌려요.</p>
-
-      <p class="help-cat">고정 비율</p>
-      <p class="hint">· 비율 선택이 세로형 · 가로형 <b>두 줄</b>로 나뉘었어요.<br>· 가로형에 2:1 · 5:4 · 4:3 · 3:2가 새로 추가됐어요.</p>
+      <p class="help-cat">도움말</p>
+      <p class="hint">· 인용선 여백 · 말풍선 여백 다이어그램이 더 알아보기 쉽게 개선됐어요.<br>· 꾸밈 테두리 조작법이 도움말(?)에 추가됐어요.</p>
     </div>
     <div class="notice-btns">
       <button class="sheet__cancel" id="notice-never" type="button">다시 보지 않기</button>
@@ -4967,9 +4964,9 @@
      (기존 사용자는 저장된 값이 없으므로 이번에 한 번 보게 된다)
      ============================================================ */
   (function(){
-    var NOTICE_ID   = '2026-09-18a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
-    var NOTICE_FROM = '2026-09-18T00:00:00';         // 이 기간에는 볼 때마다 뜬다
-    var NOTICE_TO   = '2026-09-20T00:00:00';         // (끝나는 날 자정 = 19일까지)
+    var NOTICE_ID   = '2026-09-26a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
+    var NOTICE_FROM = '2026-09-26T00:00:00';         // 이 기간에는 볼 때마다 뜬다
+    var NOTICE_TO   = '2026-09-28T00:00:00';         // (끝나는 날 자정 = 27일까지)
     var NOTICE_KEY  = 'logmaker-notice-v2';
     var ov=$('notice-overlay'), okBtn=$('notice-close'), neverBtn=$('notice-never'), t=null;
     if(!ov) return;
@@ -5493,7 +5490,9 @@
   var _foldSize=$('fold-size');
   if(_foldSize){ _foldSize.addEventListener('toggle', function(){ if(_foldSize.open){ requestAnimationFrame(moveAllThumbs); } }); }
   var _foldBg=$('fold-bg');
-  if(_foldBg){ _foldBg.addEventListener('toggle', function(){ updateFrameInteractive(); if(_foldBg.open){ requestAnimationFrame(function(){ moveAllThumbs(); moveThumb($('frame-pos-seg')); }); } }); }
+  if(_foldBg){ _foldBg.addEventListener('toggle', function(){ if(_foldBg.open){ requestAnimationFrame(moveAllThumbs); } }); }
+  var _foldFrame=$('fold-frame');
+  if(_foldFrame){ _foldFrame.addEventListener('toggle', function(){ updateFrameInteractive(); if(_foldFrame.open){ requestAnimationFrame(function(){ moveAllThumbs(); moveThumb($('frame-pos-seg')); }); } }); }
   var _foldBubDesign=$('fold-bubdesign');
   if(_foldBubDesign){ _foldBubDesign.addEventListener('toggle', function(){ if(_foldBubDesign.open){ requestAnimationFrame(moveAllThumbs); } }); }
   var _foldImsgBar=$('fold-imsgbar');
@@ -6499,7 +6498,7 @@
   }
   // ── 테두리 꾸밈 UI
   function updateFrameInteractive(){
-    var on = !!($('fold-bg') && $('fold-bg').open && framePos!=='none' && frameData);
+    var on = !!( ($('fold-frame') ? $('fold-frame').open : ($('fold-bg') && $('fold-bg').open)) && framePos!=='none' && frameData);
     canvas.classList.toggle('frame-interactive', on);
   }
   function updateFrameUI(){
@@ -6655,8 +6654,7 @@
     padEl.addEventListener('change', syncFrameToPad);
   })();
 
-  // fold-frame 삭제됨 → fold-bg에서 꾸밈 seg thumb 업데이트
-  // (fold-bg toggle은 아래 _foldBg 핸들러에서 처리)
+  // 꾸밈 테두리는 fold-frame으로 분리됨
 
   // ── 꾸밈 프레임 드래그 인터랙션 ──
   // render() 없이 .g-frame CSS만 직접 갱신 → 60fps 부드러운 드래그
