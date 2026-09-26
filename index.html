@@ -6512,7 +6512,7 @@
     $('frame-file').addEventListener('change', function(e){
       var file=e.target.files && e.target.files[0]; if(!file) return;
       var rd=new FileReader();
-      rd.onload=function(ev){ frameData=ev.target.result; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState(); };
+      rd.onload=function(ev){ frameData=ev.target.result; _activeLibId=null; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState(); };
       rd.readAsDataURL(file); e.target.value='';
     });
   }
@@ -6520,6 +6520,7 @@
   // ── 사진 저장소 (IndexedDB) ──
   var FRAMELIB_MAX = 10;
   var _flDB = null;
+  var _activeLibId = null;   // 현재 저장소에서 불러온 항목 id (위치 자동 갱신용)
   function openFrameLibDB(cb){
     if(_flDB){ cb(_flDB); return; }
     var req = indexedDB.open('logmaker-frame-lib', 1);
@@ -6554,6 +6555,19 @@
       tx.oncomplete = function(){ if(cb) cb(); };
     });
   }
+  function updateFrameLibItem(id, zoom, px, py){
+    openFrameLibDB(function(db){
+      if(!db) return;
+      var tx = db.transaction('images','readwrite');
+      var store = tx.objectStore('images');
+      var req = store.get(id);
+      req.onsuccess = function(){
+        var item = req.result; if(!item) return;
+        item.zoom = zoom; item.px = px; item.py = py;
+        store.put(item);
+      };
+    });
+  }
   function clearFrameLib(cb){
     openFrameLibDB(function(db){
       if(!db){ if(cb) cb(); return; }
@@ -6572,6 +6586,7 @@
         if(frameData===item.src) th.classList.add('on');
         th.addEventListener('click', function(){
           frameData=item.src;
+          _activeLibId = item.id;
           if(item.zoom!=null && $('frame-zoom')) $('frame-zoom').value = item.zoom;
           if(item.px!=null && $('frame-x')) $('frame-x').value = item.px;
           if(item.py!=null && $('frame-y')) $('frame-y').value = item.py;
@@ -6580,6 +6595,7 @@
         var x=document.createElement('span'); x.className='frame-lib__x'; x.textContent='×';
         x.addEventListener('click', function(e){
           e.stopPropagation();
+          if(_activeLibId===item.id) _activeLibId=null;
           deleteFrameLibItem(item.id, renderFrameLib);
         });
         th.appendChild(x); wrap.appendChild(th);
@@ -7935,6 +7951,13 @@
       };
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
       catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
+      // 사진 저장소: 활성 항목의 zoom/x/y 자동 갱신
+      if(_activeLibId!=null){
+        var _lz = $('frame-zoom') ? parseFloat($('frame-zoom').value) : null;
+        var _lx = $('frame-x') ? parseFloat($('frame-x').value) : null;
+        var _ly = $('frame-y') ? parseFloat($('frame-y').value) : null;
+        if(_lz!=null) updateFrameLibItem(_activeLibId, _lz, _lx, _ly);
+      }
     }catch(e){}
   }
   // 저장은 무겁다(사진 base64 포함 JSON 직렬화 + localStorage). 타이핑 경로에서 빼고 잠깐 멈춘 뒤 한 번만.
@@ -8095,6 +8118,7 @@
   });
   if($('reset-framelib')) $('reset-framelib').addEventListener('click', function(){
     if(!confirm('사진 저장소를 비울까요?')) return;
+    _activeLibId=null;
     clearFrameLib(renderFrameLib);
   });
   if($('reset-snapshot')) $('reset-snapshot').addEventListener('click', function(){
@@ -9134,6 +9158,10 @@
      초기화
      ============================================================ */
   restoreState();
+  // 복원된 frameData가 저장소 항목과 일치하면 _activeLibId 복원
+  if(frameData){ loadFrameLib(function(list){
+    for(var i=0;i<list.length;i++){ if(list[i].src===frameData){ _activeLibId=list[i].id; break; } }
+  }); }
   renderPageTabs(); // 저장 데이터 없어도 탭 바 초기화
   restoreUIState();
   renderMyPresets();
