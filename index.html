@@ -2210,7 +2210,7 @@
                 </div>
               </div>
               <p class="section__head" style="margin-top:22px">꾸밈</p>
-              <p class="hint" style="margin:-10px 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br><b>PC:</b> 프리뷰 속 사진을 드래그하면 위치를, 테두리를 드래그하면 두께를, 마우스 휠로 확대를 조절할 수 있어요.<br><b>모바일:</b> 프리뷰 속 사진을 터치하면 조정 모드로 전환되며, 사진 밖을 터치하면 편집창이 돌아와요. 드래그로 위치를, 테두리 드래그로 두께를, 두 손가락 핀치로 확대를 조절할 수 있어요.</p>
+              <p class="hint" style="margin:-10px 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요. <a href="javascript:void 0" id="frame-help-link" style="color:var(--accent,#3b82f6);text-decoration:none;font-weight:600">조작법 ▸</a></p>
               <div class="field">
                 <span class="label">위치</span>
                 <div class="seg" id="frame-pos-seg">
@@ -2233,6 +2233,13 @@
                 <p class="hint" style="margin:0 0 6px">자주 쓰는 사진을 저장해 두고 원터치로 불러와요. (최대 10장)</p>
                 <div class="frame-lib" id="frame-lib"></div>
                 <button class="btn btn--ghost" id="frame-lib-add" type="button" style="height:34px;font-size:12px;width:100%;margin-top:6px">＋ 사진 추가</button>
+                <label class="switch" style="margin-top:14px">
+                  <span class="switch__text" style="flex:1">
+                    <span class="switch__title">여백 맞추기</span>
+                    <span class="switch__sub">사진의 두께를 크기 · 비율의 여백 값과 통일해요.</span>
+                  </span>
+                  <input id="frame-pad-sync" type="checkbox" style="margin-left:auto">
+                </label>
                 <!-- 상태 저장용 hidden inputs -->
                 <input id="frame-size" type="hidden" value="20">
                 <input id="frame-zoom" type="hidden" value="100">
@@ -5645,6 +5652,7 @@
     el.style.letterSpacing = ls+'px';
     el.style.lineHeight = String((parseFloat($('line-height').value)/10).toFixed(2));
     // ── 테두리 꾸밈(가장자리 사진 띠)
+    if(typeof syncFrameToPad==='function') syncFrameToPad();
     var frameOn = (framePos!=='none' && !!frameData);
     var fThick = 0;
     if(frameOn){
@@ -6622,6 +6630,34 @@
     });
   }
   renderFrameLib();
+
+  // ── 여백 맞추기 ──
+  var _framePadSync = false;
+  function syncFrameToPad(){
+    if(!_framePadSync) return;
+    var pad = parseFloat($('pad') ? $('pad').value : 120)||120;
+    var w = baseW();
+    if(w>0 && $('frame-size')) $('frame-size').value = Math.max(5, Math.min(50, pad / w * 100));
+  }
+  if($('frame-help-link')){
+    $('frame-help-link').addEventListener('click', function(){
+      alert('PC: 프리뷰 속 사진을 드래그하면 위치를, 테두리를 드래그하면 두께를, 마우스 휠로 확대를 조절할 수 있어요.\n\n모바일: 프리뷰 속 사진을 터치하면 조정 모드로 전환되며, 사진 밖을 터치하면 편집창이 돌아와요. 드래그로 위치를, 테두리 드래그로 두께를, 두 손가락 핀치로 확대를 조절할 수 있어요.');
+    });
+  }
+  if($('frame-pad-sync')){
+    $('frame-pad-sync').addEventListener('change', function(){
+      _framePadSync = this.checked;
+      if(_framePadSync){ syncFrameToPad(); render(); }
+      saveState();
+    });
+  }
+  // pad 슬라이더 움직일 때도 동기화
+  (function(){
+    var padEl=$('pad'); if(!padEl) return;
+    padEl.addEventListener('input', syncFrameToPad);
+    padEl.addEventListener('change', syncFrameToPad);
+  })();
+
   // fold-frame 삭제됨 → fold-bg에서 꾸밈 seg thumb 업데이트
   // (fold-bg toggle은 아래 _foldBg 핸들러에서 처리)
 
@@ -6749,7 +6785,7 @@
         el.classList.remove('frame-resize-h','frame-resize-v');
       });
       if(!f) return;
-      if(isInnerEdge(e, f)){
+      if(isInnerEdge(e, f) && !_framePadSync){
         f.classList.add(getResizeAxis(f)==='h' ? 'frame-resize-h' : 'frame-resize-v');
       }
     });
@@ -6789,7 +6825,7 @@
       startVal = readVals();
       dragTarget = f;
 
-      if(isInnerEdge(e, f)){
+      if(isInnerEdge(e, f) && !_framePadSync){
         dragMode = 'resize';
         f.classList.add(getResizeAxis(f)==='h' ? 'frame-resize-h' : 'frame-resize-v');
       } else {
@@ -7945,7 +7981,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:pages[0].body||'', nameHtml:sharedName,
         titleHtml:sharedTitle, subtitleHtml:sharedSubtitle,
-        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, chrome:chrome,
+        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null,
         multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages }
       };
@@ -8073,6 +8109,8 @@
       frameData = (typeof data.frameData==='string') ? data.frameData : null;
       framePos = ({none:1,left:1,right:1,top:1,bottom:1,all:1})[data.framePos] ? data.framePos : 'none';
       document.querySelectorAll('#frame-pos-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-fpos')===framePos?'true':'false'); });
+      _framePadSync = !!data.framePadSync;
+      if($('frame-pad-sync')) $('frame-pad-sync').checked = _framePadSync;
       loadFrameNat(render);
       if(typeof updateFrameUI==='function') updateFrameUI();
       requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); });
@@ -8397,7 +8435,7 @@
     // 인물 자물쇠 상태 (charId → hidden)
     var charHidden={};
     characters.forEach(function(c){ if(c.id) charHidden[c.id]=!!c.hidden; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, charHidden:charHidden };
+    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, charHidden:charHidden, framePadSync:_framePadSync };
   }
   function applySettings(s){
     if(!s) return;
@@ -8428,6 +8466,9 @@
     bubbleShape = ({imessage:1,simple:1,soft:1,plain:1,script:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
     syncShapeSeg();
     applyBubbleShape();
+    // 여백 맞추기 복원
+    _framePadSync = !!s.framePadSync;
+    if($('frame-pad-sync')) $('frame-pad-sync').checked = _framePadSync;
     // 인물 자물쇠 상태 복원
     if(s.charHidden){
       var changed=false;
