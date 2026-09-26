@@ -5641,6 +5641,7 @@
       if(!frameOn) return;
       var isAll = (framePos==='all');
       var W = el.clientWidth, H = el.clientHeight;
+      el._frameW = W; el._frameH = H;          // patchFrames 에서 재사용
       var sides = isAll ? ['left','right','top','bottom'] : [framePos];
       sides.forEach(function(sd){
         var f=document.createElement('div'); f.className='g-frame'; f.setAttribute('data-side',sd);
@@ -6528,7 +6529,6 @@
     }
 
     // ── 경량 CSS 갱신: render() 호출 없이 .g-frame 스타일만 직접 변경 ──
-    var _patchCount = 0;
     function patchFrames(){
       var frames = canvas.querySelectorAll('.g-frame');
       if(!frames.length || frameNatW<=0 || frameNatH<=0) return;
@@ -6536,10 +6536,11 @@
       var px = (parseFloat($('frame-x') ? $('frame-x').value : 50)||0)/100;
       var py = (parseFloat($('frame-y') ? $('frame-y').value : 50)||0)/100;
       var fp = parseFloat($('frame-size') ? $('frame-size').value : 20); if(isNaN(fp)) fp=20;
-      var W = canvas.clientWidth, H = canvas.clientHeight;
+      // render() 가 캐시한 W·H 를 사용 — reflow 로 높이가 달라지는 문제 방지
+      var W = canvas._frameW || canvas.clientWidth;
+      var H = canvas._frameH || canvas.clientHeight;
       var fThick = Math.round(W * fp / 100);
       var isAll = (framePos==='all');
-      _patchCount++;
       [].forEach.call(frames, function(f){
         var sd = f.getAttribute('data-side');
         if(sd==='left'||sd==='right'){ f.style.width=fThick+'px'; }
@@ -6550,22 +6551,6 @@
         var bw = frameNatW*sc, bh = frameNatH*sc;
         var bx = -(bw-boxW)*px, by = -(bh-boxH)*py;
         if(isAll){ bx -= (sd==='right') ? (W-fThick) : 0; by -= (sd==='bottom') ? (H-fThick) : 0; }
-        // 디버그: 첫 3회 patchFrames 호출의 값 표시
-        if(_patchCount <= 3){
-          var _oldBs = f.style.getPropertyValue('background-size');
-          var _newBs = bw+'px '+bh+'px';
-          _showDbg(
-            'patchFrames #'+_patchCount+' ['+sd+']\n'+
-            '  old bg-size: '+_oldBs+'\n'+
-            '  new bg-size: '+_newBs+'\n'+
-            '  W='+W+' H='+H+' fThick='+fThick+'\n'+
-            '  boxW='+boxW+' boxH='+boxH+'\n'+
-            '  natW='+frameNatW+' natH='+frameNatH+'\n'+
-            '  sc='+sc+' zoom='+zoom+'\n'+
-            '  px='+px+' py='+py+'\n'+
-            '  fp='+fp+' framePos='+framePos
-          );
-        }
         f.style.setProperty('background-size', bw+'px '+bh+'px','important');
         f.style.setProperty('background-position', bx+'px '+by+'px','important');
       });
@@ -6650,27 +6635,12 @@
       };
     }
 
-    // ── 디버그 오버레이 (터치 시 값 변화 표시) ──
-    var _dbg = document.createElement('div');
-    _dbg.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,.85);color:#0f0;font:11px/1.4 monospace;padding:6px 10px;pointer-events:none;display:none;white-space:pre-wrap;';
-    document.body.appendChild(_dbg);
-    function _showDbg(txt){ _dbg.style.display='block'; _dbg.textContent=txt; }
-
     function onDown(e){
       if(!canvas.classList.contains('frame-interactive')) return;
       var f = e.target.closest('.g-frame');
       if(!f) return;
       e.preventDefault();
       e.stopPropagation();
-
-      // ── 디버그: 터치 전 상태 캡처 ──
-      var _bsBefore = f.style.getPropertyValue('background-size');
-      var _bpBefore = f.style.getPropertyValue('background-position');
-      var _rectBefore = f.getBoundingClientRect();
-      var _cW1 = canvas.clientWidth, _cH1 = canvas.clientHeight;
-      var _stageIn = $('stage-in');
-      var _trBefore = _stageIn ? _stageIn.style.transform : '?';
-      var _stageH1 = $('stage') ? $('stage').style.height : '?';
 
       // 핀치 (최소 거리 50px 이상)
       if(e.touches && e.touches.length >= 2){
@@ -6699,33 +6669,6 @@
         f.classList.add('frame-dragging');
       }
       if(e.touches) pushEditcol();
-
-      // ── 디버그: 터치 후 상태 캡처 (pushEditcol 이후) ──
-      requestAnimationFrame(function(){
-        var _bsAfter = f.style.getPropertyValue('background-size');
-        var _bpAfter = f.style.getPropertyValue('background-position');
-        var _rectAfter = f.getBoundingClientRect();
-        var _cW2 = canvas.clientWidth, _cH2 = canvas.clientHeight;
-        var _trAfter = _stageIn ? _stageIn.style.transform : '?';
-        var _stageH2 = $('stage') ? $('stage').style.height : '?';
-        _showDbg(
-          'BEFORE pushEditcol:\n'+
-          '  bg-size: '+_bsBefore+'\n'+
-          '  bg-pos: '+_bpBefore+'\n'+
-          '  rect: '+Math.round(_rectBefore.width)+'x'+Math.round(_rectBefore.height)+' @'+Math.round(_rectBefore.left)+','+Math.round(_rectBefore.top)+'\n'+
-          '  canvas: '+_cW1+'x'+_cH1+'\n'+
-          '  transform: '+_trBefore+'\n'+
-          '  stage.h: '+_stageH1+'\n'+
-          'AFTER (rAF):\n'+
-          '  bg-size: '+_bsAfter+'\n'+
-          '  bg-pos: '+_bpAfter+'\n'+
-          '  rect: '+Math.round(_rectAfter.width)+'x'+Math.round(_rectAfter.height)+' @'+Math.round(_rectAfter.left)+','+Math.round(_rectAfter.top)+'\n'+
-          '  canvas: '+_cW2+'x'+_cH2+'\n'+
-          '  transform: '+_trAfter+'\n'+
-          '  stage.h: '+_stageH2+'\n'+
-          '  editcolPushed: '+editcolPushed
-        );
-      });
 
       document.addEventListener('mousemove', onMove, {passive:false});
       document.addEventListener('mouseup', onUp);
