@@ -758,6 +758,22 @@
   .dot:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);}
   .dot.on{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink);border-color:transparent;}
 
+  /* 사진 저장소 (꾸밈 테두리) */
+  .frame-lib{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+  .frame-lib__thumb{
+    position:relative;aspect-ratio:1;border-radius:var(--radius-sm);border:2px solid var(--line);
+    background:var(--surface-2) center/cover no-repeat;cursor:pointer;overflow:hidden;
+    transition:border-color .14s var(--ease),transform .14s;
+  }
+  .frame-lib__thumb:hover{border-color:var(--ink);transform:translateY(-1px);}
+  .frame-lib__thumb.on{border-color:var(--accent,#3b82f6);box-shadow:0 0 0 2px var(--accent-soft,rgba(59,130,246,.25));}
+  .frame-lib__thumb .frame-lib__x{
+    position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;
+    background:rgba(0,0,0,.55);color:#fff;font-size:12px;line-height:18px;text-align:center;
+    opacity:0;transition:opacity .14s;cursor:pointer;
+  }
+  .frame-lib__thumb:hover .frame-lib__x{opacity:1;}
+
   /* 내 프리셋 */
   .mychips{display:flex;flex-wrap:wrap;gap:8px;}
   .mychips:not(:empty){margin-bottom:10px;}
@@ -2209,9 +2225,14 @@
               </div>
               <div id="frame-opts" hidden>
                 <input id="frame-file" type="file" accept="image/*" hidden>
+                <input id="frame-lib-file" type="file" accept="image/*" hidden>
                 <div class="mini-row" style="justify-content:flex-start;margin-top:12px">
                   <button class="mini" id="frame-pick" type="button">🖼 사진 선택</button>
                 </div>
+                <span class="label" style="display:block;margin-top:14px">사진 저장소</span>
+                <p class="hint" style="margin:0 0 6px">자주 쓰는 사진을 저장해 두고 원터치로 불러와요. (최대 6장)</p>
+                <div class="frame-lib" id="frame-lib"></div>
+                <button class="btn btn--ghost" id="frame-lib-add" type="button" style="height:34px;font-size:12px;width:100%;margin-top:6px">＋ 사진 추가</button>
                 <!-- 상태 저장용 hidden inputs -->
                 <input id="frame-size" type="hidden" value="20">
                 <input id="frame-zoom" type="hidden" value="100">
@@ -2296,7 +2317,7 @@
 
           <div class="section" style="margin-top:20px">
             <p class="section__head">내 프리셋</p>
-            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>꾸밈 테두리 사진도 함께 저장되지만, 사진 배경은 저장되지 않아요.</p>
+            <p class="hint" style="margin:0 0 12px">지금의 설정을 저장해 두고 언제든 다시 불러올 수 있어요.<br>단, 사진 배경과 꾸밈 테두리 사진은 프리셋에 저장되지 않아요.</p>
             <div class="mychips" id="my-presets"></div>
             <button class="btn btn--ghost" id="preset-save" type="button" style="height:40px;font-size:12.5px;width:100%">＋ 현재 설정 저장</button>
             <div class="grid-2" style="margin-top:8px">
@@ -2315,6 +2336,7 @@
               <button class="btn btn--ghost" id="reset-replace" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">텍스트 대치 초기화</button>
               <button class="btn btn--ghost" id="reset-snapshot" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">이어서 편집하기 초기화</button>
               <button class="btn btn--ghost" id="reset-mypreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">내 프리셋 초기화</button>
+              <button class="btn btn--ghost" id="reset-framelib" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">사진 저장소 초기화</button>
             </div>
           </div>
         </div>
@@ -6490,10 +6512,66 @@
     $('frame-file').addEventListener('change', function(e){
       var file=e.target.files && e.target.files[0]; if(!file) return;
       var rd=new FileReader();
-      rd.onload=function(ev){ frameData=ev.target.result; loadFrameNat(render); updateFrameUI(); render(); saveState(); };
+      rd.onload=function(ev){ frameData=ev.target.result; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState(); };
       rd.readAsDataURL(file); e.target.value='';
     });
   }
+
+  // ── 사진 저장소 ──
+  var FRAMELIB_KEY = 'logmaker-frame-lib-v1';
+  var FRAMELIB_MAX = 6;
+  var FRAMELIB_DIM = 800; // 저장 시 최대 픽셀(장변)
+  function loadFrameLib(){ try{ var r=localStorage.getItem(FRAMELIB_KEY); return r?JSON.parse(r):[]; }catch(e){ return []; } }
+  function saveFrameLib(list){ try{ localStorage.setItem(FRAMELIB_KEY, JSON.stringify(list)); }catch(e){ alert('저장 공간이 부족해요. 기존 사진을 삭제한 뒤 다시 시도해 주세요.'); } }
+  function compressImage(dataUrl, maxDim, cb){
+    var img=new Image();
+    img.onload=function(){
+      var w=img.naturalWidth, h=img.naturalHeight;
+      if(w<=maxDim && h<=maxDim){ cb(dataUrl); return; }
+      var scale=maxDim/Math.max(w,h); var nw=Math.round(w*scale), nh=Math.round(h*scale);
+      var cv=document.createElement('canvas'); cv.width=nw; cv.height=nh;
+      var cx=cv.getContext('2d'); cx.drawImage(img,0,0,nw,nh);
+      cb(cv.toDataURL('image/jpeg',0.85));
+    };
+    img.onerror=function(){ cb(dataUrl); };
+    img.src=dataUrl;
+  }
+  function renderFrameLib(){
+    var wrap=$('frame-lib'); if(!wrap) return;
+    var list=loadFrameLib(); wrap.innerHTML='';
+    list.forEach(function(src, idx){
+      var th=document.createElement('div'); th.className='frame-lib__thumb';
+      th.style.backgroundImage='url("'+src+'")';
+      if(frameData===src) th.classList.add('on');
+      th.addEventListener('click', function(){
+        frameData=src; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState();
+      });
+      var x=document.createElement('span'); x.className='frame-lib__x'; x.textContent='×';
+      x.addEventListener('click', function(e){
+        e.stopPropagation();
+        var cur=loadFrameLib(); cur.splice(idx,1); saveFrameLib(cur); renderFrameLib();
+      });
+      th.appendChild(x); wrap.appendChild(th);
+    });
+    var addBtn=$('frame-lib-add');
+    if(addBtn) addBtn.style.display = list.length>=FRAMELIB_MAX ? 'none' : '';
+  }
+  if($('frame-lib-add')){
+    $('frame-lib-add').addEventListener('click', function(){ $('frame-lib-file').click(); });
+    $('frame-lib-file').addEventListener('change', function(e){
+      var file=e.target.files && e.target.files[0]; if(!file) return;
+      var rd=new FileReader();
+      rd.onload=function(ev){
+        var list=loadFrameLib();
+        if(list.length>=FRAMELIB_MAX){ alert('최대 '+FRAMELIB_MAX+'장까지 저장할 수 있어요.'); return; }
+        compressImage(ev.target.result, FRAMELIB_DIM, function(compressed){
+          list.push(compressed); saveFrameLib(list); renderFrameLib();
+        });
+      };
+      rd.readAsDataURL(file); e.target.value='';
+    });
+  }
+  renderFrameLib();
   // fold-frame 삭제됨 → fold-bg에서 꾸밈 seg thumb 업데이트
   // (fold-bg toggle은 아래 _foldBg 핸들러에서 처리)
 
@@ -7981,6 +8059,11 @@
     try{ localStorage.removeItem(PRESET_KEY); }catch(e){}
     renderMyPresets();
   });
+  if($('reset-framelib')) $('reset-framelib').addEventListener('click', function(){
+    if(!confirm('사진 저장소를 비울까요?')) return;
+    try{ localStorage.removeItem(FRAMELIB_KEY); }catch(e){}
+    renderFrameLib();
+  });
   if($('reset-snapshot')) $('reset-snapshot').addEventListener('click', function(){
     if(!confirm('저장된 스냅샷을 모두 삭제할까요?')) return;
     try{ localStorage.removeItem(SNAPSHOT_KEY); }catch(e){}
@@ -8251,7 +8334,7 @@
   var PRESET_KEY = 'logmaker-presets-v1';
   function captureSettings(){
     var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, framePos:framePos, frameData:frameData };
+    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape };
   }
   function applySettings(s){
     if(!s) return;
@@ -8297,25 +8380,10 @@
         var q =chip('quote',n);if(q  && typeof recolorQuoteSlot==='function') recolorQuoteSlot(n, q.value);
       }
     })();
-    // 꾸밈 테두리 사진 복원
-    framePos = ({none:1,left:1,right:1,top:1,bottom:1,all:1})[s.framePos] ? s.framePos : 'none';
-    frameData = (typeof s.frameData==='string') ? s.frameData : null;
-    document.querySelectorAll('#frame-pos-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-fpos')===framePos?'true':'false'); });
-    var fpSeg=$('frame-pos-seg'); if(fpSeg && typeof moveThumb==='function') moveThumb(fpSeg);
-    loadFrameNat(function(){ updateFrameUI(); render(); });
+    render();
   }
   function loadMyPresets(){ try{ var raw=localStorage.getItem(PRESET_KEY); return raw?JSON.parse(raw):[]; }catch(e){ return []; } }
-  function saveMyPresets(list){
-    try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); }
-    catch(e){
-      // 용량 초과 시 꾸밈 사진을 빼고 재시도
-      try{
-        var slim=list.map(function(p){ var d=Object.assign({},p.data); d.frameData=null; return {name:p.name,data:d}; });
-        localStorage.setItem(PRESET_KEY, JSON.stringify(slim));
-        alert('저장 공간이 부족해 꾸밈 테두리 사진 없이 저장되었어요.');
-      }catch(e2){}
-    }
-  }
+  function saveMyPresets(list){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); }catch(e){} }
   function renderMyPresets(){
     var wrap=$('my-presets'), list=loadMyPresets(); wrap.innerHTML='';
     if(!list.length){ return; }
