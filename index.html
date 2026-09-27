@@ -31,11 +31,6 @@
   @font-face{font-family:'OngleipYoonwoo';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105@1.1/Yoonwoo.woff') format('woff');}
   @font-face{font-family:'OngleipKonkon';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2412-1@1.0/Ownglyph_corncorn-Rg.woff2') format('woff2');}
   @font-face{font-family:'ChosunIlboMyungjo';font-weight:normal;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');}
-  /* 조선일보명조체에는 휜 따옴표(‘ ’ “ ”)·말줄임표(… ⋯) 글자가 아예 없다.
-     그대로 두면 미리보기(브라우저)와 저장(캔버스)이 각자 다른 기기 글꼴로 대신 채워서 모양이 달라진다.
-     → 그 여섯 글자만 본뜬 작은 글꼴(Noto Serif CJK KR 일부, SIL OFL 1.1)을 같은 이름에 붙여 둔다.
-       파일 안에 들어 있어 따로 받지 않고, 미리보기·저장이 똑같은 모양을 쓴다. */
-  @font-face{font-family:'ChosunIlboMyungjo';font-weight:normal;font-display:block;unicode-range:U+2018-2019,U+201C-201D,U+2026,U+22EF;src:url(data:font/woff2;base64,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) format('woff2');}
   @font-face{font-family:'DreamHeumul';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2608201818@dreamheumulkr/dreamheumulkr/DreamHeumulKR.woff2') format('woff2');}
   @font-face{font-family:'KyoboHand2025';font-weight:normal;font-display:swap;src:url('./KyoboHandwriting2025lyb.otf') format('opentype');}
   @font-face{font-family:'KyoboHand2020';font-weight:normal;font-display:swap;src:url('./KyoboHandwriting2020pdy.otf') format('opentype');}
@@ -832,6 +827,11 @@
   .reorderable.dragging *{cursor:grabbing;}
 
   .hint{font-size:11.5px;color:var(--ink-3);line-height:1.55;margin:12px 0 0;}
+  /* 설명 안의 '자세히' 링크 — 누르면 도움말(?)의 해당 부분으로 */
+  .hint-link{appearance:none;border:none;background:none;padding:0;margin:0;cursor:pointer;
+    font:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px;}
+  .hint-link:hover{color:var(--ink-2);}
+  .hint-link::before{content:"\2794\00a0";}   /* ➔ — 글자처럼 붙어 밑줄도 화살표까지 이어진다 */
 
   /* ============================================================
      로그 에디터
@@ -889,6 +889,8 @@
   #editor .g-img.is-sel{box-shadow:0 0 0 2px var(--accent);}
   #editor .g-img.is-sel::after{content:"\00d7";position:absolute;top:-9px;right:-9px;z-index:2;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;color:var(--ink-2);background:var(--surface);border:1px solid var(--line-strong);border-radius:50%;box-shadow:var(--shadow-2);transition:color .14s var(--ease),background .14s,border-color .14s;}
   #editor .g-img.is-sel:hover::after{color:#fff;background:var(--danger);border-color:var(--danger);}
+  /* 문단 들여쓰기가 켜져 있을 때 입력에도 들여쓴 자리를 보여 주는 빈 칸(글에는 들어가지 않는 장식) */
+  #editor .g-ind-vis{display:inline-block !important;width:var(--ed-indent,1em);height:1px;vertical-align:baseline;pointer-events:none;}
   #editor .g-bub-img{display:inline-block;vertical-align:bottom;max-width:100%;height:auto;border-radius:11px;margin:0;}
   #editor .g-bub.img-only{max-width:var(--photo-w,60%);}
   #editor .g-bub.has-img:not(.img-only) .g-bub-img{display:block;width:var(--photo-w-px,60%);max-width:100%;margin:0 0 2px;}
@@ -1018,6 +1020,9 @@
   /* 맨 마지막 말풍선(뒤에 실제 내용 없음)은 아래 여백 제거 */
   #canvas .g-msg-group.g-endbub,.canvas-clone .g-msg-group.g-endbub{margin-bottom:0 !important;}
   #canvas .g-bub.g-endbub,.canvas-clone .g-bub.g-endbub{margin-bottom:0 !important;}
+  /* 문단 들여쓰기 — 켜져 있을 때만 캔버스에서 문단을 블록으로 감싸 첫 줄을 민다(1글자 = 본문 1em) */
+  #canvas .g-para,.canvas-clone .g-para{display:block !important;}
+  #canvas .g-para.ind,.canvas-clone .g-para.ind{text-indent:var(--para-indent,1em) !important;}
   #canvas .g-para-gap,.canvas-clone .g-para-gap{display:block !important;width:100% !important;height:var(--para-gap,20px) !important;}
   #canvas .g-msg-group.left,.canvas-clone .g-msg-group.left{flex-direction:row !important;}
   #canvas .g-msg-group.right,.canvas-clone .g-msg-group.right{flex-direction:row-reverse !important;}
@@ -1316,6 +1321,40 @@
     *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
   }
 </style>
+<script>
+/* 글꼴에 없는 문장부호 채우기
+   일부 글꼴에는 휜 따옴표(‘ ’ “ ”)·말줄임표(… ⋯)가 없다. 그대로 두면 미리보기(브라우저)와
+   저장(캔버스)이 각자 다른 기기 글꼴로 대신 채워서 모양이 달라진다.
+   → 빠진 글자만 담은 작은 글꼴을 같은 이름에 덧붙여, 두 곳이 똑같은 모양을 쓰게 한다.
+     명조 계열은 Noto Serif CJK KR, 고딕·손글씨 계열은 Noto Sans CJK KR 에서 여섯 글자만 뽑았다(SIL OFL 1.1).
+     파일 안에 들어 있어 따로 받지 않는다. 글꼴에 원래 있는 글자는 건드리지 않도록, 빠진 글자만 범위로 지정한다. */
+(function(){
+  var SERIF='data:font/woff2;base64,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';
+  var SANS='data:font/woff2;base64,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';
+  var ALL='U+2018-2019,U+201C-201D,U+2026,U+22EF', DOTS='U+22EF', ELL='U+2026,U+22EF';
+  // [글꼴 이름, 굵기들, 채울 글꼴, 빠진 글자 범위]
+  var list=[
+    ['ChosunIlboMyungjo', [400], SERIF, ALL],
+    ['DreamHeumul', [400], SANS, ALL],
+    ['BookkMyungjo', [400,700], SERIF, DOTS],
+    ['Ridibatang', [400], SERIF, DOTS],
+    ['OgRenaissanceSecret', [400], SERIF, DOTS],
+    ['MaruBuri', [200,300,400,600,700], SERIF, DOTS],
+    ['Nanum Myeongjo', [400,700,800], SERIF, DOTS],
+    ['Paperozi', [400,700], SANS, DOTS],
+    ['OngleipKonkon', [400], SANS, DOTS],
+    ['OngleipYoonwoo', [400], SANS, ELL]
+  ];
+  var css='';
+  list.forEach(function(f){
+    f[1].forEach(function(w){
+      css+="@font-face{font-family:'"+f[0]+"';font-weight:"+w+";font-display:block;unicode-range:"+f[3]+";src:url("+f[2]+") format('woff2');}\n";
+    });
+  });
+  var st=document.createElement('style'); st.id='punct-fallback'; st.textContent=css;
+  document.head.appendChild(st);   // 원래 글꼴 선언보다 뒤에 둬야 빠진 글자에서 이쪽이 쓰인다
+})();
+</script>
 </head>
 <body>
 <div class="app">
@@ -1544,12 +1583,31 @@
               </div>
               <label class="switch" style="margin-top:16px">
                 <span class="switch__text" style="flex:1">
+                  <span class="switch__title">문단 들여쓰기</span>
+                  <span class="switch__sub">문단 첫 줄을 안으로 들여써요. 인용선 · 말풍선 안은 빼요</span>
+                </span>
+                <input id="para-indent" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="field" id="para-indent-row" style="margin-top:12px;display:none">
+                <span class="label">들여쓰기 크기</span>
+                <div class="seg" id="para-indent-seg">
+                  <button type="button" data-ind="0.5" aria-pressed="false">0.5글자</button>
+                  <button type="button" data-ind="1" aria-pressed="true">1글자</button>
+                  <button type="button" data-ind="1.5" aria-pressed="false">1.5글자</button>
+                  <button type="button" data-ind="2" aria-pressed="false">2글자</button>
+                  <span class="seg__thumb"></span>
+                </div>
+                <input id="indent-size" type="hidden" value="1">
+                <p class="hint" style="margin-top:10px">들여쓰기를 빼고 싶은 경우 입력의 해당 문단 앞에서 백스페이스를 누르면 돼요.</p>
+              </div>
+              <label class="switch" style="margin-top:16px">
+                <span class="switch__text" style="flex:1">
                   <span class="switch__title">크기 도우미</span>
                   <span class="switch__sub">본문 글자 크기에 맞춰 값을 자동으로 정해요</span>
                 </span>
                 <input id="size-helper" type="checkbox" style="margin-left:auto">
               </label>
-              <p class="hint" style="margin-top:8px">크기 변경: 제목 · 소제목 · 하단 · (크기) · 인용선 두께<br>간격 변경: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요. 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 저장돼요.</p>
+              <p class="hint" style="margin-top:8px"><button type="button" class="hint-link" data-help-jump="help-sizehelper">자세한 설명 (크기 도우미 사용 시 필독)</button></p>
 
             </div>
           </details>
@@ -2010,7 +2068,7 @@
             </summary>
             <div class="fold__body">
               <div class="field">
-                <span class="label">말풍선 모양 (오른쪽 위 ? 도움말 참고!)</span>
+                <span class="label">말풍선 모양</span>
                 <div class="seg" id="bub-shape-seg" style="height:auto">
                   <button type="button" data-shape="imessage" aria-pressed="true" style="padding:7px 2px;line-height:1.35">메시지</button>
                   <button type="button" data-shape="soft" aria-pressed="false" style="padding:7px 2px;line-height:1.35">심플</button>
@@ -2019,6 +2077,7 @@
                   <button type="button" data-shape="script" aria-pressed="false" style="padding:7px 2px;line-height:1.35">대본</button>
                   <span class="seg__thumb"></span>
                 </div>
+                <p class="hint" style="margin-top:8px"><button type="button" class="hint-link" data-help-jump="help-bubble">자세한 설명 (모양별 차이)</button></p>
               </div>
 
               <div id="script-options" style="margin-top:16px;display:none">
@@ -2435,7 +2494,7 @@
       <p class="help-cat">자동화 도구</p>
       <p class="hint">· <b>*색*</b>: *영역*을 *색*의 색깔로 변경해요.<br><br>· <b>(색)</b>: (영역)을 (색)의 색깔로 변경해요. 말풍선 안의 (영역)은 각 인물별로 지정된 (색)을 사용해요.<br>· <b>(휨)</b>: (영역)을 이탤릭으로 변경해요.<br>· <b>(크기)</b>: (영역)의 글자 크기를 변환해요. 어떤 크기로 변환할지는 내용-자동화 도구에서 설정하며, 값을 바꾸면 이미 적용한 것도 함께 반영돼요.<br><br>· <b>&quot;넣&quot;</b>: 문단 앞뒤에 &quot; &quot;를 넣어요. 문단이 별표·괄호·따옴표로 시작하거나 끝나면 건너뛰어요.<br>· <b>&quot;색&quot;</b>: &quot;영역&quot;을 강조색으로 변경해요. 강조색 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 강조색과 똑같이 조정돼요.<br>· <b>&quot;인&quot;</b>: &quot;영역&quot;을 인용선으로 변경해요. 바로 아래 줄에 (영역)·*(영역)*이 있으면 하나의 인용선에 같이 들어가요. 인용선 1~6 중에서 고를 수 있으며, 적용 후에는 일반적인 인용선과 똑같이 조정돼요.<br>· <b>&quot;말&quot;</b>: &quot;영역&quot;을 말풍선으로 변경해요. 바로 아래 줄에 (영역)·*(영역)*이 있으면 하나의 말풍선에 같이 들어가요.<br><br><b>TIP!</b><br>· *색*과 (색)에 사용되는 색깔은 내용-자동화 도구에서 설정해요.<br>· 말풍선 안의 (색)에 사용되는 색깔은 말풍선-인물에서 인물별로 변경돼요.<br>· 프리셋-텍스트 대치에서 특정 글자를 다른 글자로 변환 · 삭제할 수 있어요.</p>
       <p class="help-cat">서식</p>
-      <p class="hint">· <b>서식 종류</b>: 볼드, 이탤릭, 밑줄, 취소선, 형광펜, 강조색, 개별 크기, 삽입.<br><br>· <b>형광펜 · 강조색 · 인용선</b>: 적용된 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br><br>· <b>개별 크기</b>: 드래그한 부분만 크기를 따로 적용해요. 본문보다 작게도, 크게도 만들 수 있어요. 나중에 값을 변경해도 이전 것은 적용 당시 크기를 그대로 유지해요. 이전 것까지 바꾸고 싶다면 해당 영역을 다시 적용해 주세요.<br>· <b>글자 크기 불러오기</b>: 입력이나 미리보기의 글자를 누르면 해당 글자의 크기를 그대로 가져와요. 일반 본문 · 제목 · 하단을 눌러도 돼요.<br><br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br><br><b>TIP!</b><br>· 강조색 · 형광펜 · 인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· 개별 글자를 되돌리거나 값을 변경하고 싶을 경우, 해당 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.<br>· 인용선 여백은 인용선의 위아래를 항상 감싸는 여백이에요.<br>
+      <p class="hint">· <b>서식 종류</b>: 볼드, 이탤릭, 밑줄, 취소선, 형광펜, 강조색, 개별 크기, 삽입.<br><br>· <b>형광펜 · 강조색 · 인용선</b>: 적용된 뒤에도 각각 고유한 값을 가져요. 형광펜 1을 칠했다면, 나중에 형광펜 1의 색을 변경해도 이전 것이 반영돼요.<br><br>· <b>개별 크기</b>: 드래그한 부분만 크기를 따로 적용해요. 본문보다 작게도, 크게도 만들 수 있어요. 나중에 값을 변경해도 이전 것은 적용 당시 크기를 그대로 유지해요. 이전 것까지 바꾸고 싶다면 해당 영역을 다시 적용해 주세요.<br>· <b>글자 크기 불러오기</b>: 입력이나 미리보기의 글자를 누르면 해당 글자의 크기를 그대로 가져와요. 일반 본문 · 제목 · 하단을 눌러도 돼요.<br><br>· <b>구분선 삭제</b>: 백스페이스 또는 입력에서 직접 클릭 후 삭제할 수 있어요.<br>· <b>사진 정렬</b>: 삽입 후에도 사진을 클릭해서 조정할 수 있어요.<br>· <b>문단 들여쓰기</b>: 내용-본문에서 켜요. 인용선 · 말풍선 안을 뺀 모든 문단의 첫 줄을 0.5~2글자만큼 들여써요. 빼고 싶은 문단은 입력에서 문단 맨 앞에 커서를 두고 백스페이스를 누르면 빠지고, 버튼을 껐다 켜면 모두 다시 들여써요. 입력에서도 들여쓴 자리가 보여요.<br><br><b>TIP!</b><br>· 강조색 · 형광펜 · 인용선을 삭제하거나 슬롯(색)을 변경하고 싶을 경우, 칠해진 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· 개별 글자를 되돌리거나 값을 변경하고 싶을 경우, 해당 영역을 드래그하는 대신 커서만 둬도 전체에 반영돼요.<br>· ＋로 넣는 사진은 본문에 바로 들어가는 사진이에요. 말풍선처럼 사진을 넣고 싶다면 말풍선 삽입의 인물을 클릭하여 사진을 선택해 주세요.<br>· 인용선 여백은 인용선의 위아래를 항상 감싸는 여백이에요.<br>
 <svg viewBox="0 0 360 100" width="100%" style="display:block;margin:8px auto 2px;max-width:500px" fill="none" xmlns="http://www.w3.org/2000/svg">
 <text x="55" y="10" font-size="8" fill="#888" text-anchor="middle">여백 0 설정</text>
 <text x="155" y="10" font-size="8" fill="#888" text-anchor="middle">여백 있음</text>
@@ -2466,7 +2525,9 @@
 <rect x="232" y="84" width="70" height="13" rx="2" fill="#f0f0f0"/><text x="267" y="93" font-size="7" fill="#555" text-anchor="middle">본문 텍스트</text>
 </svg>
 </p>
-      <p class="help-cat">말풍선</p>
+      <p class="help-cat" id="help-sizehelper">크기 도우미</p>
+      <p class="hint">· <b>크기 변경</b>: 제목 · 소제목 · 하단 · (크기) · 인용선 두께<br>· <b>간격 변경</b>: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>· 버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>· 버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요.<br>· 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 저장돼요.</p>
+      <p class="help-cat" id="help-bubble">말풍선</p>
       <table class="help-tbl">
         <tr><th></th><th>메시지</th><th>심플</th><th>네모</th><th>로그</th><th>대본</th></tr>
         <tr><td>꼬리</td><td>O</td><td>O</td><td>X</td><td>X</td><td>X</td></tr>
@@ -2925,7 +2986,7 @@
   function flushPage(){
     // 현재 에디터 내용을 pages 배열에 저장
     if(!pages[pageIdx]) return;
-    pages[pageIdx].body = editor.innerHTML;
+    pages[pageIdx].body = stripIndVis(editor.innerHTML);
     // 제목·소제목·하단: 분리 상태면 현재 에디터 값 저장
     if(pages[pageIdx].title != null) pages[pageIdx].title = $('title-ed') ? $('title-ed').innerHTML : '';
     if(pages[pageIdx].subtitle != null) pages[pageIdx].subtitle = $('subtitle-ed') ? $('subtitle-ed').innerHTML : '';
@@ -4981,6 +5042,17 @@
     function closeHelp(){ hOv.classList.remove('is-open'); hT=setTimeout(function(){ hOv.hidden=true; hT=null; }, 260); }
     (typeof bindTap==='function'?bindTap:function(b,f){b.addEventListener('click',f);})(hBtn, function(e){ if(e){ e.preventDefault(); e.stopPropagation(); } openHelp(); });
     if(hClose){ hClose.addEventListener('click', closeHelp); }
+    // 설명 속 '자세한 설명' 링크 → 도움말을 열고 해당 항목으로 스크롤
+    document.addEventListener('click', function(e){
+      var a = e.target && e.target.closest ? e.target.closest('[data-help-jump]') : null;
+      if(!a) return;
+      e.preventDefault(); e.stopPropagation();
+      openHelp();
+      var t = document.getElementById(a.getAttribute('data-help-jump'));
+      var body = hOv.querySelector('.help-body');
+      function go(){ if(t && body){ body.scrollTop += t.getBoundingClientRect().top - body.getBoundingClientRect().top - 2; } }
+      requestAnimationFrame(go); setTimeout(go, 260);   // 열리는 애니메이션이 끝난 뒤 한 번 더 맞춤
+    });
     hOv.addEventListener('click', function(e){ if(e.target===hOv){ closeHelp(); } });
     document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !hOv.hidden){ closeHelp(); } });
   })();
@@ -5661,6 +5733,7 @@
     var psubsz=$('parensub-size'); if(psubsz){ var _ps=parseFloat(psubsz.value); if(isNaN(_ps)) _ps=26; el.style.setProperty('--psub-size', _ps+'px'); }
     var psz=$('photo-size'); if(psz){ var _pp=parseFloat(psz.value); el.style.setProperty('--photo-w', _pp+'%'); el.style.setProperty('--photo-w-px', Math.round(w*_pp/100)+'px'); }
     var lisz=$('logimg-size'); if(lisz){ el.style.setProperty('--logimg-w', parseFloat(lisz.value)+'%'); }
+    var indz=$('indent-size'); el.style.setProperty('--para-indent', ((indz && parseFloat(indz.value))||1)+'em');
     var lirad=$('logimg-radius'); if(lirad){ el.style.setProperty('--logimg-radius', parseFloat(lirad.value)+'px'); }
     var tf=$('title-font'), nf=$('name-font');
     el.style.setProperty('--title-font', (tf && tf.value) ? tf.value : $('font').value);
@@ -6157,11 +6230,12 @@
     var _lisz=$('logimg-size'); if(_lisz) editor.style.setProperty('--logimg-w', parseFloat(_lisz.value)+'%');
     var _lirad=$('logimg-radius'); if(_lirad) editor.style.setProperty('--logimg-radius', parseFloat(_lirad.value)+'px');
     cleanOrphanNames();
+    syncEditorIndent();
     updateEmptyBubbles();
     styleCharBubbles(editor);
     syncSubFixedEm();
     canvas.innerHTML = '<div class="g-inner">' + (gridCols > 0 && pages.length > 1 ? buildGridHtml() : buildHtml()) + '</div>';
-    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); novelJustifyLastLine(canvas); applyScriptFont(canvas); fitStage();
+    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); applyParaIndent(canvas, isNovelCont(pageIdx)); novelJustifyLastLine(canvas); applyScriptFont(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('subtext-size')) setVal('subtext-size', $('subtext-size').value+'px');
     if($('parensub-size')) setVal('parensub-size', $('parensub-size').value+'px');
@@ -6278,7 +6352,7 @@
   /* 한 페이지를 (입력창은 건드리지 않고) 캔버스에만 그려 잰다.
      사용자 여백 그대로 두고 잰다(넘칠 때 여백을 줄이는 보정은 측정에 끼지 않게 _measuring 으로 막음).
      반환: ih = 내용 높이, avail = 여백 안쪽에 쓸 수 있는 높이, nameTop = 하단 시작 높이 */
-  function layoutTestPage(body, tH, sH, nH, wantAvail){
+  function layoutTestPage(body, tH, sH, nH, wantAvail, cont){
     _measuring = true;
     try{
       var html = buildTitleBlock(edToHtml(tmpEl(tH)), edToHtml(tmpEl(sH)))
@@ -6288,6 +6362,7 @@
       renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas);
       groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas);
       tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas);
+      applyParaIndent(canvas, !!cont);
       applyScriptFont(canvas);
       var padSet = Math.round(parseFloat($('pad').value)||0);
       var _mfOn = (framePos!=='none' && !!frameData);
@@ -6335,7 +6410,7 @@
       var isCur = (i === pageIdx);
       var m = pageMetaHtml(p, shT, shS, shN);
       var r = layoutTestPage(isCur ? editor.innerHTML : (p.body || ''),
-                             isCur ? liveTitle : m.t, isCur ? liveSub : m.s, isCur ? liveName : m.n, false);
+                             isCur ? liveTitle : m.t, isCur ? liveSub : m.s, isCur ? liveName : m.n, false, isNovelCont(i));
       p._contentH = r.ih;
       p._nameTop = r.nameTop;   // 하단이 시작하는 높이(없으면 null)
     });
@@ -6390,7 +6465,7 @@
   function novelIsEmptyEl(el){
     if(novelAtomic(el)) return false;
     if(el.querySelector('img,br,svg,.g-hr,.g-img')) return false;
-    return (el.textContent||'').replace(/​/g,'')==='';
+    return (el.textContent||'').replace(/\u200b/g,'')==='';
   }
   function novelLeaf(d, fromEnd){
     var n = fromEnd ? d.lastChild : d.firstChild;
@@ -6403,9 +6478,9 @@
     for(var g=0; g<500; g++){
       var n = novelLeaf(d, true); if(!n || n===d) break;
       if(n.nodeType===3){
-        var v=n.nodeValue, t=v.replace(/[\s​]+$/,'');
+        var v=n.nodeValue, t=v.replace(/[\s\u200b]+$/,'');
         if(t===v) break;
-        removed = v.slice(t.length).replace(/​/g,'') + removed;
+        removed = v.slice(t.length).replace(/\u200b/g,'') + removed;
         if(t===''){ n.parentNode.removeChild(n); continue; }
         n.nodeValue=t; break;
       }
@@ -6422,10 +6497,10 @@
       var n = novelLeaf(d, false); if(!n || n===d) break;
       if(n.nodeType===3){
         var v=n.nodeValue;
-        var re = sawBr ? /^​+/ : /^[\s​]+/;
+        var re = sawBr ? /^\u200b+/ : /^[\s\u200b]+/;
         var t=v.replace(re,'');
         if(t===v) break;
-        removed += v.slice(0, v.length-t.length).replace(/​/g,'');
+        removed += v.slice(0, v.length-t.length).replace(/\u200b/g,'');
         if(t===''){ n.parentNode.removeChild(n); continue; }
         n.nodeValue=t; break;
       }
@@ -6438,7 +6513,7 @@
   function novelIsBlank(html){
     var d=tmpEl(html);
     if(d.querySelector('img,.g-hr,.g-img')) return false;
-    return (d.textContent||'').replace(/[\s​]/g,'')==='';
+    return (d.textContent||'').replace(/[\s\u200b]/g,'')==='';
   }
   // 지금 페이지들을 한 덩어리로 합친다(소설 모드로 나눈 자리는 원래 모양 그대로, 직접 만든 페이지 사이는 줄바꿈)
   function novelMergedBody(){
@@ -6472,7 +6547,8 @@
     for(var i=0; i<PAGE_LIMIT; i++){
       var meta = metas[i] || { title:null, subtitle:null, name:null };
       var m = pageMetaHtml(meta, sharedTitle, sharedSubtitle, sharedName);
-      var whole = layoutTestPage(rest, m.t, m.s, m.n, true);
+      var cont = i > 0 && typeof joins[i] === 'string' && joins[i].indexOf('<br') === -1;
+      var whole = layoutTestPage(rest, m.t, m.s, m.n, true, cont);
       availPx = whole.avail;
       var page = { id: meta.id || ('p' + (_nextPageId++)), body:'', title:meta.title==null?null:meta.title,
                    subtitle:meta.subtitle==null?null:meta.subtitle, name:meta.name==null?null:meta.name };
@@ -6485,7 +6561,7 @@
       var lo = 0, hi = cuts.length - 1, best = -1;
       while(lo <= hi){
         var mid = (lo + hi) >> 1;
-        var r = layoutTestPage(novelSlice(root, cuts[mid], true).innerHTML, m.t, m.s, m.n, false);
+        var r = layoutTestPage(novelSlice(root, cuts[mid], true).innerHTML, m.t, m.s, m.n, false, cont);
         if(r.ih <= availPx + 0.5){ best = mid; lo = mid + 1; } else { hi = mid - 1; }
       }
       if(best < 0) best = 0;   // 첫 덩어리조차 안 들어가면(아주 큰 사진 등) 그것만이라도 싣고 넘어간다
@@ -6535,6 +6611,197 @@
     // 웹폰트가 다 붙은 뒤 재야 줄바꿈 위치가 맞는다
     if(document.fonts && document.fonts.ready) document.fonts.ready.then(go); else go();
   }
+  /* ============================================================
+     문단 들여쓰기
+     · 켜져 있으면 캔버스에서 본문의 문단(줄바꿈으로 나뉜 글 덩어리)을 블록으로 감싸 첫 줄을 민다
+     · 인용선 · 말풍선 · 사진 등 블록 안의 글은 건드리지 않는다
+     · 입력에서 문단 맨 앞 백스페이스 → 그 문단 앞에 보이지 않는 표식(U+2060)을 넣어 그 문단만 뺀다
+     · 버튼을 껐다 켜면 표식을 모두 지운다(= 다시 전부 들여씀)
+     ============================================================ */
+  var IND_MARK = '\u2060';
+  function paraIndentOn(){ var c=$('para-indent'); return !!(c && c.checked); }
+  function isNovelCont(i){
+    var p = pages[i];
+    return !!(novelMode && i > 0 && p && typeof p.novelJoin === 'string' && p.novelJoin.indexOf('<br') === -1);
+  }
+  function isIndVis(n){ return n && n.nodeType===1 && n.classList && n.classList.contains('g-ind-vis'); }
+  function isInlineNode(n){
+    if(n.nodeType===3) return true;
+    if(isIndVis(n)) return true;
+    return n.nodeType===1 && (NOVEL_INLINE[n.tagName] || (n.tagName==='SPAN' && !/\bg-/.test(n.className||'')));
+  }
+  function indentIn(host, firstCont){
+    var kids=[].slice.call(host.childNodes), run=[], started=false;
+    function flush(){
+      var r=run; run=[];
+      if(!r.length) return null;
+      var txt=r.map(function(x){ return x.textContent||''; }).join('').replace(/\u200b/g,'');
+      if(txt.replace(/[\s\u2060]/g,'')==='') return null;         // 빈 줄은 그대로
+      var d=document.createElement('div'); d.className='g-para';
+      var cont = !started && firstCont;                              // 앞 페이지에서 이어진 문단은 들여쓰지 않음
+      if(!cont && txt.charAt(0)!==IND_MARK) d.classList.add('ind');  // 표식이 붙은 문단은 뺀다
+      r[0].parentNode.insertBefore(d, r[0]);
+      r.forEach(function(x){ d.appendChild(x); });
+      started=true;
+      return d;
+    }
+    kids.forEach(function(n){
+      if(n.nodeType===1 && n.tagName==='BR'){
+        if(flush() && n.parentNode) n.parentNode.removeChild(n);    // 문단이 블록이 되었으니 끝의 줄바꿈은 필요 없음
+        return;
+      }
+      if(isInlineNode(n)){ run.push(n); return; }
+      flush();
+      if(n.nodeType===1 && n.classList && !n.classList.contains('g-title-blk') && !n.classList.contains('g-bg-layer')) started=true;
+    });
+    flush();
+  }
+  function applyParaIndent(root, firstCont){
+    if(!paraIndentOn()) return;
+    var inner=root.querySelector('.g-inner'); if(!inner) return;
+    var cols=inner.querySelectorAll('.g-grid-col');
+    if(cols.length){ [].forEach.call(cols, function(c, i){ indentIn(c, isNovelCont(i)); }); }
+    else indentIn(inner, !!firstCont);
+  }
+  function editorParaBreak(n){ return n.nodeType===1 && (n.tagName==='BR' || !isInlineNode(n)); }
+  // 커서가 있는 문단의 앞뒤 정보(본문 최상위 문단일 때만)
+  function caretParaCtx(){
+    var sel=window.getSelection(); if(!sel || !sel.rangeCount || !sel.isCollapsed) return null;
+    var r=sel.getRangeAt(0), c=r.startContainer, o=r.startOffset;
+    if(!editor.contains(c)) return null;
+    var walkFrom, walkNext;
+    if(c===editor){ walkFrom=editor.childNodes[o-1]||null; walkNext=editor.childNodes[o]||null; }
+    else {
+      var top=c; while(top.parentNode!==editor) top=top.parentNode;
+      if(top.nodeType===1 && !isInlineNode(top)) return null;       // 인용선 · 말풍선 등 안쪽
+      walkFrom=top.previousSibling; walkNext=top.nextSibling;
+    }
+    var b=walkFrom; while(b && !editorParaBreak(b)) b=b.previousSibling;
+    var e=walkNext; while(e && !editorParaBreak(e)) e=e.nextSibling;
+    var br=document.createRange(); if(b) br.setStartAfter(b); else br.setStart(editor,0); br.setEnd(c,o);
+    var ar=document.createRange(); ar.setStart(c,o); if(e) ar.setEndBefore(e); else ar.setEnd(editor, editor.childNodes.length);
+    return { b:b, beforeRange:br, before:br.toString().replace(/\u200b/g,''), after:ar.toString().replace(/[\u200b\u2060]/g,'') };
+  }
+  function handleIndentBackspace(e){
+    if(!paraIndentOn()) return false;
+    var ctx=caretParaCtx(); if(!ctx) return false;
+    if(ctx.after.replace(/\s/g,'')==='' && ctx.before.replace(/[\s\u2060]/g,'')===''){
+      // 빈 문단: 들여쓰기 표시 칸 때문에 백스페이스가 헛돌지 않게, 윗줄과 바로 합친다
+      if(!ctx.b || ctx.b.tagName!=='BR') return false;
+      var hasVis=false, nx=ctx.b.nextSibling;
+      while(nx && !editorParaBreak(nx)){ if(isIndVis(nx)) hasVis=true; nx=nx.nextSibling; }
+      if(!hasVis) return false;
+      e.preventDefault(); e.stopPropagation();
+      var n2=ctx.b.nextSibling;
+      while(n2 && !editorParaBreak(n2)){ var nn=n2.nextSibling; if(isIndVis(n2) || (n2.nodeType===3 && n2.nodeValue.replace(/[\u200b\u2060]/g,'')==='')) n2.parentNode.removeChild(n2); n2=nn; }
+      var par=ctx.b.parentNode, ix=[].indexOf.call(par.childNodes, ctx.b);
+      par.removeChild(ctx.b);
+      var rr=document.createRange(); rr.setStart(par, Math.min(ix, par.childNodes.length)); rr.collapse(true);
+      var sl=window.getSelection(); sl.removeAllRanges(); sl.addRange(rr);
+      saveSel(); render(); return true;
+    }
+    if(!ctx.b && isNovelCont(pageIdx)) return false;                  // 앞 페이지에서 이어진 문단은 원래 들여쓰기 없음
+    var sel=window.getSelection();
+    if(ctx.before===''){
+      // 들여쓰기 되어 있는 문단 맨 앞 → 이 문단만 들여쓰기 빼기
+      e.preventDefault(); e.stopPropagation();
+      var t=document.createTextNode(IND_MARK);
+      sel.getRangeAt(0).insertNode(t);
+      var r2=document.createRange(); r2.setStartAfter(t); r2.collapse(true);
+      sel.removeAllRanges(); sel.addRange(r2);
+      saveSel(); render(); return true;
+    }
+    if(ctx.before.replace(/\u2060/g,'')===''){
+      // 이미 뺀 문단 맨 앞 → 평소 백스페이스처럼 윗줄과 합친다
+      if(!ctx.b){ e.preventDefault(); e.stopPropagation(); return true; }   // 페이지 첫 문단: 합칠 윗줄 없음
+      if(ctx.b.tagName!=='BR') return false;                           // 위가 사진 · 구분선 등이면 원래 처리에 맡김
+      e.preventDefault(); e.stopPropagation();
+      var pb=ctx.b.previousSibling; while(pb && !editorParaBreak(pb)) pb=pb.previousSibling;
+      var pr=document.createRange(); if(pb) pr.setStartAfter(pb); else pr.setStart(editor,0); pr.setEndBefore(ctx.b);
+      var prevEmpty = pr.toString().replace(/[\s\u200b\u2060]/g,'')==='';
+      if(!prevEmpty) ctx.beforeRange.deleteContents();                // 내용 있는 윗줄과 합치면 표식은 필요 없음
+      var parent=ctx.b.parentNode, idx=[].indexOf.call(parent.childNodes, ctx.b);
+      parent.removeChild(ctx.b);                                       // 윗줄이 빈 줄이면 빈 줄만 지우고 표식은 유지
+      if(!prevEmpty){ var r3=document.createRange(); r3.setStart(parent, Math.min(idx, parent.childNodes.length)); r3.collapse(true); sel.removeAllRanges(); sel.addRange(r3); }
+      saveSel(); render(); return true;
+    }
+    return false;
+  }
+  // 편집창의 다른 백스페이스 처리보다 먼저 받는다(document 캡처 단계)
+  document.addEventListener('keydown', function(e){
+    if(e.key!=='Backspace' || e.isComposing || e.keyCode===229) return;
+    if(!(e.target===editor || editor.contains(e.target))) return;
+    handleIndentBackspace(e);
+  }, true);
+  document.addEventListener('beforeinput', function(e){
+    if(e.inputType!=='deleteContentBackward') return;
+    if(!(e.target===editor || editor.contains(e.target))) return;
+    handleIndentBackspace(e);
+  }, true);
+  function stripIndVis(html){ return String(html||'').replace(/<span class="g-ind-vis"[^>]*><\/span>/g,''); }
+  var _edComposing = false;
+  editor.addEventListener('compositionstart', function(){ _edComposing = true; });
+  editor.addEventListener('compositionend', function(){ _edComposing = false; setTimeout(function(){ if(typeof renderSoon==='function') renderSoon(); }, 0); });
+  /* 입력에도 들여쓰기를 보여 준다: 들여쓸 문단 맨 앞에 빈 칸(.g-ind-vis)을 하나씩 둔다.
+     바뀔 게 있을 때만 건드리고, 한글 조합 중에는 손대지 않는다(조합이 깨지지 않게) */
+  function syncEditorIndent(){
+    if(_edComposing) return;
+    var on = paraIndentOn();
+    var v = parseFloat(($('indent-size')||{}).value)||1;
+    editor.style.setProperty('--ed-indent', 'max(4px, '+(v*0.6).toFixed(2)+'em)');   // 입력에선 자리만 알아볼 정도로(설정값의 60%)
+    // 최상위가 아닌 곳(인용선·말풍선 안 등)에 들어간 칸은 없앤다
+    [].forEach.call(editor.querySelectorAll('.g-ind-vis'), function(x){ if(x.parentNode!==editor || !on) x.parentNode.removeChild(x); });
+    if(!on) return;
+    var kids=[].slice.call(editor.childNodes), runs=[], run=[];
+    kids.forEach(function(n){
+      if(n.nodeType===1 && n.tagName==='BR'){ runs.push(run); run=[]; return; }
+      if(isInlineNode(n)){ run.push(n); return; }
+      runs.push(run); run=[]; runs.push(null);   // null = 블록(첫 문단 판정용)
+    });
+    runs.push(run);
+    var sawBody=false;
+    runs.forEach(function(r){
+      if(r===null){ sawBody=true; return; }
+      var real=r.filter(function(n){ return !isIndVis(n); });
+      var vis=r.filter(isIndVis);
+      var isFirst = !sawBody; if(real.length) sawBody=true;
+      var txt=real.map(function(n){ return n.textContent||''; }).join('').replace(/​/g,'');
+      var want = real.length>0 && !(isFirst && isNovelCont(pageIdx)) && txt.charAt(0)!==IND_MARK;
+      if(!want){ vis.forEach(function(x){ x.parentNode.removeChild(x); }); return; }
+      if(r[0] && isIndVis(r[0]) && vis.length===1) return;           // 이미 제자리
+      vis.forEach(function(x){ x.parentNode.removeChild(x); });
+      var sp=document.createElement('span'); sp.className='g-ind-vis'; sp.setAttribute('contenteditable','false');
+      real[0].parentNode.insertBefore(sp, real[0]);
+    });
+  }
+  function stripIndentMarks(){
+    flushPage();
+    pages.forEach(function(p){ if(typeof p.body==='string') p.body=p.body.replace(/\u2060/g,''); });
+    var w=document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false), ns=[];
+    while(w.nextNode()){ if(w.currentNode.nodeValue.indexOf(IND_MARK)!==-1) ns.push(w.currentNode); }
+    ns.forEach(function(n){ n.nodeValue=n.nodeValue.replace(/\u2060/g,''); });
+  }
+  function syncIndentUI(){
+    var on=paraIndentOn(), row=$('para-indent-row'); if(row) row.style.display = on ? '' : 'none';
+    var v=String(parseFloat(($('indent-size')||{}).value)||1);
+    var seg=$('para-indent-seg');
+    if(seg){
+      [].forEach.call(seg.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-ind')===v ? 'true':'false'); });
+      if(on) requestAnimationFrame(function(){ moveThumb(seg); });
+    }
+  }
+  if($('para-indent')){
+    $('para-indent').addEventListener('change', function(){
+      if(!_restoring) stripIndentMarks();
+      syncIndentUI(); render(); scheduleSave();
+    });
+  }
+  if($('para-indent-seg')){
+    [].forEach.call($('para-indent-seg').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ $('indent-size').value=b.getAttribute('data-ind'); syncIndentUI(); render(); scheduleSave(); });
+    });
+  }
+
   /* 다음 페이지로 문단 한가운데가 이어지면, 이 페이지 마지막 줄도 양쪽 끝까지 맞춘다
      (문단의 끝 줄로 취급되어 왼쪽에 붙는 걸 막음) */
   function novelJustifyLastLine(root){
@@ -6543,6 +6810,9 @@
     if(!nx || typeof nx.novelJoin !== 'string' || nx.novelJoin.indexOf('<br') !== -1) return;
     var inner = root.querySelector('.g-inner'); if(!inner) return;
     var end = nameStartEl(inner);
+    var lp = end ? end.previousSibling : inner.lastChild;
+    while(lp && lp.nodeType===3 && lp.nodeValue.replace(/[\s\u200b]/g,'')==='') lp = lp.previousSibling;
+    if(lp && lp.nodeType===1 && lp.classList && lp.classList.contains('g-para')){ lp.style.setProperty('text-align-last','justify','important'); return; }
     var n = end ? end.previousSibling : inner.lastChild, run = [];
     while(n){
       if(n.nodeType===3){ run.unshift(n); n = n.previousSibling; continue; }
@@ -8039,11 +8309,14 @@
   function _wrapSeg(parent, seg){
     if(!seg.length) return;
     var txt=''; seg.forEach(function(n){ txt += (n.textContent||''); });
-    txt = txt.replace(/\u200b/g,'').trim();
+    txt = txt.replace(/[\u200b\u2060]/g,'').trim();
     if(!txt) return;
     if(_EDGE_SKIP.indexOf(txt.charAt(0))>-1) return;                // 앞이 * ( )
     if(_EDGE_SKIP.indexOf(txt.charAt(txt.length-1))>-1) return;     // 뒤가 * ( )
-    parent.insertBefore(document.createTextNode('“'), seg[0]);      // 서식 '바깥'에 붙음 — 휜 여는 따옴표
+    var f0=seg[0];
+    if(f0.nodeType===3 && /^\u200b*\u2060/.test(f0.nodeValue)){      // 들여쓰기 뺀 표식은 문단 맨 앞에 남긴다
+      f0.nodeValue = f0.nodeValue.replace(/^(\u200b*\u2060)/, '$1“');
+    } else parent.insertBefore(document.createTextNode('“'), seg[0]);      // 서식 '바깥'에 붙음 — 휜 여는 따옴표
     var last=seg[seg.length-1];
     parent.insertBefore(document.createTextNode('”'), last.nextSibling);   // 휜 닫는 따옴표
     _wrapCount++;
@@ -8273,7 +8546,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['indent-size','name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt','c-title-hr','c-title-hr-txt',
@@ -8291,7 +8564,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:pages[0].body||'', nameHtml:sharedName,
         titleHtml:sharedTitle, subtitleHtml:sharedSubtitle,
-        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
+        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, paraIndent:paraIndentOn(), photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null,
         multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages, novelMode:novelMode }
       };
@@ -8385,6 +8658,7 @@
       nameRuleStyle = ({solid:1,dashed:1,dotted:1,double:1})[data.nameRuleStyle] ? data.nameRuleStyle : 'solid';
       if(typeof syncTitleRuleUI==='function') syncTitleRuleUI();
       if(typeof syncNameRuleUI==='function') syncNameRuleUI();
+      if($('para-indent')){ $('para-indent').checked = !!data.paraIndent; syncIndentUI(); }
       if(typeof normalizeNamePos==='function') normalizeNamePos();
       if(typeof syncNameSegs==='function') syncNameSegs();
       if($('size-helper')){
@@ -8625,6 +8899,7 @@
     // 선택 표시(is-sel)는 일시적 UI 상태 → 스냅샷에서 제외(선택만으로 기록이 쌓이지 않게)
     var c=editor.cloneNode(true);
     [].forEach.call(c.querySelectorAll('.is-sel'), function(x){ x.classList.remove('is-sel'); });
+    [].forEach.call(c.querySelectorAll('.g-ind-vis'), function(x){ x.parentNode.removeChild(x); });   // 들여쓰기 표시 칸은 기록에서 뺀다
     var snap={ body:c.innerHTML };
     HIST_EDS.forEach(function(id){ var e=$(id); if(e) snap[id]=e.innerHTML; });
     return JSON.stringify(snap);
@@ -8746,7 +9021,7 @@
     // 인물 자물쇠 상태 (charId → hidden)
     var charHidden={};
     characters.forEach(function(c){ if(c.id) charHidden[c.id]=!!c.hidden; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, charHidden:charHidden, framePadSync:_framePadSync };
+    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, charHidden:charHidden, framePadSync:_framePadSync, paraIndent:paraIndentOn() };
   }
   function applySettings(s){
     if(!s) return;
@@ -8777,6 +9052,8 @@
     bubbleShape = ({imessage:1,simple:1,soft:1,plain:1,script:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
     syncShapeSeg();
     applyBubbleShape();
+    // 문단 들여쓰기 복원(옛 프리셋엔 값이 없으니 그대로 둔다)
+    if(typeof s.paraIndent==='boolean' && $('para-indent')){ $('para-indent').checked = s.paraIndent; syncIndentUI(); }
     // 여백 맞추기 복원
     _framePadSync = !!s.framePadSync;
     if($('frame-pad-sync')) $('frame-pad-sync').checked = _framePadSync;
