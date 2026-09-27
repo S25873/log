@@ -1159,6 +1159,9 @@
   #canvas .g-img.al-left,.canvas-clone .g-img.al-left{text-align:left !important;}
   #canvas .g-img.al-right,.canvas-clone .g-img.al-right{text-align:right !important;}
   #canvas .g-img img,.canvas-clone .g-img img{max-width:var(--logimg-w,100%) !important;height:auto !important;border-radius:var(--logimg-radius,10px) !important;display:inline-block !important;vertical-align:top !important;}
+  /* 하단 여백을 절반만 사용하기: 하단(과 구분선)을 본문에서 떼어 아래 여백 가운데에 둔다 */
+  #canvas .g-foot,.canvas-clone .g-foot{position:absolute !important;z-index:1;transform-origin:left top;}
+  #canvas .g-foot > :first-child,.canvas-clone .g-foot > :first-child{margin-top:0 !important;}
   #canvas .g-name,.canvas-clone .g-name{display:block !important;margin-top:var(--name-gap,1.6em) !important;font-size:var(--name-size,.8em) !important;font-weight:400 !important;font-family:var(--name-font,inherit) !important;color:var(--name-color,#5a5a5a) !important;white-space:pre-wrap !important;overflow-wrap:break-word !important;}
   #canvas .g-name.al-right,.canvas-clone .g-name.al-right{text-align:right !important;}
   #canvas .g-name.al-left,.canvas-clone .g-name.al-left{text-align:left !important;}
@@ -1583,8 +1586,8 @@
               </div>
               <label class="switch" style="margin-top:16px">
                 <span class="switch__text" style="flex:1">
-                  <span class="switch__title">문단 들여쓰기</span>
-                  <span class="switch__sub">문단 첫 줄을 안으로 들여써요. 인용선 · 말풍선 안은 빼요</span>
+                  <span class="switch__title">문단 들여쓰기 (소설 모드 추천)</span>
+                  <span class="switch__sub">문단 첫 줄을 들여써요 (인용선 · 말풍선의 내용X)</span>
                 </span>
                 <input id="para-indent" type="checkbox" style="margin-left:auto">
               </label>
@@ -1819,6 +1822,13 @@
                 </div>
                 <p class="hint" style="margin-top:10px">구분선 색깔은 디자인-글자 · 보조 탭에 있어요.</p>
               </div>
+              <label class="switch" style="margin-top:16px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">하단 여백 절반만 사용 (소설 모드 추천)</span>
+                  <span class="switch__sub">소설은 위보다 아래 여백이 좁으니 페이지 표기용으로 마련했어요</span>
+                </span>
+                <input id="name-in-margin" type="checkbox" style="margin-left:auto">
+              </label>
           </details>
         </div>
 
@@ -2285,7 +2295,7 @@
             <div class="fold__body">
               <p class="hint" style="margin:-4px 0 12px">가장자리에 사진 띠를 둘러요. 글 영역은 그만큼 좁아져요.<br>간혹 창을 너무 오래 띄우면 사진 편집이 안 되는 경우가 있어요.<br>꾸밈 위치(왼쪽 등)을 다른 것으로 설정했다가 복귀하면 고쳐져요.</p>
               <div class="field">
-                <span class="label">위치</span>
+                <span class="label">꾸밈 위치</span>
                 <div class="seg" id="frame-pos-seg">
                   <button type="button" data-fpos="none" aria-pressed="true">없음</button>
                   <button type="button" data-fpos="left" aria-pressed="false">왼쪽</button>
@@ -2302,14 +2312,14 @@
                 <div class="mini-row" style="justify-content:flex-start;margin-top:12px">
                   <button class="mini" id="frame-pick" type="button">🖼 사진 선택</button>
                 </div>
-                <span class="label" style="display:block;margin-top:14px">사진 저장소</span>
+                <span class="label" style="display:block;margin-top:14px">꾸밈 사진 저장소</span>
                 <p class="hint" style="margin:0 0 6px">자주 쓰는 사진을 저장해 두고 원터치로 불러와요. (최대 10장)</p>
                 <div class="frame-lib" id="frame-lib"></div>
                 <button class="btn btn--ghost" id="frame-lib-add" type="button" style="height:34px;font-size:12px;width:100%;margin-top:6px">＋ 사진 추가</button>
                 <label class="switch" style="margin-top:14px">
                   <span class="switch__text" style="flex:1">
                     <span class="switch__title">여백 맞추기</span>
-                    <span class="switch__sub">사진의 두께를 크기 · 비율의 여백 값과 통일해요.</span>
+                    <span class="switch__sub">사진의 두께를 크기 · 비율의 여백 값과 통일해요</span>
                   </span>
                   <input id="frame-pad-sync" type="checkbox" style="margin-left:auto">
                 </label>
@@ -2416,7 +2426,7 @@
               <button class="btn btn--ghost" id="reset-replace" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">텍스트 대치 초기화</button>
               <button class="btn btn--ghost" id="reset-snapshot" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">이어서 편집하기 초기화</button>
               <button class="btn btn--ghost" id="reset-mypreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">내 프리셋 초기화</button>
-              <button class="btn btn--ghost" id="reset-framelib" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">사진 저장소 초기화</button>
+              <button class="btn btn--ghost" id="reset-framelib" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">꾸밈 사진 저장소 초기화</button>
             </div>
           </div>
         </div>
@@ -2464,8 +2474,23 @@
     <div class="sheet__grip"></div>
     <div class="sheet__title">업데이트!</div>
     <div class="help-body">
+      <p class="help-cat">소설 모드</p>
+      <p class="hint">· 고정 비율일 때 <b>소설 모드</b> 버튼이 나타나요. 긴 본문을 소설 형식처럼 내용이 잘리지 않는 선에서 최대 4페이지로 배분해요.<br>· 사용 시 시작점 맞추기도 함께 켜지며, 모드를 끄면 모든 페이지가 다시 한 페이지로 합쳐져요. 모드를 끌 경우 2페이지 이후 따로 작성한 제목 · 하단은 지워져요.</p>
+
+      <p class="help-cat">문단 들여쓰기</p>
+      <p class="hint">· 내용-본문에 <b>문단 들여쓰기</b>가 추가됐어요. 0.5 · 1 · 1.5 · 2글자 중에서 고를 수 있어요.<br>· 입력에서도 들여쓴 자리가 보이며, 들여쓰기를 빼고 싶은 경우 입력의 해당 문단 앞에서 백스페이스를 누르면 돼요.</p>
+
+      <p class="help-cat">하단 여백 절반만 사용</p>
+      <p class="hint">· 내용-하단에 <b>하단 여백 절반만 사용</b>이 추가됐어요. 켜면 레이아웃-크기 · 비율에서 지정한 여백의 절반 값만 하단에 사용해요.<br>· 소설 내지 특성상 위 여백보다 아래 여백이 좁은 점을 고려하여 마련했어요.</p>
+
+      <p class="help-cat">시작점 맞추기</p>
+      <p class="hint">· 시작점 맞추기를 켜면 <b>하단</b>도 모든 페이지에서 같은 높이에 맞춰져요.</p>
+
+      <p class="help-cat">글꼴</p>
+      <p class="hint">· 조선일보명조체 · 드림흐물체처럼 휜 따옴표(‘ ’ “ ”)나 말줄임표(… ⋯)가 없는 글꼴에서 미리보기와 저장한 이미지의 모양이 다르게 나오던 문제를 고쳤어요.</p>
+
       <p class="help-cat">꾸밈 테두리</p>
-      <p class="hint">· 프리뷰에서 직접 사진의 <b>위치 · 확대 · 두께</b>를 조절할 수 있도록 바뀌었어요.<br>· 사진 저장소의 사진들은 각각 확대 · 위치를 따로 지녀요. 예를 들어 사진1에서 사진2로 넘어가 조정하더라도, 다시 사진1을 클릭하면 사진2의 값이 아니라 마지막으로 조정한 사진1의 값으로 떠요.<br>· <b>여백 맞추기</b> 토글이 추가됐어요. 켜면 사진 두께가 크기 · 비율의 여백 값과 자동으로 통일돼요.</p>
+      <p class="hint">· 프리뷰에서 직접 사진의 <b>위치 · 확대 · 두께</b>를 조절할 수 있도록 바뀌었어요.<br>· 꾸밈 사진 저장소의 사진들은 각각 확대 · 위치를 따로 지녀요. 예를 들어 사진1에서 사진2로 넘어가 조정하더라도, 다시 사진1을 클릭하면 사진2의 값이 아니라 마지막으로 조정한 사진1의 값으로 떠요.<br>· <b>여백 맞추기</b> 토글이 추가됐어요. 켜면 사진 두께가 크기 · 비율의 여백 값과 자동으로 통일돼요.</p>
 
       <p class="help-cat">프리셋</p>
       <p class="hint">· 프리셋마다 인물의 <b>자물쇠 상태</b>가 따로 저장돼요.</p>
@@ -2474,7 +2499,7 @@
       <p class="hint">· "넣" 도구가 이제 휜 따옴표(“ ”)를 넣어요. 휜 따옴표는 양 끝의 모양이 다르고, 곧은 따옴표는 전부 같아서 곧은 따옴표 → 휜 따옴표를 대치하는 게 어려워 내린 판단이에요. 휜 따옴표 → 곧은 따옴표는 편의성의 대치 기능을 이용해 주세요.</p>
 
       <p class="help-cat">도움말</p>
-      <p class="hint">· 인용선 여백 · 말풍선 여백 다이어그램이 더 알아보기 쉽게 개선됐어요.<br>· 꾸밈 테두리 조작법이 도움말(?)에 추가됐어요.</p>
+      <p class="hint">· 인용선 여백 · 말풍선 여백 다이어그램이 더 알아보기 쉽게 개선됐어요.<br>· 꾸밈 테두리 조작법이 도움말에 추가됐어요.<br>· 버튼 아래 긴 설명들을 도움말로 옮겼어요. 크기 도우미 · 말풍선 모양 아래의 <b>➔ 자세한 설명</b>을 누르면 도움말의 해당 부분으로 바로 넘어가요.<br>· 소설 모드 · 문단 들여쓰기 설명이 추가됐어요.</p>
 
       <p class="help-cat">기타</p>
       <p class="hint">· 오류 제보 · 기능 추가 · 개선 문의 등은 언제나 환영이에요!<br>· 부탁 받은 사항은 늦더라도 전부 반영해드려요.</p>
@@ -5062,9 +5087,9 @@
      (기존 사용자는 저장된 값이 없으므로 이번에 한 번 보게 된다)
      ============================================================ */
   (function(){
-    var NOTICE_ID   = '2026-09-26a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
+    var NOTICE_ID   = '2026-09-27a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
     var NOTICE_FROM = '2026-09-26T00:00:00';         // 이 기간에는 볼 때마다 뜬다
-    var NOTICE_TO   = '2026-09-28T00:00:00';         // (끝나는 날 자정 = 27일까지)
+    var NOTICE_TO   = '2026-09-29T00:00:00';         // (끝나는 날 자정 = 28일까지)
     var NOTICE_KEY  = 'logmaker-notice-v2';
     var ov=$('notice-overlay'), okBtn=$('notice-close'), neverBtn=$('notice-never'), t=null;
     if(!ov) return;
@@ -6235,7 +6260,7 @@
     styleCharBubbles(editor);
     syncSubFixedEm();
     canvas.innerHTML = '<div class="g-inner">' + (gridCols > 0 && pages.length > 1 ? buildGridHtml() : buildHtml()) + '</div>';
-    renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); applyParaIndent(canvas, isNovelCont(pageIdx)); novelJustifyLastLine(canvas); applyScriptFont(canvas); fitStage();
+    renderChrome(canvas); extractFooter(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); applyParaIndent(canvas, isNovelCont(pageIdx)); novelJustifyLastLine(canvas); applyScriptFont(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('subtext-size')) setVal('subtext-size', $('subtext-size').value+'px');
     if($('parensub-size')) setVal('parensub-size', $('parensub-size').value+'px');
@@ -6359,7 +6384,7 @@
         + processBodyRaw(body)
         + buildNameBlock(edToHtml(tmpEl(nH)));
       canvas.innerHTML = '<div class="g-inner">' + html + '</div>';
-      renderChrome(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas);
+      renderChrome(canvas); extractFooter(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas);
       groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas);
       tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas);
       applyParaIndent(canvas, !!cont);
@@ -6790,6 +6815,9 @@
       if(on) requestAnimationFrame(function(){ moveThumb(seg); });
     }
   }
+  if($('name-in-margin')){
+    $('name-in-margin').addEventListener('change', function(){ render(); scheduleSave(); });
+  }
   if($('para-indent')){
     $('para-indent').addEventListener('change', function(){
       if(!_restoring) stripIndentMarks();
@@ -6827,7 +6855,37 @@
     run.forEach(function(x){ w.appendChild(x); });
   }
 
-  function centerRatioInner(){
+  function footerHalfOn(){ var c=$('name-in-margin'); return !!(c && c.checked) && !chrome.inputbar; }
+  // 하단 블록(구분선 + 하단)을 본문 밖으로 꺼낸다 — 본문 높이 · 페이지 나누기 계산에서 빠지게
+  function extractFooter(root){
+    if(!footerHalfOn()) return;
+    var inner=root.querySelector('.g-inner'); if(!inner) return;
+    var first=nameStartEl(inner); if(!first) return;
+    var foot=document.createElement('div'); foot.className='g-foot';
+    var n=first;
+    while(n){ var nx=n.nextSibling; foot.appendChild(n); n=nx; }
+    root.appendChild(foot);
+  }
+  // 아래 여백(꾸밈 테두리 두께 제외)의 한가운데에 하단을 놓는다. 장평도 본문과 똑같이 적용
+  function positionFooter(){
+    var f=canvas.querySelector('.g-foot'); if(!f) return;
+    var cs=getComputedStyle(canvas);
+    var pl=parseFloat(cs.paddingLeft)||0, pr=parseFloat(cs.paddingRight)||0, pb=parseFloat(cs.paddingBottom)||0;
+    var fB=0;
+    if(framePos!=='none' && frameData && (framePos==='bottom' || framePos==='all')){
+      var fp=parseFloat($('frame-size') ? $('frame-size').value : 20); if(isNaN(fp)) fp=20;
+      fB=Math.round(canvas.clientWidth * fp/100);
+    }
+    var st=parseFloat($('stretch') ? $('stretch').value : 100); if(isNaN(st)) st=100; var sc=st/100;
+    var cw=canvas.clientWidth - pl - pr;
+    f.style.left=pl+'px'; f.style.right='auto';
+    f.style.width=(cw/sc)+'px';
+    f.style.transform = (sc===1) ? '' : 'scaleX('+sc+')';
+    var margin=Math.max(0, pb - fB);
+    f.style.bottom = Math.max(0, fB + margin/2 - f.offsetHeight/2) + 'px';
+  }
+  function centerRatioInner(){ _centerRatioInnerCore(); positionFooter(); }
+  function _centerRatioInnerCore(){
     var inner = canvas.querySelector('.g-inner');
     if(!inner) return;
     var warn = $('ratio-warn');
@@ -8564,7 +8622,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:pages[0].body||'', nameHtml:sharedName,
         titleHtml:sharedTitle, subtitleHtml:sharedSubtitle,
-        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, paraIndent:paraIndentOn(), photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
+        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, paraIndent:paraIndentOn(), nameInMargin:(!!($('name-in-margin')&&$('name-in-margin').checked)), photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null,
         multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages, novelMode:novelMode }
       };
@@ -8659,6 +8717,7 @@
       if(typeof syncTitleRuleUI==='function') syncTitleRuleUI();
       if(typeof syncNameRuleUI==='function') syncNameRuleUI();
       if($('para-indent')){ $('para-indent').checked = !!data.paraIndent; syncIndentUI(); }
+      if($('name-in-margin')){ $('name-in-margin').checked = !!data.nameInMargin; }
       if(typeof normalizeNamePos==='function') normalizeNamePos();
       if(typeof syncNameSegs==='function') syncNameSegs();
       if($('size-helper')){
@@ -8743,7 +8802,7 @@
     renderMyPresets();
   });
   if($('reset-framelib')) $('reset-framelib').addEventListener('click', function(){
-    if(!confirm('사진 저장소를 비울까요?')) return;
+    if(!confirm('꾸밈 사진 저장소를 비울까요?')) return;
     _activeLibId=null;
     clearFrameLib(renderFrameLib);
   });
@@ -9021,7 +9080,7 @@
     // 인물 자물쇠 상태 (charId → hidden)
     var charHidden={};
     characters.forEach(function(c){ if(c.id) charHidden[c.id]=!!c.hidden; });
-    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, charHidden:charHidden, framePadSync:_framePadSync, paraIndent:paraIndentOn() };
+    return { vals:vals, bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, charHidden:charHidden, framePadSync:_framePadSync, paraIndent:paraIndentOn(), nameInMargin:(!!($('name-in-margin')&&$('name-in-margin').checked)) };
   }
   function applySettings(s){
     if(!s) return;
@@ -9054,6 +9113,7 @@
     applyBubbleShape();
     // 문단 들여쓰기 복원(옛 프리셋엔 값이 없으니 그대로 둔다)
     if(typeof s.paraIndent==='boolean' && $('para-indent')){ $('para-indent').checked = s.paraIndent; syncIndentUI(); }
+    if(typeof s.nameInMargin==='boolean' && $('name-in-margin')){ $('name-in-margin').checked = s.nameInMargin; }
     // 여백 맞추기 복원
     _framePadSync = !!s.framePadSync;
     if($('frame-pad-sync')) $('frame-pad-sync').checked = _framePadSync;
