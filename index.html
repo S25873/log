@@ -1104,6 +1104,15 @@
   #canvas mark.em,.canvas-clone mark.em{color:var(--em) !important;background:transparent !important;display:inline !important;}
   #canvas mark.ul,.canvas-clone mark.ul{color:inherit !important;background:transparent !important;display:inline !important;
     text-decoration:underline !important;text-decoration-thickness:.05em !important;text-underline-offset:.12em !important;}
+  /* 취소선: 글꼴 기본선은 명조 등에서 너무 얇고, 저장(html2canvas)은 1px 고정이라
+     미리보기 · 저장 모두 같은 식으로 직접 긋는다 — 두께 .06em, 글자 상자 높이의 55% 지점(한글 가운데) */
+  #canvas s,#canvas strike,.canvas-clone s,.canvas-clone strike{text-decoration:none !important;
+    background-image:linear-gradient(currentColor,currentColor) !important;background-repeat:no-repeat !important;
+    background-size:100% var(--st-th,.06em) !important;background-position:0 55% !important;
+    -webkit-box-decoration-break:clone;box-decoration-break:clone;}
+  /* 취소선 안의 형광펜은 자기 배경이 선을 덮으니 선을 한 겹 더 얹는다 */
+  #canvas s mark.hl,#canvas strike mark.hl,.canvas-clone s mark.hl,.canvas-clone strike mark.hl{
+    background:linear-gradient(currentColor,currentColor) 0 55%/100% var(--st-th,.06em) no-repeat,var(--hl-solid,#eaeaea) !important;}
   #canvas mark.sub,.canvas-clone mark.sub{color:inherit !important;background:transparent !important;display:inline !important;font-size:var(--sub-fixed,var(--sub-size,.8em)) !important;}
   #canvas mark.sub.psub,.canvas-clone mark.sub.psub{font-size:var(--psub-size,var(--sub-size,.8em)) !important;}
   #canvas mark.gray mark.sub,.canvas-clone mark.gray mark.sub{color:inherit !important;}
@@ -7977,6 +7986,22 @@
         ulBackup.push([mk, mk.getAttribute('style')]);
         mk.style.setProperty('text-decoration','none','important');
       });
+      // 취소선(s/strike): 미리보기와 같은 식(두께 .06em, 상자 높이 55% 지점)으로 모아 직접 그린다
+      var stRects=[], stEls=canvas.querySelectorAll('s,strike');
+      [].forEach.call(stEls, function(el){
+        var cs=window.getComputedStyle(el);
+        var color=cs.color || '#000';
+        var th=(parseFloat(cs.fontSize)||16)*0.06;
+        var rects=el.getClientRects();
+        for(var i=0;i<rects.length;i++){
+          var r=rects[i]; if(r.width<=0||r.height<=0) continue;
+          stRects.push({ x:r.left-canvasRect.left, y:(r.top-canvasRect.top)+(r.height-th)*0.55, w:r.width, h:th, color:color });
+        }
+      });
+      [].forEach.call(stEls, function(el){
+        ulBackup.push([el, el.getAttribute('style')]);
+        el.style.setProperty('background-image','none','important');   // 저장 중엔 CSS 선을 끄고 위에서 직접 그림
+      });
       function restoreUl(){ ulBackup.forEach(function(pair){ if(pair[1]===null) pair[0].removeAttribute('style'); else pair[0].setAttribute('style', pair[1]); }); }
       var markBackup=[];
       [].forEach.call(marks, function(mk){
@@ -8069,6 +8094,7 @@
           ctx.drawImage(textCanvas, 0, 0, outW, outH);
           // 밑줄을 텍스트 위에 직접 그린다 (html2canvas text-decoration 렌더링 불일치 보정)
           ulRects.forEach(function(rc){ ctx.fillStyle=rc.color; ctx.fillRect(rc.x*2, rc.y*2, rc.w*2, rc.h*2); });
+          stRects.forEach(function(rc){ ctx.fillStyle=rc.color; ctx.fillRect(rc.x*2, rc.y*2, rc.w*2, rc.h*2); });
           drawBakedAvatars(ctx, avBakes, function(){ deliverImage(out, type, cleanup, mode); });
         });
       }).catch(function(){ restoreMarks(); restoreUl(); restoreTails(); restoreHrs(); restoreAvatars(); restoreCanvasBg(); restoreBoldStroke(); removeResolveStyle(); cleanup(); });
@@ -8614,6 +8640,20 @@
   function saveState(){
     if(_restoring) return;
     try{
+      var data = buildStateData();
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+      catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
+      // 사진 저장소: 활성 항목의 zoom/x/y 자동 갱신
+      if(_activeLibId!=null){
+        var _lz = $('frame-zoom') ? parseFloat($('frame-zoom').value) : null;
+        var _lx = $('frame-x') ? parseFloat($('frame-x').value) : null;
+        var _ly = $('frame-y') ? parseFloat($('frame-y').value) : null;
+        if(_lz!=null) updateFrameLibItem(_activeLibId, _lz, _lx, _ly);
+      }
+    }catch(e){}
+  }
+  // 지금 편집 상태 전체를 하나의 객체로 만든다(자동 저장 · 스냅샷 공용)
+  function buildStateData(){
       flushPage(); // 현재 에디터 내용을 pages에 반영
       // 공유 상태인 에디터 값을 shared에 반영
       if(pages[pageIdx] && pages[pageIdx].title == null && $('title-ed')) sharedTitle = $('title-ed').innerHTML;
@@ -8626,16 +8666,7 @@
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null,
         multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages, novelMode:novelMode }
       };
-      try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
-      catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
-      // 사진 저장소: 활성 항목의 zoom/x/y 자동 갱신
-      if(_activeLibId!=null){
-        var _lz = $('frame-zoom') ? parseFloat($('frame-zoom').value) : null;
-        var _lx = $('frame-x') ? parseFloat($('frame-x').value) : null;
-        var _ly = $('frame-y') ? parseFloat($('frame-y').value) : null;
-        if(_lz!=null) updateFrameLibItem(_activeLibId, _lz, _lx, _ly);
-      }
-    }catch(e){}
+      return data;
   }
   // 저장은 무겁다(사진 base64 포함 JSON 직렬화 + localStorage). 타이핑 경로에서 빼고 잠깐 멈춘 뒤 한 번만.
   var _saveT=null;
@@ -8808,22 +8839,85 @@
   });
   if($('reset-snapshot')) $('reset-snapshot').addEventListener('click', function(){
     if(!confirm('저장된 스냅샷을 모두 삭제할까요?')) return;
-    try{ localStorage.removeItem(SNAPSHOT_KEY); }catch(e){}
-    renderSnapshots();
+    snapClear(renderSnapshots);
   });
 
   /* ============================================================
      이어서 편집하기 (다중 스냅샷)
      saveState()와 같은 데이터를 이름별로 여러 개 저장/복원
      ============================================================ */
+  /* 스냅샷은 편집 상태 전체(사진 포함)를 담아 커서, 5MB 남짓인 localStorage 대신
+     꾸밈 사진 저장소처럼 IndexedDB(훨씬 넉넉함)에 둔다.
+     예전 localStorage 스냅샷은 처음 열 때 한 번 옮기고 지운다(그래야 자동 저장 공간도 돌아온다). */
   var SNAPSHOT_KEY = 'logmaker-snapshot-v1';
-  function loadSnapshots(){ try{ var r=localStorage.getItem(SNAPSHOT_KEY); if(!r) return []; var p=JSON.parse(r); return Array.isArray(p)?p:[]; }catch(e){ return []; } }
-  function saveSnapshots(arr){ try{ localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(arr)); }catch(e){ alert('저장 공간이 부족해요. 사용하지 않는 스냅샷을 삭제해 주세요.'); } }
+  var _snapDB = null, _snapDBTried = false, _snapWaiters = [];
+  function legacySnaps(){ try{ var r=localStorage.getItem(SNAPSHOT_KEY); if(!r) return []; var p=JSON.parse(r); return Array.isArray(p)?p:[]; }catch(e){ return []; } }
+  function openSnapDB(cb){
+    if(_snapDBTried){ cb(_snapDB); return; }
+    _snapWaiters.push(cb);
+    if(_snapWaiters.length > 1) return;
+    function done(db){
+      _snapDB = db; _snapDBTried = true;
+      var w = _snapWaiters; _snapWaiters = [];
+      w.forEach(function(f){ f(db); });
+    }
+    var req;
+    try{ req = indexedDB.open('logmaker-snapshots', 1); }catch(e){ done(null); return; }
+    req.onupgradeneeded = function(e){ e.target.result.createObjectStore('snaps', {keyPath:'id', autoIncrement:true}); };
+    req.onerror = function(){ done(null); };
+    req.onsuccess = function(e){
+      var db = e.target.result;
+      var old = legacySnaps();
+      if(!old.length){ done(db); return; }
+      // 예전 스냅샷 옮기기 — 다 들어간 뒤에만 localStorage 에서 지운다
+      var tx = db.transaction('snaps','readwrite'), st = tx.objectStore('snaps');
+      old.forEach(function(x){ if(x && x.data) st.add({ name:x.name, time:x.time, data:x.data }); });
+      tx.oncomplete = function(){ try{ localStorage.removeItem(SNAPSHOT_KEY); }catch(_){} done(db); };
+      tx.onabort = tx.onerror = function(){ done(db); };
+    };
+  }
+  // 목록 (저장한 순서대로). IndexedDB 를 못 쓰는 브라우저에선 예전 방식 그대로
+  function snapAll(cb){
+    openSnapDB(function(db){
+      if(!db){ cb(legacySnaps().map(function(x, i){ x.id = i; return x; })); return; }
+      var r = db.transaction('snaps','readonly').objectStore('snaps').getAll();
+      r.onsuccess = function(){ cb(r.result || []); };
+      r.onerror = function(){ cb([]); };
+    });
+  }
+  function snapFull(){ alert('저장 공간이 부족해요. 사용하지 않는 스냅샷을 삭제해 주세요.'); }
+  function snapWrite(fn, cb){
+    openSnapDB(function(db){
+      if(!db){
+        // 예비: localStorage 배열
+        var arr = legacySnaps(); fn(null, arr);
+        try{ localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(arr.map(function(x){ return { name:x.name, time:x.time, data:x.data }; }))); }catch(e){ snapFull(); }
+        if(cb) cb(); return;
+      }
+      var tx = db.transaction('snaps','readwrite');
+      fn(tx.objectStore('snaps'), null);
+      tx.oncomplete = function(){ if(cb) cb(); };
+      tx.onabort = function(){ snapFull(); if(cb) cb(); };
+    });
+  }
+  function snapAdd(items, cb){ snapWrite(function(st, arr){ items.forEach(function(it){ var o={ name:it.name, time:it.time, data:it.data }; if(st) st.add(o); else arr.push(o); }); }, cb); }
+  function snapPut(item, cb){ snapWrite(function(st, arr){ if(st) st.put(item); else if(arr[item.id]) arr[item.id] = item; }, cb); }
+  function snapDel(id, cb){ snapWrite(function(st, arr){ if(st) st.delete(id); else arr.splice(id, 1); }, cb); }
+  function snapClear(cb){ snapWrite(function(st, arr){ if(st) st.clear(); else arr.length = 0; }, cb); }
+  function nowStamp(){
+    var now=new Date();
+    return now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  }
+  // 지금 편집 상태 — 자동 저장 사본이 아니라 화면에서 바로 만든다(자동 저장이 공간 부족으로 실패했어도 최신 상태가 담기게)
+  function currentStateData(){
+    flushSave();
+    return JSON.parse(JSON.stringify(buildStateData()));
+  }
   function renderSnapshots(){
     var list=$('snapshot-list'); if(!list) return;
-    var snaps=loadSnapshots();
+    snapAll(function(snaps){
     list.innerHTML='';
-    snaps.forEach(function(s, idx){
+    snaps.forEach(function(s){
       var chip=document.createElement('div'); chip.className='mychip';
       var lbl=document.createElement('span'); lbl.className='mychip__name';
       lbl.textContent=s.name+(s.time?' ('+s.time+')':'');
@@ -8831,24 +8925,22 @@
         openSheetDef({ title:s.name, noFocus:true, options:[
           { label:'불러오기', run:function(){
             if(!confirm('현재 작업은 사라져요. 불러올까요?')) return;
-            try{
-              _restoring=true;
-              if(_saveT){ clearTimeout(_saveT); _saveT=null; }
-              localStorage.setItem(STORE_KEY, JSON.stringify(Object.assign({}, s.data)));
-              location.reload();
-            }catch(e){ _restoring=false; alert('불러오기에 실패했어요.'); }
+            _restoring=true;
+            if(_saveT){ clearTimeout(_saveT); _saveT=null; }
+            var json=JSON.stringify(Object.assign({}, s.data));
+            try{ localStorage.setItem(STORE_KEY, json); }
+            catch(e){
+              // 자리가 모자라면 지금 작업을 비우고 다시 시도(어차피 덮어쓸 내용)
+              try{ localStorage.removeItem(STORE_KEY); localStorage.setItem(STORE_KEY, json); }
+              catch(e2){ _restoring=false; alert('불러오기에 실패했어요. 저장 공간이 부족해요.'); return; }
+            }
+            location.reload();
           }},
           { label:'현재 상태로 덮어쓰기', run:function(){
             try{
-              flushSave();
-              var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
-              var data=JSON.parse(raw);
-              var now=new Date();
-              var time=now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-              var arr=loadSnapshots();
-              if(arr[idx]){ arr[idx].data=data; arr[idx].time=time; }
-              saveSnapshots(arr);
-              renderSnapshots();
+              var data=currentStateData(); if(!data) return;
+              s.data=data; s.time=nowStamp();
+              snapPut(s, renderSnapshots);
             }catch(e){ alert('업데이트에 실패했어요.'); }
           }},
         ]});
@@ -8857,10 +8949,11 @@
       del.addEventListener('click', function(e){
         e.stopPropagation();
         if(!confirm('「'+s.name+'」을(를) 삭제할까요?')) return;
-        var arr=loadSnapshots(); arr.splice(idx,1); saveSnapshots(arr); renderSnapshots();
+        snapDel(s.id, renderSnapshots);
       });
       chip.appendChild(lbl); chip.appendChild(del);
       list.appendChild(chip);
+    });
     });
   }
   if($('snapshot-save')) $('snapshot-save').addEventListener('click', function(){
@@ -8868,15 +8961,8 @@
     if(!name || !name.trim()) return;
     name=name.trim();
     try{
-      flushSave();
-      var raw=localStorage.getItem(STORE_KEY); if(!raw){ alert('저장할 상태가 없어요.'); return; }
-      var data=JSON.parse(raw);
-      var now=new Date();
-      var time=now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-      var snaps=loadSnapshots();
-      snaps.push({ name:name, time:time, data:data });
-      saveSnapshots(snaps);
-      renderSnapshots();
+      var data=currentStateData(); if(!data){ alert('저장할 상태가 없어요.'); return; }
+      snapAdd([{ name:name, time:nowStamp(), data:data }], renderSnapshots);
     }catch(e){ alert('저장에 실패했어요.'); }
   });
   renderSnapshots();
@@ -8905,18 +8991,16 @@
   }
   /* 이어서 편집하기 내보내기/가져오기 */
   if($('snapshot-export')) $('snapshot-export').addEventListener('click', function(){
-    var snaps = loadSnapshots();
-    if(!snaps.length){ alert('내보낼 스냅샷이 없어요.'); return; }
-    exportJSON('logmaker-snapshot.json', { type:'snapshot', items:snaps });
+    snapAll(function(snaps){
+      if(!snaps.length){ alert('내보낼 스냅샷이 없어요.'); return; }
+      exportJSON('logmaker-snapshot.json', { type:'snapshot', items:snaps.map(function(x){ return { name:x.name, time:x.time, data:x.data }; }) });
+    });
   });
   if($('snapshot-import')) $('snapshot-import').addEventListener('click', function(){
     importJSON('.json', function(obj){
       if(!obj || obj.type!=='snapshot' || !Array.isArray(obj.items)){ alert('올바른 스냅샷 파일이 아니에요.'); return; }
-      var cur = loadSnapshots();
-      obj.items.forEach(function(s){ if(s.name && s.data) cur.push(s); });
-      saveSnapshots(cur);
-      renderSnapshots();
-      alert(obj.items.length+'개의 스냅샷을 가져왔어요.');
+      var ok = obj.items.filter(function(s){ return s && s.name && s.data; });
+      snapAdd(ok, function(){ renderSnapshots(); alert(ok.length+'개의 스냅샷을 가져왔어요.'); });
     });
   });
   /* 내 프리셋 내보내기/가져오기 */
