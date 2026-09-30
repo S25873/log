@@ -905,6 +905,7 @@
   .sheet__list .emo-tile:hover{border-color:var(--ink-3);background-color:var(--surface-2);}
   .sheet__list .emo-tile--add{display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--ink-3);background:transparent;border-style:dashed;}
   .emo-tile__x{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font-size:13px;line-height:20px;text-align:center;cursor:pointer;padding:0;}
+  img[src^="imgdb:"]{visibility:hidden}
   .emo-empty{grid-column:1/-1;font-size:12px;color:var(--ink-3);margin:2px 0 4px;}
   #editor .g-bub.img-only>svg.g-tail{display:none !important;}
   #editor .g-bub.img-only::before,#editor .g-bub.img-only::after{content:none !important;display:none !important;}
@@ -1248,13 +1249,13 @@
     -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1275 1025'%3E%3Cdefs%3E%3Cmask id='k' maskUnits='userSpaceOnUse' x='0' y='0' width='1275' height='1025'%3E%3Crect width='1275' height='1025' fill='white'/%3E%3Cpath d='M0,25 L125,25 Q625,25 625,525 L625,1025 L0,1025 Z' fill='black'/%3E%3C/mask%3E%3C/defs%3E%3Cpath d='M275,0 L475,0 Q1275,0 1275,700 L1275,1000 L275,1000 Z' mask='url(%23k)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1275 1025'%3E%3Cdefs%3E%3Cmask id='k' maskUnits='userSpaceOnUse' x='0' y='0' width='1275' height='1025'%3E%3Crect width='1275' height='1025' fill='white'/%3E%3Cpath d='M0,25 L125,25 Q625,25 625,525 L625,1025 L0,1025 Z' fill='black'/%3E%3C/mask%3E%3C/defs%3E%3Cpath d='M275,0 L475,0 Q1275,0 1275,700 L1275,1000 L275,1000 Z' mask='url(%23k)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;}
   #editor.bub-kt .g-bub.tail.recv:not(.img-only)::before,#editor.bub-kt .g-bub.tail.char-bub.left:not(.img-only)::before{left:-.625em;background:var(--bub,var(--bub-recv,#e5e5ea));}
   #editor.bub-kt .g-bub.tail.send:not(.img-only)::before,#editor.bub-kt .g-bub.tail.char-bub.right:not(.img-only)::before{right:-.625em;transform:scaleX(-1);background:var(--bub,var(--bub-send,#248bf5));}
-  #editor.bub-kt .g-bub[data-time]::after,#editor.bub-kt .g-bub[data-read="1"]::after{position:absolute;bottom:0;font-size:.62em;line-height:1.3;white-space:pre;
+  #editor.bub-kt .g-bub[data-tshow]::after,#editor.bub-kt .g-bub[data-read="1"]::after{position:absolute;bottom:0;font-size:.62em;line-height:1.3;white-space:pre;
     color:var(--time-color,#6b7684);text-align:left;cursor:pointer;}   /* 눌러서 고칠 수 있게(누르면 말풍선이 받음) */
   #editor.bub-kt .g-bub.char-bub.left::after,#editor.bub-kt .g-bub.recv::after{left:100%;margin-left:.6em;}
   #editor.bub-kt .g-bub.char-bub.right::after,#editor.bub-kt .g-bub.send::after{right:100%;margin-right:.6em;text-align:right;}
-  #editor.bub-kt .g-bub[data-time]:not([data-read="1"])::after{content:attr(data-time);}
-  #editor.bub-kt .g-bub[data-read="1"]:not([data-read-text])::after{content:var(--read-label,"1") "\A" attr(data-time);}
-  #editor.bub-kt .g-bub[data-read="1"][data-read-text]::after{content:attr(data-read-text) "\A" attr(data-time);}
+  #editor.bub-kt .g-bub[data-tshow]:not([data-read="1"])::after{content:attr(data-tshow);}
+  #editor.bub-kt .g-bub[data-read="1"]:not([data-read-text])::after{content:var(--read-label,"1") "\A" attr(data-tshow);}
+  #editor.bub-kt .g-bub[data-read="1"][data-read-text]::after{content:attr(data-read-text) "\A" attr(data-tshow);}
 
   #canvas .g-bub-name:first-child,.canvas-clone .g-bub-name:first-child{margin-top:0 !important;}
   #canvas .g-bub>svg.g-tail,.canvas-clone .g-bub>svg.g-tail{position:absolute !important;bottom:0 !important;z-index:0 !important;width:1.35em !important;height:.85em !important;display:block !important;overflow:visible !important;pointer-events:none !important;}
@@ -2170,7 +2171,34 @@
                 <p class="hint" style="margin-top:8px"><button type="button" class="hint-link" data-help-jump="help-bubble">자세한 설명 (모양별 차이)</button></p>
               </div>
 
+              <div id="mc-block" style="margin-top:16px">
+              <label class="switch">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title mc-title">메신저 색 가져오기</span>
+                  <span class="switch__sub mc-sub">말풍선 모양이 아이메시지 · 라인 · 카카오톡 중 하나일 때 해당 메신저에 맞춰서 색이 바뀌어요</span>
+                </span>
+                <input class="mc-on" data-theme="imessage" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="mc-colors" data-theme="imessage" style="margin-top:12px" hidden>
+                <div class="cgrid cgrid--2">
+                  <div class="cchip"><label>받는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="recv" id="mc-recv" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recv" id="mc-recv-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>받는 글자</label><div class="cchip__box"><input class="mc-c" data-k="recvInk" id="mc-recvInk" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recvInk" id="mc-recvInk-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="send" id="mc-send" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="send" id="mc-send-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 글자</label><div class="cchip__box"><input class="mc-c" data-k="sendInk" id="mc-sendInk" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="sendInk" id="mc-sendInk-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>이름</label><div class="cchip__box"><input class="mc-c" data-k="name" id="mc-name" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="name" id="mc-name-txt" type="text" value="#ffffff"></div></div>
+                </div>
+                <p class="hint" style="margin:10px 0 0">켠 상태에서 바꾼 색 · 배경은 그대로 유지돼요. 말풍선을 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠해져요.<br>끄거나 아랫줄 모양(심플 · 네모 · 로그 · 대본)으로 바꾸면 원래 인물 색과 배경으로 돌아와요.</p>
+              </div>
+              </div>
+
               <div id="kt-options" style="margin-top:16px;display:none">
+                <label class="switch" style="margin-bottom:14px">
+                  <span class="switch__text" style="flex:1">
+                    <span class="switch__title">시간 자동으로 붙이기</span>
+                    <span class="switch__sub">라인은 모든 말풍선에, 카카오톡은 같은 사람이 같은 시간에 보낸 묶음의 마지막 말풍선에 시간을 붙여요</span>
+                  </span>
+                  <input id="time-auto" type="checkbox" style="margin-left:auto">
+                </label>
                 <div class="field">
                   <span class="label">읽음 표시 글자</span>
                   <input class="txt-input" id="read-text" type="text" value="1" maxlength="12" placeholder="예: 1, 읽음, Read">
@@ -2178,7 +2206,7 @@
                 <div class="cgrid cgrid--2" style="margin-top:12px">
                   <div class="cchip"><label>시간 · 읽음 표시</label><div class="cchip__box"><input id="c-time" type="color" value="#6b7684"><input class="cchip__hex" id="c-time-txt" type="text" value="#6b7684"></div></div>
                 </div>
-                <p class="hint" style="margin-top:10px">말풍선을 누르면 뜨는 도구에서 시간 · 읽음 표시를 켜고 끌 수 있어요.<br>시간은 바로 위 말풍선의 시간을 따라가고, 입력에서 시간 · 읽음 글자를 누르면 그 말풍선만 고칠 수 있어요.</p>
+                <p class="hint" style="margin-top:10px">· 자동을 켜면: 입력에서 시간 글자를 누르면 그 말풍선(카카오톡은 그 묶음)부터 시간이 바뀌고, 아래 말풍선들이 따라가요.<br>· 자동을 끄면: 말풍선을 누르면 뜨는 도구에서 시간을 켠 말풍선에만 붙어요. 켤 때는 바로 위 말풍선의 시간을 따라가고, 입력에서 시간 글자를 누르면 그 말풍선만 고쳐요.<br>· 읽음 표시는 말풍선을 누르면 뜨는 도구에서 켜고 끌 수 있어요.</p>
               </div>
 
               <div id="script-options" style="margin-top:16px;display:none">
@@ -2262,7 +2290,7 @@
             <div class="fold__body">
               <label class="switch" style="margin-top:0">
                 <span class="switch__text" style="flex:1">
-                  <span class="switch__title">메신저 화면으로 꾸미기</span>
+                  <span class="switch__title">메신저 형태로 꾸미기</span>
                   <span class="switch__sub">레이아웃 여백 대신 메신저 여백을 쓰고 말풍선을 아래쪽에 모아요</span>
                 </span>
                 <input class="msgr-on" type="checkbox" style="margin-left:auto">
@@ -2270,23 +2298,6 @@
               <div class="field msgr-pad-row" style="margin-top:12px" hidden>
                 <span class="label">메신저 여백 <span class="val">48px</span></span>
                 <div class="rangewrap"><input class="msgr-pad" id="msgr-pad" type="range" min="0" max="160" step="4" value="48"></div>
-              </div>
-              <label class="switch" style="margin-top:14px">
-                <span class="switch__text" style="flex:1">
-                  <span class="switch__title mc-title">아이메시지 메신저 색 가져오기</span>
-                  <span class="switch__sub mc-sub">아이메시지 기본 말풍선 · 글자 · 배경 색 등을 가져와요</span>
-                </span>
-                <input class="mc-on" data-theme="imessage" type="checkbox" style="margin-left:auto">
-              </label>
-              <div class="mc-colors" data-theme="imessage" style="margin-top:12px" hidden>
-                <div class="cgrid cgrid--2">
-                  <div class="cchip"><label>받는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="recv" id="mc-recv" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recv" id="mc-recv-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>받는 글자</label><div class="cchip__box"><input class="mc-c" data-k="recvInk" id="mc-recvInk" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recvInk" id="mc-recvInk-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>보내는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="send" id="mc-send" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="send" id="mc-send-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>보내는 글자</label><div class="cchip__box"><input class="mc-c" data-k="sendInk" id="mc-sendInk" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="sendInk" id="mc-sendInk-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>이름</label><div class="cchip__box"><input class="mc-c" data-k="name" id="mc-name" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="name" id="mc-name-txt" type="text" value="#ffffff"></div></div>
-                </div>
-                <p class="hint" style="margin:10px 0 0">켠 상태에서 바꾼 색 · 배경은 그대로 유지돼요. 말풍선을 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠해져요.<br>끄면 원래 인물 색과 배경으로 돌아와요.</p>
               </div>
               <label class="switch" style="margin-top:14px">
                 <span class="switch__text" style="flex:1">
@@ -2338,7 +2349,7 @@
                 <span class="label">상하단바 ↔ 본문 <span class="val" id="bar-body-gap-val">32px</span></span>
                 <div class="rangewrap"><input id="bar-body-gap" type="range" min="0" max="72" step="1" value="32"></div>
               </div>
-              <p class="hint" style="margin:14px 0 0">상하단바의 요소들은 여백 값에 맞춰 놓여요.<br>메신저 화면으로 꾸미기를 켜면 메신저 여백을, 끄면 레이아웃-여백을 따라요.</p>
+              <p class="hint" style="margin:14px 0 0">상하단바의 요소들은 여백 값에 맞춰 놓여요.<br>메신저 형태로 꾸미기를 켜면 메신저 여백을, 끄면 레이아웃-여백을 따라요.</p>
             </div>
           </details>
 
@@ -2350,7 +2361,7 @@
             <div class="fold__body">
               <label class="switch" style="margin-top:0">
                 <span class="switch__text" style="flex:1">
-                  <span class="switch__title">메신저 화면으로 꾸미기</span>
+                  <span class="switch__title">메신저 형태로 꾸미기</span>
                   <span class="switch__sub">레이아웃 여백 대신 메신저 여백을 쓰고 말풍선을 아래쪽에 모아요</span>
                 </span>
                 <input class="msgr-on" type="checkbox" style="margin-left:auto">
@@ -2358,23 +2369,6 @@
               <div class="field msgr-pad-row" style="margin-top:12px" hidden>
                 <span class="label">메신저 여백 <span class="val">48px</span></span>
                 <div class="rangewrap"><input class="msgr-pad" id="msgr-pad-b" type="range" min="0" max="160" step="4" value="48"></div>
-              </div>
-              <label class="switch" style="margin-top:14px">
-                <span class="switch__text" style="flex:1">
-                  <span class="switch__title mc-title">아이메시지 메신저 색 가져오기</span>
-                  <span class="switch__sub mc-sub">아이메시지 기본 말풍선 · 글자 · 배경 색 등을 가져와요</span>
-                </span>
-                <input class="mc-on" data-theme="line" type="checkbox" style="margin-left:auto">
-              </label>
-              <div class="mc-colors" data-theme="line" style="margin-top:12px" hidden>
-                <div class="cgrid cgrid--2">
-                  <div class="cchip"><label>받는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="recv" id="mc-recv-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recv" id="mc-recv-b-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>받는 글자</label><div class="cchip__box"><input class="mc-c" data-k="recvInk" id="mc-recvInk-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recvInk" id="mc-recvInk-b-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>보내는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="send" id="mc-send-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="send" id="mc-send-b-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>보내는 글자</label><div class="cchip__box"><input class="mc-c" data-k="sendInk" id="mc-sendInk-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="sendInk" id="mc-sendInk-b-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>이름</label><div class="cchip__box"><input class="mc-c" data-k="name" id="mc-name-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="name" id="mc-name-b-txt" type="text" value="#ffffff"></div></div>
-                </div>
-                <p class="hint" style="margin:10px 0 0">켠 상태에서 바꾼 색 · 배경은 그대로 유지돼요. 말풍선을 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠해져요.<br>끄면 원래 인물 색과 배경으로 돌아와요.</p>
               </div>
               <label class="switch" style="margin-top:14px">
                 <span class="switch__text" style="flex:1">
@@ -2412,7 +2406,7 @@
             <div class="fold__body">
               <label class="switch" style="margin-top:0">
                 <span class="switch__text" style="flex:1">
-                  <span class="switch__title">메신저 화면으로 꾸미기</span>
+                  <span class="switch__title">메신저 형태로 꾸미기</span>
                   <span class="switch__sub">레이아웃 여백 대신 메신저 여백을 쓰고 말풍선을 아래쪽에 모아요</span>
                 </span>
                 <input class="msgr-on" type="checkbox" style="margin-left:auto">
@@ -2420,23 +2414,6 @@
               <div class="field msgr-pad-row" style="margin-top:12px" hidden>
                 <span class="label">메신저 여백 <span class="val">48px</span></span>
                 <div class="rangewrap"><input class="msgr-pad" id="msgr-pad-c" type="range" min="0" max="160" step="4" value="48"></div>
-              </div>
-              <label class="switch" style="margin-top:14px">
-                <span class="switch__text" style="flex:1">
-                  <span class="switch__title mc-title">아이메시지 메신저 색 가져오기</span>
-                  <span class="switch__sub mc-sub">아이메시지 기본 말풍선 · 글자 · 배경 색 등을 가져와요</span>
-                </span>
-                <input class="mc-on" data-theme="kakao" type="checkbox" style="margin-left:auto">
-              </label>
-              <div class="mc-colors" data-theme="kakao" style="margin-top:12px" hidden>
-                <div class="cgrid cgrid--2">
-                  <div class="cchip"><label>받는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="recv" id="mc-recv-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recv" id="mc-recv-c-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>받는 글자</label><div class="cchip__box"><input class="mc-c" data-k="recvInk" id="mc-recvInk-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recvInk" id="mc-recvInk-c-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>보내는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="send" id="mc-send-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="send" id="mc-send-c-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>보내는 글자</label><div class="cchip__box"><input class="mc-c" data-k="sendInk" id="mc-sendInk-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="sendInk" id="mc-sendInk-c-txt" type="text" value="#ffffff"></div></div>
-                  <div class="cchip"><label>이름</label><div class="cchip__box"><input class="mc-c" data-k="name" id="mc-name-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="name" id="mc-name-c-txt" type="text" value="#ffffff"></div></div>
-                </div>
-                <p class="hint" style="margin:10px 0 0">켠 상태에서 바꾼 색 · 배경은 그대로 유지돼요. 말풍선을 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠해져요.<br>끄면 원래 인물 색과 배경으로 돌아와요.</p>
               </div>
               <label class="switch" style="margin-top:14px">
                 <span class="switch__text" style="flex:1">
@@ -2884,6 +2861,118 @@
   'use strict';
   var $ = function(id){ return document.getElementById(id); };
 
+  /* ============================================================
+     본문 사진 가볍게 다루기
+     사진을 data URL(수 MB 글자) 그대로 본문에 두면 글자 하나 칠 때마다
+     본문 복사 · 미리보기 재구성 · 되돌리기 기록 · 자동 저장이 그 글자를 통째로 다시 다뤄 렉이 걸린다.
+     → 화면에서는 짧은 blob: 주소로 바꿔 쓰고, 원본은 IndexedDB(logmaker-img-store)에 한 번만 저장.
+       자동 저장(localStorage)에는 'imgdb:아이디'만 남기고, 스냅샷 · 내보내기에는 원본(data URL)을 넣는다.
+     ============================================================ */
+  var _imgByData = new Map(), _imgByBlob = new Map(), _imgById = new Map();
+  var _imgDB = null, _imgDBTried = false, _imgDBWait = [];
+  var IMG_B64_RE = /data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+\/=]+/gi;
+  function openImgDB(cb){
+    if(_imgDBTried){ cb(_imgDB); return; }
+    _imgDBWait.push(cb); if(_imgDBWait.length > 1) return;
+    function done(db){ _imgDB = db; _imgDBTried = true; var w=_imgDBWait; _imgDBWait=[]; w.forEach(function(f){ f(db); }); }
+    var req; try{ req = indexedDB.open('logmaker-img-store', 1); }catch(e){ done(null); return; }
+    req.onupgradeneeded = function(e){ e.target.result.createObjectStore('items', {keyPath:'id'}); };
+    req.onsuccess = function(e){ done(e.target.result); };
+    req.onerror = req.onblocked = function(){ done(null); };
+  }
+  function dataUrlToBlob(d){
+    var i=d.indexOf(','), mime=(d.slice(5,i).split(';')[0])||'image/png';
+    var bin=atob(d.slice(i+1)), n=bin.length, u=new Uint8Array(n);
+    for(var k=0;k<n;k++) u[k]=bin.charCodeAt(k);
+    return new Blob([u], {type:mime});
+  }
+  function imgRegister(data, id, persist){
+    var r=_imgByData.get(data); if(r) return r;
+    var blob; try{ blob=URL.createObjectURL(dataUrlToBlob(data)); }catch(e){ return null; }
+    r={ id:id || ('i'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)), blob:blob, data:data, saved:!!id };
+    _imgByData.set(data, r); _imgByBlob.set(blob, r); _imgById.set(r.id, r);
+    if(persist && !r.saved) imgPersist(r);
+    return r;
+  }
+  function imgPersist(r, cb){
+    openImgDB(function(db){
+      if(!db){ if(cb) cb(false); return; }
+      try{
+        var tx=db.transaction('items','readwrite'); tx.objectStore('items').put({ id:r.id, src:r.data, t:Date.now() });
+        tx.oncomplete=function(){ var first=!r.saved; r.saved=true; if(first && typeof scheduleSave==='function') scheduleSave(); if(cb) cb(true); };
+        tx.onabort=tx.onerror=function(){ if(cb) cb(false); };
+      }catch(e){ if(cb) cb(false); }
+    });
+  }
+  // data URL → 짧은 blob 주소 (본문 사진용: 원본도 저장소에 둔다)
+  function imgShort(data){
+    if(typeof data!=='string' || data.slice(0,11)!=='data:image/' || data.indexOf(';base64,')===-1) return data;
+    var r=imgRegister(data, null, true); return r ? r.blob : data;
+  }
+  // 배경 · 꾸밈 사진처럼 따로 저장되는 그림: 화면용 짧은 주소만
+  function imgShortView(data){
+    if(typeof data!=='string' || data.slice(0,11)!=='data:image/' || data.indexOf(';base64,')===-1) return data;
+    var r=imgRegister(data, null, false); return r ? r.blob : data;
+  }
+  function packImgs(html){
+    if(typeof html!=='string' || html.indexOf('data:image/')===-1) return html;
+    return html.replace(IMG_B64_RE, function(d){ return imgShort(d); });
+  }
+  // blob 주소 → 원본(data URL): 스냅샷 · 내보내기용
+  function unpackImgs(str){
+    if(typeof str!=='string' || str.indexOf('blob:')===-1) return str;
+    return str.replace(/blob:[^"'\s)<>\\]+/g, function(u){ var r=_imgByBlob.get(u); return r ? r.data : u; });
+  }
+  // blob 주소 → imgdb:아이디 (자동 저장용 · 저장소에 들어간 것만, 아니면 원본)
+  function storeImgs(str){
+    if(typeof str!=='string' || str.indexOf('blob:')===-1) return str;
+    return str.replace(/blob:[^"'\s)<>\\]+/g, function(u){ var r=_imgByBlob.get(u); if(!r) return u; return r.saved ? ('imgdb:'+r.id) : r.data; });
+  }
+  // imgdb:아이디 → blob 주소 (이미 불러온 것만)
+  function viewImgRefs(str){
+    if(typeof str!=='string' || str.indexOf('imgdb:')===-1) return str;
+    return str.replace(/imgdb:([A-Za-z0-9]+)/g, function(m, id){ var r=_imgById.get(id); return r ? r.blob : m; });
+  }
+  function imgRefIds(str){ var out=[]; if(typeof str!=='string') return out; str.replace(/imgdb:([A-Za-z0-9]+)/g, function(m,id){ out.push(id); return m; }); return out; }
+  // 저장소에서 아이디들을 불러와 등록
+  function imgLoadIds(ids, cb){
+    var need=ids.filter(function(id, i){ return ids.indexOf(id)===i && !_imgById.has(id); });
+    if(!need.length){ cb(); return; }
+    openImgDB(function(db){
+      if(!db){ cb(); return; }
+      var left=need.length;
+      try{
+        var st=db.transaction('items','readonly').objectStore('items');
+        need.forEach(function(id){
+          var rq=st.get(id);
+          rq.onsuccess=function(){ var it=rq.result; if(it && typeof it.src==='string') imgRegister(it.src, id, false); if(--left===0) cb(); };
+          rq.onerror=function(){ if(--left===0) cb(); };
+        });
+      }catch(e){ cb(); }
+    });
+  }
+  // 자동 저장에도 · 이 세션에도 안 쓰이는 오래된 사진 정리(3일 지난 것만 — 다른 탭 보호)
+  function imgGC(keepIds){
+    openImgDB(function(db){
+      if(!db) return;
+      try{
+        var keep={}; keepIds.forEach(function(id){ keep[id]=1; }); _imgById.forEach(function(r, id){ keep[id]=1; });
+        var old=Date.now()-3*864e5;
+        var st=db.transaction('items','readwrite').objectStore('items');
+        var cur=st.openCursor();
+        cur.onsuccess=function(){ var c=cur.result; if(!c) return; var v=c.value; if(!keep[v.id] && (v.t||0) < old) c.delete(); c.continue(); };
+      }catch(e){}
+    });
+  }
+  // data URL 이 든 상태 JSON 을 저장소에 옮긴 뒤 imgdb 참조로 줄인다(스냅샷 불러오기 등)
+  function compactStateJson(json, cb){
+    var list=[]; (json.match(/src=\\"data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+\/=]+\\"/gi)||[]).forEach(function(m){ var d=m.slice(6,-2); if(list.indexOf(d)===-1) list.push(d); });
+    if(!list.length){ cb(json); return; }
+    var left=list.length;
+    function one(){ if(--left>0) return; cb(json.replace(/src=\\"(data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+\/=]+)\\"/gi, function(m, d){ var r=_imgByData.get(d); return (r && r.saved) ? 'src=\\"imgdb:'+r.id+'\\"' : m; })); }
+    list.forEach(function(d){ var r=imgRegister(d, null, false); if(!r){ one(); return; } if(r.saved){ one(); return; } imgPersist(r, function(){ one(); }); });
+  }
+
   var canvas  = $('canvas');
   var editor  = $('editor');
   var nameEd  = $('name-ed');
@@ -3254,7 +3343,8 @@
     if(rt){ var v=rt.value.trim(); if(shape==='line' && (v==='' || v==='1')) rt.value='읽음'; else if(shape==='kakao' && (v==='' || v==='읽음')) rt.value='1'; }
     applyBubbleShape(); syncShapeSeg(); updateScriptOptions();
     // 켠 상태에서 다른 메신저 모양으로 바꾸면 그 메신저 색으로 처음부터 다시(같은 색을 쓰는 모양끼리는 고친 값 유지)
-    if(msgrColor.on && msgrColor.theme!==shapeTheme()){ msgrColor.theme=shapeTheme(); mcApplyTheme(); }
+    if(msgrColor.on && !isMsgrShape()){ setMsgrColorOn(false); }   // 아랫줄 모양으로 바꾸면 꺼지고 원래 색 · 배경으로
+    else if(msgrColor.on && msgrColor.theme!==shapeTheme()){ msgrColor.theme=shapeTheme(); mcApplyTheme(); }
     syncMcUI();
     render(); updateFormatButtons();
   }
@@ -4602,7 +4692,7 @@
   }
   function emoAll(cb){ openEmoDB(function(db){ if(!db){ cb([]); return; } var r=db.transaction('items','readonly').objectStore('items').getAll(); r.onsuccess=function(){ cb(r.result||[]); }; r.onerror=function(){ cb([]); }; }); }
   function emoWrite(fn, cb){ openEmoDB(function(db){ if(!db){ alert('이 브라우저에선 이모티콘 저장소를 쓸 수 없어요.'); return; } var tx=db.transaction('items','readwrite'); fn(tx.objectStore('items')); tx.oncomplete=function(){ updateEmoCount(); if(cb) cb(); }; tx.onabort=function(){ alert('저장 공간이 부족해요.'); if(cb) cb(); }; }); }
-  function updateEmoCount(){ emoAll(function(l){ var e=$('emo-count'); if(e) e.textContent='저장된 이모티콘 '+l.length+'개'; }); }
+  function updateEmoCount(){ openEmoDB(function(db){ var e=$('emo-count'); if(!e) return; if(!db){ e.textContent='저장된 이모티콘 0개'; return; } try{ var r=db.transaction('items','readonly').objectStore('items').count(); r.onsuccess=function(){ e.textContent='저장된 이모티콘 '+(r.result||0)+'개'; }; }catch(_){} }); }   // 개수만(그림은 안 읽음)
   function emoShrink(src, cb){   // 투명 배경 유지 · 긴 변 300px · 항상 PNG
     var img=new Image();
     img.onload=function(){
@@ -4687,7 +4777,7 @@
     editor.focus(); restoreSel();
     var sel=window.getSelection();
     var box=document.createElement('div'); box.className='g-img al-'+(_imgAlign||'center');
-    var im=document.createElement('img'); im.src=url; im.alt=''; im.setAttribute('contenteditable','false'); box.appendChild(im);
+    var im=document.createElement('img'); im.src=imgShort(url); im.alt=''; im.setAttribute('contenteditable','false'); box.appendChild(im);
     if(sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)){
       var range=sel.getRangeAt(0); range.collapse(false); range.insertNode(box);
     } else { editor.appendChild(box); }
@@ -4718,7 +4808,7 @@
       bub=document.createElement('span');
       bub.className='g-bub '+(side==='right'?'send':'recv')+' '+(desc.tail?'tail':'cont');
     }
-    var im=document.createElement('img'); im.className='g-bub-img'+(emo?' g-emo':''); im.src=url; im.alt='';
+    var im=document.createElement('img'); im.className='g-bub-img'+(emo?' g-emo':''); im.src=imgShort(url); im.alt='';
     bub.appendChild(im);
     out.appendChild(bub);
     range.collapse(false); range.insertNode(out);
@@ -5222,7 +5312,7 @@
   var _sheetHideT = null;
   // 아이폰 사파리: 시트 항목을 눌러 다음 시트가 같은 자리에 바로 열리면, 같은 탭이 새 항목까지 한 번 더 눌러 버리는 일이 있음 → 열린 직후 잠깐은 눌림 무시
   var _sheetOpenAt = 0;
-  function sheetTapTooSoon(ev){ if(Date.now()-_sheetOpenAt < 450){ if(ev){ ev.preventDefault(); ev.stopPropagation(); } return true; } return false; }
+  function sheetTapTooSoon(ev){ if(Date.now()-_sheetOpenAt < 200){ if(ev){ ev.preventDefault(); ev.stopPropagation(); } return true; } return false; }
   function openSheetDef(def){
     if(!def || !sheetOverlay) return;
     if(_sheetHideT){ clearTimeout(_sheetHideT); _sheetHideT=null; }   // 대기 중인 숨김 취소(시트 연쇄 열림)
@@ -5563,6 +5653,7 @@
     else b.setAttribute('data-read','1');
   }
   bindCharBubTool($('cb-time'), cbToggleTime);
+  if($('time-auto')) $('time-auto').addEventListener('change', function(){ render(); updateFormatButtons(); scheduleSave(); });
   bindCharBubTool($('cb-emo'), function(b){ [].forEach.call(b.querySelectorAll('img.g-bub-img'), function(im){ im.classList.toggle('g-emo'); }); });   // 사진 ↔ 이모티콘
   // 메신저 색으로 칠하기 — 스위치 · 색칸은 세 아코디언 모두 같은 값
   [].forEach.call(document.querySelectorAll('.mc-on'), function(cb){ cb.addEventListener('change', function(){ setMsgrColorOn(cb.checked); }); });
@@ -5580,18 +5671,24 @@
   editor.addEventListener('click', function(e){
     if(!isKtShape()) return;
     var b = e.target && e.target.closest ? e.target.closest('.g-bub') : null;
-    if(!b || !(b.hasAttribute('data-time') || b.getAttribute('data-read')==='1')) return;
+    if(!b || !(b.hasAttribute('data-tshow') || b.getAttribute('data-read')==='1')) return;
     var r = b.getBoundingClientRect(), right = b.classList.contains('right') || b.classList.contains('send');
     var outside = right ? (e.clientX < r.left) : (e.clientX > r.right);
     if(!outside) return;
     e.preventDefault(); e.stopPropagation();
-    var hasTime = b.hasAttribute('data-time'), hasRead = b.getAttribute('data-read')==='1';
+    var hasTime = b.hasAttribute('data-tshow'), hasRead = b.getAttribute('data-read')==='1';
     var lh = (parseFloat(getComputedStyle(b).fontSize)||15) * 0.62 * 1.3;
     var onTime = hasTime && (!hasRead || e.clientY > r.bottom - lh);
     if(onTime){
-      var t = prompt('시간 (비우면 시간이 사라져요)', b.getAttribute('data-time')||'');
-      if(t==null) return; t=t.trim();
-      if(t) b.setAttribute('data-time', t); else b.removeAttribute('data-time');
+      if(timeAutoOn()){
+        var t = prompt(bubbleShape==='kakao' ? '시간 · 이 묶음부터 (비우면 위 말풍선 시간을 따라가요)' : '시간 · 이 말풍선부터 (비우면 위 말풍선 시간을 따라가요)', b.getAttribute('data-tshow')||'');
+        if(t==null) return; t=t.trim();
+        setTimeFrom(b, t);
+      } else {
+        var t2 = prompt('시간 (비우면 시간이 사라져요)', b.getAttribute('data-time')||'');
+        if(t2==null) return; t2=t2.trim();
+        if(t2) b.setAttribute('data-time', t2); else b.removeAttribute('data-time');
+      }
     } else {
       var cur = b.getAttribute('data-read-text') || readLabel();
       var v = prompt('읽음 표시 글자 · 이 말풍선만 (비우면 읽음 표시가 사라져요)', cur);
@@ -5692,10 +5789,11 @@
     var cbName = $('cb-name'); if(cbName){ cbName.hidden = isScript; }
     var cbAv = $('cb-av'); if(cbAv){ cbAv.hidden = isScript; }
     var kt = isKtShape();
-    var cbTime = $('cb-time'); if(cbTime){ cbTime.hidden = !kt; cbTime.classList.toggle('is-on', !!(kt && cbub && cbub.hasAttribute('data-time'))); }
+    var tAuto = kt && timeAutoOn();   // 자동이면 시간 버튼은 필요 없음(고칠 땐 입력의 시간 글자를 누른다)
+    var cbTime = $('cb-time'); if(cbTime){ cbTime.hidden = !kt || tAuto; cbTime.classList.toggle('is-on', !!(kt && cbub && cbub.hasAttribute('data-time'))); }
     var cbRead = $('cb-read'); if(cbRead){ cbRead.hidden = !kt; cbRead.textContent = (bubbleShape==='line') ? '읽음' : '1'; cbRead.classList.toggle('is-on', !!(kt && cbub && cbub.getAttribute('data-read')==='1')); }
     var cbEmo = $('cb-emo'); if(cbEmo){ cbEmo.hidden = !hasImg; cbEmo.classList.toggle('is-on', !!(cbub && cbub.querySelector && cbub.querySelector('img.g-emo'))); }
-    var visCount = 6 - (hideTail?1:0) - (isScript?2:0) + (kt?2:0) + (hasImg?1:0);
+    var visCount = 6 - (hideTail?1:0) - (isScript?2:0) + (kt?(tAuto?1:2):0) + (hasImg?1:0);
     if(cbTools){ cbTools.style.gridTemplateColumns = 'repeat('+visCount+',1fr)'; }
   }
   editor.addEventListener('keyup', updateFormatButtons);
@@ -6152,6 +6250,7 @@
     kakao:   { recv:'#ffffff', recvInk:'#111111', send:'#fee500', sendInk:'#111111', name:'#444d53', bg:'#b2c7d9' }
   };
   var msgrColor = { on:false, theme:null, colors:null, snap:null };
+  function isMsgrShape(){ return bubbleShape==='imessage' || bubbleShape==='line' || bubbleShape==='kakao'; }
   function shapeTheme(){ return (bubbleShape==='line' || bubbleShape==='kakao') ? bubbleShape : 'imessage'; }   // 심플 · 네모 · 로그 · 대본은 아이메시지 색
   var MSGR_NAME = { imessage:'아이메시지', line:'라인', kakao:'카카오톡' };
   function mcPalette(){ return MSGR_PALETTE[msgrColor.theme] || MSGR_PALETTE.imessage; }
@@ -6201,13 +6300,11 @@
   function syncMcUI(){
     [].forEach.call(document.querySelectorAll('.mc-on'), function(cb){ cb.checked = msgrColor.on; });
     [].forEach.call(document.querySelectorAll('.mc-colors'), function(d){ d.hidden = !msgrColor.on; });
-    var nm = MSGR_NAME[shapeTheme()];   // 이름은 지금 말풍선 모양의 메신저를 따른다
-    [].forEach.call(document.querySelectorAll('.mc-title'), function(t){ t.textContent = nm+' 메신저 색 가져오기'; });
-    [].forEach.call(document.querySelectorAll('.mc-sub'), function(t){ t.textContent = nm+' 기본 말풍선 · 글자 · 배경 색 등을 가져와요'; });
+    var mb=$('mc-block'); if(mb) mb.hidden = !isMsgrShape();   // 아랫줄 모양(심플 · 네모 · 로그 · 대본)에선 스위치를 숨긴다
     if(!msgrColor.colors) return;
     [].forEach.call(document.querySelectorAll('.mc-c, .mc-t'), function(inp){ var v=msgrColor.colors[inp.getAttribute('data-k')]; if(v && inp.value!==v) inp.value=v; });
   }
-  /* 메신저 화면으로 꾸미기: 켜져 있는 동안만 레이아웃-여백 대신 메신저 여백을 쓴다(레이아웃 값은 그대로 → 끄면 원래대로) */
+  /* 메신저 형태로 꾸미기: 켜져 있는 동안만 레이아웃-여백 대신 메신저 여백을 쓴다(레이아웃 값은 그대로 → 끄면 원래대로) */
   var messengerMode = false;
   function effPad(){
     if(messengerMode){ var m=$('msgr-pad'); return m ? (parseFloat(m.value)||0) : 48; }
@@ -6301,7 +6398,7 @@
       var sides = isAll ? ['left','right','top','bottom'] : [framePos];
       sides.forEach(function(sd){
         var f=document.createElement('div'); f.className='g-frame'; f.setAttribute('data-side',sd);
-        f.style.setProperty('background-image','url("'+frameData+'")','important');
+        f.style.setProperty('background-image','url("'+imgShortView(frameData)+'")','important');
         if(sd==='left'||sd==='right'){
           f.style.top='0'; f.style.bottom='0'; f.style.width=fThick+'px'; f.style[sd]='0';
         } else {
@@ -6396,7 +6493,7 @@
       if(!layer){ layer=document.createElement('div'); layer.className='g-bg-layer'; el.insertBefore(layer, el.firstChild); }
       var op = parseFloat($('opacity').value); if(isNaN(op)) op=100;
       var br = parseFloat($('bright').value) || 100;
-      layer.style.setProperty('background-image','url("'+photoData+'")','important');
+      layer.style.setProperty('background-image','url("'+imgShortView(photoData)+'")','important');
       layer.style.setProperty('background-size','cover','important');
       layer.style.setProperty('background-position','center','important');
       layer.style.setProperty('filter','brightness('+(br/100)+')','important');
@@ -6522,7 +6619,7 @@
 
   function processBodyRaw(rawHtml){
     var tmp = document.createElement('div');
-    tmp.innerHTML = (typeof rawHtml === 'string') ? rawHtml : '';
+    tmp.innerHTML = (typeof rawHtml === 'string') ? packImgs(rawHtml) : '';
     // 들여쓰기 빈칸만 있는 줄은 빈 줄로 취급(문단 간격으로 보이게)
     if(/\u2002/.test(tmp.innerHTML)){
       var _w=document.createTreeWalker(tmp, NodeFilter.SHOW_TEXT, null, false), _t, _ts=[];
@@ -6543,6 +6640,7 @@
     zs.forEach(function(n){ if(isBubbleSeparatorZwsp(n)) return; n.nodeValue=n.nodeValue.replace(/\u200b/g,''); });
     [].forEach.call(tmp.querySelectorAll('.g-bub'), function(b){ if(b.textContent.trim()==='' && !b.querySelector('img')){ if(b.parentNode) b.parentNode.removeChild(b); } });
     [].forEach.call(tmp.querySelectorAll('.g-bub-name'), function(n){ if(n.textContent.replace(/\u200b/g,'').trim()===''){ if(n.parentNode) n.parentNode.removeChild(n); } });
+    computeTimes(tmp);
     syncTails(tmp);
     return tmp.innerHTML;
   }
@@ -6816,12 +6914,49 @@
     var v = ($('read-text') && $('read-text').value.trim()) || '';
     return v || (bubbleShape==='line' ? '읽음' : '1');
   }
+  /* 보이는 시간 계산(자동) — data-time 은 '여기부터 이 시간'이라는 표시, 없으면 바로 위 말풍선 시간을 따른다.
+     라인: 모든 말풍선에 시간. 카카오톡: 같은 사람 · 같은 시간으로 이어진 묶음의 마지막 말풍선에만.
+     결과는 data-tshow 로(입력 · 미리보기 각각 계산 · 저장 안 됨) */
+  var KT_DEFAULT_TIME = '오후 12:00';
+  function timeAutoOn(){ var e=$('time-auto'); return !!(e && e.checked); }
+  function btSender(b){ var r=b.classList.contains('right')||b.classList.contains('send'); return (r?'R':'L')+'|'+(b.getAttribute('data-char')||''); }
+  function btAdjacent(a, b){   // a 바로 다음에 b 가 붙어 있나(사이에 줄바꿈 · 빈칸만)
+    if(!b || a.parentNode!==b.parentNode) return false;
+    for(var n=a.nextSibling; n && n!==b; n=n.nextSibling){
+      if(n.nodeType===3){ if(n.nodeValue.replace(/[\s\u200b\u2002]/g,'')!=='') return false; continue; }
+      if(n.nodeType===1){ if(n.tagName==='BR' || (n.classList && n.classList.contains('g-ind-vis'))) continue; return false; }
+    }
+    return n===b;
+  }
+  function btEffTimes(list){
+    var first=null; for(var i=0;i<list.length;i++){ var t0=list[i].getAttribute('data-time'); if(t0){ first=t0; break; } }
+    var cur=first||KT_DEFAULT_TIME;
+    return list.map(function(b){ var t=b.getAttribute('data-time'); if(t) cur=t; return cur; });
+  }
+  function btSameGroup(list, eff, i){ var nx=list[i+1]; return !!(nx && eff[i+1]===eff[i] && btSender(nx)===btSender(list[i]) && btAdjacent(list[i], nx)); }
+  function computeTimes(root){
+    var list=[].slice.call(root.querySelectorAll('.g-bub'));
+    if(!isKtShape()){ list.forEach(function(b){ if(b.hasAttribute('data-tshow')) b.removeAttribute('data-tshow'); }); return; }
+    var auto=timeAutoOn(), eff=auto ? btEffTimes(list) : null, kakao=(bubbleShape==='kakao');
+    list.forEach(function(b, i){
+      var v = !auto ? b.getAttribute('data-time') : ((kakao && btSameGroup(list, eff, i)) ? null : eff[i]);   // 자동 끄면 직접 켠 시간만
+      if(v){ if(b.getAttribute('data-tshow')!==v) b.setAttribute('data-tshow', v); }
+      else if(b.hasAttribute('data-tshow')) b.removeAttribute('data-tshow');
+    });
+  }
+  // 입력에서 시간 글자를 눌러 고칠 때: 라인은 그 말풍선부터, 카카오톡은 그 묶음 전체부터 새 시간
+  function setTimeFrom(b, t){
+    var list=[].slice.call(editor.querySelectorAll('.g-bub')), i=list.indexOf(b); if(i<0) return;
+    var start=i;
+    if(bubbleShape==='kakao'){ var eff=btEffTimes(list); while(start>0 && btSameGroup(list, eff, start-1)) start--; for(var k=start+1;k<=i;k++) list[k].removeAttribute('data-time'); }
+    if(t) list[start].setAttribute('data-time', t); else list[start].removeAttribute('data-time');
+  }
   // 라인 · 카카오톡: 미리보기 말풍선에 시간 · 읽음 글자를 붙인다
   function ktDecorate(root){
     if(!isKtShape()) return;
     if(root===editor) return;
     [].forEach.call(root.querySelectorAll('.g-bub'), function(b){
-      var t = b.getAttribute('data-time'), rd = b.getAttribute('data-read')==='1';
+      var t = b.getAttribute('data-tshow'), rd = b.getAttribute('data-read')==='1';
       if(!t && !rd) return;
       var right = b.classList.contains('right') || b.classList.contains('send');
       var m = document.createElement('span'); m.className = 'g-bub-meta ' + (right ? 'right' : 'left');
@@ -6831,6 +6966,8 @@
     });
   }
   function render(){
+    // 붙여넣기 등으로 들어온 긴 data URL 사진 → 짧은 주소로(렉 방지)
+    [].forEach.call(editor.querySelectorAll('img[src^="data:image/"]'), function(im){ var u=imgShort(im.getAttribute('src')); if(u!==im.getAttribute('src')) im.setAttribute('src', u); });
     bgValue = effectiveBg();
     var _psz=$('photo-size'); if(_psz){ var _pp2=parseFloat(_psz.value); editor.style.setProperty('--photo-w', _pp2+'%'); editor.style.setProperty('--photo-w-px', Math.round((editor.clientWidth||360)*_pp2/100)+'px'); }
     var _lisz=$('logimg-size'); if(_lisz) editor.style.setProperty('--logimg-w', parseFloat(_lisz.value)+'%');
@@ -6843,6 +6980,7 @@
     var _ep2=parseFloat(($('emo-size')||{}).value); if(!(_ep2>=10&&_ep2<=50)) _ep2=20; editor.style.setProperty('--emo-w', Math.round((editor.clientWidth||360)*_ep2/100)+'px');
     if($('emo-size')) setVal('emo-size', _ep2+'%');
     editor.style.setProperty('--time-color', ($('c-time')||{}).value || '#6b7684');
+    computeTimes(editor);
     ktDecorate(editor);
     syncSubFixedEm();
     canvas.innerHTML = '<div class="g-inner">' + (gridCols > 0 && pages.length > 1 ? buildGridHtml() : buildHtml()) + '</div>';
@@ -7728,7 +7866,7 @@
     $('frame-file').addEventListener('change', function(e){
       var file=e.target.files && e.target.files[0]; if(!file) return;
       var rd=new FileReader();
-      rd.onload=function(ev){ frameData=ev.target.result; _activeLibId=null; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState(); };
+      rd.onload=function(ev){ downscaleImage(ev.target.result, 2560, function(url){ frameData=url; _activeLibId=null; loadFrameNat(render); updateFrameUI(); renderFrameLib(); render(); saveState(); }); };   // 폰 원본(수 MB)은 긴 변 2560px로 줄여서
       rd.readAsDataURL(file); e.target.value='';
     });
   }
@@ -7792,13 +7930,21 @@
       tx.oncomplete = function(){ if(cb) cb(); };
     });
   }
+  function makeFrameThumb(item, th){
+    downscaleImage(item.src, 240, function(t){
+      if(!t || t===item.src) return;
+      item.thumb=t; th.style.backgroundImage='url("'+t+'")';
+      openFrameLibDB(function(db){ if(!db) return; try{ var st=db.transaction('images','readwrite').objectStore('images'); var rq=st.get(item.id); rq.onsuccess=function(){ var it=rq.result; if(it){ it.thumb=t; st.put(it); } }; }catch(e){} });
+    });
+  }
   function renderFrameLib(){
     var wrap=$('frame-lib'); if(!wrap) return;
     loadFrameLib(function(list){
       wrap.innerHTML='';
       list.forEach(function(item){
         var th=document.createElement('div'); th.className='frame-lib__thumb';
-        th.style.backgroundImage='url("'+item.src+'")';
+        th.style.backgroundImage='url("'+(item.thumb||item.src)+'")';
+        if(!item.thumb) makeFrameThumb(item, th);   // 목록은 작은 미리보기로(원본 여러 장을 한꺼번에 띄우면 무거움)
         if(frameData===item.src) th.classList.add('on');
         th.addEventListener('click', function(){
           frameData=item.src;
@@ -7831,7 +7977,7 @@
           var _z = $('frame-zoom') ? parseFloat($('frame-zoom').value)||100 : 100;
           var _px = $('frame-x') ? parseFloat($('frame-x').value)||50 : 50;
           var _py = $('frame-y') ? parseFloat($('frame-y').value)||50 : 50;
-          addFrameLibItem(ev.target.result, _z, _px, _py, renderFrameLib);
+          downscaleImage(ev.target.result, 2560, function(url){ addFrameLibItem(url, _z, _px, _py, renderFrameLib); });
         });
       };
       rd.readAsDataURL(file); e.target.value='';
@@ -8139,7 +8285,7 @@
   $('photo-file').addEventListener('change', function(e){
     var file=e.target.files && e.target.files[0]; if(!file) return;
     var reader=new FileReader();
-    reader.onload=function(ev){ photoData=ev.target.result; photoOn=(bgMode==='photo'); updatePhotoUI(); render(); };
+    reader.onload=function(ev){ downscaleImage(ev.target.result, 2560, function(url){ photoData=url; photoOn=(bgMode==='photo'); updatePhotoUI(); render(); scheduleSave(); }); };
     reader.readAsDataURL(file); e.target.value='';
   });
 
@@ -9238,18 +9384,20 @@
     'c-brecv-name','c-brecv-name-txt','c-bsend-name','c-bsend-name-txt','c-bar-bg','c-bar-bg-txt','c-bar-accent','c-bar-accent-txt','c-bar-name','c-bar-name-txt','c-bar-avatar','c-bar-avatar-txt','c-bar-plus','c-bar-plus-txt','c-bar-arrow','c-bar-arrow-txt','opacity','bright','c-grad1','c-grad1-txt','c-grad2','c-grad2-txt','grad-angle'];
   var _restoring=false;
 
+  var _frameLibLastKey='';
   function saveState(){
     if(_restoring) return;
     try{
       var data = buildStateData();
-      try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
-      catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e2){} }
+      try{ localStorage.setItem(STORE_KEY, storeImgs(JSON.stringify(data))); }
+      catch(e){ try{ data.photoData=null; localStorage.setItem(STORE_KEY, storeImgs(JSON.stringify(data))); }catch(e2){} }
       // 사진 저장소: 활성 항목의 zoom/x/y 자동 갱신
       if(_activeLibId!=null){
         var _lz = $('frame-zoom') ? parseFloat($('frame-zoom').value) : null;
         var _lx = $('frame-x') ? parseFloat($('frame-x').value) : null;
         var _ly = $('frame-y') ? parseFloat($('frame-y').value) : null;
-        if(_lz!=null) updateFrameLibItem(_activeLibId, _lz, _lx, _ly);
+        var _lk=_activeLibId+'|'+_lz+'|'+_lx+'|'+_ly;   // 값이 바뀐 때만 저장소에 씀(사진째 다시 쓰는 무거운 작업)
+        if(_lz!=null && _lk!==_frameLibLastKey){ _frameLibLastKey=_lk; updateFrameLibItem(_activeLibId, _lz, _lx, _ly); }
       }
     }catch(e){}
   }
@@ -9263,7 +9411,7 @@
       var vals={}; TEXT_IDS.forEach(function(id){ var e=$(id); if(e) vals[id]=e.value; });
       var data={ vals:vals, editorHtml:pages[0].body||'', nameHtml:sharedName,
         titleHtml:sharedTitle, subtitleHtml:sharedSubtitle,
-        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, paraIndent:paraIndentOn(), nameInMargin:(!!($('name-in-margin')&&$('name-in-margin').checked)), photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
+        bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, paraIndent:paraIndentOn(), nameInMargin:(!!($('name-in-margin')&&$('name-in-margin').checked)), timeAuto:timeAutoOn(), photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null, indentV2:1,
         multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages, novelMode:novelMode },
         messengerMode: messengerMode,
@@ -9304,9 +9452,38 @@
       if(!ok){ sel.value = firstSelectableFont(sel); }   // 제목·하단은 첫 항목이 '본문과 동일'
     });
   }
+  // 상태 안의 본문 html: data URL → blob, imgdb 참조 → (불러온 것은) blob
+  function packStateHtml(data){
+    function f(x){ return (typeof x==='string') ? viewImgRefs(packImgs(x)) : x; }
+    ['editorHtml','titleHtml','subtitleHtml','nameHtml'].forEach(function(k){ data[k]=f(data[k]); });
+    var mp=data.multiPage;
+    if(mp){
+      ['sharedTitle','sharedSubtitle','sharedName'].forEach(function(k){ mp[k]=f(mp[k]); });
+      if(Array.isArray(mp.pages)) mp.pages.forEach(function(pg){ if(pg){ ['body','title','subtitle','name'].forEach(function(k){ pg[k]=f(pg[k]); }); } });
+    }
+    return data;
+  }
+  // 시작할 때: 자동 저장에 imgdb 참조로 남은 사진을 저장소에서 불러와 채운다
+  function resolveImgRefs(){
+    var raw=''; try{ raw=localStorage.getItem(STORE_KEY)||''; }catch(e){}
+    var ids=imgRefIds(raw);
+    imgLoadIds(ids, function(){
+      var changed=false;
+      function f(x){ if(typeof x==='string' && x.indexOf('imgdb:')!==-1){ changed=true; return viewImgRefs(x); } return x; }
+      pages.forEach(function(pg){ if(pg){ ['body','title','subtitle','name'].forEach(function(k){ pg[k]=f(pg[k]); }); } });
+      sharedTitle=f(sharedTitle); sharedSubtitle=f(sharedSubtitle); sharedName=f(sharedName);
+      [].forEach.call(document.querySelectorAll('img[src^="imgdb:"]'), function(im){
+        var r=_imgById.get(im.getAttribute('src').slice(6)); if(r){ im.setAttribute('src', r.blob); changed=true; reRenderOnDecode(im); }
+      });
+      if(typeof _hist!=='undefined' && _hist.length){ _hist=_hist.map(function(h){ return viewImgRefs(h); }); _histLast=viewImgRefs(_histLast); }
+      if(changed) render();
+      imgGC(ids);
+    });
+  }
   function restoreState(){
     var raw; try{ raw=localStorage.getItem(STORE_KEY); }catch(e){ return; } if(!raw) return;
     var data; try{ data=JSON.parse(raw); }catch(e){ return; }
+    packStateHtml(data);
     _restoring=true;
     try{
       if(data.vals){ TEXT_IDS.forEach(function(id){ if(data.vals[id]!=null){ safeRestoreValue(id, data.vals[id]); } }); }
@@ -9354,6 +9531,7 @@
       // 예전 방식으로 저장된 들여쓰기 → 문단 앞 빈칸 방식으로 한 번 옮긴다('뺀 문단' 표식은 빈칸 없이)
       if(!data.indentV2 && data.paraIndent) applyIndentMarkers(true, true);
       if($('name-in-margin')){ $('name-in-margin').checked = !!data.nameInMargin; }
+      if($('time-auto')){ $('time-auto').checked = !!data.timeAuto; }
       if(typeof normalizeNamePos==='function') normalizeNamePos();
       if(typeof syncNameSegs==='function') syncNameSegs();
       if($('size-helper')){
@@ -9525,7 +9703,7 @@
   // 지금 편집 상태 — 자동 저장 사본이 아니라 화면에서 바로 만든다(자동 저장이 공간 부족으로 실패했어도 최신 상태가 담기게)
   function currentStateData(){
     flushSave();
-    return JSON.parse(JSON.stringify(buildStateData()));
+    return JSON.parse(unpackImgs(JSON.stringify(buildStateData())));   // 사진은 원본으로(스냅샷 · 내보내기는 그것만으로 완결)
   }
   function renderSnapshots(){
     var list=$('snapshot-list'); if(!list) return;
@@ -9541,14 +9719,15 @@
             if(!confirm('현재 작업은 사라져요. 불러올까요?')) return;
             _restoring=true;
             if(_saveT){ clearTimeout(_saveT); _saveT=null; }
-            var json=JSON.stringify(Object.assign({}, s.data));
-            try{ localStorage.setItem(STORE_KEY, json); }
-            catch(e){
-              // 자리가 모자라면 지금 작업을 비우고 다시 시도(어차피 덮어쓸 내용)
-              try{ localStorage.removeItem(STORE_KEY); localStorage.setItem(STORE_KEY, json); }
-              catch(e2){ _restoring=false; alert('불러오기에 실패했어요. 저장 공간이 부족해요.'); return; }
-            }
-            location.reload();
+            compactStateJson(JSON.stringify(Object.assign({}, s.data)), function(json){   // 사진은 사진 저장소로 옮기고 참조만
+              try{ localStorage.setItem(STORE_KEY, json); }
+              catch(e){
+                // 자리가 모자라면 지금 작업을 비우고 다시 시도(어차피 덮어쓸 내용)
+                try{ localStorage.removeItem(STORE_KEY); localStorage.setItem(STORE_KEY, json); }
+                catch(e2){ _restoring=false; alert('불러오기에 실패했어요. 저장 공간이 부족해요.'); return; }
+              }
+              location.reload();
+            });
           }},
           { label:'현재 상태로 덮어쓰기', run:function(){
             try{
@@ -9678,6 +9857,7 @@
     var c=editor.cloneNode(true);
     [].forEach.call(c.querySelectorAll('.is-sel'), function(x){ x.classList.remove('is-sel'); });
     [].forEach.call(c.querySelectorAll('.g-ind-vis'), function(x){ x.parentNode.removeChild(x); });   // 들여쓰기 표시 칸은 기록에서 뺀다
+    [].forEach.call(c.querySelectorAll('[data-tshow]'), function(x){ x.removeAttribute('data-tshow'); });   // 보이는 시간은 계산값
     var snap={ body:c.innerHTML };
     HIST_EDS.forEach(function(id){ var e=$(id); if(e) snap[id]=e.innerHTML; });
     return JSON.stringify(snap);
@@ -10587,7 +10767,7 @@
     if(ki) ki.addEventListener('change', function(){ if(ki.checked) onlyInput('kakaoInput'); else chrome.kakaoInput=false; syncChromeUI(); render(); saveState(); });
     if(kn) kn.addEventListener('input', function(){ chrome.kakaoName=kn.value; render(); saveState(); });
     if(ln) ln.addEventListener('input', function(){ chrome.lineName=ln.value; render(); saveState(); });
-    // 메신저 화면으로 꾸미기 — 세 아코디언의 스위치 · 여백은 모두 같은 값(하나 바꾸면 다 바뀜)
+    // 메신저 형태로 꾸미기 — 세 아코디언의 스위치 · 여백은 모두 같은 값(하나 바꾸면 다 바뀜)
     [].forEach.call(document.querySelectorAll('.msgr-on'), function(cb){
       cb.addEventListener('change', function(){ messengerMode = cb.checked; syncMsgrUI(); render(); saveState(); });
     });
@@ -10616,6 +10796,9 @@
      초기화
      ============================================================ */
   restoreState();
+  resolveImgRefs();
+  if(msgrColor.on && !isMsgrShape()) setMsgrColorOn(false);   // 예전 저장: 아랫줄 모양인데 켜져 있던 경우
+  syncMcUI();
   // 복원된 frameData가 저장소 항목과 일치하면 _activeLibId 복원
   if(frameData){ loadFrameLib(function(list){
     for(var i=0;i<list.length;i++){ if(list[i].src===frameData){ _activeLibId=list[i].id; break; } }
