@@ -930,6 +930,7 @@
   #editor .g-bub.is-empty:before{content:"내용";opacity:.6;}
   #editor .g-bub.recv.is-empty:before{color:var(--bub-recv-ink,#000);}
   #editor .g-bub.send.is-empty:before{color:var(--bub-send-ink,#fff);}
+  #editor .g-bub-name{display:none !important;}   /* 입력창에선 이름 숨김 — 이름 버튼으로만 켜고 끔(미리보기 · 저장엔 그대로) */
   #editor .g-bub-name{display:block;width:fit-content;max-width:80%;font-size:.8em;font-weight:700;color:var(--ink-3);margin:4px 0;padding:0 3px;white-space:pre-wrap;}
   #editor .g-bub-name.recv{margin-right:auto;margin-left:8px;text-align:left;color:var(--bub-name-recv,#8a8a8a);}
   #editor .g-bub-name.send{margin-left:auto;margin-right:8px;text-align:right;color:var(--bub-name-send,#8a8a8a);}
@@ -2773,7 +2774,7 @@
         <tr><td>이름</td><td>위</td><td>위</td><td>위</td><td>위</td><td>위</td><td>위</td><td>옆</td></tr>
         <tr><td>시간 · 읽음</td><td>X</td><td>O</td><td>O</td><td>X</td><td>X</td><td>X</td><td>X</td></tr>
       </table>
-      <p class="hint" style="margin-top:18px">· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 이름</b>: 말풍선 이름은 입력에서 조정 가능한 텍스트가 아니에요. 이름을 바꾸고 싶다면 말풍선-인물에서 변경해 주세요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 앞·맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일은 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.<br><br>· <b>말풍선 ↔ 말풍선 간격</b>: 서로 다른 말풍선끼리의 간격이에요. 빈 문단은 본문으로 인식되어서, 말풍선과 말풍선 사이에 빈 문단이 있다면 각 말풍선 기준 말풍선 여백이 적용돼요.<br>· <b>연속 말풍선 간격</b>: 같은 인물, 같은 방향, 중간에 빈 문단이 없는 말풍선들을 연속 말풍선으로 처리해요. 이때 연속 말풍선끼리의 간격이에요.<br><br><b>TIP!</b><br>· 말풍선 여백은 말풍선의 위아래를 감싸는 여백이에요. 말풍선 앞뒤로 빈 문단 · 일반 글이 있을 때 적용돼요.<br>
+      <p class="hint" style="margin-top:18px">· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 이름</b>: 말풍선 이름은 입력에는 보이지 않고 미리보기에만 보여요. 말풍선을 누르면 뜨는 도구의 이름 버튼으로 켜고 끌 수 있고, 이름을 바꾸고 싶다면 말풍선-인물에서 변경해 주세요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 앞·맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일은 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.<br><br>· <b>말풍선 ↔ 말풍선 간격</b>: 서로 다른 말풍선끼리의 간격이에요. 빈 문단은 본문으로 인식되어서, 말풍선과 말풍선 사이에 빈 문단이 있다면 각 말풍선 기준 말풍선 여백이 적용돼요.<br>· <b>연속 말풍선 간격</b>: 같은 인물, 같은 방향, 중간에 빈 문단이 없는 말풍선들을 연속 말풍선으로 처리해요. 이때 연속 말풍선끼리의 간격이에요.<br><br><b>TIP!</b><br>· 말풍선 여백은 말풍선의 위아래를 감싸는 여백이에요. 말풍선 앞뒤로 빈 문단 · 일반 글이 있을 때 적용돼요.<br>
 <svg viewBox="0 0 360 100" width="100%" style="display:block;margin:8px auto 2px;max-width:500px" fill="none" xmlns="http://www.w3.org/2000/svg">
 <text x="55" y="10" font-size="8" fill="#888" text-anchor="middle">여백 0 설정</text>
 <text x="155" y="10" font-size="8" fill="#888" text-anchor="middle">여백 있음</text>
@@ -3860,6 +3861,22 @@
     if(prev && prev.nodeType===1 && prev.classList && prev.classList.contains('g-bub-name')) return prev;
     return null;
   }
+  // 숨긴 이름은 백스페이스 · 선택 삭제로 딸려 지워지지 않게: 지우기 직전 이름↔말풍선 짝을 기억했다가 말풍선이 남아 있으면 되돌린다
+  function bubAfterName(n){
+    var s=n.nextSibling;
+    while(s && ((s.nodeType===3 && !s.nodeValue.replace(/[\s\u200b]/g,'')) || (s.nodeType===1 && s.tagName==='BR'))) s=s.nextSibling;
+    return (s && s.nodeType===1 && s.classList && s.classList.contains('g-bub')) ? s : null;
+  }
+  var _nmGuard=null;
+  editor.addEventListener('beforeinput', function(e){
+    _nmGuard=null;
+    if(!/^delete/.test(e.inputType||'')) return;
+    _nmGuard=[].map.call(editor.querySelectorAll('.g-bub-name'), function(n){ var b=bubAfterName(n); return b ? {n:n, b:b} : null; }).filter(Boolean);
+  }, true);
+  editor.addEventListener('input', function(){
+    if(!_nmGuard) return; var g=_nmGuard; _nmGuard=null;
+    g.forEach(function(x){ if(!editor.contains(x.n) && editor.contains(x.b) && !bubNameBefore(x.b)) x.b.parentNode.insertBefore(x.n, x.b); });
+  }, true);
   function ensureBubName(bub, kind){
     var nm = bubNameBefore(bub);
     if(nm){ nm.className = 'g-bub-name ' + kind; return nm; }
