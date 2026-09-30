@@ -898,6 +898,14 @@
   #editor .g-bub.char-bub.right.has-img:not(.img-only) .g-bub-img,#editor .g-bub.send.has-img:not(.img-only) .g-bub-img{margin-left:auto;margin-right:0;}
   #editor .g-bub.img-only{padding:0 !important;background:transparent !important;}
   #editor .g-bub.img-only .g-bub-img{border-radius:14px;}
+  #editor .g-bub.has-img:not(.x) .g-bub-img.g-emo{width:var(--emo-w,20%);max-width:none;border-radius:0;}
+  /* 이모티콘 고르기(시트 안 그리드) */
+  .emo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:2px 0 4px;}
+  .sheet__list .emo-tile{position:relative;aspect-ratio:1/1;border:1px solid var(--line);border-radius:12px;background-color:var(--surface-2);background-position:center;background-size:78%;background-repeat:no-repeat;cursor:pointer;padding:0;min-height:0;display:block;}
+  .sheet__list .emo-tile:hover{border-color:var(--ink-3);background-color:var(--surface-2);}
+  .sheet__list .emo-tile--add{display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--ink-3);background:transparent;border-style:dashed;}
+  .emo-tile__x{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font-size:13px;line-height:20px;text-align:center;cursor:pointer;padding:0;}
+  .emo-empty{grid-column:1/-1;font-size:12px;color:var(--ink-3);margin:2px 0 4px;}
   #editor .g-bub.img-only>svg.g-tail{display:none !important;}
   #editor .g-bub.img-only::before,#editor .g-bub.img-only::after{content:none !important;display:none !important;}
   #editor .g-bub{display:block;position:relative;width:fit-content;max-width:80%;padding:4px 10px;border-radius:14px;margin:2px 0;white-space:pre-wrap;}
@@ -1261,6 +1269,10 @@
   #canvas .g-bub.img-only,.canvas-clone .g-bub.img-only{padding:0 !important;background:transparent !important;}
   #canvas .g-bub.img-only .g-bub-img,.canvas-clone .g-bub.img-only .g-bub-img{border-radius:1.15em !important;}
   #canvas .g-bub.img-only>svg.g-tail,.canvas-clone .g-bub.img-only>svg.g-tail{display:none !important;}
+  /* 이모티콘: 사진과 따로 크기(페이지 너비 기준 --emo-w), 둥근 모서리 없음. 말풍선에 이모티콘만 있으면 배경 · 꼬리 없이 그림만 */
+  #canvas .g-bub.has-img:not(.x) .g-bub-img.g-emo,.canvas-clone .g-bub.has-img:not(.x) .g-bub-img.g-emo{width:var(--emo-w,20%) !important;max-width:none !important;border-radius:0 !important;}
+  #canvas .g-bub.img-only.has-emo,.canvas-clone .g-bub.img-only.has-emo{max-width:none !important;}
+  #canvas .g-bub.has-emo:not(.img-only) .g-bub-img.g-emo,.canvas-clone .g-bub.has-emo:not(.img-only) .g-bub-img.g-emo{margin:0 0 .3em !important;}
   #canvas .g-bub.img-only::before,#canvas .g-bub.img-only::after,.canvas-clone .g-bub.img-only::before,.canvas-clone .g-bub.img-only::after{content:none !important;display:none !important;}
   /* 아이메시지 기본 모양 + 단색 배경(.bg-solid-tail): SVG 꼬리 숨기고 ::before/::after 진짜 아이메시지 꼬리. 마스크(::after)가 배경색(--tail-mask)이라 단색에서만 정확 → 그라데이션·사진 배경은 이 클래스 없어 SVG 꼬리로 폴백 */
   #canvas.bg-solid-tail:not(.bub-simple):not(.bub-soft) .g-bub.tail>svg.g-tail,.canvas-clone.bg-solid-tail:not(.bub-simple):not(.bub-soft) .g-bub.tail>svg.g-tail{display:none !important;}
@@ -1495,6 +1507,7 @@
               <button class="fbtn" id="cb-tail" type="button" title="꼬리 켜기/끄기">꼬리</button>
               <button class="fbtn" id="cb-time" type="button" title="시간 켜기/끄기" hidden>시간</button>
               <button class="fbtn" id="cb-read" type="button" title="읽음 표시 켜기/끄기" hidden>1</button>
+              <button class="fbtn" id="cb-emo" type="button" title="사진 ↔ 이모티콘" hidden>이모티콘</button>
               <button class="fbtn fbtn--del" id="cb-del" type="button" title="말풍선 해제(내용은 남김)">삭제</button>
             </div>
             <div class="subtools" id="logimg-tools" hidden style="grid-template-columns:repeat(4,1fr)">
@@ -2232,6 +2245,10 @@
                   <span class="label">말풍선 사진 크기 <span class="val" id="photo-size-val">60%</span></span>
                   <div class="rangewrap"><input id="photo-size" type="range" min="25" max="95" step="5" value="60"></div>
                 </div>
+                <div class="field">
+                  <span class="label">이모티콘 크기 <span class="val" id="emo-size-val">20%</span></span>
+                  <div class="rangewrap"><input id="emo-size" type="range" min="10" max="50" step="5" value="20"></div>
+                </div>
               </div>
 
             </div>
@@ -2647,6 +2664,16 @@
           </div>
 
           <div class="section" style="margin-top:20px">
+            <p class="section__head">이모티콘 저장소</p>
+            <p class="hint" style="margin:0 0 12px">말풍선에 넣은 이모티콘을 모아 둬요. 최대 50개까지 저장돼요.<br>이모티콘은 말풍선을 넣을 때 '이모티콘'을 고르면 쓸 수 있어요.</p>
+            <p class="hint" id="emo-count" style="margin:0 0 10px">저장된 이모티콘 0개</p>
+            <div class="grid-2">
+              <button class="btn btn--ghost" id="emo-export" type="button" style="height:40px;font-size:12px">내보내기</button>
+              <button class="btn btn--ghost" id="emo-import" type="button" style="height:40px;font-size:12px">가져오기</button>
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:20px">
             <p class="section__head">초기화</p>
             <p class="hint" style="margin:0 0 12px">전체 초기화: 프리셋을 제외한 모든 설정과 입력을 처음 상태로 되돌려요.<br>나머지 초기화: 각 프리셋에 저장된 내용을 초기화해요.</p>
             <button class="btn btn--ghost" id="t-reset" type="button" style="width:100%;height:42px;font-size:13px;color:var(--danger,#d9534f)">전체 초기화</button>
@@ -2657,6 +2684,7 @@
               <button class="btn btn--ghost" id="reset-snapshot" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">이어서 편집하기 초기화</button>
               <button class="btn btn--ghost" id="reset-mypreset" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">내 프리셋 초기화</button>
               <button class="btn btn--ghost" id="reset-framelib" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">꾸밈 사진 저장소 초기화</button>
+              <button class="btn btn--ghost" id="reset-emolib" type="button" style="height:40px;font-size:12px;color:var(--danger,#d9534f)">이모티콘 저장소 초기화</button>
             </div>
           </div>
         </div>
@@ -2683,6 +2711,7 @@
 </div>
 
 <!-- 서식 선택 시트 (인용/구분) -->
+<input id="emo-file" type="file" accept="image/*" hidden>
 <div class="sheet-overlay" id="sheet-overlay" hidden>
   <div class="sheet" id="sheet" role="dialog" aria-modal="true">
     <div class="sheet__grip"></div>
@@ -3540,6 +3569,7 @@
   linkColor('c-bar-plus','c-bar-plus-txt',false,false);
   linkColor('c-bar-arrow','c-bar-arrow-txt',false,false);
   linkColor('c-time','c-time-txt',false,false);
+  if($('emo-size')){ $('emo-size').addEventListener('input', function(){ render(); }); $('emo-size').addEventListener('change', function(){ scheduleSave(); }); }
   ['c-lbar-top','c-lbar-bg','c-lbar-ic','c-lbar-field','c-kbar-top','c-kbar-bg','c-kbar-ic','c-kbar-field'].forEach(function(id){ linkColor(id, id+'-txt', false, false); });
   if($('read-text')) $('read-text').addEventListener('input', function(){ render(); });
 
@@ -3800,6 +3830,7 @@
       var txt=b.textContent.replace(/\u200b/g,'').trim();
       b.classList.toggle('has-img', hasImg);
       b.classList.toggle('img-only', hasImg && txt==='');
+      b.classList.toggle('has-emo', !!b.querySelector('img.g-emo'));
     });
   }
   function styleCharBubbles(root){
@@ -4262,7 +4293,7 @@
         preview: p.photo ? photoBubIcon(side,col) : sideBubIcon(side,col),
         noFocus: !!p.photo,
         run: function(){
-          if(p.photo){ pickPhotoBubble({charId:charId, side:side, tail:false, nm:!!p.nm, av:!!p.av}); }
+          if(p.photo){ choosePhotoOrEmo({charId:charId, side:side, tail:false, nm:!!p.nm, av:!!p.av}); }
           else { insertCharBubbles(charId, side, null, {av:!!p.av, nm:!!p.nm, tail:!!p.tail}); }
         }
       };
@@ -4558,6 +4589,74 @@
       { label:'오른쪽', preview:al('right'), noFocus:true, run:function(){ pickLogImage('right'); } }
     ]});
   }
+  /* ===== 이모티콘 =====
+     · 말풍선 사진 중 이모티콘은 img.g-emo 로 표시 → 사진과 따로 '이모티콘 크기', 모서리 없음, 이모티콘만 있으면 배경 · 꼬리 없음
+     · 이모티콘 저장소: 꾸밈 사진 저장소처럼 IndexedDB. 넣을 때 투명 배경 그대로 긴 변 300px PNG 로 줄여 저장(본문 용량 절약) */
+  var EMO_MAX = 50, _emoDB = null, _emoDesc = null;
+  function openEmoDB(cb){
+    if(_emoDB){ cb(_emoDB); return; }
+    var req; try{ req = indexedDB.open('logmaker-emo-lib', 1); }catch(e){ cb(null); return; }
+    req.onupgradeneeded = function(e){ e.target.result.createObjectStore('items', {keyPath:'id', autoIncrement:true}); };
+    req.onsuccess = function(e){ _emoDB = e.target.result; cb(_emoDB); };
+    req.onerror = function(){ cb(null); };
+  }
+  function emoAll(cb){ openEmoDB(function(db){ if(!db){ cb([]); return; } var r=db.transaction('items','readonly').objectStore('items').getAll(); r.onsuccess=function(){ cb(r.result||[]); }; r.onerror=function(){ cb([]); }; }); }
+  function emoWrite(fn, cb){ openEmoDB(function(db){ if(!db){ alert('이 브라우저에선 이모티콘 저장소를 쓸 수 없어요.'); return; } var tx=db.transaction('items','readwrite'); fn(tx.objectStore('items')); tx.oncomplete=function(){ updateEmoCount(); if(cb) cb(); }; tx.onabort=function(){ alert('저장 공간이 부족해요.'); if(cb) cb(); }; }); }
+  function updateEmoCount(){ emoAll(function(l){ var e=$('emo-count'); if(e) e.textContent='저장된 이모티콘 '+l.length+'개'; }); }
+  function emoShrink(src, cb){   // 투명 배경 유지 · 긴 변 300px · 항상 PNG
+    var img=new Image();
+    img.onload=function(){
+      var w=img.naturalWidth, h=img.naturalHeight; if(!w||!h){ cb(src); return; }
+      var k=Math.min(1, 300/Math.max(w,h)), ow=Math.max(1,Math.round(w*k)), oh=Math.max(1,Math.round(h*k));
+      var cv=document.createElement('canvas'); cv.width=ow; cv.height=oh;
+      try{ cv.getContext('2d').drawImage(img,0,0,ow,oh); cb(cv.toDataURL('image/png')); }catch(e){ cb(src); }
+    };
+    img.onerror=function(){ cb(null); };
+    img.src=src;
+  }
+  function choosePhotoOrEmo(desc){
+    saveSel();
+    openSheetDef({ title:'사진 · 이모티콘', noFocus:true, options:[
+      { label:'사진', noFocus:true, run:function(){ pickPhotoBubble(desc); } },
+      { label:'이모티콘', noFocus:true, run:function(){ openEmoPicker(desc); } }
+    ]});
+  }
+  function openEmoPicker(desc){
+    _emoDesc = desc;
+    openSheetDef({ title:'이모티콘', noFocus:true, back:function(){ choosePhotoOrEmo(desc); }, options:[{ custom:function(){
+      var grid=document.createElement('div'); grid.className='emo-grid';
+      function fill(){
+        emoAll(function(list){
+          grid.innerHTML='';
+          if(!list.length){ var em=document.createElement('p'); em.className='emo-empty'; em.textContent='저장된 이모티콘이 없어요. ＋로 추가해 주세요.'; grid.appendChild(em); }
+          list.forEach(function(it){
+            var t=document.createElement('button'); t.type='button'; t.className='emo-tile'; t.style.backgroundImage='url("'+it.src+'")';
+            t.addEventListener('click', function(ev){ ev.preventDefault(); closeSheet(); insertPhotoBubbleImg(desc, it.src, true); });
+            var x=document.createElement('span'); x.className='emo-tile__x'; x.textContent='×'; x.title='저장소에서 삭제';
+            x.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); if(!confirm('이 이모티콘을 저장소에서 지울까요?')) return; emoWrite(function(st){ st.delete(it.id); }, fill); });
+            t.appendChild(x); grid.appendChild(t);
+          });
+          var add=document.createElement('button'); add.type='button'; add.className='emo-tile emo-tile--add'; add.textContent='＋'; add.title='새 이모티콘';
+          add.addEventListener('click', function(ev){ ev.preventDefault(); if(list.length>=EMO_MAX){ alert('이모티콘은 최대 '+EMO_MAX+'개까지 저장돼요. 안 쓰는 걸 지워 주세요.'); return; } var f=$('emo-file'); if(f) f.click(); });
+          grid.appendChild(add);
+        });
+      }
+      fill();
+      return grid;
+    }}]});
+  }
+  if($('emo-file')){
+    $('emo-file').addEventListener('change', function(e){
+      var f=e.target.files && e.target.files[0]; e.target.value=''; if(!f) return;
+      var desc=_emoDesc || {side:'left'};
+      var rd=new FileReader();
+      rd.onload=function(ev){ emoShrink(ev.target.result, function(url){
+        if(!url){ alert('이미지를 읽을 수 없어요.'); return; }
+        emoAll(function(cur){ var dup=cur.some(function(x){ return x.src===url; }); if(dup){ closeSheet(); insertPhotoBubbleImg(desc, url, true); return; } emoWrite(function(st){ st.add({ src:url }); }, function(){ closeSheet(); insertPhotoBubbleImg(desc, url, true); }); });   // 저장소에 넣고 바로 사용(같은 그림은 한 번만 저장)
+      }); };
+      rd.readAsDataURL(f);
+    });
+  }
   function pickPhotoBubble(desc){ _imgMode=desc||{side:'left'}; saveSel(); if(_imgFile) _imgFile.click(); }
   function downscaleImage(src, maxDim, cb){
     var img=new Image();
@@ -4598,7 +4697,7 @@
     reRenderOnDecode(im);
   }
   // 사진 말풍선: 이미지가 들어있는 말풍선(char-bub 또는 plain recv/send). 캡션은 말풍선 안에 이어서 입력.
-  function insertPhotoBubbleImg(desc, url){
+  function insertPhotoBubbleImg(desc, url, emo){
     editor.focus();
     var sel=window.getSelection();
     if(!(sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer))){
@@ -4619,7 +4718,7 @@
       bub=document.createElement('span');
       bub.className='g-bub '+(side==='right'?'send':'recv')+' '+(desc.tail?'tail':'cont');
     }
-    var im=document.createElement('img'); im.className='g-bub-img'; im.src=url; im.alt='';
+    var im=document.createElement('img'); im.className='g-bub-img'+(emo?' g-emo':''); im.src=url; im.alt='';
     bub.appendChild(im);
     out.appendChild(bub);
     range.collapse(false); range.insertNode(out);
@@ -5459,6 +5558,7 @@
     else b.setAttribute('data-read','1');
   }
   bindCharBubTool($('cb-time'), cbToggleTime);
+  bindCharBubTool($('cb-emo'), function(b){ [].forEach.call(b.querySelectorAll('img.g-bub-img'), function(im){ im.classList.toggle('g-emo'); }); });   // 사진 ↔ 이모티콘
   // 메신저 색으로 칠하기 — 스위치 · 색칸은 세 아코디언 모두 같은 값
   [].forEach.call(document.querySelectorAll('.mc-on'), function(cb){ cb.addEventListener('change', function(){ setMsgrColorOn(cb.checked); }); });
   [].forEach.call(document.querySelectorAll('.mc-c, .mc-t'), function(inp){
@@ -5589,7 +5689,8 @@
     var kt = isKtShape();
     var cbTime = $('cb-time'); if(cbTime){ cbTime.hidden = !kt; cbTime.classList.toggle('is-on', !!(kt && cbub && cbub.hasAttribute('data-time'))); }
     var cbRead = $('cb-read'); if(cbRead){ cbRead.hidden = !kt; cbRead.textContent = (bubbleShape==='line') ? '읽음' : '1'; cbRead.classList.toggle('is-on', !!(kt && cbub && cbub.getAttribute('data-read')==='1')); }
-    var visCount = 6 - (hideTail?1:0) - (isScript?2:0) + (kt?2:0);
+    var cbEmo = $('cb-emo'); if(cbEmo){ cbEmo.hidden = !hasImg; cbEmo.classList.toggle('is-on', !!(cbub && cbub.querySelector && cbub.querySelector('img.g-emo'))); }
+    var visCount = 6 - (hideTail?1:0) - (isScript?2:0) + (kt?2:0) + (hasImg?1:0);
     if(cbTools){ cbTools.style.gridTemplateColumns = 'repeat('+visCount+',1fr)'; }
   }
   editor.addEventListener('keyup', updateFormatButtons);
@@ -6151,6 +6252,7 @@
     var psubsz=$('parensub-size'); if(psubsz){ var _ps=parseFloat(psubsz.value); if(isNaN(_ps)) _ps=26; el.style.setProperty('--psub-size', _ps+'px'); }
     var psz=$('photo-size'); if(psz){ var _pp=parseFloat(psz.value); el.style.setProperty('--photo-w', _pp+'%'); el.style.setProperty('--photo-w-px', Math.round(w*_pp/100)+'px'); }
     var lisz=$('logimg-size'); if(lisz){ el.style.setProperty('--logimg-w', parseFloat(lisz.value)+'%'); }
+    var _ep=parseFloat(($('emo-size')||{}).value); if(!(_ep>=10&&_ep<=50)) _ep=20; el.style.setProperty('--emo-w', Math.round(w*_ep/100)+'px');
     var indz=$('indent-size'); el.style.setProperty('--para-indent', ((indz && parseFloat(indz.value))||1)+'em');
     el.style.setProperty('--time-color', ($('c-time')||{}).value || '#6b7684');
     var lirad=$('logimg-radius'); if(lirad){ el.style.setProperty('--logimg-radius', parseFloat(lirad.value)+'px'); }
@@ -6335,10 +6437,10 @@
         if(ch.nodeName && ch.nodeName.toLowerCase()==='svg') return;
         var tag = ch.tagName;
         if(tag==='IMG'){
-          var _bs=ch.getAttribute('src')||'';
+          var _bs=ch.getAttribute('src')||'', _emo=ch.classList.contains('g-emo');   // 이모티콘 표시는 남긴다
           for(var bi=ch.attributes.length-1;bi>=0;bi--){ ch.removeAttribute(ch.attributes[bi].name); }
           if(_bs) ch.setAttribute('src', _bs);
-          ch.setAttribute('alt',''); ch.className='g-bub-img';
+          ch.setAttribute('alt',''); ch.className='g-bub-img'+(_emo?' g-emo':'');
           return;
         }
         var isBub = tag==='SPAN' && ch.classList.contains('g-bub');
@@ -6733,6 +6835,8 @@
     updateEmptyBubbles();
     styleCharBubbles(editor);
     editor.style.setProperty('--read-label', JSON.stringify(readLabel()));
+    var _ep2=parseFloat(($('emo-size')||{}).value); if(!(_ep2>=10&&_ep2<=50)) _ep2=20; editor.style.setProperty('--emo-w', Math.round((editor.clientWidth||360)*_ep2/100)+'px');
+    if($('emo-size')) setVal('emo-size', _ep2+'%');
     editor.style.setProperty('--time-color', ($('c-time')||{}).value || '#6b7684');
     ktDecorate(editor);
     syncSubFixedEm();
@@ -9122,7 +9226,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['msgr-pad','read-text','c-time','c-time-txt','c-lbar-top','c-lbar-top-txt','c-lbar-bg','c-lbar-bg-txt','c-lbar-ic','c-lbar-ic-txt','c-lbar-field','c-lbar-field-txt','c-kbar-top','c-kbar-top-txt','c-kbar-bg','c-kbar-bg-txt','c-kbar-ic','c-kbar-ic-txt','c-kbar-field','c-kbar-field-txt','indent-size','name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['emo-size','msgr-pad','read-text','c-time','c-time-txt','c-lbar-top','c-lbar-top-txt','c-lbar-bg','c-lbar-bg-txt','c-lbar-ic','c-lbar-ic-txt','c-lbar-field','c-lbar-field-txt','c-kbar-top','c-kbar-top-txt','c-kbar-bg','c-kbar-bg-txt','c-kbar-ic','c-kbar-ic-txt','c-kbar-field','c-kbar-field-txt','indent-size','name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt','c-title-hr','c-title-hr-txt',
@@ -9337,6 +9441,11 @@
     _activeLibId=null;
     clearFrameLib(renderFrameLib);
   });
+  if($('reset-emolib')) $('reset-emolib').addEventListener('click', function(){
+    if(!confirm('이모티콘 저장소를 비울까요? (이미 넣은 이모티콘은 그대로 남아요)')) return;
+    emoWrite(function(st){ st.clear(); });
+  });
+  updateEmoCount();
   if($('reset-snapshot')) $('reset-snapshot').addEventListener('click', function(){
     if(!confirm('저장된 스냅샷을 모두 삭제할까요?')) return;
     snapClear(renderSnapshots);
@@ -9501,6 +9610,27 @@
       if(!obj || obj.type!=='snapshot' || !Array.isArray(obj.items)){ alert('올바른 스냅샷 파일이 아니에요.'); return; }
       var ok = obj.items.filter(function(s){ return s && s.name && s.data; });
       snapAdd(ok, function(){ renderSnapshots(); alert(ok.length+'개의 스냅샷을 가져왔어요.'); });
+    });
+  });
+  /* 이모티콘 저장소 내보내기/가져오기 */
+  if($('emo-export')) $('emo-export').addEventListener('click', function(){
+    emoAll(function(list){
+      if(!list.length){ alert('내보낼 이모티콘이 없어요.'); return; }
+      exportJSON('logmaker-emoticon.json', { type:'emoticon', items:list.map(function(x){ return { src:x.src }; }) });
+    });
+  });
+  if($('emo-import')) $('emo-import').addEventListener('click', function(){
+    importJSON('.json', function(obj){
+      if(!obj || obj.type!=='emoticon' || !Array.isArray(obj.items)){ alert('올바른 이모티콘 파일이 아니에요.'); return; }
+      emoAll(function(cur){
+        var have={}; cur.forEach(function(x){ have[x.src]=1; });
+        var add=obj.items.filter(function(x){ return x && typeof x.src==='string' && /^data:image\//.test(x.src) && !have[x.src]; });
+        var room=Math.max(0, EMO_MAX-cur.length), take=add.slice(0, room);
+        if(!take.length){ alert(add.length ? '저장소가 가득 찼어요(최대 '+EMO_MAX+'개).' : '새로 가져올 이모티콘이 없어요(이미 다 있어요).'); return; }
+        emoWrite(function(st){ take.forEach(function(x){ st.add({ src:x.src }); }); }, function(){
+          alert(take.length+'개의 이모티콘을 가져왔어요.'+(add.length>take.length ? '\n'+(add.length-take.length)+'개는 저장소가 가득 차서 빠졌어요.' : ''));
+        });
+      });
     });
   });
   /* 내 프리셋 내보내기/가져오기 */
