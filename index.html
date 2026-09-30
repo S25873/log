@@ -244,6 +244,7 @@
      공용 컨트롤
      ============================================================ */
   .field{display:flex;flex-direction:column;min-width:0;}
+  .field[hidden]{display:none !important;}   /* 숨김 칸(메신저 여백 · 대화방 이름 등)이 flex 에 덮여 보이던 문제 */
   .field + .field{margin-top:12px;}
   .grid-2 > .field + .field{margin-top:0;}
   .label{
@@ -1011,6 +1012,16 @@
   #canvas .g-ib-plus,.canvas-clone .g-ib-plus{flex:none;display:block;background:center/contain no-repeat url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round'><line x1='12' y1='5' x2='12' y2='19'/><line x1='5' y1='12' x2='19' y2='12'/></svg>");}
   #canvas .g-ib-field,.canvas-clone .g-ib-field{flex:1;border:1px solid #d1d1d6;border-radius:999px;color:#8e8e93;background:#fff;display:flex;align-items:center;}
   #canvas .g-ib-send,.canvas-clone .g-ib-send{flex:none;border-radius:50%;display:block;background:#0b93f6 center/78% no-repeat url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><line x1='12' y1='17.5' x2='12' y2='6.5'/><path d='M6.5 11l5.5-5.5 5.5 5.5'/></svg>");}
+  /* 라인 상단바 / 하단바 — .g-topbar / .g-inputbar 자리를 그대로 쓰고(레이아웃 계산 공용) 모양만 바꾼다. 크기는 styleCanvas 에서 글자 크기 기준으로 */
+  #canvas .g-topbar.line,.canvas-clone .g-topbar.line{flex-direction:row !important;align-items:center !important;justify-content:flex-start !important;background:transparent !important;border-bottom:none !important;}
+  #canvas .g-topbar.line .g-ltb-name,.canvas-clone .g-topbar.line .g-ltb-name{flex:1 1 auto;min-width:0;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;}
+  #canvas .g-topbar.line .g-lb-ic,#canvas .g-inputbar.line .g-lb-ic,.canvas-clone .g-topbar.line .g-lb-ic,.canvas-clone .g-inputbar.line .g-lb-ic{flex:none;display:block;background-position:center;background-size:contain;background-repeat:no-repeat;}
+  #canvas .g-inputbar.line,.canvas-clone .g-inputbar.line{border-top:none !important;}
+  #canvas .g-inputbar.line .g-lib-field,.canvas-clone .g-inputbar.line .g-lib-field{flex:1 1 auto;min-width:0;display:flex;align-items:center;border-radius:999px;box-sizing:border-box;}
+  #canvas .g-inputbar.line .g-lib-field span.g-lib-ph,.canvas-clone .g-inputbar.line .g-lib-field span.g-lib-ph{flex:1 1 auto;line-height:1;}
+  /* 카카오톡 상단바 / 하단바 — 라인과 같은 구조(.line 클래스 공용) + 이름은 가운데 */
+  #canvas .g-topbar.line.kakao .g-ltb-name,.canvas-clone .g-topbar.line.kakao .g-ltb-name{position:absolute;left:0;right:0;text-align:center;pointer-events:none;}
+  #canvas .g-topbar.line.kakao .g-ktb-sp,.canvas-clone .g-topbar.line.kakao .g-ktb-sp{flex:1 1 auto;}
   /* 아바타 + 메시지 묶음 (카톡 스타일) */
   #canvas .g-msg-group,.canvas-clone .g-msg-group{display:flex !important;align-items:flex-start !important;gap:.45em !important;margin:0 !important;}
   #canvas .g-msg-group.gmg-top-bub,.canvas-clone .g-msg-group.gmg-top-bub{margin-top:var(--msg-gap,.55em) !important;}
@@ -1195,6 +1206,48 @@
   #canvas .g-bub-name.recv,.canvas-clone .g-bub-name.recv{margin-right:auto !important;margin-left:.4em !important;text-align:left !important;color:var(--bub-name-recv,#8a8a8a) !important;}
   #canvas .g-bub-name.send,.canvas-clone .g-bub-name.send{margin-left:auto !important;margin-right:.4em !important;text-align:right !important;color:var(--bub-name-send,#8a8a8a) !important;}
   #canvas .g-bub-name + .g-bub,.canvas-clone .g-bub-name + .g-bub{margin-top:.25em !important;}
+  /* ===== 라인 · 카카오톡 말풍선 (심플 위에 얹음: .bub-soft + .bub-kt) =====
+     꼬리는 아이메시지(단색 배경) 꼬리를 위아래로 뒤집어 말풍선 '위쪽', 프사 쪽에 붙인다.
+     모양 = 1em 상자(모서리 .8×.7) 에서 .625em 상자(모서리 .5)를 뺀 것 — 저장할 때 쓰는 collectPseudoTails 와 같은 식.
+     미리보기는 그 모양을 SVG 마스크로, 저장은 캔버스에 직접 그린다. */
+  #canvas.bub-kt .g-bub,.canvas-clone.bub-kt .g-bub{border-radius:.78em !important;}
+  #canvas.bub-kt.bub-line .g-bub,.canvas-clone.bub-kt.bub-line .g-bub{border-radius:1.05em !important;}
+  /* 꼬리 쪽 모서리도 둥글게(아이메시지처럼) — 심플의 '꼬리 쪽 모서리 각지게' 규칙을 이겨야 해서 선택자를 더 구체적으로 */
+  #canvas.bub-kt.bub-soft .g-bub.tail.recv,.canvas-clone.bub-kt.bub-soft .g-bub.tail.recv,#canvas.bub-kt.bub-soft .g-bub.tail.char-bub.left,.canvas-clone.bub-kt.bub-soft .g-bub.tail.char-bub.left,
+  #canvas.bub-kt.bub-soft .g-bub.tail.send,.canvas-clone.bub-kt.bub-soft .g-bub.tail.send,#canvas.bub-kt.bub-soft .g-bub.tail.char-bub.right,.canvas-clone.bub-kt.bub-soft .g-bub.tail.char-bub.right{border-radius:.78em !important;}
+  #canvas.bub-kt.bub-line.bub-soft .g-bub.tail.recv,.canvas-clone.bub-kt.bub-line.bub-soft .g-bub.tail.recv,#canvas.bub-kt.bub-line.bub-soft .g-bub.tail.char-bub.left,.canvas-clone.bub-kt.bub-line.bub-soft .g-bub.tail.char-bub.left,
+  #canvas.bub-kt.bub-line.bub-soft .g-bub.tail.send,.canvas-clone.bub-kt.bub-line.bub-soft .g-bub.tail.send,#canvas.bub-kt.bub-line.bub-soft .g-bub.tail.char-bub.right,.canvas-clone.bub-kt.bub-line.bub-soft .g-bub.tail.char-bub.right{border-radius:1.05em !important;}
+  #canvas.bub-kt .g-bub.tail:not(.img-only)::before,.canvas-clone.bub-kt .g-bub.tail:not(.img-only)::before{
+    content:"" !important;position:absolute !important;top:0 !important;width:1.275em !important;height:1.025em !important;z-index:0 !important;pointer-events:none !important;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1275 1025'%3E%3Cdefs%3E%3Cmask id='k' maskUnits='userSpaceOnUse' x='0' y='0' width='1275' height='1025'%3E%3Crect width='1275' height='1025' fill='white'/%3E%3Cpath d='M0,25 L125,25 Q625,25 625,525 L625,1025 L0,1025 Z' fill='black'/%3E%3C/mask%3E%3C/defs%3E%3Cpath d='M275,0 L475,0 Q1275,0 1275,700 L1275,1000 L275,1000 Z' mask='url(%23k)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat !important;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1275 1025'%3E%3Cdefs%3E%3Cmask id='k' maskUnits='userSpaceOnUse' x='0' y='0' width='1275' height='1025'%3E%3Crect width='1275' height='1025' fill='white'/%3E%3Cpath d='M0,25 L125,25 Q625,25 625,525 L625,1025 L0,1025 Z' fill='black'/%3E%3C/mask%3E%3C/defs%3E%3Cpath d='M275,0 L475,0 Q1275,0 1275,700 L1275,1000 L275,1000 Z' mask='url(%23k)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat !important;}
+  #canvas.bub-kt .g-bub.tail.recv:not(.img-only)::before,.canvas-clone.bub-kt .g-bub.tail.recv:not(.img-only)::before,
+  #canvas.bub-kt .g-bub.tail.char-bub.left:not(.img-only)::before,.canvas-clone.bub-kt .g-bub.tail.char-bub.left:not(.img-only)::before{left:-.625em !important;right:auto !important;background:var(--bub,var(--bub-recv,#e5e5ea)) !important;}
+  #canvas.bub-kt .g-bub.tail.send:not(.img-only)::before,.canvas-clone.bub-kt .g-bub.tail.send:not(.img-only)::before,
+  #canvas.bub-kt .g-bub.tail.char-bub.right:not(.img-only)::before,.canvas-clone.bub-kt .g-bub.tail.char-bub.right:not(.img-only)::before{right:-.625em !important;left:auto !important;transform:scaleX(-1) !important;background:var(--bub,var(--bub-send,#248bf5)) !important;}
+  /* 시간 · 읽음 표시 — 말풍선 바깥 아래(받는 쪽은 오른쪽, 보내는 쪽은 왼쪽) */
+  #canvas .g-bub-meta,.canvas-clone .g-bub-meta{position:absolute !important;bottom:0 !important;display:flex !important;flex-direction:column !important;
+    font-size:.6em !important;line-height:1.3 !important;white-space:nowrap !important;font-weight:400 !important;font-style:normal !important;text-decoration:none !important;text-indent:0 !important;}
+  #canvas .g-bub-meta.left,.canvas-clone .g-bub-meta.left{left:100% !important;right:auto !important;margin-left:.6em !important;align-items:flex-start !important;}
+  #canvas .g-bub-meta.right,.canvas-clone .g-bub-meta.right{right:100% !important;left:auto !important;margin-right:.6em !important;align-items:flex-end !important;}
+  #canvas .g-bub-meta .g-meta-read,.canvas-clone .g-bub-meta .g-meta-read{color:var(--time-color,#6b7684) !important;}   /* 읽음 표시 = 시간과 같은 글자 · 색 */
+  #canvas .g-bub-meta .g-meta-time,.canvas-clone .g-bub-meta .g-meta-time{color:var(--time-color,#6b7684) !important;}
+  /* 입력창: 꼬리 · 시간 · 읽음 미리 보기 */
+  #editor.bub-kt .g-bub{border-radius:12px;}
+  #editor.bub-kt.bub-line .g-bub{border-radius:16px;}
+  #editor.bub-kt.bub-soft .g-bub.tail.recv,#editor.bub-kt.bub-soft .g-bub.tail.char-bub.left,#editor.bub-kt.bub-soft .g-bub.tail.send,#editor.bub-kt.bub-soft .g-bub.tail.char-bub.right{border-radius:12px;}
+  #editor.bub-kt.bub-line.bub-soft .g-bub.tail.recv,#editor.bub-kt.bub-line.bub-soft .g-bub.tail.char-bub.left,#editor.bub-kt.bub-line.bub-soft .g-bub.tail.send,#editor.bub-kt.bub-line.bub-soft .g-bub.tail.char-bub.right{border-radius:16px;}
+  #editor.bub-kt .g-bub.tail:not(.img-only)::before{content:"";position:absolute;top:0;width:1.275em;height:1.025em;pointer-events:none;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1275 1025'%3E%3Cdefs%3E%3Cmask id='k' maskUnits='userSpaceOnUse' x='0' y='0' width='1275' height='1025'%3E%3Crect width='1275' height='1025' fill='white'/%3E%3Cpath d='M0,25 L125,25 Q625,25 625,525 L625,1025 L0,1025 Z' fill='black'/%3E%3C/mask%3E%3C/defs%3E%3Cpath d='M275,0 L475,0 Q1275,0 1275,700 L1275,1000 L275,1000 Z' mask='url(%23k)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1275 1025'%3E%3Cdefs%3E%3Cmask id='k' maskUnits='userSpaceOnUse' x='0' y='0' width='1275' height='1025'%3E%3Crect width='1275' height='1025' fill='white'/%3E%3Cpath d='M0,25 L125,25 Q625,25 625,525 L625,1025 L0,1025 Z' fill='black'/%3E%3C/mask%3E%3C/defs%3E%3Cpath d='M275,0 L475,0 Q1275,0 1275,700 L1275,1000 L275,1000 Z' mask='url(%23k)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;}
+  #editor.bub-kt .g-bub.tail.recv:not(.img-only)::before,#editor.bub-kt .g-bub.tail.char-bub.left:not(.img-only)::before{left:-.625em;background:var(--bub,var(--bub-recv,#e5e5ea));}
+  #editor.bub-kt .g-bub.tail.send:not(.img-only)::before,#editor.bub-kt .g-bub.tail.char-bub.right:not(.img-only)::before{right:-.625em;transform:scaleX(-1);background:var(--bub,var(--bub-send,#248bf5));}
+  #editor.bub-kt .g-bub[data-time]::after,#editor.bub-kt .g-bub[data-read="1"]::after{position:absolute;bottom:0;font-size:.62em;line-height:1.3;white-space:pre;
+    color:var(--time-color,#6b7684);text-align:left;cursor:pointer;}   /* 눌러서 고칠 수 있게(누르면 말풍선이 받음) */
+  #editor.bub-kt .g-bub.char-bub.left::after,#editor.bub-kt .g-bub.recv::after{left:100%;margin-left:.6em;}
+  #editor.bub-kt .g-bub.char-bub.right::after,#editor.bub-kt .g-bub.send::after{right:100%;margin-right:.6em;text-align:right;}
+  #editor.bub-kt .g-bub[data-time]:not([data-read="1"])::after{content:attr(data-time);}
+  #editor.bub-kt .g-bub[data-read="1"]:not([data-read-text])::after{content:var(--read-label,"1") "\A" attr(data-time);}
+  #editor.bub-kt .g-bub[data-read="1"][data-read-text]::after{content:attr(data-read-text) "\A" attr(data-time);}
+
   #canvas .g-bub-name:first-child,.canvas-clone .g-bub-name:first-child{margin-top:0 !important;}
   #canvas .g-bub>svg.g-tail,.canvas-clone .g-bub>svg.g-tail{position:absolute !important;bottom:0 !important;z-index:0 !important;width:1.35em !important;height:.85em !important;display:block !important;overflow:visible !important;pointer-events:none !important;}
   #canvas .g-bub.recv>svg.g-tail,.canvas-clone .g-bub.recv>svg.g-tail{left:-.42em !important;}
@@ -1440,6 +1493,8 @@
               <button class="fbtn" id="cb-name" type="button" title="이름 넣기/빼기">이름</button>
               <button class="fbtn" id="cb-av" type="button" title="프사 넣기/빼기">프사</button>
               <button class="fbtn" id="cb-tail" type="button" title="꼬리 켜기/끄기">꼬리</button>
+              <button class="fbtn" id="cb-time" type="button" title="시간 켜기/끄기" hidden>시간</button>
+              <button class="fbtn" id="cb-read" type="button" title="읽음 표시 켜기/끄기" hidden>1</button>
               <button class="fbtn fbtn--del" id="cb-del" type="button" title="말풍선 해제(내용은 남김)">삭제</button>
             </div>
             <div class="subtools" id="logimg-tools" hidden style="grid-template-columns:repeat(4,1fr)">
@@ -2088,15 +2143,29 @@
             <div class="fold__body">
               <div class="field">
                 <span class="label">말풍선 모양</span>
-                <div class="seg" id="bub-shape-seg" style="height:auto">
-                  <button type="button" data-shape="imessage" aria-pressed="true" style="padding:7px 2px;line-height:1.35">메시지</button>
-                  <button type="button" data-shape="soft" aria-pressed="false" style="padding:7px 2px;line-height:1.35">심플</button>
-                  <button type="button" data-shape="simple" aria-pressed="false" style="padding:7px 2px;line-height:1.35">네모</button>
-                  <button type="button" data-shape="plain" aria-pressed="false" style="padding:7px 2px;line-height:1.35">로그</button>
-                  <button type="button" data-shape="script" aria-pressed="false" style="padding:7px 2px;line-height:1.35">대본</button>
+                <div class="seg seg--wrap" id="bub-shape-seg">
+                  <button type="button" data-shape="imessage" aria-pressed="true" style="height:32px">아이메시지</button>
+                  <button type="button" data-shape="line" aria-pressed="false" style="height:32px">라인</button>
+                  <button type="button" data-shape="kakao" aria-pressed="false" style="height:32px">카카오톡</button>
+                  <span class="seg__divider"></span>
+                  <button type="button" data-shape="soft" aria-pressed="false" style="height:32px">심플</button>
+                  <button type="button" data-shape="simple" aria-pressed="false" style="height:32px">네모</button>
+                  <button type="button" data-shape="plain" aria-pressed="false" style="height:32px">로그</button>
+                  <button type="button" data-shape="script" aria-pressed="false" style="height:32px">대본</button>
                   <span class="seg__thumb"></span>
                 </div>
                 <p class="hint" style="margin-top:8px"><button type="button" class="hint-link" data-help-jump="help-bubble">자세한 설명 (모양별 차이)</button></p>
+              </div>
+
+              <div id="kt-options" style="margin-top:16px;display:none">
+                <div class="field">
+                  <span class="label">읽음 표시 글자</span>
+                  <input class="txt-input" id="read-text" type="text" value="1" maxlength="12" placeholder="예: 1, 읽음, Read">
+                </div>
+                <div class="cgrid cgrid--2" style="margin-top:12px">
+                  <div class="cchip"><label>시간 · 읽음 표시</label><div class="cchip__box"><input id="c-time" type="color" value="#6b7684"><input class="cchip__hex" id="c-time-txt" type="text" value="#6b7684"></div></div>
+                </div>
+                <p class="hint" style="margin-top:10px">말풍선을 누르면 뜨는 도구에서 시간 · 읽음 표시를 켜고 끌 수 있어요.<br>시간은 바로 위 말풍선의 시간을 따라가고, 입력에서 시간 · 읽음 글자를 누르면 그 말풍선만 고칠 수 있어요.</p>
               </div>
 
               <div id="script-options" style="margin-top:16px;display:none">
@@ -2176,6 +2245,34 @@
             <div class="fold__body">
               <label class="switch" style="margin-top:0">
                 <span class="switch__text" style="flex:1">
+                  <span class="switch__title">메신저 화면으로 꾸미기</span>
+                  <span class="switch__sub">레이아웃 여백 대신 메신저 여백을 쓰고 말풍선을 아래쪽에 모아요</span>
+                </span>
+                <input class="msgr-on" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="field msgr-pad-row" style="margin-top:12px" hidden>
+                <span class="label">메신저 여백 <span class="val">48px</span></span>
+                <div class="rangewrap"><input class="msgr-pad" id="msgr-pad" type="range" min="0" max="160" step="4" value="48"></div>
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title mc-title">아이메시지 메신저 색 가져오기</span>
+                  <span class="switch__sub mc-sub">아이메시지 기본 말풍선 · 글자 · 배경 색 등을 가져와요</span>
+                </span>
+                <input class="mc-on" data-theme="imessage" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="mc-colors" data-theme="imessage" style="margin-top:12px" hidden>
+                <div class="cgrid cgrid--2">
+                  <div class="cchip"><label>받는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="recv" id="mc-recv" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recv" id="mc-recv-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>받는 글자</label><div class="cchip__box"><input class="mc-c" data-k="recvInk" id="mc-recvInk" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recvInk" id="mc-recvInk-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="send" id="mc-send" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="send" id="mc-send-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 글자</label><div class="cchip__box"><input class="mc-c" data-k="sendInk" id="mc-sendInk" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="sendInk" id="mc-sendInk-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>이름</label><div class="cchip__box"><input class="mc-c" data-k="name" id="mc-name" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="name" id="mc-name-txt" type="text" value="#ffffff"></div></div>
+                </div>
+                <p class="hint" style="margin:10px 0 0">켠 상태에서 바꾼 색 · 배경은 그대로 유지돼요. 말풍선을 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠해져요.<br>끄면 원래 인물 색과 배경으로 돌아와요.</p>
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
                   <span class="switch__title">아이메시지 상단바</span>
                   <span class="switch__sub">상단에 프로필 헤더를 표시해요</span>
                 </span>
@@ -2224,7 +2321,131 @@
                 <span class="label">상하단바 ↔ 본문 <span class="val" id="bar-body-gap-val">32px</span></span>
                 <div class="rangewrap"><input id="bar-body-gap" type="range" min="0" max="72" step="1" value="32"></div>
               </div>
-              <p class="hint" style="margin:14px 0 0">상하단바의 요소들은 레이아웃-여백의 값에 영향을 받아요.<br>메시지만 구성할 경우 40~60으로 여백을 조정한 후 저장 추천드려요.</p>
+              <p class="hint" style="margin:14px 0 0">상하단바의 요소들은 여백 값에 맞춰 놓여요.<br>메신저 화면으로 꾸미기를 켜면 메신저 여백을, 끄면 레이아웃-여백을 따라요.</p>
+            </div>
+          </details>
+
+          <details class="fold" id="fold-linebar">
+            <summary>
+              라인 상하단바
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <label class="switch" style="margin-top:0">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">메신저 화면으로 꾸미기</span>
+                  <span class="switch__sub">레이아웃 여백 대신 메신저 여백을 쓰고 말풍선을 아래쪽에 모아요</span>
+                </span>
+                <input class="msgr-on" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="field msgr-pad-row" style="margin-top:12px" hidden>
+                <span class="label">메신저 여백 <span class="val">48px</span></span>
+                <div class="rangewrap"><input class="msgr-pad" id="msgr-pad-b" type="range" min="0" max="160" step="4" value="48"></div>
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title mc-title">아이메시지 메신저 색 가져오기</span>
+                  <span class="switch__sub mc-sub">아이메시지 기본 말풍선 · 글자 · 배경 색 등을 가져와요</span>
+                </span>
+                <input class="mc-on" data-theme="line" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="mc-colors" data-theme="line" style="margin-top:12px" hidden>
+                <div class="cgrid cgrid--2">
+                  <div class="cchip"><label>받는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="recv" id="mc-recv-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recv" id="mc-recv-b-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>받는 글자</label><div class="cchip__box"><input class="mc-c" data-k="recvInk" id="mc-recvInk-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recvInk" id="mc-recvInk-b-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="send" id="mc-send-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="send" id="mc-send-b-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 글자</label><div class="cchip__box"><input class="mc-c" data-k="sendInk" id="mc-sendInk-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="sendInk" id="mc-sendInk-b-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>이름</label><div class="cchip__box"><input class="mc-c" data-k="name" id="mc-name-b" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="name" id="mc-name-b-txt" type="text" value="#ffffff"></div></div>
+                </div>
+                <p class="hint" style="margin:10px 0 0">켠 상태에서 바꾼 색 · 배경은 그대로 유지돼요. 말풍선을 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠해져요.<br>끄면 원래 인물 색과 배경으로 돌아와요.</p>
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">라인 상단바</span>
+                  <span class="switch__sub">상단에 대화방 이름과 아이콘을 표시해요</span>
+                </span>
+                <input id="line-topbar-on" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="field" id="line-topbar-opts" style="margin-top:12px" hidden>
+                <span class="label">대화방 이름</span>
+                <input class="txt-input" id="line-topbar-name" type="text" placeholder="예: Keep 메모" maxlength="24">
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">라인 하단바</span>
+                  <span class="switch__sub">하단에 메시지 입력창을 표시해요</span>
+                </span>
+                <input id="line-inputbar-on" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="cgrid cgrid--2" style="margin-top:16px">
+                <div class="cchip"><label>상단바 글자 · 아이콘</label><div class="cchip__box"><input id="c-lbar-top" type="color" value="#1e1e1e"><input class="cchip__hex" id="c-lbar-top-txt" type="text" value="#1e1e1e"></div></div>
+                <div class="cchip"><label>하단바 배경</label><div class="cchip__box"><input id="c-lbar-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-lbar-bg-txt" type="text" value="#ffffff"></div></div>
+                <div class="cchip"><label>하단바 아이콘</label><div class="cchip__box"><input id="c-lbar-ic" type="color" value="#2b2b2b"><input class="cchip__hex" id="c-lbar-ic-txt" type="text" value="#2b2b2b"></div></div>
+                <div class="cchip"><label>입력칸</label><div class="cchip__box"><input id="c-lbar-field" type="color" value="#f1f2f4"><input class="cchip__hex" id="c-lbar-field-txt" type="text" value="#f1f2f4"></div></div>
+              </div>
+              <p class="hint" style="margin:14px 0 0">상단바는 배경 없이 레이아웃의 배경이 그대로 보여요.<br>아이메시지 · 카카오톡 상하단바와 같은 자리라, 한쪽을 켜면 다른 쪽의 같은 바는 꺼져요.<br>상하단바 ↔ 본문 간격은 아이메시지 상하단바의 값을 같이 써요.</p>
+            </div>
+          </details>
+
+          <details class="fold" id="fold-kakaobar">
+            <summary>
+              카카오톡 상하단바
+              <svg class="fold__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="fold__body">
+              <label class="switch" style="margin-top:0">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">메신저 화면으로 꾸미기</span>
+                  <span class="switch__sub">레이아웃 여백 대신 메신저 여백을 쓰고 말풍선을 아래쪽에 모아요</span>
+                </span>
+                <input class="msgr-on" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="field msgr-pad-row" style="margin-top:12px" hidden>
+                <span class="label">메신저 여백 <span class="val">48px</span></span>
+                <div class="rangewrap"><input class="msgr-pad" id="msgr-pad-c" type="range" min="0" max="160" step="4" value="48"></div>
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title mc-title">아이메시지 메신저 색 가져오기</span>
+                  <span class="switch__sub mc-sub">아이메시지 기본 말풍선 · 글자 · 배경 색 등을 가져와요</span>
+                </span>
+                <input class="mc-on" data-theme="kakao" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="mc-colors" data-theme="kakao" style="margin-top:12px" hidden>
+                <div class="cgrid cgrid--2">
+                  <div class="cchip"><label>받는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="recv" id="mc-recv-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recv" id="mc-recv-c-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>받는 글자</label><div class="cchip__box"><input class="mc-c" data-k="recvInk" id="mc-recvInk-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="recvInk" id="mc-recvInk-c-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 말풍선</label><div class="cchip__box"><input class="mc-c" data-k="send" id="mc-send-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="send" id="mc-send-c-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>보내는 글자</label><div class="cchip__box"><input class="mc-c" data-k="sendInk" id="mc-sendInk-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="sendInk" id="mc-sendInk-c-txt" type="text" value="#ffffff"></div></div>
+                  <div class="cchip"><label>이름</label><div class="cchip__box"><input class="mc-c" data-k="name" id="mc-name-c" type="color" value="#ffffff"><input class="cchip__hex mc-t" data-k="name" id="mc-name-c-txt" type="text" value="#ffffff"></div></div>
+                </div>
+                <p class="hint" style="margin:10px 0 0">켠 상태에서 바꾼 색 · 배경은 그대로 유지돼요. 말풍선을 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠해져요.<br>끄면 원래 인물 색과 배경으로 돌아와요.</p>
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">카카오톡 상단바</span>
+                  <span class="switch__sub">상단에 대화방 이름과 아이콘을 표시해요</span>
+                </span>
+                <input id="kakao-topbar-on" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="field" id="kakao-topbar-opts" style="margin-top:12px" hidden>
+                <span class="label">대화방 이름</span>
+                <input class="txt-input" id="kakao-topbar-name" type="text" placeholder="예: 김라연" maxlength="24">
+              </div>
+              <label class="switch" style="margin-top:14px">
+                <span class="switch__text" style="flex:1">
+                  <span class="switch__title">카카오톡 하단바</span>
+                  <span class="switch__sub">하단에 메시지 입력창을 표시해요</span>
+                </span>
+                <input id="kakao-inputbar-on" type="checkbox" style="margin-left:auto">
+              </label>
+              <div class="cgrid cgrid--2" style="margin-top:16px">
+                <div class="cchip"><label>상단바 글자 · 아이콘</label><div class="cchip__box"><input id="c-kbar-top" type="color" value="#1e1e1e"><input class="cchip__hex" id="c-kbar-top-txt" type="text" value="#1e1e1e"></div></div>
+                <div class="cchip"><label>하단바 배경</label><div class="cchip__box"><input id="c-kbar-bg" type="color" value="#ffffff"><input class="cchip__hex" id="c-kbar-bg-txt" type="text" value="#ffffff"></div></div>
+                <div class="cchip"><label>하단바 아이콘</label><div class="cchip__box"><input id="c-kbar-ic" type="color" value="#4a4a4a"><input class="cchip__hex" id="c-kbar-ic-txt" type="text" value="#4a4a4a"></div></div>
+                <div class="cchip"><label>입력칸</label><div class="cchip__box"><input id="c-kbar-field" type="color" value="#f3f3f3"><input class="cchip__hex" id="c-kbar-field-txt" type="text" value="#f3f3f3"></div></div>
+              </div>
+              <p class="hint" style="margin:14px 0 0">상단바는 배경 없이 레이아웃의 배경이 그대로 보여요.<br>아이메시지 · 라인 상하단바와 같은 자리라, 한쪽을 켜면 다른 쪽의 같은 바는 꺼져요.<br>상하단바 ↔ 본문 간격은 아이메시지 상하단바의 값을 같이 써요.</p>
             </div>
           </details>
 
@@ -2483,32 +2704,8 @@
     <div class="sheet__grip"></div>
     <div class="sheet__title">업데이트!</div>
     <div class="help-body">
-      <p class="help-cat">소설 모드</p>
-      <p class="hint">· 고정 비율일 때 <b>소설 모드</b> 버튼이 나타나요. 긴 본문을 소설 형식처럼 내용이 잘리지 않는 선에서 최대 4페이지로 배분해요.<br>· 사용 시 시작점 맞추기도 함께 켜지며, 모드를 끄면 모든 페이지가 다시 한 페이지로 합쳐져요. 모드를 끌 경우 2페이지 이후 따로 작성한 제목 · 하단은 지워져요.</p>
-
-      <p class="help-cat">문단 들여쓰기</p>
-      <p class="hint">· 내용-본문에 <b>문단 들여쓰기</b>가 추가됐어요. 0.5 · 1 · 1.5 · 2글자 중에서 고를 수 있어요.<br>· 입력에서도 들여쓴 자리가 보이며, 들여쓰기를 빼고 싶은 경우 입력의 해당 문단 앞에서 백스페이스를 누르면 돼요.</p>
-
-      <p class="help-cat">하단 여백 절반만 사용</p>
-      <p class="hint">· 내용-하단에 <b>하단 여백 절반만 사용</b>이 추가됐어요. 켜면 레이아웃-크기 · 비율에서 지정한 여백의 절반 값만 하단에 사용해요.<br>· 소설 내지 특성상 위 여백보다 아래 여백이 좁은 점을 고려하여 마련했어요.</p>
-
-      <p class="help-cat">시작점 맞추기</p>
-      <p class="hint">· 시작점 맞추기를 켜면 <b>하단</b>도 모든 페이지에서 같은 높이에 맞춰져요.</p>
-
-      <p class="help-cat">글꼴</p>
-      <p class="hint">· 조선일보명조체 · 드림흐물체처럼 휜 따옴표(‘ ’ “ ”)나 말줄임표(… ⋯)가 없는 글꼴에서 미리보기와 저장한 이미지의 모양이 다르게 나오던 문제를 고쳤어요.</p>
-
-      <p class="help-cat">꾸밈 테두리</p>
-      <p class="hint">· 프리뷰에서 직접 사진의 <b>위치 · 확대 · 두께</b>를 조절할 수 있도록 바뀌었어요.<br>· 꾸밈 사진 저장소의 사진들은 각각 확대 · 위치를 따로 지녀요. 예를 들어 사진1에서 사진2로 넘어가 조정하더라도, 다시 사진1을 클릭하면 사진2의 값이 아니라 마지막으로 조정한 사진1의 값으로 떠요.<br>· <b>여백 맞추기</b> 토글이 추가됐어요. 켜면 사진 두께가 크기 · 비율의 여백 값과 자동으로 통일돼요.</p>
-
-      <p class="help-cat">프리셋</p>
-      <p class="hint">· 프리셋마다 인물의 <b>자물쇠 상태</b>가 따로 저장돼요.</p>
-
-      <p class="help-cat">따옴표 넣기</p>
-      <p class="hint">· "넣" 도구가 이제 휜 따옴표(“ ”)를 넣어요. 휜 따옴표는 양 끝의 모양이 다르고, 곧은 따옴표는 전부 같아서 곧은 따옴표 → 휜 따옴표를 대치하는 게 어려워 내린 판단이에요. 휜 따옴표 → 곧은 따옴표는 편의성의 대치 기능을 이용해 주세요.</p>
-
-      <p class="help-cat">도움말</p>
-      <p class="hint">· 인용선 여백 · 말풍선 여백 다이어그램이 더 알아보기 쉽게 개선됐어요.<br>· 꾸밈 테두리 조작법이 도움말에 추가됐어요.<br>· 버튼 아래 긴 설명들을 도움말로 옮겼어요. 크기 도우미 · 말풍선 모양 아래의 <b>➔ 자세한 설명</b>을 누르면 도움말의 해당 부분으로 바로 넘어가요.<br>· 소설 모드 · 문단 들여쓰기 설명이 추가됐어요.</p>
+      <p class="help-cat">테마 추가</p>
+      <p class="hint">· 라인 · 카카오톡에 맞는 말풍선과 상하단바를 추가 중이에요.<br>· UI가 더러워졌으나 개선 예정이에요.</p>
 
       <p class="help-cat">기타</p>
       <p class="hint">· 오류 제보 · 기능 추가 · 개선 문의 등은 언제나 환영이에요!<br>· 부탁 받은 사항은 늦더라도 전부 반영해드려요.</p>
@@ -2563,11 +2760,12 @@
       <p class="hint">· <b>크기 변경</b>: 제목 · 소제목 · 하단 · (크기) · 인용선 두께<br>· <b>간격 변경</b>: 문단 · 제목 · 하단 (말풍선 관련 간격 X)<br>· 버튼을 킨 상태에서 다른 크기를 직접 수정해도 돼요. 단, 본문 글자 크기를 바꾸면 다른 크기까지 영향을 받아 수정한 값까지 다시 정해져요.<br>· 버튼을 끄면 모든 게 켜기 전 값으로 돌아가요. 킨 상태에서 직접 수정한 값도 복구할 수 없어요. 중요한 값은 미리 메모하거나 프리셋에 저장해 주세요.<br>· 프리셋 저장 시 크기 도우미를 사용했다는 사실은 남지 않고 값만 저장돼요.</p>
       <p class="help-cat" id="help-bubble">말풍선</p>
       <table class="help-tbl">
-        <tr><th></th><th>메시지</th><th>심플</th><th>네모</th><th>로그</th><th>대본</th></tr>
-        <tr><td>꼬리</td><td>O</td><td>O</td><td>X</td><td>X</td><td>X</td></tr>
-        <tr><td>프사</td><td>O</td><td>O</td><td>O</td><td>O</td><td>X</td></tr>
-        <tr><td>배경</td><td>O</td><td>O</td><td>O</td><td>X</td><td>X</td></tr>
-        <tr><td>이름</td><td>위</td><td>위</td><td>위</td><td>위</td><td>옆</td></tr>
+        <tr><th></th><th>아이<br>메시지</th><th>라인</th><th>카카오톡</th><th>심플</th><th>네모</th><th>로그</th><th>대본</th></tr>
+        <tr><td>꼬리</td><td>O</td><td>O</td><td>O</td><td>O</td><td>X</td><td>X</td><td>X</td></tr>
+        <tr><td>프사</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>X</td></tr>
+        <tr><td>배경</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>X</td><td>X</td></tr>
+        <tr><td>이름</td><td>위</td><td>위</td><td>위</td><td>위</td><td>위</td><td>위</td><td>옆</td></tr>
+        <tr><td>시간 · 읽음</td><td>X</td><td>O</td><td>O</td><td>X</td><td>X</td><td>X</td><td>X</td></tr>
       </table>
       <p class="hint" style="margin-top:18px">· <b>말풍선 삭제</b>: 백스페이스 또는 클릭 시 나타나는 버튼으로 삭제할 수 있어요. 삭제 버튼을 사용할 경우 말풍선 안 내용은 그대로 유지돼요.<br>· <b>말풍선 이름</b>: 말풍선 이름은 입력에서 조정 가능한 텍스트가 아니에요. 이름을 바꾸고 싶다면 말풍선-인물에서 변경해 주세요.<br>· <b>말풍선 내 줄바꿈</b>: 맨 앞·맨 뒤에서 이루어지는 엔터는 말풍선 밖으로 이동해요. 맨 뒤에서 줄바꿈을 하고 싶다면 Shift+Enter를 사용해 주세요. 모바일은 호환이 되지 않아 모든 글을 입력한 후 앞으로 이동하여 엔터를 눌러주세요.<br><br>· <b>말풍선 ↔ 말풍선 간격</b>: 서로 다른 말풍선끼리의 간격이에요. 빈 문단은 본문으로 인식되어서, 말풍선과 말풍선 사이에 빈 문단이 있다면 각 말풍선 기준 말풍선 여백이 적용돼요.<br>· <b>연속 말풍선 간격</b>: 같은 인물, 같은 방향, 중간에 빈 문단이 없는 말풍선들을 연속 말풍선으로 처리해요. 이때 연속 말풍선끼리의 간격이에요.<br><br><b>TIP!</b><br>· 말풍선 여백은 말풍선의 위아래를 감싸는 여백이에요. 말풍선 앞뒤로 빈 문단 · 일반 글이 있을 때 적용돼요.<br>
 <svg viewBox="0 0 360 100" width="100%" style="display:block;margin:8px auto 2px;max-width:500px" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2939,8 +3137,8 @@
   function bubInkRecv(){ return $('c-brecv-ink').value; }
   function bubInkSend(){ return $('c-bsend-ink').value; }
   function updateEditorBub(){
-    editor.style.setProperty('--bub-recv', $('c-brecv').value);
-    editor.style.setProperty('--bub-send', $('c-bsend').value);
+    editor.style.setProperty('--bub-recv', plainBubColor(false));
+    editor.style.setProperty('--bub-send', plainBubColor(true));
     editor.style.setProperty('--bub-recv-ink', bubInkRecv());
     editor.style.setProperty('--bub-send-ink', bubInkSend());
     editor.style.setProperty('--sub-color', $('c-sub').value);
@@ -2994,9 +3192,14 @@
       render();
     });
   });
+  function isKtShape(){ return bubbleShape==='line' || bubbleShape==='kakao'; }
   function applyBubbleShape(){
     var simple = bubbleShape==='simple';
-    var soft = bubbleShape==='soft';
+    var kt = isKtShape();
+    var soft = bubbleShape==='soft' || kt;   // 라인 · 카카오톡은 심플(둥근 말풍선) 위에 꼬리 · 시간을 얹은 모양
+    editor.classList.toggle('bub-kt', kt); canvas.classList.toggle('bub-kt', kt);
+    editor.classList.toggle('bub-line', bubbleShape==='line'); canvas.classList.toggle('bub-line', bubbleShape==='line');
+    editor.classList.toggle('bub-kakao', bubbleShape==='kakao'); canvas.classList.toggle('bub-kakao', bubbleShape==='kakao');
     var plain = bubbleShape==='plain';
     var script = bubbleShape==='script';
     editor.classList.toggle('bub-simple', simple);
@@ -3015,7 +3218,17 @@
     });
     moveThumb($('bub-shape-seg'));
   }
-  function setBubbleShape(shape){ bubbleShape=shape; applyBubbleShape(); syncShapeSeg(); updateScriptOptions(); render(); updateFormatButtons(); }
+  function setBubbleShape(shape){
+    bubbleShape=shape;
+    // 읽음 표시 글자: 손대지 않은 기본값이면 모양에 맞게 바꿔 준다(카카오톡 1 / 라인 읽음)
+    var rt=$('read-text');
+    if(rt){ var v=rt.value.trim(); if(shape==='line' && (v==='' || v==='1')) rt.value='읽음'; else if(shape==='kakao' && (v==='' || v==='읽음')) rt.value='1'; }
+    applyBubbleShape(); syncShapeSeg(); updateScriptOptions();
+    // 켠 상태에서 다른 메신저 모양으로 바꾸면 그 메신저 색으로 처음부터 다시(같은 색을 쓰는 모양끼리는 고친 값 유지)
+    if(msgrColor.on && msgrColor.theme!==shapeTheme()){ msgrColor.theme=shapeTheme(); mcApplyTheme(); }
+    syncMcUI();
+    render(); updateFormatButtons();
+  }
   /* ── 멀티페이지: 탭 렌더·전환·추가·삭제 ── */
   function flushPage(){
     // 현재 에디터 내용을 pages 배열에 저장
@@ -3228,6 +3441,7 @@
   /* 대본 모드 전용 옵션 표시/숨김 */
   function updateScriptOptions(){
     var opt=$('script-options'); if(opt) opt.style.display = (bubbleShape==='script')?'':'none';
+    var kto=$('kt-options'); if(kto) kto.style.display = isKtShape()?'':'none';
   }
   /* 간격 맞추기: 가장 긴 이름의 너비를 측정해 CSS 변수로 세팅 */
   function applyScriptAlign(){
@@ -3325,6 +3539,9 @@
   linkColor('c-bar-avatar','c-bar-avatar-txt',false,false);
   linkColor('c-bar-plus','c-bar-plus-txt',false,false);
   linkColor('c-bar-arrow','c-bar-arrow-txt',false,false);
+  linkColor('c-time','c-time-txt',false,false);
+  ['c-lbar-top','c-lbar-bg','c-lbar-ic','c-lbar-field','c-kbar-top','c-kbar-bg','c-kbar-ic','c-kbar-field'].forEach(function(id){ linkColor(id, id+'-txt', false, false); });
+  if($('read-text')) $('read-text').addEventListener('input', function(){ render(); });
 
   /* ============================================================
      하단 정보 HTML화 (br만 허용)
@@ -3589,7 +3806,8 @@
     if(!root) return;
     markPhotoBubbles(root);
     [].forEach.call(root.querySelectorAll('.g-bub.char-bub'), function(b){
-      var c=findChar(b.getAttribute('data-char')); if(!c) return;
+      var c0=findChar(b.getAttribute('data-char')); if(!c0) return;
+      var cc=bubColors(b, c0), c={ bub:cc.bub, ink:cc.ink, subColor:c0.subColor };   // 메신저 색으로 칠하기면 메신저 색
       // '로그' 모양은 배경 없이 글만 — 인물별 말풍선 색도 무시한다(글자색은 그대로 유지)
       if(b.classList.contains('img-only') || bubbleShape==='plain' || bubbleShape==='script'){
         b.style.setProperty('background','transparent','important');
@@ -3608,7 +3826,7 @@
       var c=findChar(n.getAttribute('data-char')); if(!c) return;
       if(root===editor) n.setAttribute('contenteditable','false');
       if(c.name) n.textContent=c.name;
-      n.style.setProperty('color', c.nameColor, 'important');
+      n.style.setProperty('color', bubColors(n, c).name, 'important');
     });
   }
   // 캔버스: 같은 인물 묶음을 [아바타][말풍선 열]로 감싼다. 이름은 새 그룹의 시작점.
@@ -3658,7 +3876,7 @@
         scriptName.style.setProperty('display','block','important');
         var bold=document.createElement('b'); bold.textContent=(c&&c.name)?c.name:'';
         scriptName.appendChild(bold);
-        if(c&&c.nameColor) scriptName.style.setProperty('color', c.nameColor, 'important');
+        var _sc=bubColors(scriptName, c); if(_sc&&_sc.name) scriptName.style.setProperty('color', _sc.name, 'important');
         group.appendChild(scriptName);
         var colName=col.querySelector('.g-bub-name'); if(colName) colName.style.display='none';
         group.classList.add('no-av');
@@ -5096,9 +5314,9 @@
      (기존 사용자는 저장된 값이 없으므로 이번에 한 번 보게 된다)
      ============================================================ */
   (function(){
-    var NOTICE_ID   = '2026-09-27a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
-    var NOTICE_FROM = '2026-09-26T00:00:00';         // 이 기간에는 볼 때마다 뜬다
-    var NOTICE_TO   = '2026-09-29T00:00:00';         // (끝나는 날 자정 = 28일까지)
+    var NOTICE_ID   = '2026-09-30a';                 // ★공지를 새로 띄우려면 이 값을 바꾼다
+    var NOTICE_FROM = '2026-09-30T00:00:00';         // 이 기간에는 볼 때마다 뜬다
+    var NOTICE_TO   = '2026-10-02T00:00:00';         // (끝나는 날 자정 = 10월 1일까지)
     var NOTICE_KEY  = 'logmaker-notice-v2';
     var ov=$('notice-overlay'), okBtn=$('notice-close'), neverBtn=$('notice-never'), t=null;
     if(!ov) return;
@@ -5222,6 +5440,63 @@
   bindCharBubTool($('cb-name'), cbToggleName);
   bindCharBubTool($('cb-av'), cbToggleAvatar);
   bindCharBubTool($('cb-del'), cbDelete);
+  /* ===== 라인 · 카카오톡: 시간 · 읽음 표시 =====
+     말풍선 속성으로 들고 다닌다(data-time="오후 3:12", data-read="1", data-read-text="이 말풍선만 다른 글자").
+     그래서 저장 · 페이지 · 스냅샷 · 되돌리기에 그대로 따라간다. */
+  function timeAbove(b){
+    var all=[].slice.call(editor.querySelectorAll('.g-bub')), i=all.indexOf(b);
+    for(var k=i-1; k>=0; k--){ var t=all[k].getAttribute('data-time'); if(t) return t; }
+    return '';
+  }
+  function cbToggleTime(b){
+    if(b.hasAttribute('data-time')){ b.removeAttribute('data-time'); return; }
+    var t = timeAbove(b);                                   // 바로 위 시간 따라가기
+    if(!t){ t = prompt('시간을 적어 주세요. (예: 오후 3:12)', ''); if(t==null) return; t = t.trim(); if(!t) return; }
+    b.setAttribute('data-time', t);
+  }
+  function cbToggleRead(b){
+    if(b.getAttribute('data-read')==='1'){ b.removeAttribute('data-read'); b.removeAttribute('data-read-text'); }
+    else b.setAttribute('data-read','1');
+  }
+  bindCharBubTool($('cb-time'), cbToggleTime);
+  // 메신저 색으로 칠하기 — 스위치 · 색칸은 세 아코디언 모두 같은 값
+  [].forEach.call(document.querySelectorAll('.mc-on'), function(cb){ cb.addEventListener('change', function(){ setMsgrColorOn(cb.checked); }); });
+  [].forEach.call(document.querySelectorAll('.mc-c, .mc-t'), function(inp){
+    inp.addEventListener('input', function(){
+      if(!msgrColor.colors) return;
+      var v=inp.value.trim(); if(inp.classList.contains('mc-t')){ if(!/^#?[0-9a-fA-F]{6}$/.test(v)) return; if(v.charAt(0)!=='#') v='#'+v; }
+      msgrColor.colors[inp.getAttribute('data-k')] = v.toLowerCase();
+      syncMcUI(); render();
+    });
+    inp.addEventListener('change', function(){ scheduleSave(); });
+  });
+  bindCharBubTool($('cb-read'), cbToggleRead);
+  // 입력창에서 말풍선 옆 시간 · 읽음 글자를 누르면 그 말풍선만 고친다(말풍선 상자 바깥쪽을 누른 것으로 판단)
+  editor.addEventListener('click', function(e){
+    if(!isKtShape()) return;
+    var b = e.target && e.target.closest ? e.target.closest('.g-bub') : null;
+    if(!b || !(b.hasAttribute('data-time') || b.getAttribute('data-read')==='1')) return;
+    var r = b.getBoundingClientRect(), right = b.classList.contains('right') || b.classList.contains('send');
+    var outside = right ? (e.clientX < r.left) : (e.clientX > r.right);
+    if(!outside) return;
+    e.preventDefault(); e.stopPropagation();
+    var hasTime = b.hasAttribute('data-time'), hasRead = b.getAttribute('data-read')==='1';
+    var lh = (parseFloat(getComputedStyle(b).fontSize)||15) * 0.62 * 1.3;
+    var onTime = hasTime && (!hasRead || e.clientY > r.bottom - lh);
+    if(onTime){
+      var t = prompt('시간 (비우면 시간이 사라져요)', b.getAttribute('data-time')||'');
+      if(t==null) return; t=t.trim();
+      if(t) b.setAttribute('data-time', t); else b.removeAttribute('data-time');
+    } else {
+      var cur = b.getAttribute('data-read-text') || readLabel();
+      var v = prompt('읽음 표시 글자 · 이 말풍선만 (비우면 읽음 표시가 사라져요)', cur);
+      if(v==null) return; v=v.trim();
+      if(!v){ b.removeAttribute('data-read'); b.removeAttribute('data-read-text'); }
+      else if(v===readLabel()) b.removeAttribute('data-read-text');
+      else b.setAttribute('data-read-text', v);
+    }
+    render(); updateFormatButtons();
+  }, true);
   if($('cb-char')){
     bindTap($('cb-char'), function(e){
       if(e){ e.preventDefault(); e.stopPropagation(); }
@@ -5311,7 +5586,10 @@
     var cbTail = $('cb-tail'); if(cbTail){ cbTail.hidden = hideTail; }
     var cbName = $('cb-name'); if(cbName){ cbName.hidden = isScript; }
     var cbAv = $('cb-av'); if(cbAv){ cbAv.hidden = isScript; }
-    var visCount = 6 - (hideTail?1:0) - (isScript?2:0);
+    var kt = isKtShape();
+    var cbTime = $('cb-time'); if(cbTime){ cbTime.hidden = !kt; cbTime.classList.toggle('is-on', !!(kt && cbub && cbub.hasAttribute('data-time'))); }
+    var cbRead = $('cb-read'); if(cbRead){ cbRead.hidden = !kt; cbRead.textContent = (bubbleShape==='line') ? '읽음' : '1'; cbRead.classList.toggle('is-on', !!(kt && cbub && cbub.getAttribute('data-read')==='1')); }
+    var visCount = 6 - (hideTail?1:0) - (isScript?2:0) + (kt?2:0);
     if(cbTools){ cbTools.style.gridTemplateColumns = 'repeat('+visCount+',1fr)'; }
   }
   editor.addEventListener('keyup', updateFormatButtons);
@@ -5728,6 +6006,24 @@
     var r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
     return 'rgba('+r+','+g+','+b+','+a+')';
   }
+  /* 라인 상하단바 아이콘(선 아이콘, 색만 바꿔 쓴다) */
+  var LINE_ICONS = {
+    back:"<path d='M15 5l-7 7 7 7'/>",
+    search:"<circle cx='10.5' cy='10.5' r='6.5'/><path d='M15.5 15.5L20 20'/>",
+    bookmark:"<path d='M6.5 4h11v16l-5.5-4-5.5 4z'/>",
+    gear:"<circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/>",
+    plus:"<path d='M12 4v16M4 12h16'/>",
+    camera:"<path d='M3.5 8.5a2 2 0 0 1 2-2h2.3l1.5-2h5.4l1.5 2h2.3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z'/><circle cx='12' cy='13' r='3.6'/>",
+    image:"<rect x='3.5' y='4.5' width='17' height='15' rx='2'/><circle cx='9' cy='9.5' r='1.6'/><path d='M20.5 15.5l-5-5-9 9'/>",
+    smile:"<circle cx='12' cy='12' r='8.5'/><path d='M8.6 13.8s1.2 1.9 3.4 1.9 3.4-1.9 3.4-1.9'/><path d='M9.3 9.6h.01M14.7 9.6h.01' stroke-width='2.2'/>",
+    mic:"<rect x='9' y='3.5' width='6' height='11' rx='3'/><path d='M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3'/>",
+    menu:"<path d='M4 6.5h16M4 12h16M4 17.5h16'/>",
+    hash:"<path d='M10 4.5L8 19.5M16 4.5l-2 15M5 9.5h14.5M4.5 14.5h14.5'/>"
+  };
+  function lineIconSvg(name, c, sw){
+    c=String(c).replace('#','%23');
+    return "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 24 24' fill='none' stroke='"+c+"' stroke-width='"+(sw||1.7)+"' stroke-linecap='round' stroke-linejoin='round'>"+LINE_ICONS[name]+"</svg>\")";
+  }
   function barBackSvg(c){ c=String(c).replace('#','%23');
     return "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 24 24' fill='none' stroke='"+c+"' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M15 4.5l-7.5 7.5 7.5 7.5'/></svg>\")"; }
   function barInfoSvg(c){ c=String(c).replace('#','%23');
@@ -5740,9 +6036,80 @@
   /* ============================================================
      캔버스 스타일 적용
      ============================================================ */
+  /* 메신저 색 가져오기: 켜 있는 동안만 인물 색 대신 지금 말풍선 모양의 메신저 기본 색(받는 쪽=왼쪽, 보내는 쪽=오른쪽)으로 그린다.
+     세 아코디언의 스위치는 모두 같은 스위치(이름만 말풍선 모양을 따라 바뀜).
+     인물 정보는 그대로. 배경은 켤 때 원래 값을 기억했다가(snap) 끌 때 돌려놓는다(크기 도우미와 같은 방식).
+     켠 상태에서 고친 색 · 배경은 유지 / 다른 메신저 모양으로 바꾸거나 껐다 켜면 처음부터 다시 칠한다. */
+  var MSGR_PALETTE = {
+    imessage:{ recv:'#e9e9eb', recvInk:'#000000', send:'#0b84fe', sendInk:'#ffffff', name:'#8e8e93', bg:'#ffffff' },
+    line:    { recv:'#ffffff', recvInk:'#111111', send:'#8de07a', sendInk:'#111111', name:'#333333', bg:'#8fa9d6' },
+    kakao:   { recv:'#ffffff', recvInk:'#111111', send:'#fee500', sendInk:'#111111', name:'#444d53', bg:'#b2c7d9' }
+  };
+  var msgrColor = { on:false, theme:null, colors:null, snap:null };
+  function shapeTheme(){ return (bubbleShape==='line' || bubbleShape==='kakao') ? bubbleShape : 'imessage'; }   // 심플 · 네모 · 로그 · 대본은 아이메시지 색
+  var MSGR_NAME = { imessage:'아이메시지', line:'라인', kakao:'카카오톡' };
+  function mcPalette(){ return MSGR_PALETTE[msgrColor.theme] || MSGR_PALETTE.imessage; }
+  function bubRightSide(el){ return !!(el && el.classList && (el.classList.contains('right') || el.classList.contains('send'))); }
+  // 말풍선 · 이름이 지금 쓸 색 {bub, ink, name} — 미리보기 · 저장(꼬리) 모두 여기서만 읽는다
+  function bubColors(el, c){
+    if(msgrColor.on && msgrColor.colors){
+      var m=msgrColor.colors, r=bubRightSide(el);
+      return { bub: r?m.send:m.recv, ink: r?m.sendInk:m.recvInk, name: m.name };
+    }
+    return c ? { bub:c.bub, ink:c.ink, name:c.nameColor } : null;
+  }
+  function plainBubColor(isSend){
+    if(msgrColor.on && msgrColor.colors) return isSend ? msgrColor.colors.send : msgrColor.colors.recv;
+    return isSend ? ($('c-bsend')?$('c-bsend').value:'#248bf5') : ($('c-brecv')?$('c-brecv').value:'#e5e5ea');
+  }
+  function plainInkColor(isSend){
+    if(msgrColor.on && msgrColor.colors) return isSend ? msgrColor.colors.sendInk : msgrColor.colors.recvInk;
+    return isSend ? bubInkSend() : bubInkRecv();
+  }
+  function setBgMode(mode){
+    if(mode==='photo' && !photoData) mode='solid';   // 사진이 없으면 파일 창이 뜨지 않게 단색으로
+    var b=document.querySelector('#bg-mode-seg button[data-bgmode="'+mode+'"]'); if(b) b.click();
+  }
+  function setBgColor(col){
+    var c=$('c-bg'), t=$('c-bg-txt'); if(!c) return;
+    c.value=col; if(t) t.value=col; c.dispatchEvent(new Event('input'));
+  }
+  function mcApplyTheme(){
+    var pal=mcPalette();
+    msgrColor.colors = { recv:pal.recv, recvInk:pal.recvInk, send:pal.send, sendInk:pal.sendInk, name:pal.name };
+    setBgMode('solid'); setBgColor(pal.bg);
+  }
+  function setMsgrColorOn(on, theme){
+    if(on){
+      if(!msgrColor.on) msgrColor.snap = { bgMode:bgMode, cbg:($('c-bg')||{}).value };   // 원래 배경은 처음 켤 때 한 번만 기억
+      msgrColor.on = true; msgrColor.theme = shapeTheme();
+      mcApplyTheme();
+    } else {
+      if(!msgrColor.on) return;
+      msgrColor.on = false; msgrColor.theme = null;
+      var sn = msgrColor.snap; msgrColor.snap = null; msgrColor.colors = null;
+      if(sn){ if(sn.cbg) setBgColor(sn.cbg); setBgMode(sn.bgMode||'solid'); }
+    }
+    syncMcUI(); render(); scheduleSave();
+  }
+  function syncMcUI(){
+    [].forEach.call(document.querySelectorAll('.mc-on'), function(cb){ cb.checked = msgrColor.on; });
+    [].forEach.call(document.querySelectorAll('.mc-colors'), function(d){ d.hidden = !msgrColor.on; });
+    var nm = MSGR_NAME[shapeTheme()];   // 이름은 지금 말풍선 모양의 메신저를 따른다
+    [].forEach.call(document.querySelectorAll('.mc-title'), function(t){ t.textContent = nm+' 메신저 색 가져오기'; });
+    [].forEach.call(document.querySelectorAll('.mc-sub'), function(t){ t.textContent = nm+' 기본 말풍선 · 글자 · 배경 색 등을 가져와요'; });
+    if(!msgrColor.colors) return;
+    [].forEach.call(document.querySelectorAll('.mc-c, .mc-t'), function(inp){ var v=msgrColor.colors[inp.getAttribute('data-k')]; if(v && inp.value!==v) inp.value=v; });
+  }
+  /* 메신저 화면으로 꾸미기: 켜져 있는 동안만 레이아웃-여백 대신 메신저 여백을 쓴다(레이아웃 값은 그대로 → 끄면 원래대로) */
+  var messengerMode = false;
+  function effPad(){
+    if(messengerMode){ var m=$('msgr-pad'); return m ? (parseFloat(m.value)||0) : 48; }
+    return parseFloat($('pad').value)||0;
+  }
   function styleCanvas(el){
     var fs = parseFloat($('font-size').value);
-    var pad = parseFloat($('pad').value);
+    var pad = effPad();
     var ls = parseFloat($('letter-spacing').value);
     var mode = $('break-mode').value;
     var w = baseW();
@@ -5750,10 +6117,10 @@
     el.style.background = bgValue;
     el.style.setProperty('--tail-mask', (bgMode==='solid') ? $('c-bg').value : '#ffffff');
     el.classList.toggle('bg-solid-tail', bgMode==='solid');
-    el.style.setProperty('--bub-recv', $('c-brecv').value);
-    el.style.setProperty('--bub-send', $('c-bsend').value);
-    el.style.setProperty('--bub-recv-ink', bubInkRecv());
-    el.style.setProperty('--bub-send-ink', bubInkSend());
+    el.style.setProperty('--bub-recv', plainBubColor(false));
+    el.style.setProperty('--bub-send', plainBubColor(true));
+    el.style.setProperty('--bub-recv-ink', plainInkColor(false));
+    el.style.setProperty('--bub-send-ink', plainInkColor(true));
     el.style.setProperty('--title-color', $('c-title').value);
     el.style.setProperty('--subtitle-color', $('c-subtitle').value);
     var tsz=$('title-size'), ssz=$('subtitle-size'), nsz=$('name-size');
@@ -5785,6 +6152,7 @@
     var psz=$('photo-size'); if(psz){ var _pp=parseFloat(psz.value); el.style.setProperty('--photo-w', _pp+'%'); el.style.setProperty('--photo-w-px', Math.round(w*_pp/100)+'px'); }
     var lisz=$('logimg-size'); if(lisz){ el.style.setProperty('--logimg-w', parseFloat(lisz.value)+'%'); }
     var indz=$('indent-size'); el.style.setProperty('--para-indent', ((indz && parseFloat(indz.value))||1)+'em');
+    el.style.setProperty('--time-color', ($('c-time')||{}).value || '#6b7684');
     var lirad=$('logimg-radius'); if(lirad){ el.style.setProperty('--logimg-radius', parseFloat(lirad.value)+'px'); }
     var tf=$('title-font'), nf=$('name-font');
     el.style.setProperty('--title-font', (tf && tf.value) ? tf.value : $('font').value);
@@ -5858,6 +6226,32 @@
     var _barBg = barBgColor(), _accent = barAccentColor(), _nameCol = barNameColor(), _avatar = barAvatarColor(), _plus = barPlusColor(), _arrow = barArrowColor();
     var _barGap = $('bar-body-gap') ? parseFloat($('bar-body-gap').value) : fs;
     var _top = el.querySelector('.g-topbar');
+    var _lcol = function(id, d){ var e=$(id); return e ? e.value : d; };
+    if(_top && _top.classList.contains('line')){
+      // 라인 상단바: 배경 없음 · 왼쪽 < 이름 · 오른쪽 아이콘 셋
+      var _isK=_top.classList.contains('kakao');
+      var ltc=_isK ? _lcol('c-kbar-top','#1e1e1e') : _lcol('c-lbar-top','#1e1e1e'), lic=fs*1.5;
+      _top.style.padding=(fs*0.8)+'px '+pad+'px';
+      _top.style.marginBottom=_barGap+'px';
+      _top.style.gap=(fs*1.05)+'px';
+      var _lb=_top.querySelector('.g-ltb-back'); if(_lb){ _lb.style.backgroundImage=lineIconSvg('back', ltc, 2); _lb.style.width=(fs*1.35)+'px'; _lb.style.height=(fs*1.35)+'px'; _lb.style.marginRight=(-fs*0.45)+'px'; }
+      var _ln=_top.querySelector('.g-ltb-name'); if(_ln){ _ln.style.fontSize=(fs*1.05)+'px'; _ln.style.color=ltc; if(_isK){ _ln.style.padding='0 '+(pad+fs*4.5)+'px'; } }
+      [].forEach.call(_top.querySelectorAll('.g-lb-ic[data-ic]'), function(ic){ ic.style.backgroundImage=lineIconSvg(ic.getAttribute('data-ic'), ltc); ic.style.width=lic+'px'; ic.style.height=lic+'px'; });
+      _top = null;   // 아이메시지 상단바 처리는 건너뛴다
+    }
+    var _lbar = el.querySelector('.g-inputbar.line');
+    if(_lbar){
+      // 라인 하단바: + · 카메라 · 사진 · [Aa ☺] · 마이크
+      var _isKb=_lbar.classList.contains('kakao');
+      var lbc=_isKb ? _lcol('c-kbar-ic','#4a4a4a') : _lcol('c-lbar-ic','#2b2b2b'), lis=_isKb ? fs*1.45 : fs*1.55;
+      _lbar.style.background=_isKb ? _lcol('c-kbar-bg','#ffffff') : _lcol('c-lbar-bg','#ffffff');
+      _lbar.style.padding=(fs*0.6)+'px '+pad+'px';
+      _lbar.style.gap=(fs*0.95)+'px';
+      _lbar.style.marginTop=_barGap+'px';
+      [].forEach.call(_lbar.querySelectorAll('.g-lb-ic[data-ic]'), function(ic){ var sm=ic.getAttribute('data-ic')==='smile'; ic.style.backgroundImage=lineIconSvg(ic.getAttribute('data-ic'), lbc, sm?1.5:1.7); ic.style.width=(sm?fs*1.35:lis)+'px'; ic.style.height=(sm?fs*1.35:lis)+'px'; });
+      var _lf=_lbar.querySelector('.g-lib-field'); if(_lf){ _lf.style.background=_isKb ? _lcol('c-kbar-field','#f3f3f3') : _lcol('c-lbar-field','#f1f2f4'); _lf.style.height=(fs*2.3)+'px'; _lf.style.padding='0 '+(fs*0.55)+'px 0 '+(fs*0.85)+'px'; _lf.style.marginLeft=(fs*0.1)+'px'; }
+      var _lp=_lbar.querySelector('.g-lib-ph'); if(_lp){ _lp.style.fontSize=(fs*0.95)+'px'; _lp.style.color='#b4b8bf'; }
+    }
     if(_top){
       var padTop=fs*0.65, avD=fs*3.0;
       _top.style.background = _barBg;
@@ -5869,7 +6263,7 @@
       var _bk=_top.querySelector('.g-tb-back'); if(_bk){ _bk.style.background='center/contain no-repeat '+barBackSvg(_accent); _bk.style.width=(fs*1.85)+'px'; _bk.style.height=(fs*1.85)+'px'; _bk.style.left=pad+'px'; _bk.style.top=avC+'px'; }
       var _if=_top.querySelector('.g-tb-info'); if(_if){ _if.style.background='center/contain no-repeat '+barInfoSvg(_accent); _if.style.width=(fs*1.55)+'px'; _if.style.height=(fs*1.55)+'px'; _if.style.right=pad+'px'; _if.style.top=avC+'px'; }
     }
-    var _comp = el.querySelector('.g-inputbar');
+    var _comp = el.querySelector('.g-inputbar:not(.line)');
     if(_comp){
       _comp.style.background = _barBg;
       _comp.style.padding=(fs*0.65)+'px '+pad+'px'; _comp.style.gap='0px'; _comp.style.marginTop=_barGap+'px';
@@ -5993,6 +6387,7 @@
           var savedCharId = (isCharBub||isCharName) ? (ch.getAttribute('data-char')||'') : '';
           var savedAv = isCharBub ? (ch.getAttribute('data-av')||'') : '';
           var bubTail = isBub ? !ch.classList.contains('cont') : false;
+          var bubMeta = isBub ? ['data-time','data-read','data-read-text'].map(function(a){ return [a, ch.getAttribute(a)]; }) : null;   // 시간 · 읽음 보존
           var hlColor = isHl ? ch.style.getPropertyValue('--hl') : '';
           var emColor = isEm ? ch.style.getPropertyValue('--em') : '';
           var subFixed = isSub ? ch.style.getPropertyValue('--sub-fixed') : '';
@@ -6000,6 +6395,7 @@
           for(var i=ch.attributes.length-1;i>=0;i--){ ch.removeAttribute(ch.attributes[i].name); }
           if(isCharBub){ ch.className='g-bub char-bub '+charSide+' '+(bubTail?'tail':'cont'); if(savedCharId) ch.setAttribute('data-char', savedCharId); if(savedAv) ch.setAttribute('data-av', savedAv); }
           else if(isBub){ ch.className='g-bub '+bubKind+' '+(bubTail?'tail':'cont'); }
+          if(bubMeta) bubMeta.forEach(function(p){ if(p[1]!=null) ch.setAttribute(p[0], p[1]); });
           else if(isCharName){ ch.className='g-bub-name char-name '+charSide; if(savedCharId) ch.setAttribute('data-char', savedCharId); }
           else if(isBubName){ ch.className='g-bub-name '+nameKind; }
           else if(isHl){
@@ -6250,7 +6646,7 @@
     var span=(wrap?wrap.querySelector('.val'):null) || (lbl?lbl.querySelector('.val'):null);   // 스테퍼 안으로 옮겨진 경우 포함
     if(span) span.textContent=text;
   }
-  var chrome = { topbar:false, src:'char', charId:null, name:'', photo:null, inputbar:false };
+  var chrome = { topbar:false, src:'char', charId:null, name:'', photo:null, inputbar:false, lineTop:false, lineInput:false, lineName:'', kakaoTop:false, kakaoInput:false, kakaoName:'' };
   var TB_CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.8" width="12" height="10.4" rx="2.4"/><path d="M14.5 10.6 L21 7.6 V16.4 L14.5 13.4 Z"/></svg>';
   var IB_SEND='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.2 L18.6 10.8 H14 V19.5 H10 V10.8 H5.4 Z"/></svg>';
   function chromeEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -6264,7 +6660,17 @@
     var el; while((el=root.querySelector('.g-topbar'))) el.parentNode.removeChild(el);
     while((el=root.querySelector('.g-inputbar'))) el.parentNode.removeChild(el);
     var inner=root.querySelector('.g-inner');
-    if(chrome.topbar){
+    if(chrome.kakaoTop){
+      var kt=document.createElement('div'); kt.className='g-topbar line kakao'; kt.setAttribute('contenteditable','false');
+      kt.innerHTML='<span class="g-lb-ic g-ltb-back"></span><div class="g-ltb-name">'+chromeEsc(chrome.kakaoName||'')+'</div><span class="g-ktb-sp"></span>'
+        +'<span class="g-lb-ic" data-ic="search"></span><span class="g-lb-ic" data-ic="menu"></span>';
+      if(inner) root.insertBefore(kt, inner); else root.appendChild(kt);
+    } else if(chrome.lineTop){
+      var lt=document.createElement('div'); lt.className='g-topbar line'; lt.setAttribute('contenteditable','false');
+      lt.innerHTML='<span class="g-lb-ic g-ltb-back"></span><div class="g-ltb-name">'+chromeEsc(chrome.lineName||'')+'</div>'
+        +'<span class="g-lb-ic" data-ic="search"></span><span class="g-lb-ic" data-ic="bookmark"></span><span class="g-lb-ic" data-ic="gear"></span>';
+      if(inner) root.insertBefore(lt, inner); else root.appendChild(lt);
+    } else if(chrome.topbar){
       var d=topbarInfo();
       var av = d.photo
         ? '<div class="g-tb-av'+(d.shape==='square'?' square':'')+'"><img src="'+d.photo+'" alt=""></div>'
@@ -6275,7 +6681,17 @@
         +'<span class="g-tb-info"></span>';
       if(inner) root.insertBefore(tb, inner); else root.appendChild(tb);
     }
-    if(chrome.inputbar){
+    if(chrome.kakaoInput){
+      var kb=document.createElement('div'); kb.className='g-inputbar line kakao'; kb.setAttribute('contenteditable','false');
+      kb.innerHTML='<span class="g-lb-ic" data-ic="plus"></span>'
+        +'<div class="g-lib-field"><span class="g-lib-ph">메시지 입력</span><span class="g-lb-ic" data-ic="smile"></span></div><span class="g-lb-ic" data-ic="hash"></span>';
+      root.appendChild(kb);
+    } else if(chrome.lineInput){
+      var lb=document.createElement('div'); lb.className='g-inputbar line'; lb.setAttribute('contenteditable','false');
+      lb.innerHTML='<span class="g-lb-ic" data-ic="plus"></span><span class="g-lb-ic" data-ic="camera"></span><span class="g-lb-ic" data-ic="image"></span>'
+        +'<div class="g-lib-field"><span class="g-lib-ph">Aa</span><span class="g-lb-ic" data-ic="smile"></span></div><span class="g-lb-ic" data-ic="mic"></span>';
+      root.appendChild(lb);
+    } else if(chrome.inputbar){
       var ib=document.createElement('div'); ib.className='g-inputbar'; ib.setAttribute('contenteditable','false');
       ib.innerHTML='<span class="g-ib-plus"></span><div class="g-ib-field"><span>iMessage</span></div><span class="g-ib-send"></span>';
       root.appendChild(ib);
@@ -6289,6 +6705,24 @@
       if(!ok && nm.parentNode) nm.parentNode.removeChild(nm);
     });
   }
+  function readLabel(){
+    var v = ($('read-text') && $('read-text').value.trim()) || '';
+    return v || (bubbleShape==='line' ? '읽음' : '1');
+  }
+  // 라인 · 카카오톡: 미리보기 말풍선에 시간 · 읽음 글자를 붙인다
+  function ktDecorate(root){
+    if(!isKtShape()) return;
+    if(root===editor) return;
+    [].forEach.call(root.querySelectorAll('.g-bub'), function(b){
+      var t = b.getAttribute('data-time'), rd = b.getAttribute('data-read')==='1';
+      if(!t && !rd) return;
+      var right = b.classList.contains('right') || b.classList.contains('send');
+      var m = document.createElement('span'); m.className = 'g-bub-meta ' + (right ? 'right' : 'left');
+      if(rd){ var r = document.createElement('span'); r.className='g-meta-read'; r.textContent = b.getAttribute('data-read-text') || readLabel(); m.appendChild(r); }
+      if(t){ var tm = document.createElement('span'); tm.className='g-meta-time'; tm.textContent = t; m.appendChild(tm); }
+      b.appendChild(m);
+    });
+  }
   function render(){
     bgValue = effectiveBg();
     var _psz=$('photo-size'); if(_psz){ var _pp2=parseFloat(_psz.value); editor.style.setProperty('--photo-w', _pp2+'%'); editor.style.setProperty('--photo-w-px', Math.round((editor.clientWidth||360)*_pp2/100)+'px'); }
@@ -6298,9 +6732,12 @@
     syncEditorIndent();
     updateEmptyBubbles();
     styleCharBubbles(editor);
+    editor.style.setProperty('--read-label', JSON.stringify(readLabel()));
+    editor.style.setProperty('--time-color', ($('c-time')||{}).value || '#6b7684');
+    ktDecorate(editor);
     syncSubFixedEm();
     canvas.innerHTML = '<div class="g-inner">' + (gridCols > 0 && pages.length > 1 ? buildGridHtml() : buildHtml()) + '</div>';
-    renderChrome(canvas); extractFooter(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); applyParaIndent(canvas, isNovelCont(pageIdx)); novelJustifyLastLine(canvas); applyScriptFont(canvas); fitStage();
+    renderChrome(canvas); extractFooter(canvas); styleCanvas(canvas); applyHlSolid(canvas); styleCharBubbles(canvas); groupAvatars(canvas); neutralizeStretch(canvas); wrapParaGaps(canvas); tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas); applyParaIndent(canvas, isNovelCont(pageIdx)); novelJustifyLastLine(canvas); ktDecorate(canvas); applyScriptFont(canvas); fitStage();
     setVal('font-size', $('font-size').value+'px');
     if($('subtext-size')) setVal('subtext-size', $('subtext-size').value+'px');
     if($('parensub-size')) setVal('parensub-size', $('parensub-size').value+'px');
@@ -6335,7 +6772,7 @@
     var inner = canvas.querySelector('.g-inner'); if(!inner || !ratio) return 0;
     var sl = $('ratio-w'); if(!sl) return 0;
     var step = parseFloat(sl.step)||20, max = parseFloat(sl.max)||2000;
-    var pad = parseFloat($('pad').value)||0;
+    var pad = effPad();
     var prevW = canvas.style.width, prevH = canvas.style.height, prevPad = canvas.style.padding;
     var prevMT = inner.style.marginTop, prevMB = inner.style.marginBottom;
     inner.style.marginTop='0'; inner.style.marginBottom='0';
@@ -6429,7 +6866,7 @@
       tagMsgGroupNeighbors(canvas); stripLastGap(canvas); trimImgMargins(canvas);
       applyParaIndent(canvas, !!cont);
       applyScriptFont(canvas);
-      var padSet = Math.round(parseFloat($('pad').value)||0);
+      var padSet = Math.round(effPad());
       var _mfOn = (framePos!=='none' && !!frameData);
       var _mfPct = _mfOn ? (parseFloat($('frame-size') ? $('frame-size').value : 20)||20) : 0;
       var _mfT = _mfOn ? Math.round(canvas.clientWidth * _mfPct/100) : 0;
@@ -6868,7 +7305,7 @@
     run.forEach(function(x){ w.appendChild(x); });
   }
 
-  function footerHalfOn(){ var c=$('name-in-margin'); return !!(c && c.checked) && !chrome.inputbar; }
+  function footerHalfOn(){ var c=$('name-in-margin'); return !!(c && c.checked) && !chrome.inputbar && !chrome.lineInput && !chrome.kakaoInput; }
   // 하단 블록(구분선 + 하단)을 본문 밖으로 꺼낸다 — 본문 높이 · 페이지 나누기 계산에서 빠지게
   function extractFooter(root){
     if(!footerHalfOn()) return;
@@ -6897,7 +7334,15 @@
     var margin=Math.max(0, pb - fB);
     f.style.bottom = (fB + margin/2) + 'px';   // 하단 아래에 남는 여백 = 지정한 여백의 절반
   }
-  function centerRatioInner(){ _centerRatioInnerCore(); positionFooter(); }
+  function centerRatioInner(){
+    _centerRatioInnerCore();
+    // 메신저 화면: 말풍선을 아래(입력창 바로 위)로 모은다
+    if(messengerMode && sizeMode==='ratio' && ratio){
+      var _in = canvas.querySelector('.g-inner');
+      if(_in){ _in.style.marginTop='auto'; _in.style.marginBottom='0'; }
+    }
+    positionFooter();
+  }
   function _centerRatioInnerCore(){
     var inner = canvas.querySelector('.g-inner');
     if(!inner) return;
@@ -6906,9 +7351,9 @@
     var nameEl = clearNameAlign(inner);   // 이전에 밀어 둔 하단 여백은 떼고 원래 높이로 잰다
     if(!(sizeMode==='ratio' && ratio)){ if(warn) warn.hidden = true; return; }
 
-    var padSet = Math.round(parseFloat($('pad').value)||0);
+    var padSet = Math.round(effPad());
     var padStep = parseFloat(($('pad')||{}).step) || 10;
-    var minPad = parseFloat(($('pad')||{}).min) || 40;
+    var minPad = messengerMode ? 0 : (parseFloat(($('pad')||{}).min) || 40);
 
     // 꾸밈 테두리 두께 계산 (frameOn이면 해당 변에 fThick만큼 추가)
     var _fOn = (framePos!=='none' && !!frameData);
@@ -7647,6 +8092,10 @@
     if(corner==='bl'){
       ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.lineTo(x1,y1); ctx.lineTo(x0+rx,y1);
       ctx.quadraticCurveTo(x0,y1,x0,y1-ry); ctx.lineTo(x0,y0);
+    } else if(corner==='tr'){   // 라인 · 카카오톡(위로 붙는 꼬리)
+      ctx.moveTo(x0,y0); ctx.lineTo(x1-rx,y0); ctx.quadraticCurveTo(x1,y0,x1,y0+ry); ctx.lineTo(x1,y1); ctx.lineTo(x0,y1);
+    } else if(corner==='tl'){
+      ctx.moveTo(x0+rx,y0); ctx.lineTo(x1,y0); ctx.lineTo(x1,y1); ctx.lineTo(x0,y1); ctx.lineTo(x0,y0+ry); ctx.quadraticCurveTo(x0,y0,x0+rx,y0);
     } else {
       ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.lineTo(x1,y1-ry);
       ctx.quadraticCurveTo(x1,y1,x1-rx,y1); ctx.lineTo(x0,y1); ctx.lineTo(x0,y0);
@@ -7660,13 +8109,14 @@
   }
   function collectPseudoTails(canvasRect, scale){
     var out=[];
+    if(canvas.classList.contains('bub-kt')) return collectKtTails(canvasRect, scale);
     if(!usePseudoTailNow()) return out;
     [].forEach.call(canvas.querySelectorAll('.g-bub.tail'), function(bub){
       var r=bub.getBoundingClientRect(); if(r.width<=0||r.height<=0) return;
       var fs=parseFloat(getComputedStyle(bub).fontSize)||16, e=fs*scale;
       var isSend, color;
-      if(bub.classList.contains('char-bub')){ isSend=bub.classList.contains('right'); var cc=findChar(bub.getAttribute('data-char')); color=cc?cc.bub:'#cccccc'; }
-      else { isSend=bub.classList.contains('send'); color=isSend?($('c-bsend')?$('c-bsend').value:'#248bf5'):($('c-brecv')?$('c-brecv').value:'#e5e5ea'); }
+      if(bub.classList.contains('char-bub')){ isSend=bub.classList.contains('right'); var cc=bubColors(bub, findChar(bub.getAttribute('data-char'))); color=cc?cc.bub:'#cccccc'; }
+      else { isSend=bub.classList.contains('send'); color=plainBubColor(isSend); }
       var bx=(r.left-canvasRect.left)*scale, byTop=(r.top-canvasRect.top)*scale, bw=r.width*scale, bh=r.height*scale;
       var BBy=byTop+bh, BRx=isSend?(bx+bw):bx;
       var b_x0,b_x1,b_y0,b_y1,a_x0,a_x1,a_y0,a_y1,corner, brx=0.8*e, bry=0.7*e, ra=0.5*e;
@@ -7679,6 +8129,27 @@
       }
       out.push({ color:color, corner:corner, brx:brx, bry:bry, ra:ra,
         b:[b_x0,b_y0,b_x1,b_y1], a:[a_x0,a_y0,a_x1,a_y1] });
+    });
+    return out;
+  }
+  /* 라인 · 카카오톡: 아이메시지 pseudo 꼬리를 위아래로 뒤집은 것(미리보기 SVG 마스크와 같은 수치) */
+  function collectKtTails(canvasRect, scale){
+    var out=[];
+    [].forEach.call(canvas.querySelectorAll('.g-bub.tail:not(.img-only)'), function(bub){
+      var r=bub.getBoundingClientRect(); if(r.width<=0||r.height<=0) return;
+      var fs=parseFloat(getComputedStyle(bub).fontSize)||16, e=fs*scale;
+      var isSend, color;
+      if(bub.classList.contains('char-bub')){ isSend=bub.classList.contains('right'); var cc=bubColors(bub, findChar(bub.getAttribute('data-char'))); color=cc?cc.bub:'#cccccc'; }
+      else { isSend=bub.classList.contains('send'); color=plainBubColor(isSend); }
+      var bx=(r.left-canvasRect.left)*scale, top=(r.top-canvasRect.top)*scale, bw=r.width*scale;
+      var b_x0,b_x1,a_x0,a_x1,corner;
+      if(isSend){ corner='tl'; var R=bx+bw;
+        b_x1=R+0.35*e; b_x0=b_x1-1*e; a_x1=R+0.625*e; a_x0=a_x1-0.625*e;
+      } else { corner='tr';
+        b_x0=bx-0.35*e; b_x1=b_x0+1*e; a_x0=bx-0.625*e; a_x1=a_x0+0.625*e;
+      }
+      out.push({ color:color, corner:corner, brx:0.8*e, bry:0.7*e, ra:0.5*e,
+        b:[b_x0, top, b_x1, top+1*e], a:[a_x0, top+0.025*e, a_x1, top+1.025*e] });
     });
     return out;
   }
@@ -7698,10 +8169,10 @@
   }
 
   /* 꼬리 패스 (2D 캔버스에 직접) */
-  function traceTailPath(ctx, x, y, w, h, flip){
+  function traceTailPath(ctx, x, y, w, h, flip, vflip){
     var sx=w/16, sy=h/20;
     function X(u){ return x + (flip ? (16-u) : u)*sx; }
-    function Y(v){ return y + v*sy; }
+    function Y(v){ return y + (vflip ? (20-v) : v)*sy; }   // vflip: 라인 · 카카오톡(위로 붙는 꼬리)
     ctx.beginPath();
     ctx.moveTo(X(16),Y(0)); ctx.lineTo(X(16),Y(20));
     ctx.quadraticCurveTo(X(6),Y(20),X(0.6),Y(19.2));
@@ -7721,19 +8192,21 @@
       if(bub.classList.contains('char-bub')){
         flip = bub.classList.contains('right');
         var cc=findChar(bub.getAttribute('data-char'));
-        color = cc ? cc.bub : (bub.style.getPropertyValue('background') || '#cccccc');
+        var _bc = bubColors(bub, cc); color = _bc ? _bc.bub : (bub.style.getPropertyValue('background') || '#cccccc');
       } else {
         var isSend=bub.classList.contains('send');
-        flip=isSend; color = isSend ? ($('c-bsend')?$('c-bsend').value:'#248bf5') : ($('c-brecv')?$('c-brecv').value:'#ececec');
+        flip=isSend; color = plainBubColor(isSend);
       }
-      out.push({ x:r.left-rootRect.left, y:r.top-rootRect.top, w:r.width, h:r.height, flip:flip, color:color });
+      out.push({ x:r.left-rootRect.left, y:r.top-rootRect.top, w:r.width, h:r.height, flip:flip, vflip:root.classList.contains('bub-kt'), color:color });
     });
     return out;
   }
   function hideTails(root){
+    // 저장 중엔 꼬리(svg)를 잠깐 떼어 낸다 — 숨김(display)만으로는 html2canvas 가 svg 를 그대로 그려
+    // 직접 그린 꼬리와 겹치는 일이 있었다(라인 · 카카오톡 위쪽 꼬리에서 두 번 그려짐). 끝나면 제자리에 다시 붙인다.
     var backup=[];
-    [].forEach.call(root.querySelectorAll('svg.g-tail'), function(t){ backup.push([t, t.style.display]); t.style.display='none'; });
-    return function(){ backup.forEach(function(p){ if(p[1]) p[0].style.display=p[1]; else p[0].style.removeProperty('display'); }); };
+    [].forEach.call(root.querySelectorAll('svg.g-tail'), function(t){ backup.push([t, t.parentNode, t.nextSibling]); t.parentNode.removeChild(t); });
+    return function(){ backup.forEach(function(p){ if(p[1] && !p[0].parentNode) p[1].insertBefore(p[0], (p[2] && p[2].parentNode===p[1]) ? p[2] : null); }); };
   }
 
   /* ============================================================
@@ -8108,7 +8581,7 @@
           hlRects.forEach(function(rc){ ctx.fillStyle=rc.color; ctx.fillRect(rc.x*2, rc.y*2, rc.w*2, rc.h*2); });
           // 본문 구분선도 정수 픽셀에 맞춰 그린다(위치에 따라 굵기가 달라 보이지 않게)
           hrRects.forEach(function(rc){ ctx.fillStyle=rc.color; ctx.fillRect(Math.round(rc.x*2), Math.round(rc.y*2), Math.round(rc.w*2), Math.max(1, Math.round(rc.h*2))); });
-          tailRects.forEach(function(t){ ctx.save(); ctx.fillStyle=t.color; traceTailPath(ctx, t.x*2, t.y*2, t.w*2, t.h*2, t.flip); ctx.fill(); ctx.restore(); });
+          tailRects.forEach(function(t){ ctx.save(); ctx.fillStyle=t.color; traceTailPath(ctx, t.x*2, t.y*2, t.w*2, t.h*2, t.flip, t.vflip); ctx.fill(); ctx.restore(); });
           pseudoTails.forEach(function(d){ paintPseudoTail(ctx, d); });
           ctx.drawImage(textCanvas, 0, 0, outW, outH);
           // 밑줄을 텍스트 위에 직접 그린다 (html2canvas text-decoration 렌더링 불일치 보정)
@@ -8649,7 +9122,7 @@
      상태 저장/복원/초기화
      ============================================================ */
   var STORE_KEY = 'logmaker-state-v1';
-  var TEXT_IDS = ['indent-size','name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
+  var TEXT_IDS = ['msgr-pad','read-text','c-time','c-time-txt','c-lbar-top','c-lbar-top-txt','c-lbar-bg','c-lbar-bg-txt','c-lbar-ic','c-lbar-ic-txt','c-lbar-field','c-lbar-field-txt','c-kbar-top','c-kbar-top-txt','c-kbar-bg','c-kbar-bg-txt','c-kbar-ic','c-kbar-ic-txt','c-kbar-field','c-kbar-field-txt','indent-size','name-pos','font','title-font','name-font','title-size','subtitle-size','name-size','title-gap','titleblk-gap','name-gap','msg-gap','bub-body-gap','para-gap','stack-gap','bar-body-gap','photo-size','frame-size','frame-zoom','frame-x','frame-y','logimg-size','logimg-radius','quote-thick','quote-gap','hr-thick','title-hr-thick','grid-gap','script-font','font-size','subtext-size','parensub-size','stretch','letter-spacing','line-height','pad','break-mode','base-w','ratio-w',
     'c-bg','c-bg-txt','c-fg','c-fg-txt','c-hl','c-hl-txt','c-hl2','c-hl2-txt','c-hl3','c-hl3-txt','c-hl4','c-hl4-txt','c-hl5','c-hl5-txt','c-hl6','c-hl6-txt','c-em','c-em-txt','c-em2','c-em2-txt','c-em3','c-em3-txt','c-em4','c-em4-txt','c-em5','c-em5-txt','c-em6','c-em6-txt','c-name','c-name-txt','c-bar','c-bar-txt',
     'c-brecv','c-brecv-txt','c-bsend','c-bsend-txt','c-brecv-ink','c-brecv-ink-txt','c-bsend-ink','c-bsend-ink-txt',
     'c-title','c-title-txt','c-subtitle','c-subtitle-txt','c-sub','c-sub-txt','c-star','c-star-txt','c-paren','c-paren-txt','c-quote','c-quote-txt','c-quote2','c-quote2-txt','c-quote3','c-quote3-txt','c-quote4','c-quote4-txt','c-quote5','c-quote5-txt','c-quote6','c-quote6-txt','c-hr','c-hr-txt','c-title-hr','c-title-hr-txt',
@@ -8683,7 +9156,9 @@
         titleHtml:sharedTitle, subtitleHtml:sharedSubtitle,
         bgValue:bgValue, align:currentAlign, titleAlign:titleAlign, sizeMode:sizeMode, ratio:ratio, bgMode:bgMode, bubbleShape:bubbleShape, scriptAlign:(!!($('script-align')&&$('script-align').checked)), scriptJustify:(!!($('script-justify')&&$('script-justify').checked)), titleRule:(!!($('title-rule')&&$('title-rule').checked)), titleRuleStyle:titleRuleStyle, nameRule:(!!($('name-rule')&&$('name-rule').checked)), nameRuleStyle:nameRuleStyle, paraIndent:paraIndentOn(), nameInMargin:(!!($('name-in-margin')&&$('name-in-margin').checked)), photoOn:photoOn, photoData:photoData, framePos:framePos, frameData:frameData, framePadSync:_framePadSync, chrome:chrome,
         sizeHelper: sizeHelperOn() ? { on:1, snap:_sizeSnap } : null, indentV2:1,
-        multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages, novelMode:novelMode }
+        multiPage: { pages:pages, pageIdx:pageIdx, nextId:_nextPageId, sharedTitle:sharedTitle, sharedSubtitle:sharedSubtitle, sharedName:sharedName, gridCols:gridCols, alignPages:alignPages, novelMode:novelMode },
+        messengerMode: messengerMode,
+        msgrColor: msgrColor.on ? { on:true, theme:msgrColor.theme, colors:msgrColor.colors, snap:msgrColor.snap } : null
       };
       return data;
   }
@@ -8810,13 +9285,17 @@
       loadFrameNat(render);
       if(typeof updateFrameUI==='function') updateFrameUI();
       requestAnimationFrame(function(){ moveThumb($('frame-pos-seg')); });
-      bubbleShape = ({imessage:1,simple:1,soft:1,plain:1,script:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
+      bubbleShape = ({imessage:1,simple:1,soft:1,plain:1,script:1,line:1,kakao:1})[data.bubbleShape] ? data.bubbleShape : 'imessage';
       syncShapeSeg();
       applyBubbleShape();
       if($('script-align')) $('script-align').checked = !!data.scriptAlign;
       if($('script-justify')) $('script-justify').checked = !!data.scriptJustify;
       updateScriptOptions();
-      if(data.chrome){ chrome.topbar=!!data.chrome.topbar; chrome.src=(data.chrome.src==='custom')?'custom':'char'; chrome.charId=data.chrome.charId||null; chrome.name=data.chrome.name||''; chrome.photo=data.chrome.photo||null; chrome.inputbar=!!data.chrome.inputbar; }
+      if(data.chrome){ chrome.topbar=!!data.chrome.topbar; chrome.src=(data.chrome.src==='custom')?'custom':'char'; chrome.charId=data.chrome.charId||null; chrome.name=data.chrome.name||''; chrome.photo=data.chrome.photo||null; chrome.inputbar=!!data.chrome.inputbar; chrome.lineTop=!!data.chrome.lineTop; chrome.lineInput=!!data.chrome.lineInput; chrome.lineName=data.chrome.lineName||''; chrome.kakaoTop=!!data.chrome.kakaoTop; chrome.kakaoInput=!!data.chrome.kakaoInput; chrome.kakaoName=data.chrome.kakaoName||''; }
+      messengerMode = !!data.messengerMode;
+      if(data.msgrColor && data.msgrColor.on && data.msgrColor.colors){ msgrColor = { on:true, theme:data.msgrColor.theme||'imessage', colors:data.msgrColor.colors, snap:data.msgrColor.snap||null }; }
+      else msgrColor = { on:false, theme:null, colors:null, snap:null };
+      if(typeof syncMcUI==='function') syncMcUI();
       if(typeof syncChromeUI==='function') syncChromeUI();
     }catch(e){}
     _restoring=false;
@@ -9213,7 +9692,7 @@
     document.querySelectorAll('#bg-mode-seg button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-bgmode')===bgMode?'true':'false'); });
     applyBgViews();
     photoOn = (bgMode==='photo') && !!photoData;
-    bubbleShape = ({imessage:1,simple:1,soft:1,plain:1,script:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
+    bubbleShape = ({imessage:1,simple:1,soft:1,plain:1,script:1,line:1,kakao:1})[s.bubbleShape] ? s.bubbleShape : 'imessage';
     syncShapeSeg();
     applyBubbleShape();
     // 문단 들여쓰기 복원(옛 프리셋엔 값이 없으니 그대로 둔다)
@@ -9232,7 +9711,7 @@
       characters.forEach(function(c){ if(c.id && s.charHidden[c.id]!=null){ var h=!!s.charHidden[c.id]; if(c.hidden!==h){ c.hidden=h; changed=true; } } });
       if(changed){ saveChars(); renderCharList(); renderCharInsert(); if(typeof renderTopbarCharList==='function') renderTopbarCharList(); }
     }
-    ['c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-hl5','c-hl6','c-em','c-em2','c-em3','c-em4','c-em5','c-em6','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-star','c-paren','c-quote','c-quote2','c-quote3','c-quote4','c-quote5','c-quote6','c-hr','c-brecv-name','c-bsend-name','c-bar-bg','c-bar-accent','c-bar-name','c-bar-avatar','c-bar-plus','c-bar-arrow'].forEach(function(cid){
+    ['c-time','c-lbar-top','c-lbar-bg','c-lbar-ic','c-lbar-field','c-kbar-top','c-kbar-bg','c-kbar-ic','c-kbar-field','c-bg','c-fg','c-hl','c-hl2','c-hl3','c-hl4','c-hl5','c-hl6','c-em','c-em2','c-em3','c-em4','c-em5','c-em6','c-name','c-bar','c-brecv','c-bsend','c-brecv-ink','c-bsend-ink','c-title','c-subtitle','c-sub','c-star','c-paren','c-quote','c-quote2','c-quote3','c-quote4','c-quote5','c-quote6','c-hr','c-brecv-name','c-bsend-name','c-bar-bg','c-bar-accent','c-bar-name','c-bar-avatar','c-bar-plus','c-bar-arrow'].forEach(function(cid){
       var t=$(cid+'-txt'); if(t){ var v=t.value.trim(); if(v.indexOf('gradient')===-1 && /^#?[0-9a-fA-F]{3,8}$/.test(v)){ $(cid).value = v.charAt(0)==='#'?v:'#'+v; } }
     });
     if(typeof moveAllThumbs==='function'){ requestAnimationFrame(moveAllThumbs); }
@@ -9930,12 +10409,26 @@
     });
     var empty=$('topbar-char-empty'); if(empty) empty.style.display=characters.length?'none':'';
   }
+  function syncMsgrUI(){
+    var v = ($('msgr-pad')||{}).value || '48';
+    [].forEach.call(document.querySelectorAll('.msgr-on'), function(cb){ cb.checked = messengerMode; });
+    [].forEach.call(document.querySelectorAll('.msgr-pad-row'), function(r){ r.hidden = !messengerMode; });
+    [].forEach.call(document.querySelectorAll('.msgr-pad'), function(sl){
+      sl.value = v;
+      var w = sl.closest('.rangewrap'), sp = w && w.querySelector('.val'); if(sp) sp.textContent = v+'px';
+      var mi = w && w.querySelector('.stepbtn:first-child'), pl = w && w.querySelector('.stepbtn:last-child');
+      if(mi) mi.disabled = parseFloat(v) <= parseFloat(sl.min); if(pl) pl.disabled = parseFloat(v) >= parseFloat(sl.max);
+    });
+  }
   function syncChromeUI(){
     var on=$('topbar-on'), ib=$('inputbar-on'), srcSeg=$('topbar-src-seg'), nm=$('topbar-name');
     if(!on) return;
     on.checked=chrome.topbar; ib.checked=chrome.inputbar; if(nm) nm.value=chrome.name||'';
     if(srcSeg){ [].forEach.call(srcSeg.querySelectorAll('button'), function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-src')===chrome.src?'true':'false'); }); if(typeof moveThumb==='function'){ requestAnimationFrame(function(){ moveThumb(srcSeg); }); } }
     var opts=$('topbar-opts'); if(opts) opts.hidden=!chrome.topbar;
+    syncMsgrUI();
+    if($('line-topbar-on')){ $('line-topbar-on').checked=!!chrome.lineTop; $('line-inputbar-on').checked=!!chrome.lineInput; $('line-topbar-name').value=chrome.lineName||''; $('line-topbar-opts').hidden=!chrome.lineTop; }
+    if($('kakao-topbar-on')){ $('kakao-topbar-on').checked=!!chrome.kakaoTop; $('kakao-inputbar-on').checked=!!chrome.kakaoInput; $('kakao-topbar-name').value=chrome.kakaoName||''; $('kakao-topbar-opts').hidden=!chrome.kakaoTop; }
     var custom=chrome.src==='custom';
     if($('topbar-char-view')) $('topbar-char-view').hidden=custom;
     if($('topbar-custom-view')) $('topbar-custom-view').hidden=!custom;
@@ -9945,8 +10438,28 @@
     var on=$('topbar-on'); if(!on) return;
     var ib=$('inputbar-on'), srcSeg=$('topbar-src-seg'), nm=$('topbar-name'),
         prev=$('topbar-photo-preview'), file=$('topbar-photo-file');
-    on.addEventListener('change', function(){ chrome.topbar=on.checked; syncChromeUI(); render(); saveState(); });
-    ib.addEventListener('change', function(){ chrome.inputbar=ib.checked; render(); saveState(); });
+    // 상단바 · 하단바는 아이메시지 / 라인 / 카카오톡 중 한 가지만(같은 자리)
+    function onlyTop(k){ chrome.topbar = k==='topbar'; chrome.lineTop = k==='lineTop'; chrome.kakaoTop = k==='kakaoTop'; }
+    function onlyInput(k){ chrome.inputbar = k==='inputbar'; chrome.lineInput = k==='lineInput'; chrome.kakaoInput = k==='kakaoInput'; }
+    on.addEventListener('change', function(){ if(on.checked) onlyTop('topbar'); else chrome.topbar=false; syncChromeUI(); render(); saveState(); });
+    ib.addEventListener('change', function(){ if(ib.checked) onlyInput('inputbar'); else chrome.inputbar=false; syncChromeUI(); render(); saveState(); });
+    // 라인 상하단바 — 아이메시지와 같은 자리라 한쪽을 켜면 다른 쪽 같은 바는 끈다
+    var lt=$('line-topbar-on'), li=$('line-inputbar-on'), ln=$('line-topbar-name');
+    if(lt) lt.addEventListener('change', function(){ if(lt.checked) onlyTop('lineTop'); else chrome.lineTop=false; syncChromeUI(); render(); saveState(); });
+    if(li) li.addEventListener('change', function(){ if(li.checked) onlyInput('lineInput'); else chrome.lineInput=false; syncChromeUI(); render(); saveState(); });
+    var kt=$('kakao-topbar-on'), ki=$('kakao-inputbar-on'), kn=$('kakao-topbar-name');
+    if(kt) kt.addEventListener('change', function(){ if(kt.checked) onlyTop('kakaoTop'); else chrome.kakaoTop=false; syncChromeUI(); render(); saveState(); });
+    if(ki) ki.addEventListener('change', function(){ if(ki.checked) onlyInput('kakaoInput'); else chrome.kakaoInput=false; syncChromeUI(); render(); saveState(); });
+    if(kn) kn.addEventListener('input', function(){ chrome.kakaoName=kn.value; render(); saveState(); });
+    if(ln) ln.addEventListener('input', function(){ chrome.lineName=ln.value; render(); saveState(); });
+    // 메신저 화면으로 꾸미기 — 세 아코디언의 스위치 · 여백은 모두 같은 값(하나 바꾸면 다 바뀜)
+    [].forEach.call(document.querySelectorAll('.msgr-on'), function(cb){
+      cb.addEventListener('change', function(){ messengerMode = cb.checked; syncMsgrUI(); render(); saveState(); });
+    });
+    [].forEach.call(document.querySelectorAll('.msgr-pad'), function(sl){
+      sl.addEventListener('input', function(){ var m=$('msgr-pad'); if(m && sl!==m) m.value=sl.value; syncMsgrUI(); render(); });
+      sl.addEventListener('change', function(){ saveState(); });
+    });
     [].forEach.call(srcSeg.querySelectorAll('button'), function(b){
       b.addEventListener('click', function(){ chrome.src=b.getAttribute('data-src'); syncChromeUI(); render(); saveState(); });
     });
