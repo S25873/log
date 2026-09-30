@@ -4631,13 +4631,13 @@
           if(!list.length){ var em=document.createElement('p'); em.className='emo-empty'; em.textContent='저장된 이모티콘이 없어요. ＋로 추가해 주세요.'; grid.appendChild(em); }
           list.forEach(function(it){
             var t=document.createElement('button'); t.type='button'; t.className='emo-tile'; t.style.backgroundImage='url("'+it.src+'")';
-            t.addEventListener('click', function(ev){ ev.preventDefault(); closeSheet(); insertPhotoBubbleImg(desc, it.src, true); });
+            t.addEventListener('click', function(ev){ ev.preventDefault(); if(sheetTapTooSoon(ev)) return; closeSheet(); insertPhotoBubbleImg(desc, it.src, true); });
             var x=document.createElement('span'); x.className='emo-tile__x'; x.textContent='×'; x.title='저장소에서 삭제';
-            x.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); if(!confirm('이 이모티콘을 저장소에서 지울까요?')) return; emoWrite(function(st){ st.delete(it.id); }, fill); });
+            x.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); if(sheetTapTooSoon(ev)) return; if(!confirm('이 이모티콘을 저장소에서 지울까요?')) return; emoWrite(function(st){ st.delete(it.id); }, fill); });
             t.appendChild(x); grid.appendChild(t);
           });
           var add=document.createElement('button'); add.type='button'; add.className='emo-tile emo-tile--add'; add.textContent='＋'; add.title='새 이모티콘';
-          add.addEventListener('click', function(ev){ ev.preventDefault(); if(list.length>=EMO_MAX){ alert('이모티콘은 최대 '+EMO_MAX+'개까지 저장돼요. 안 쓰는 걸 지워 주세요.'); return; } var f=$('emo-file'); if(f) f.click(); });
+          add.addEventListener('click', function(ev){ ev.preventDefault(); if(sheetTapTooSoon(ev)) return; if(list.length>=EMO_MAX){ alert('이모티콘은 최대 '+EMO_MAX+'개까지 저장돼요. 안 쓰는 걸 지워 주세요.'); return; } var f=$('emo-file'); if(f) f.click(); });
           grid.appendChild(add);
         });
       }
@@ -5220,9 +5220,13 @@
   var _sheetBack = null;
   var _sheetSavedRange = null;
   var _sheetHideT = null;
+  // 아이폰 사파리: 시트 항목을 눌러 다음 시트가 같은 자리에 바로 열리면, 같은 탭이 새 항목까지 한 번 더 눌러 버리는 일이 있음 → 열린 직후 잠깐은 눌림 무시
+  var _sheetOpenAt = 0;
+  function sheetTapTooSoon(ev){ if(Date.now()-_sheetOpenAt < 450){ if(ev){ ev.preventDefault(); ev.stopPropagation(); } return true; } return false; }
   function openSheetDef(def){
     if(!def || !sheetOverlay) return;
     if(_sheetHideT){ clearTimeout(_sheetHideT); _sheetHideT=null; }   // 대기 중인 숨김 취소(시트 연쇄 열림)
+    _sheetOpenAt = Date.now();
     // 현재 에디터 선택을 보존 (시트 여는 동안 포커스 이동해도 복원)
     var sel = window.getSelection();
     _sheetSavedRange = (sel && sel.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)) ? sel.getRangeAt(0).cloneRange() : (_savedRange ? _savedRange.cloneRange() : null);
@@ -5240,7 +5244,8 @@
       b.innerHTML = pv + '<span>'+opt.label+'</span>';
       b.addEventListener('click', function(ev){
         ev.preventDefault(); ev.stopPropagation();
-        if(opt.keepOpen){ opt.run(); return; }   // 체크 토글처럼 시트를 닫지 않는 항목
+        if(sheetTapTooSoon(ev)) return;
+        if(opt.keepOpen){ opt.run(); _sheetOpenAt=0; return; }   // 체크 토글처럼 시트를 닫지 않는 항목(같은 시트 갱신이라 눌림 막기 없음)
         closeSheet();
         if(!opt.noFocus && _sheetSavedRange && editor.contains(_sheetSavedRange.startContainer)){
           editor.focus();
@@ -5379,9 +5384,9 @@
   document.querySelectorAll('[data-sheet]').forEach(function(btn){
     bindTap(btn, function(e){ if(e){ e.preventDefault(); e.stopPropagation(); } openSheet(btn.getAttribute('data-sheet')); });
   });
-  if(sheetCancel){ sheetCancel.addEventListener('click', closeSheet); }
-  if(sheetBackBtn){ sheetBackBtn.addEventListener('click', function(){ var b=_sheetBack; if(b){ b(); } else { closeSheet(); } }); }
-  if(sheetOverlay){ sheetOverlay.addEventListener('click', function(e){ if(e.target===sheetOverlay){ closeSheet(); } }); }
+  if(sheetCancel){ sheetCancel.addEventListener('click', function(ev){ if(sheetTapTooSoon(ev)) return; closeSheet(); }); }
+  if(sheetBackBtn){ sheetBackBtn.addEventListener('click', function(ev){ if(sheetTapTooSoon(ev)) return; var b=_sheetBack; if(b){ b(); } else { closeSheet(); } }); }
+  if(sheetOverlay){ sheetOverlay.addEventListener('click', function(e){ if(e.target===sheetOverlay){ if(sheetTapTooSoon(e)) return; closeSheet(); } }); }
   document.addEventListener('keydown', function(e){ if(e.key==='Escape' && _picking){ e.preventDefault(); endSizePick(null); return; } });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape' && sheetOverlay && !sheetOverlay.hidden){ closeSheet(); } });
 
